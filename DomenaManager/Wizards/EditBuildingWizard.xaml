@@ -1,0 +1,114 @@
+﻿<UserControl x:Class="DomenaManager.Wizards.EditBuildingWizard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        mc:Ignorable="d"
+        Height="400" Width="450">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+       <!-- <TextBlock Grid.Column="0" Grid.Row="0" Text="Podaj nazwę:" VerticalAlignment="Center" Margin="5" />
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="(Nazwa służy do identyfikacji budynku w programie)" FontSize="10" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Column="0" Grid.Row="2" Text="Miasto:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Column="0" Grid.Row="3" Text="Kod pocztowy:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Column="0" Grid.Row="4" Text="Ulica:" VerticalAlignment="Center" Margin="5"/>
+        <TextBlock Grid.Column="0" Grid.Row="5" Text="Numer:" VerticalAlignment="Center" Margin="5"/>
+
+        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding BuildingName}" Margin="5,10,5,10" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding BuildingCity}" Margin="5,10,5,10" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding BuildingZipCode}" Margin="5,10,5,10" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding BuildingRoadName}" Margin="5,10,5,10" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding BuildingRoadNumber}" Margin="5,10,5,10" VerticalContentAlignment="Center"/>-->
+        <TextBox materialDesign:HintAssist.Hint="Nazwa"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingName" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="(Nazwa służy do identyfikacji budynku w programie)" FontSize="10" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="5,-5,5,5" TextAlignment="Center"/>
+        
+        <TextBox materialDesign:HintAssist.Hint="Miasto"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingCity" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBox materialDesign:HintAssist.Hint="Kod pocztowy"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingZipCode" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyLoginValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBox materialDesign:HintAssist.Hint="Ulica"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingRoadName" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBox materialDesign:HintAssist.Hint="Numer domu"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingRoadNumber" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyLoginValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <!--<Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{Binding AcceptCommand}" Grid.Column="0" Grid.Row="6" Margin="5,0,5,2"/>
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{Binding CancelCommand}"  Grid.Column="1" Grid.Row="6" Margin="5,0,5,2"/> -->
+
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.Row="6" Margin="5,0,5,2">
+            <Button.CommandParameter>
+                <system:Boolean>True</system:Boolean>
+            </Button.CommandParameter>
+        </Button>
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="1" Grid.Row="6" Margin="5,0,5,2">
+            <Button.CommandParameter>
+                <system:Boolean>False</system:Boolean>
+            </Button.CommandParameter>
+        </Button>
+    </Grid>
+</UserControl>
