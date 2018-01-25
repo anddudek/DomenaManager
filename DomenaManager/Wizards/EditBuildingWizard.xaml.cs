@@ -119,9 +119,11 @@ namespace DomenaManager.Wizards
         {
             if (_buildingLocalCopy == null)
             {
+                
                 //Add new building
                 using (var db = new DB.DomenaDBContext())
                 {
+                    
                     var newBuilding = new Building { BuildingId = Guid.NewGuid(), Name = BuildingName, City= BuildingCity, ZipCode= BuildingZipCode, BuildingNumber= BuildingRoadNumber, RoadName = BuildingRoadName, IsDeleted=false};
                     db.Buildings.Add(newBuilding);
                     db.SaveChanges();
@@ -143,6 +145,9 @@ namespace DomenaManager.Wizards
             }
             //this.Close();
         }
+
+
+
 
         private bool CanCancel()
         {

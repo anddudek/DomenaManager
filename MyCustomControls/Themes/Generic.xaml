@@ -97,13 +97,16 @@
         
         <Style.Triggers>
             <Trigger Property="IsFocused" Value="true">
-                <Setter Property="Background" Value="#8BC34A" />
+                <Setter Property="Background" Value="#D8D8D8" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Background" Value="#8BC34A" />
+                <Setter Property="Background" Value="#D8D8D8" />
             </Trigger>
             <Trigger Property="IsKeyboardFocused" Value="true">
-                <Setter Property="Background" Value="#8BC34A" />
+                <Setter Property="Background" Value="#D8D8D8" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Foreground" Value="Gray" />
             </Trigger>
         </Style.Triggers>
         

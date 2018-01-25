@@ -163,6 +163,12 @@ namespace DomenaManager.Pages
                 //Accept
                 if (dc._buildingLocalCopy == null)
                 {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.BuildingName) || string.IsNullOrEmpty(dc.BuildingCity) || string.IsNullOrEmpty(dc.BuildingZipCode) || string.IsNullOrEmpty(dc.BuildingRoadName) || string.IsNullOrEmpty(dc.BuildingRoadNumber)))
+        
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
                     //Add new building
                     using (var db = new DB.DomenaDBContext())
                     {
@@ -187,6 +193,16 @@ namespace DomenaManager.Pages
                 }
             }
             InitializeCollection();
+        }
+
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
         }
 
         private bool CanDeleteBuilding()

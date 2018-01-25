@@ -9,12 +9,14 @@
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="600" 
 	Title="Budynki">
-    <Grid>
+    <Grid Background="#FFFFFF">
         <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
             <RowDefinition Height="*" />
             <RowDefinition Height="90" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="1">
+        <Label Grid.Row="0" Content="Budynki" FontSize="28"/>
+        <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddBuildingCommand}" Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditBuildingCommand}" Margin="10,0,10,0"/>
@@ -26,7 +28,7 @@
                 <Mtrx:FontAwesomeButton Style="{StaticResource ButtonStyle}" Command="{Binding DeleteBuildingCommand}" Content="Usuń budynek" Icon="times" Width="155" Height="35" Margin="5,5,0,5"/>
             </WrapPanel>-->
         </Grid>
-        <DataGrid ItemsSource="{Binding Buildings}" AutoGenerateColumns="False" IsReadOnly="True" Grid.Row="0" Margin="20" SelectedItem="{Binding SelectedBuilding}">
+        <DataGrid ItemsSource="{Binding Buildings}" AutoGenerateColumns="False" IsReadOnly="True" Grid.Row="1" Margin="20" SelectedItem="{Binding SelectedBuilding}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="auto" FontSize="14"/>
                 <DataGridTextColumn Header="Adres" Binding="{Binding Address}" Width="*" FontSize="14"/>

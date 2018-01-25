@@ -67,7 +67,7 @@
             <TextBox.Text>
                 <Binding Path="BuildingZipCode" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <Helpers:EmptyLoginValidationRule/>
+                        <Helpers:EmptyZipCodeValidationRule/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -86,12 +86,12 @@
         </TextBox>
 
         <TextBox materialDesign:HintAssist.Hint="Numer domu"
-	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
             Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
             <TextBox.Text>
                 <Binding Path="BuildingRoadNumber" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <Helpers:EmptyLoginValidationRule/>
+                        <Helpers:EmptyStringValidationRule/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
