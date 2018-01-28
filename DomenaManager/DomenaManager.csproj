@@ -80,17 +80,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\OwnerDescriptionListView.cs" />
     <Compile Include="Helpers\EmptyZipCodeValidationRule.cs" />
     <Compile Include="Helpers\EmptyNumericValidationRule.cs" />
     <Compile Include="Helpers\EmptyStringValidationRule.cs" />
     <Compile Include="Helpers\EmptyPasswordValidationRule.cs" />
     <Compile Include="Helpers\EmptyLoginValidationRule.cs" />
+    <Compile Include="Helpers\OwnerDataGrid.cs" />
+    <Compile Include="Helpers\YNMsg.cs" />
+    <Compile Include="Pages\OwnersPage.xaml.cs">
+      <DependentUpon>OwnersPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\EditBuildingWizard.xaml.cs">
       <DependentUpon>EditBuildingWizard.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\YNMsgBox.xaml.cs">
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="Pages\OwnersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

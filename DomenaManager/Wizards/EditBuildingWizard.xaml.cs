@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using LibDataModel;
+using MaterialDesignThemes.Wpf;
 
 namespace DomenaManager.Wizards
 {
@@ -153,14 +154,20 @@ namespace DomenaManager.Wizards
         {
             return true;
         }
-        private void Cancel(object obj)
+        private async void Cancel(object obj)
         {
+            /*
             MessageBoxResult mbr = MessageBox.Show("Czy chcesz przerwać edycję?", "Anulowanie", MessageBoxButton.YesNo);
             if (mbr == MessageBoxResult.Yes)
             {
                 //this.Close();
-            }
+            }*/
         }
+
+        
+    
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)

@@ -29,19 +29,22 @@
                     <ColumnDefinition Width="170" />
                     <ColumnDefinition Width="170" />
                 </Grid.ColumnDefinitions>
-                    <MyControls:MetroButton 
+                        <MyControls:MetroButton Command="{Binding SwitchPageCommand}" CommandParameter="Buildings"
              Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="Home" MDTText="Budynki" Foreground="White"/>
-                    <MyControls:MetroButton Grid.Column="1"
+                        <MyControls:MetroButton Grid.Column="1" Command="{Binding SwitchPageCommand}" CommandParameter="Apartments"
              Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="AccountMultiple" MDTText="Lokale" Foreground="White"/>
-                    <MyControls:MetroButton Grid.Column="2"
+                        <MyControls:MetroButton Grid.Column="2" Command="{Binding SwitchPageCommand}" CommandParameter="Payments"
              Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="CreditCard" MDTText="Wpłaty" Foreground="White"/>
-                    <MyControls:MetroButton Grid.Column="3"
+                        <MyControls:MetroButton Grid.Column="3" Command="{Binding SwitchPageCommand}" CommandParameter="PaymentOrders"
              Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="SquareIncCash" MDTText="Naliczenia" Foreground="White"/>
-                    <MyControls:MetroButton Grid.Column="4"
+                        <MyControls:MetroButton Grid.Column="4" Command="{Binding SwitchPageCommand}" CommandParameter="Letters"
              Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="BookOpenPageVariant" MDTText="Pisma" Foreground="White"/>
-                </Grid>
+                        <MyControls:MetroButton Grid.Column="5" Command="{Binding SwitchPageCommand}" CommandParameter="Owners"
+             Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="Account" MDTText="Właściciele" Foreground="White"/>
+                    </Grid>
         </Grid>
-        <Frame Grid.Row="1" Content="{Binding CurrentPage}" Margin="10,0,10,0"/>
+        
+        <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" Margin="10,0,10,0"/>
     </Grid>
         </materialDesign:DialogHost >
     </materialDesign:DialogHost >

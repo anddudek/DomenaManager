@@ -10,7 +10,7 @@
              xmlns:local="clr-namespace:DomenaManager.Wizards"
              mc:Ignorable="d" 
              d:DesignHeight="160" d:DesignWidth="200">
-    <Grid Background="White">
+    <Grid Background="White" Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
@@ -19,13 +19,13 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Label Content="{Binding Message}" />
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.Row="6" Margin="5,0,5,2">
+        <Label Content="{Binding Message}" Grid.ColumnSpan="2" />
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="{Binding YesTitle}" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.Row="6" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>True</system:Boolean>
             </Button.CommandParameter>
         </Button>
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="1" Grid.Row="6" Margin="5,0,5,2">
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="{Binding NoTitle}" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="1" Grid.Row="6" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>False</system:Boolean>
             </Button.CommandParameter>

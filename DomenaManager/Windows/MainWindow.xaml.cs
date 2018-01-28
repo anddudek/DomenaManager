@@ -23,8 +23,8 @@ namespace DomenaManager.Windows
     /// </summary>
     public partial class MainWindow : MetroWindow, INotifyPropertyChanged
     {
-        private Page _currentPage;
-        public Page CurrentPage
+        private UserControl _currentPage;
+        public UserControl CurrentPage
         {
             get
             {
@@ -36,26 +36,16 @@ namespace DomenaManager.Windows
                 OnPropertyChanged("CurrentPage");
             }
         }
-
-        private string _pageTitle;
-        public string PageTitle
-        {
-            get { return _pageTitle; }
-            set
-            {
-                _pageTitle = value;
-                OnPropertyChanged("PageTitle");
-            }
-        }
+        
 
         public MainWindow()
         {
             DataContext = this;
             InitializeComponent();
 
-            CurrentPage = new Pages.BuildingsPage();
-            PageTitle = PageTitleToFAIconConverter.Get(CurrentPage.Title) + "  " + CurrentPage.Title;
-            
+            SwitchPage("Buildings");
+
+
             using (var db = new DB.DomenaDBContext())
             {
                 /*db.Buildings.Add(new LibDataModel.Building { Name = "ELO", BuildingId = Guid.NewGuid(), BuildingNumber = "7", City = "Świątniki", RoadName = "Kreta", ZipCode="32-040" });
@@ -82,7 +72,41 @@ namespace DomenaManager.Windows
                 db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "ZN Domena", CostAmount = 255, CostCategoryId = domena, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 1/2017", PaymentTime = new DateTime(2017, 11, 12) });
                 db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "Wodnik", CostAmount = 105.78, CostCategoryId = woda, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 89219/2017", PaymentTime = new DateTime(2017, 11, 29) });
                 db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "ZN Domena", CostAmount = 255, CostCategoryId = domena, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 3/2017", PaymentTime = new DateTime(2017, 12, 2) });
-                db.SaveChanges();*/
+                
+                db.Owners.Add(new LibDataModel.Owner { OwnerId = Guid.NewGuid(), IsDeleted = false, MailAddress = "ul. Krzaczasta 5, /r/n 30-389 Kraków", OwnerName="Dominik Biegański" });
+    */            
+    //db.SaveChanges();
+            }
+        }
+
+        public void SwitchPage(object PageName)
+        {
+            switch ((string)PageName)
+            {
+                default:
+                    return;
+                case "Buildings":
+                    CurrentPage = new Pages.BuildingsPage();
+                    OnPropertyChanged("CurrentPage");
+                    return;
+                case "Owners":
+                    CurrentPage = new Pages.OwnersPage();
+
+                    OnPropertyChanged("CurrentPage");
+                    return;
+            }
+        }
+
+        public bool CanSwitchPage()
+        {
+            return true;
+        }
+
+        public ICommand SwitchPageCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(param => SwitchPage(param), CanSwitchPage);
             }
         }
 

@@ -21,7 +21,7 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class YNMsgBox : UserControl, INotifyPropertyChanged
     {
-        public string _message;
+        private string _message;
         public string Message
         {
             get { return _message; }
@@ -32,8 +32,42 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private string _yesTitle;
+        public string YesTitle
+        {
+            get { return _yesTitle; }
+            set
+            {
+                _yesTitle = value;
+                OnPropertyChanged("YesTitle");
+            }
+        }
+
+        private string _noTitle;
+        public string NoTitle
+        {
+            get { return _noTitle; }
+            set
+            {
+                _noTitle = value;
+                OnPropertyChanged("NoTitle");
+            }
+        }
+
         public YNMsgBox(string BoxMessage)
         {
+            DataContext = this;
+            _yesTitle = "Tak";
+            _noTitle = "Nie";
+            _message = BoxMessage;
+            InitializeComponent();
+        }
+
+        public YNMsgBox(string BoxMessage, string YesButtonTitle, string NoButtonTitle)
+        {
+            DataContext = this;
+            _yesTitle = YesButtonTitle;
+            _noTitle = NoButtonTitle;
             _message = BoxMessage;
             InitializeComponent();
         }

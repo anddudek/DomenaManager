@@ -22,7 +22,7 @@ namespace DomenaManager.Pages
     /// <summary>
     /// Interaction logic for BuildingsPage.xaml
     /// </summary>
-    public partial class BuildingsPage : Page, INotifyPropertyChanged
+    public partial class BuildingsPage : UserControl, INotifyPropertyChanged
     {
         #region Bindings
 
@@ -155,8 +155,9 @@ namespace DomenaManager.Pages
             
         }
 
-        private void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
+            
             if ((bool)eventArgs.Parameter)
             {
                 var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
@@ -179,6 +180,12 @@ namespace DomenaManager.Pages
                 }
                 else
                 {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.BuildingName) || string.IsNullOrEmpty(dc.BuildingCity) || string.IsNullOrEmpty(dc.BuildingZipCode) || string.IsNullOrEmpty(dc.BuildingRoadName) || string.IsNullOrEmpty(dc.BuildingRoadNumber)))
+
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
                     //Edit building
                     using (var db = new DB.DomenaDBContext())
                     {
@@ -190,6 +197,17 @@ namespace DomenaManager.Pages
                         q.ZipCode = dc.BuildingZipCode;
                         db.SaveChanges();
                     }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+                
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    //eventArgs.Cancel();
+                    var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
                 }
             }
             InitializeCollection();
@@ -210,10 +228,10 @@ namespace DomenaManager.Pages
             return (SelectedBuilding != null);
         }
 
-        private void DeleteBuilding(object obj)
+        private async void DeleteBuilding(object obj)
         {
-            MessageBoxResult mbr = MessageBox.Show("Czy chcesz usunąć budynek " + SelectedBuilding.Name + "?", "Usuwanie", MessageBoxButton.YesNo);
-            if (mbr == MessageBoxResult.Yes)
+            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć budynek " + SelectedBuilding.Name + "?");
+            if (ynResult)
             {
                 using (var db = new DB.DomenaDBContext())
                 {
@@ -222,6 +240,7 @@ namespace DomenaManager.Pages
                 }
             }
             InitializeCollection();
+            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
