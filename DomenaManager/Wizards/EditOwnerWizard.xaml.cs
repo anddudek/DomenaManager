@@ -58,7 +58,7 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private Owner _ownerLocalCopy;
+        public Owner _ownerLocalCopy;
 
         public EditOwnerWizard(Owner SelectedOwner = null)
         {
@@ -79,10 +79,6 @@ namespace DomenaManager.Wizards
                         apartment.BuildingName = db.Buildings.Where(x => x.BuildingId == a.BuildingId).Select(x => x.Name).FirstOrDefault();
                         apartment.ApartmentNumber = a.ApartmentNumber;
                         ApartmentsOwned.Add(apartment);
-                    }
-                    if (ApartmentsOwned != null && ApartmentsOwned.Count == 0)
-                    {
-                        ApartmentsOwned.Add(new ApartmentListView { BuildingName = "Brak mieszkań" });
                     }
                 }
             }

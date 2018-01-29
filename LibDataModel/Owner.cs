@@ -25,7 +25,7 @@ namespace LibDataModel
 
         public Owner(Owner CopySource)
         {
-            this.OwnerId = Guid.NewGuid();
+            this.OwnerId = CopySource.OwnerId;
             this.OwnerName = CopySource.OwnerName;
             this.MailAddress = CopySource.MailAddress;
             this.IsDeleted = CopySource.IsDeleted;

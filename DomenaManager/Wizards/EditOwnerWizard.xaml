@@ -19,6 +19,7 @@
             <RowDefinition Height="20" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
@@ -50,27 +51,28 @@
             </TextBox.Text>
         </TextBox>
 
-        
+        <TextBlock Grid.Column="0" Grid.Row="4" Text="Posiadane mieszkania:" FontSize="12" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,5,5,5" TextAlignment="Left"/>
 
-        <TextBox materialDesign:HintAssist.Hint="Posiadane lokale" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" SpellCheck.IsEnabled="True" ScrollViewer.CanContentScroll="True"
-	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" Height="123"
-            Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
-            <TextBox.Text>
-                <Binding Path="ApartmentsOwned" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-     
+        <ListView Height="123" ScrollViewer.CanContentScroll="True" ItemsSource="{Binding ApartmentsOwned}"
+            Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel>
+                        <TextBlock Text="{Binding Path=BuildingName}" />
+                        <TextBlock Text=", lokal nr. " />
+                        <TextBlock Text="{Binding Path=ApartmentNumber}" />
+                    </WrapPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.Row="6" Margin="5,0,5,2">
+
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.Row="7" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>True</system:Boolean>
             </Button.CommandParameter>
         </Button>
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="1" Grid.Row="6" Margin="5,0,5,2">
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="1" Grid.Row="7" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>False</system:Boolean>
             </Button.CommandParameter>
