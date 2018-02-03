@@ -22,22 +22,6 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class EditBuildingWizard : UserControl, INotifyPropertyChanged
     {
-        public ICommand AcceptCommand
-        {
-            get
-            {
-                return new Helpers.RelayCommand(Accept, CanAccept);
-            }
-        }
-
-        public ICommand CancelCommand
-        {
-            get
-            {
-                return new Helpers.RelayCommand(Cancel, CanCancel);
-            }
-        }
-
         private string _buildingName;
         public string BuildingName
         {
@@ -110,64 +94,6 @@ namespace DomenaManager.Wizards
                 BuildingRoadNumber = SelectedBuilding.BuildingNumber;
             }
         }
-
-        private bool CanAccept()
-        {
-            return
-                !(string.IsNullOrEmpty(BuildingName) || string.IsNullOrEmpty(BuildingCity) || string.IsNullOrEmpty(BuildingZipCode) || string.IsNullOrEmpty(BuildingRoadName) || string.IsNullOrEmpty(BuildingRoadNumber));
-        }
-        private void Accept(object obj)
-        {
-            if (_buildingLocalCopy == null)
-            {
-                
-                //Add new building
-                using (var db = new DB.DomenaDBContext())
-                {
-                    
-                    var newBuilding = new Building { BuildingId = Guid.NewGuid(), Name = BuildingName, City= BuildingCity, ZipCode= BuildingZipCode, BuildingNumber= BuildingRoadNumber, RoadName = BuildingRoadName, IsDeleted=false};
-                    db.Buildings.Add(newBuilding);
-                    db.SaveChanges();
-                }
-            }
-            else
-            {
-                //Edit building
-                using (var db = new DB.DomenaDBContext())
-                {
-                    var q = db.Buildings.Where(x => x.BuildingId.Equals(_buildingLocalCopy.BuildingId)).FirstOrDefault();
-                    q.BuildingNumber = BuildingRoadNumber;
-                    q.City = BuildingCity;
-                    q.Name = BuildingName;
-                    q.RoadName = BuildingRoadName;
-                    q.ZipCode = BuildingZipCode;
-                    db.SaveChanges();
-                }
-            }
-            //this.Close();
-        }
-
-
-
-
-        private bool CanCancel()
-        {
-            return true;
-        }
-        private async void Cancel(object obj)
-        {
-            /*
-            MessageBoxResult mbr = MessageBox.Show("Czy chcesz przerwać edycję?", "Anulowanie", MessageBoxButton.YesNo);
-            if (mbr == MessageBoxResult.Yes)
-            {
-                //this.Close();
-            }*/
-        }
-
-        
-    
-
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)

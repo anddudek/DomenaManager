@@ -14,5 +14,21 @@ namespace LibDataModel
         public string OwnerName { get; set; }
         public string MailAddress { get; set; }
         public bool IsDeleted { get; set; }
+
+        public Owner()
+        {
+            this.OwnerId = Guid.NewGuid();
+            this.OwnerName = null;
+            this.MailAddress = null;
+            this.IsDeleted = false;
+        }
+
+        public Owner(Owner CopySource)
+        {
+            this.OwnerId = CopySource.OwnerId;
+            this.OwnerName = CopySource.OwnerName;
+            this.MailAddress = CopySource.MailAddress;
+            this.IsDeleted = CopySource.IsDeleted;
+        }
     }
 }
