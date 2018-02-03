@@ -74,8 +74,9 @@ namespace DomenaManager.Windows
                 db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "ZN Domena", CostAmount = 255, CostCategoryId = domena, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 3/2017", PaymentTime = new DateTime(2017, 12, 2) });
                 
                 db.Owners.Add(new LibDataModel.Owner { OwnerId = Guid.NewGuid(), IsDeleted = false, MailAddress = "ul. Krzaczasta 5, /r/n 30-389 Kraków", OwnerName="Dominik Biegański" });
-    */            
-    //db.SaveChanges();
+                */
+                //db.Apartments.Add(new LibDataModel.Apartment { ApartmentId=Guid.NewGuid(), AdditionalArea = 15, ApartmentArea=45, ApartmentNumber = 7, CreatedDate = DateTime.Today, HasWaterMeter=false, IsDeleted= false, OwnerId = Guid.Parse("2FE5BADA-1FF5-4F01-81B5-F4A7470B5DDC"), BuildingId=Guid.Parse("CDBBEEDB-EC2F-49E1-9B74-71AAB9ED2102")  });
+                //db.SaveChanges();
             }
         }
 
@@ -91,7 +92,10 @@ namespace DomenaManager.Windows
                     return;
                 case "Owners":
                     CurrentPage = new Pages.OwnersPage();
-
+                    OnPropertyChanged("CurrentPage");
+                    return;
+                case "Apartments":
+                    CurrentPage = new Pages.ApartmentsPage();
                     OnPropertyChanged("CurrentPage");
                     return;
             }

@@ -88,8 +88,11 @@
     <Compile Include="Helpers\EmptyLoginValidationRule.cs" />
     <Compile Include="Helpers\OwnerDataGrid.cs" />
     <Compile Include="Helpers\YNMsg.cs" />
-    <Compile Include="Pages\OwnersPage.xaml.cs">
-      <DependentUpon>OwnersPage.xaml</DependentUpon>
+    <Compile Include="Pages\OwnersPage - Copy.xaml.cs">
+      <DependentUpon>OwnersPage - Copy.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ApartmentsPage.xaml.cs">
+      <DependentUpon>ApartmentsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\EditBuildingWizard.xaml.cs">
       <DependentUpon>EditBuildingWizard.xaml</DependentUpon>
@@ -97,7 +100,11 @@
     <Compile Include="Wizards\YNMsgBox.xaml.cs">
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
     </Compile>
-    <Page Include="Pages\OwnersPage.xaml">
+    <Page Include="Pages\OwnersPage - Copy.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\ApartmentsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
