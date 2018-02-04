@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using MaterialDesignThemes.Wpf;
 using DomenaManager.Helpers;
+using System.Windows.Threading;
 
 namespace DomenaManager.Pages
 {
@@ -43,11 +44,23 @@ namespace DomenaManager.Pages
             set
             {
                 _selectedOwner = value;
-                DrawerHost.OpenDrawerCommand.Execute(Dock.Right, this.DH);
                 OnPropertyChanged("SelectedOwner");
+                OpenDrawer();   
             }
         }
 
+        async Task PutTaskDelay()
+        {
+            await Task.Delay(100);
+        }
+
+        private async void OpenDrawer()
+        {
+            // Wait till all events in bg that can takes focus away from drawer (thus cancel it) finishes
+            await PutTaskDelay();
+            DrawerHost.OpenDrawerCommand.Execute(Dock.Bottom, this.DH);
+        }
+        
         public ICommand AddOwnerCommand
         {
             get

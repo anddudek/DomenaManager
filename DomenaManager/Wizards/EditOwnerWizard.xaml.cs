@@ -50,7 +50,14 @@ namespace DomenaManager.Wizards
         private ObservableCollection<ApartmentListView> _apartmentsOwned;
         public ObservableCollection<ApartmentListView> ApartmentsOwned
         {
-            get { return _apartmentsOwned; }
+            get
+            {  
+                if (_apartmentsOwned == null)
+                {
+                    _apartmentsOwned = new ObservableCollection<ApartmentListView>();
+                }
+                return _apartmentsOwned;
+            }
             set
             {
                 _apartmentsOwned = value;
