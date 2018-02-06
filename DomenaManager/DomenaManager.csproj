@@ -90,6 +90,8 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ApartmentDataGrid.cs" />
     <Compile Include="Helpers\ApartmentListView.cs" />
+    <Compile Include="Helpers\StringToDoubleValidationRule.cs" />
+    <Compile Include="Helpers\StringToIntValidationRule.cs" />
     <Compile Include="Helpers\OwnerDescriptionListView.cs" />
     <Compile Include="Helpers\EmptyZipCodeValidationRule.cs" />
     <Compile Include="Helpers\EmptyNumericValidationRule.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Helpers\EmptyPasswordValidationRule.cs" />
     <Compile Include="Helpers\EmptyLoginValidationRule.cs" />
     <Compile Include="Helpers\OwnerDataGrid.cs" />
+    <Compile Include="Helpers\SumConverter.cs" />
     <Compile Include="Helpers\YNMsg.cs" />
     <Compile Include="Pages\OwnersPage.xaml.cs">
       <DependentUpon>OwnersPage.xaml</DependentUpon>

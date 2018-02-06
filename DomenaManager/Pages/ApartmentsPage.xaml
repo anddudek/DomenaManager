@@ -8,14 +8,17 @@
         xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:hlp="clr-namespace:DomenaManager.Helpers"
         mc:Ignorable="d" 
         d:DesignHeight="600" d:DesignWidth="600" 
         >
     <UserControl.Resources>
+        <hlp:SumConverter x:Key="SumConverter"/>
         <CollectionViewSource x:Key="cvsApartments" Source="{Binding Apartments}" >
             <CollectionViewSource.SortDescriptions>
                 <scm:SortDescription PropertyName="ApartmentNumber"/>
-                <scm:SortDescription PropertyName="ApartmentTotalArea" />
+                <scm:SortDescription PropertyName="ApartmentArea" />
+                <scm:SortDescription PropertyName="AdditionalArea" />
                 <scm:SortDescription PropertyName="Balance" />
             </CollectionViewSource.SortDescriptions>
             <CollectionViewSource.GroupDescriptions>
@@ -81,9 +84,9 @@
         
         <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddOwnerCommand}" Margin="10,0,10,0"/>
-                    <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditOwnerCommand}" Margin="10,0,10,0"/>
-                <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteOwnerCommand}" Margin="10,0,10,0"/>
+                    <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddApartmentCommand}" Margin="10,0,10,0"/>
+                    <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditApartmentCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteApartmentCommand}" Margin="10,0,10,0"/>
             </StackPanel>
         </Grid>
             <!--<DataGrid ItemsSource="{Binding Apartments}" AutoGenerateColumns="False" IsReadOnly="True" Grid.Row="1" Margin="20" SelectedItem="{Binding SelectedApartment}" >
@@ -102,7 +105,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn Header="Numer lokalu" Binding="{Binding ApartmentNumber}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn Header="Powierzchnia" Binding="{Binding ApartmentArea}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn Header="Powierzchnia" Binding="{Binding ApartmentTotalArea}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn Header="Saldo" Binding="{Binding Saldo}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn Header="Właściciel" Binding="{Binding ApartmentOwner}" Width="*" FontSize="14"/>
                 </DataGrid.Columns>

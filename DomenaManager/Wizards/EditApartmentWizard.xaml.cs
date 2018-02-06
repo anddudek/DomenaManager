@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 using LibDataModel;
 using MaterialDesignThemes.Wpf;
 
@@ -22,77 +23,160 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class EditApartmentWizard : UserControl, INotifyPropertyChanged
     {
-        private string _buildingName;
-        public string BuildingName
+        private ObservableCollection<Building> _buildingsNames;
+        public ObservableCollection<Building> BuildingsNames
         {
-            get { return _buildingName; }
+            get { return _buildingsNames; }
             set
             {
-                _buildingName = value;
-                OnPropertyChanged("BuildingName");
+                _buildingsNames = value;
+                OnPropertyChanged("BuildingsNames");
             }
         }
 
-        private string _buildingCity;
-        public string BuildingCity
+        private Building _selectedBuildingName;
+        public Building SelectedBuildingName
         {
-            get { return _buildingCity; }
+            get { return _selectedBuildingName; }
             set
             {
-                _buildingCity = value;
-                OnPropertyChanged("BuildingCity");
+                _selectedBuildingName = value;
+                OnPropertyChanged("SelectedBuildingName");
+                OnPropertyChanged("SelectedBuildingAddress");
             }
         }
 
-        private string _buildingZipCode;
-        public string BuildingZipCode
+        private int _apartmentNumber;
+        public int ApartmentNumber
         {
-            get { return _buildingZipCode; }
+            get { return _apartmentNumber; }
             set
             {
-                _buildingZipCode = value;
-                OnPropertyChanged("BuildingZipCode");
+                _apartmentNumber = value;
+                OnPropertyChanged("ApartmentNumber");
             }
         }
 
-        private string _buildingRoadName;
-        public string BuildingRoadName
+        private string _selectedBuildingAddress;
+        public string SelectedBuildingAddress
         {
-            get { return _buildingRoadName; }
+            get 
+            {
+                _selectedBuildingAddress = _selectedBuildingName != null ? _selectedBuildingName.GetAddress() : null;
+                return _selectedBuildingAddress; 
+            }
             set
             {
-                _buildingRoadName = value;
-                OnPropertyChanged("BuildingRoadName");
+                _selectedBuildingAddress = value;
+                OnPropertyChanged("SelectedBuildingAddress");
             }
         }
 
-        private string _buildingRoadNumber;
-        public string BuildingRoadNumber
+        private ObservableCollection<Owner> _ownersNames;
+        public ObservableCollection<Owner> OwnersNames
         {
-            get { return _buildingRoadNumber; }
+            get { return _ownersNames; }
             set
             {
-                _buildingRoadNumber = value;
-                OnPropertyChanged("BuildingRoadNumber");
+                _ownersNames = value;
+                OnPropertyChanged("OwnersNames");
             }
         }
 
-        public Building _buildingLocalCopy;
-
-        public EditApartmentWizard(Building SelectedBuilding = null)
+        private Owner _selectedOwnerName;
+        public Owner SelectedOwnerName
         {
-            DataContext = this;
-            InitializeComponent();
-            if (SelectedBuilding != null)
+            get { return _selectedOwnerName; }
+            set
             {
-                _buildingLocalCopy = new Building(SelectedBuilding);
-
-                BuildingName = SelectedBuilding.Name;
-                BuildingCity = SelectedBuilding.City;
-                BuildingZipCode = SelectedBuilding.ZipCode;
-                BuildingRoadName = SelectedBuilding.RoadName;
-                BuildingRoadNumber = SelectedBuilding.BuildingNumber;
+                _selectedOwnerName = value;
+                OnPropertyChanged("SelectedOwnerName");
+                OnPropertyChanged("SelectedOwnerMailAddress");
             }
+        }
+
+        private string _selectedOwnerMailAddress;
+        public string SelectedOwnerMailAddress
+        {
+            get 
+            {
+                _selectedOwnerMailAddress = _selectedOwnerName != null ? _selectedOwnerName.MailAddress : null;
+                return _selectedOwnerMailAddress; 
+            }
+            set
+            {
+                _selectedOwnerMailAddress = value;
+                OnPropertyChanged("SelectedOwnerMailAddress");
+            }
+        }
+
+        private string _apartmentArea;
+        public string ApartmentArea
+        {
+            get { return _apartmentArea; }
+            set
+            {
+                if (_apartmentArea != value)
+                {
+                    _apartmentArea = value;
+                    OnPropertyChanged("ApartmentArea");
+                }
+            }
+        }
+
+        private string _additionalArea;
+        public string AdditionalArea
+        {
+            get { return _additionalArea; }
+            set
+            {
+                if (_additionalArea != value)
+                {
+                    _additionalArea = value;
+                    OnPropertyChanged("AdditionalArea");
+                }                
+            }
+        }
+
+        private int _hasWaterMeter;
+        public int HasWaterMeter
+        {
+            get { return _hasWaterMeter; }
+            set
+            {
+                _hasWaterMeter = value;
+                OnPropertyChanged("HasWaterMeter");
+            }
+        }
+
+        public Apartment _apartmentLocalCopy;
+
+        public EditApartmentWizard(Apartment SelectedApartment = null)
+        {
+            if (SelectedApartment != null)
+            {
+                _apartmentLocalCopy = new Apartment(SelectedApartment);
+            }
+            InitializeList();
+            DataContext = this;            
+            InitializeComponent();            
+        }
+
+        private void InitializeList()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                _buildingsNames = new ObservableCollection<Building>(db.Buildings.ToList());
+                _ownersNames = new ObservableCollection<Owner>(db.Owners.ToList());
+            }
+
+            if (_apartmentLocalCopy == null)
+                return;            
+
+            _additionalArea = _apartmentLocalCopy.AdditionalArea.ToString();
+            _apartmentArea = _apartmentLocalCopy.ApartmentArea.ToString();
+            _apartmentNumber = _apartmentLocalCopy.ApartmentNumber;
+            _hasWaterMeter = _apartmentLocalCopy.HasWaterMeter ? 0 : 1;            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

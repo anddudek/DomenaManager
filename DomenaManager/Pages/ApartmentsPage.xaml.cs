@@ -121,9 +121,11 @@ namespace DomenaManager.Pages
             }
         }
 
-        private void AddApartment(object param)
+        private async void AddApartment(object param)
         {
+            Wizards.EditApartmentWizard eaw = new Wizards.EditApartmentWizard();
 
+            var result = await DialogHost.Show(eaw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
         private bool CanAddApartment()
@@ -131,7 +133,7 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private void EditApartment(object param)
+        private async void EditApartment(object param)
         {
 
         }
@@ -150,6 +152,82 @@ namespace DomenaManager.Pages
         {
             return SelectedApartment != null;
         }
+
+        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+        {
+
+        }
+
+        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditApartmentWizard);
+                //Accept
+                if (dc._apartmentLocalCopy == null)
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingAddress) || string.IsNullOrEmpty(dc.SelectedOwnerMailAddress) || dc.ApartmentNumber <= 0 || double.Parse(dc.AdditionalArea) <= 0 || double.Parse(dc.ApartmentArea) <= 0))
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Add new apartment
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        var newApartment = new LibDataModel.Apartment { ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), HasWaterMeter = dc.HasWaterMeter == 1, IsDeleted=false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber };
+                        db.Apartments.Add(newApartment);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingAddress) || string.IsNullOrEmpty(dc.SelectedOwnerMailAddress) || dc.ApartmentNumber > 0 || double.Parse(dc.AdditionalArea) > 0 || double.Parse(dc.ApartmentArea) > 0))
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Edit Apartment
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        var q = db.Apartments.Where(x => x.ApartmentId.Equals(dc._apartmentLocalCopy.ApartmentId)).FirstOrDefault();
+                        q.AdditionalArea = double.Parse(dc.AdditionalArea);
+                        q.ApartmentArea = double.Parse(dc.ApartmentArea);
+                        q.ApartmentNumber = dc.ApartmentNumber;
+                        q.BuildingId = dc.SelectedBuildingName.BuildingId;
+                        q.CreatedDate = DateTime.Now;
+                        q.HasWaterMeter = dc.HasWaterMeter == 0;
+                        q.OwnerId = dc.SelectedOwnerName.OwnerId;
+                        
+                        db.SaveChanges();
+                    }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    //eventArgs.Cancel();
+                    var dc = (eventArgs.Session.Content as Wizards.EditApartmentWizard);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                }
+            }
+            InitializeCollection();
+            
+        }
+
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)

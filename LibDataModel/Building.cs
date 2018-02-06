@@ -30,7 +30,11 @@ namespace LibDataModel
             BuildingNumber = null;
             IsDeleted = false;
         }
-        
+
+        public string GetAddress()
+        {
+            return "ul. " + RoadName + " " + BuildingNumber + Environment.NewLine + ZipCode + " " + City;
+        }
 
         [Key]
         public Guid BuildingId {get; set;}

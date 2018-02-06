@@ -19,5 +19,25 @@ namespace LibDataModel
         public DateTime CreatedDate { get; set; }
         public bool HasWaterMeter { get; set; }
         public bool IsDeleted { get; set; }
+
+        public Apartment()
+        {
+            this.ApartmentId = Guid.NewGuid();
+            this.CreatedDate = DateTime.Now;
+            this.IsDeleted = false;
+        }
+
+        public Apartment(Apartment CopySource)
+        {
+            this.ApartmentId = CopySource.ApartmentId;
+            this.BuildingId = CopySource.BuildingId;
+            this.OwnerId = CopySource.OwnerId;
+            this.ApartmentNumber = CopySource.ApartmentNumber;
+            this.ApartmentArea = CopySource.ApartmentArea;
+            this.AdditionalArea = CopySource.AdditionalArea;
+            this.CreatedDate = CopySource.CreatedDate;
+            this.HasWaterMeter = CopySource.HasWaterMeter;
+            this.IsDeleted = CopySource.IsDeleted;
+        }
     }
 }

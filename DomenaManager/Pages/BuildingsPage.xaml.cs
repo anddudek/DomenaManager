@@ -92,7 +92,7 @@ namespace DomenaManager.Pages
                 {
                     var b = new Helpers.BuildingDataGrid { Name = build.Name, ApartmentsCount = 1 };
                     b.BuildingId = build.BuildingId;
-                    var address = new StringBuilder();
+                    /*var address = new StringBuilder();
                     address.Append(build.City);
                     address.Append(" ");
                     address.Append(build.ZipCode);
@@ -100,7 +100,8 @@ namespace DomenaManager.Pages
                     address.Append(build.RoadName);
                     address.Append(" ");
                     address.Append(build.BuildingNumber);
-                    b.Address = address.ToString();
+                    b.Address = address.ToString();*/
+                    b.Address = build.GetAddress();
                     Buildings.Add(b);
                 }
 

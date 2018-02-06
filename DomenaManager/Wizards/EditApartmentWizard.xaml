@@ -28,10 +28,10 @@
         
         <ComboBox materialDesign:HintAssist.Hint="Budynek"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-                  IsEditable="True" SelectedItem="{Binding SelectedBuildingName}"
+                  IsEditable="True" SelectedItem="{Binding SelectedBuildingName}" DisplayMemberPath="Name"
             Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="35,0,30,0" >
             <ComboBox.ItemsSource>
-                <Binding Path="BuildingsNames" UpdateSourceTrigger="PropertyChanged">
+                <Binding Path="BuildingsNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
                         <Helpers:EmptyStringValidationRule/>
                     </Binding.ValidationRules>
@@ -43,9 +43,9 @@
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
             Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="5,0,30,0" >
             <TextBox.Text>
-                <Binding Path="BuildingRoadNumber" UpdateSourceTrigger="PropertyChanged">
+                <Binding Path="ApartmentNumber" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
+                        <Helpers:StringToIntValidationRule/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -63,7 +63,7 @@
         
         <ComboBox materialDesign:HintAssist.Hint="Właściciel"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-                  IsEditable="True" SelectedItem="{Binding SelectedOwnerName}"
+                  IsEditable="True" SelectedItem="{Binding SelectedOwnerName}"  DisplayMemberPath="OwnerName"
             Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" VerticalAlignment="Center" Margin="35,0,30,0" >
             <ComboBox.ItemsSource>
                 <Binding Path="OwnersNames" UpdateSourceTrigger="PropertyChanged">
@@ -90,7 +90,7 @@
             <TextBox.Text>
                 <Binding Path="ApartmentArea" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
+                       <Helpers:StringToDoubleValidationRule/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
@@ -102,7 +102,7 @@
             <TextBox.Text>
                 <Binding Path="AdditionalArea" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
+                        <Helpers:StringToDoubleValidationRule/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
