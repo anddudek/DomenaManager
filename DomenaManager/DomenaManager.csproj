@@ -100,6 +100,7 @@
     <Compile Include="Helpers\EmptyLoginValidationRule.cs" />
     <Compile Include="Helpers\OwnerDataGrid.cs" />
     <Compile Include="Helpers\SumConverter.cs" />
+    <Compile Include="Helpers\Validator.cs" />
     <Compile Include="Helpers\YNMsg.cs" />
     <Compile Include="Pages\OwnersPage.xaml.cs">
       <DependentUpon>OwnersPage.xaml</DependentUpon>

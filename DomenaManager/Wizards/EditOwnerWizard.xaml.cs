@@ -91,6 +91,24 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand UpdateAllFieldsCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(UpdateAllFields, CanUpdateAllFields);
+            }
+        }
+
+        private void UpdateAllFields(object param)
+        {
+            Helpers.Validator.IsValid(this);
+        }
+
+        private bool CanUpdateAllFields()
+        {
+            return true;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {

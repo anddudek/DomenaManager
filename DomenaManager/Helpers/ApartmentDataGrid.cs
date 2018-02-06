@@ -8,6 +8,7 @@ namespace DomenaManager.Helpers
 {
     public class ApartmentDataGrid
     {
+        public Guid ApartmentId { get; set; }
         public string BuildingName { get; set; }
         public int ApartmentNumber { get; set; }
         public string ApartmentOwner { get; set; }

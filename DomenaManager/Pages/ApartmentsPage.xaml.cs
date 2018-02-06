@@ -18,6 +18,7 @@ using System.Data.Entity;
 using MaterialDesignThemes.Wpf;
 using DomenaManager.Helpers;
 using System.Windows.Threading;
+using LibDataModel;
 
 namespace DomenaManager.Pages
 {
@@ -85,11 +86,119 @@ namespace DomenaManager.Pages
             }
         }
 
+        private bool _groupByBuilding;
+        public bool GroupByBuilding
+        {
+            get { return _groupByBuilding; }
+            set
+            {
+                if (value != _groupByBuilding)
+                {
+                    ICollectionView cvApartments = (CollectionView)CollectionViewSource.GetDefaultView(Apartments);
+                    if (value)
+                    {
+                        cvApartments.GroupDescriptions.Add(new PropertyGroupDescription("BuildingName"));
+                    }
+                    else
+                    {
+                        cvApartments.GroupDescriptions.Remove(cvApartments.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "BuildingName").FirstOrDefault());
+                    }
+                    _groupByBuilding = value;
+                    OnPropertyChanged("GroupByBuilding");
+                }
+            }
+        }
+
+        private bool _groupByOwner;
+        public bool GroupByOwner
+        {
+            get { return _groupByOwner; }
+            set
+            {
+                if (value != _groupByOwner)
+                {
+                    ICollectionView cvApartments = (CollectionView)CollectionViewSource.GetDefaultView(Apartments);
+                    if (value)
+                    {
+                        cvApartments.GroupDescriptions.Add(new PropertyGroupDescription("ApartmentOwner"));
+                    }
+                    else
+                    {
+                        cvApartments.GroupDescriptions.Remove(cvApartments.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "ApartmentOwner").FirstOrDefault());
+                    }
+                    _groupByOwner = value;
+                    OnPropertyChanged("GroupByOwner");
+                }
+            }
+        }
+
+        private ObservableCollection<Owner> _ownersNames;
+        public ObservableCollection<Owner> OwnersNames
+        {
+            get { return _ownersNames; }
+            set
+            {
+                _ownersNames = value;
+                OnPropertyChanged("OwnersNames");
+            }
+        }
+
+        private Owner _selectedOwnerName;
+        public Owner SelectedOwnerName
+        {
+            get { return _selectedOwnerName; }
+            set
+            {
+                _selectedOwnerName = value;
+                OnPropertyChanged("SelectedOwnerName");
+                OnPropertyChanged("SelectedOwnerMailAddress");
+            }
+        }
+
+        private ObservableCollection<Building> _buildingsNames;
+        public ObservableCollection<Building> BuildingsNames
+        {
+            get { return _buildingsNames; }
+            set
+            {
+                _buildingsNames = value;
+                OnPropertyChanged("BuildingsNames");
+            }
+        }
+
+        private Building _selectedBuildingName;
+        public Building SelectedBuildingName
+        {
+            get { return _selectedBuildingName; }
+            set
+            {
+                _selectedBuildingName = value;
+                OnPropertyChanged("SelectedBuildingName");
+                OnPropertyChanged("SelectedBuildingAddress");
+            }
+        }
+
+        public ICommand FilterCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(Filter, CanFilter);
+            }
+        }
+        
+        public ICommand ClearFilterCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(ClearFilter, CanClearFilter);
+            }
+        }
+
         public ApartmentsPage()
         {
             DataContext = this;
-            InitializeComponent();
             InitializeCollection();
+            InitializeComponent();
         }
 
         public void InitializeCollection()
@@ -97,12 +206,16 @@ namespace DomenaManager.Pages
             Apartments = new ObservableCollection<ApartmentDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
+                _buildingsNames = new ObservableCollection<Building>(db.Buildings.ToList());
+                _ownersNames = new ObservableCollection<Owner>(db.Owners.ToList());
+
                 var q = db.Apartments.Where(x => x.IsDeleted == false);
                 foreach (var apar in q)
                 {
                     var a = new ApartmentDataGrid
                     {
                         BuildingName = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().Name,
+                        ApartmentId = apar.ApartmentId,
                         ApartmentNumber = apar.ApartmentNumber,
                         ApartmentArea = apar.ApartmentArea,
                         ApartmentAdditionalArea = apar.AdditionalArea,
@@ -133,9 +246,74 @@ namespace DomenaManager.Pages
             return true;
         }
 
+        private void Filter(object param)
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                Apartments.Clear();
+                IQueryable<Apartment> q = db.Apartments.Where(x => x.IsDeleted == false);
+                if (SelectedBuildingName != null)
+                {
+                    q = q.Where(x => x.BuildingId == SelectedBuildingName.BuildingId);                    
+                }
+
+                if (SelectedOwnerName != null)
+                {
+                    q = q.Where(x => x.OwnerId == SelectedOwnerName.OwnerId);
+                }
+
+
+                foreach (var apar in q)
+                {
+                    var a = new ApartmentDataGrid
+                    {
+                        BuildingName = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().Name,
+                        ApartmentId = apar.ApartmentId,
+                        ApartmentNumber = apar.ApartmentNumber,
+                        ApartmentArea = apar.ApartmentArea,
+                        ApartmentAdditionalArea = apar.AdditionalArea,
+                        ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
+                        ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
+                        HasWaterMeter = apar.HasWaterMeter
+                    };
+                    Apartments.Add(a);
+                }
+
+                foreach (var apartment in Apartments)
+                {
+                    apartment.Balance = 0;
+                    //TODO
+                }
+            }
+        }
+
+        private bool CanFilter()
+        {
+            return true;
+        }
+
+        private void ClearFilter(object param)
+        {
+            SelectedOwnerName = null;
+            SelectedBuildingName = null;
+            Filter(null);
+        }
+
+        private bool CanClearFilter()
+        {
+            return true;
+        }
+
         private async void EditApartment(object param)
         {
+            Wizards.EditApartmentWizard eaw;
+            using (var db = new DB.DomenaDBContext())
+            {
+                var sa = db.Apartments.Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
+                eaw = new Wizards.EditApartmentWizard(sa);
+            }
 
+            var result = await DialogHost.Show(eaw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
         private bool CanEditApartment()
@@ -145,7 +323,12 @@ namespace DomenaManager.Pages
 
         public void DeleteApartment(object param)
         {
-
+            using (var db = new DB.DomenaDBContext())
+            {
+                var sa = db.Apartments.Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
+                sa.IsDeleted = true;
+                db.SaveChanges();
+            }
         }
 
         private bool CanDeleteApartment()

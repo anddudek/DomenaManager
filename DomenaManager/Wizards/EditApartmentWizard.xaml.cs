@@ -149,6 +149,27 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public string SelectedBuildingValue { get; set; }
+        public string SelectedOwnerValue { get; set; }
+
+        public ICommand UpdateAllFieldsCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(UpdateAllFields, CanUpdateAllFields);
+            }
+        }
+
+        private void UpdateAllFields(object param)
+        {
+            Helpers.Validator.IsValid(this);
+        }
+
+        private bool CanUpdateAllFields()
+        {
+            return true;
+        }
+
         public Apartment _apartmentLocalCopy;
 
         public EditApartmentWizard(Apartment SelectedApartment = null)
@@ -176,7 +197,9 @@ namespace DomenaManager.Wizards
             _additionalArea = _apartmentLocalCopy.AdditionalArea.ToString();
             _apartmentArea = _apartmentLocalCopy.ApartmentArea.ToString();
             _apartmentNumber = _apartmentLocalCopy.ApartmentNumber;
-            _hasWaterMeter = _apartmentLocalCopy.HasWaterMeter ? 0 : 1;            
+            _hasWaterMeter = _apartmentLocalCopy.HasWaterMeter ? 0 : 1;
+            _selectedBuildingName = _buildingsNames.Where(x => x.BuildingId.Equals(_apartmentLocalCopy.BuildingId)).FirstOrDefault();
+            _selectedOwnerName = _ownersNames.Where(x => x.OwnerId.Equals(_apartmentLocalCopy.OwnerId)).FirstOrDefault();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

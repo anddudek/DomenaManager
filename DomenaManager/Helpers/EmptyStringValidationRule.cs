@@ -19,7 +19,11 @@ namespace DomenaManager.Helpers
 
             try
             {
-                if (((string)value).Length > 0)
+                if (value == null)
+                {
+                    return new ValidationResult(false, "Pole nie może być puste");
+                }
+                else if (((string)value).Length > 0)
                 {
                     return new ValidationResult(true, null);
                 }
