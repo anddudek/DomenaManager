@@ -26,32 +26,32 @@ namespace DomenaManager.Pages
     /// </summary>
     public partial class ApartmentsPage : UserControl, INotifyPropertyChanged
     {
-        private ObservableCollection<OwnerDataGrid> _owners;
-        public ObservableCollection<OwnerDataGrid> Owners
+        private ObservableCollection<ApartmentDataGrid> _apartments;
+        public ObservableCollection<ApartmentDataGrid> Apartments
         {
-            get { return _owners; }
+            get { return _apartments; }
             set
             {
-                _owners = value;
-                OnPropertyChanged("Owners");
+                _apartments = value;
+                OnPropertyChanged("Apartments");
             }
         }
 
-        private OwnerDataGrid _selectedOwner;
-        public OwnerDataGrid SelectedOwner
+        private ApartmentDataGrid _selectedApartment;
+        public ApartmentDataGrid SelectedApartment
         {
-            get { return _selectedOwner; }
+            get { return _selectedApartment; }
             set
             {
-                _selectedOwner = value;
-                OnPropertyChanged("SelectedOwner");
+                _selectedApartment = value;
+                OnPropertyChanged("SelectedApartment");
                 OpenDrawer();   
             }
         }
 
         async Task PutTaskDelay()
         {
-            await Task.Delay(100);
+            await Task.Delay(300);
         }
 
         private async void OpenDrawer()
@@ -61,27 +61,27 @@ namespace DomenaManager.Pages
             DrawerHost.OpenDrawerCommand.Execute(Dock.Bottom, this.DH);
         }
         
-        public ICommand AddOwnerCommand
+        public ICommand AddApartmentCommand
         {
             get
             {
-                return new Helpers.RelayCommand(AddOwner, CanAddOwner);
+                return new Helpers.RelayCommand(AddApartment, CanAddApartment);
             }
         }
 
-        public ICommand EditOwnerCommand
+        public ICommand EditApartmentCommand
         {
             get
             {
-                return new Helpers.RelayCommand(EditOwner, CanEditOwner);
+                return new Helpers.RelayCommand(EditApartment, CanEditApartment);
             }
         }
 
-        public ICommand DeleteOwnerCommand
+        public ICommand DeleteApartmentCommand
         {
             get
             {
-                return new Helpers.RelayCommand(DeleteOwner, CanDeleteOwner);
+                return new Helpers.RelayCommand(DeleteApartment, CanDeleteApartment);
             }
         }
 
@@ -94,71 +94,61 @@ namespace DomenaManager.Pages
 
         public void InitializeCollection()
         {
-            Owners = new ObservableCollection<OwnerDataGrid>();
+            Apartments = new ObservableCollection<ApartmentDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                var q = db.Owners.Where(x => x.IsDeleted == false);
-                foreach (var own in q)
+                var q = db.Apartments.Where(x => x.IsDeleted == false);
+                foreach (var apar in q)
                 {
-                    var o = new OwnerDataGrid {Name = own.OwnerName, Address= own.MailAddress, ApartmentsCount=1 };
-                    o.OwnerId = own.OwnerId;                    
-                    Owners.Add(o);
+                    var a = new ApartmentDataGrid
+                    {
+                        BuildingName = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().Name,
+                        ApartmentNumber = apar.ApartmentNumber,
+                        ApartmentArea = apar.ApartmentArea,
+                        ApartmentAdditionalArea = apar.AdditionalArea,
+                        ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
+                        ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
+                        HasWaterMeter = apar.HasWaterMeter
+                    };                   
+                    Apartments.Add(a);
                 }
 
-                foreach (var owner in Owners)
+                foreach (var apartment in Apartments)
                 {
-                    owner.ApartmensList = new List<OwnerDescriptionListView>();
-                    var apartments = db.Apartments.Where(x => x.OwnerId == owner.OwnerId);
-
-                    foreach (var a in apartments)
-                    {
-                        var address = new StringBuilder();
-                        var build = db.Buildings.Where(x => x.BuildingId == a.BuildingId).FirstOrDefault();
-                        address.Append(build.City);
-                        address.Append(" ");
-                        address.Append(build.ZipCode);
-                        address.Append(", ul. ");
-                        address.Append(build.RoadName);
-                        address.Append(" ");
-                        address.Append(build.BuildingNumber);
-                        owner.ApartmensList.Add(new OwnerDescriptionListView { DateString = a.CreatedDate.ToString("yyyy-MM-dd"), BuildingName = build.Name, BuildingAddress= address.ToString()});
-                    } 
-                    if (owner.ApartmensList.Count == 0)
-                    {
-                        owner.ApartmensList.Add(new OwnerDescriptionListView { BuildingAddress = "Brak mieszkań" });
-                    }
+                    apartment.Balance = 0;
+                    //TODO
                 }
             }
         }
 
-        private void AddOwner(object param)
+        private void AddApartment(object param)
         {
 
         }
 
-        private bool CanAddOwner()
+        private bool CanAddApartment()
         {
             return true;
         }
 
-        private void EditOwner(object param)
+        private void EditApartment(object param)
         {
 
         }
 
-        private bool CanEditOwner()
+        private bool CanEditApartment()
         {
-            return SelectedOwner != null;
+            return SelectedApartment != null;
         }
 
-        public void DeleteOwner(object param)
+        public void DeleteApartment(object param)
         {
 
         }
 
-        private bool CanDeleteOwner()
+        private bool CanDeleteApartment()
         {
-            return SelectedOwner != null;
+            return SelectedApartment != null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

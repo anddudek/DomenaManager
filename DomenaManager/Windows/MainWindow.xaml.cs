@@ -48,7 +48,8 @@ namespace DomenaManager.Windows
 
             using (var db = new DB.DomenaDBContext())
             {
-                /*db.Buildings.Add(new LibDataModel.Building { Name = "ELO", BuildingId = Guid.NewGuid(), BuildingNumber = "7", City = "Świątniki", RoadName = "Kreta", ZipCode="32-040" });
+                /*
+                db.Buildings.Add(new LibDataModel.Building { Name = "ELO", BuildingId = Guid.NewGuid(), BuildingNumber = "7", City = "Świątniki", RoadName = "Kreta", ZipCode="32-040" });
                 db.Buildings.Add(new LibDataModel.Building { Name = "Grunwaldzka 61", BuildingId = Guid.NewGuid(), BuildingNumber = "61", City = "Jelenia Góra", RoadName = "Grunwaldzka", ZipCode = "58-500" });
                 db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Prąd", CostCategoryId = Guid.NewGuid() });
                 db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Woda i ścieki", CostCategoryId = Guid.NewGuid() });
@@ -62,6 +63,7 @@ namespace DomenaManager.Windows
                 db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Inne", CostCategoryId = Guid.NewGuid() });
                 db.CostDistributionTypes.Add(new LibDataModel.CostDistributionType { CostDistributionId = Guid.NewGuid(), CostDistributionName = "Od lokalu" });
                 db.CostDistributionTypes.Add(new LibDataModel.CostDistributionType { CostDistributionId = Guid.NewGuid(), CostDistributionName = "Od powierzchni" });
+                
                 var GrunwGuid = db.Buildings.Where(x => x.BuildingNumber == "61").FirstOrDefault().BuildingId;
                 var ubez = db.CostCategories.Where(x => x.CategoryName == "Ubezpieczenie").FirstOrDefault().CostCategoryId;
                 var domena = db.CostCategories.Where(x => x.CategoryName == "Wynagrodzenie zarządcy").FirstOrDefault().CostCategoryId;
@@ -72,9 +74,9 @@ namespace DomenaManager.Windows
                 db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "ZN Domena", CostAmount = 255, CostCategoryId = domena, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 1/2017", PaymentTime = new DateTime(2017, 11, 12) });
                 db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "Wodnik", CostAmount = 105.78, CostCategoryId = woda, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 89219/2017", PaymentTime = new DateTime(2017, 11, 29) });
                 db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "ZN Domena", CostAmount = 255, CostCategoryId = domena, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 3/2017", PaymentTime = new DateTime(2017, 12, 2) });
-                
-                db.Owners.Add(new LibDataModel.Owner { OwnerId = Guid.NewGuid(), IsDeleted = false, MailAddress = "ul. Krzaczasta 5, /r/n 30-389 Kraków", OwnerName="Dominik Biegański" });
                 */
+                //db.Owners.Add(new LibDataModel.Owner { OwnerId = Guid.NewGuid(), IsDeleted = false, MailAddress = "ul. Krzaczasta 5, /r/n 30-389 Kraków", OwnerName="Dominik Biegański" });
+                
                 //db.Apartments.Add(new LibDataModel.Apartment { ApartmentId=Guid.NewGuid(), AdditionalArea = 15, ApartmentArea=45, ApartmentNumber = 7, CreatedDate = DateTime.Today, HasWaterMeter=false, IsDeleted= false, OwnerId = Guid.Parse("2FE5BADA-1FF5-4F01-81B5-F4A7470B5DDC"), BuildingId=Guid.Parse("CDBBEEDB-EC2F-49E1-9B74-71AAB9ED2102")  });
                 //db.SaveChanges();
             }
