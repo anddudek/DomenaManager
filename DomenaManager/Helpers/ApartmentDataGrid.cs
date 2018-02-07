@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiveCharts;
 
 namespace DomenaManager.Helpers
 {
@@ -20,5 +21,8 @@ namespace DomenaManager.Helpers
         public double Balance { get; set; }
         public bool HasWaterMeter { get; set; }
         public DateTime BoughtDate { get; set; }
+        //public List<LibDataModel.Cost> CostHistory { get; set; }
+        public SeriesCollection ApartmentAreaSeries { get; set; }
+        public SeriesCollection BuildingAreaSeries { get; set; }
     }
 }

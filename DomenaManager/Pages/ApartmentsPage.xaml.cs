@@ -19,6 +19,9 @@ using MaterialDesignThemes.Wpf;
 using DomenaManager.Helpers;
 using System.Windows.Threading;
 using LibDataModel;
+using LiveCharts;
+using LiveCharts.Wpf;
+using LiveCharts.Defaults;
 
 namespace DomenaManager.Pages
 {
@@ -199,6 +202,9 @@ namespace DomenaManager.Pages
             DataContext = this;
             InitializeCollection();
             InitializeComponent();
+
+            PointLabel = chartPoint =>
+                string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation);
         }
 
         public void InitializeCollection()
@@ -224,7 +230,43 @@ namespace DomenaManager.Pages
                         ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
                         HasWaterMeter = apar.HasWaterMeter,
                         BoughtDate = apar.BoughtDate,
-                        ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress
+                        ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
+                        
+                        ApartmentAreaSeries = new SeriesCollection 
+                        {
+                            new PieSeries
+                            {
+                                Title = "Powierzchnia mieszkania", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea)}, 
+                                LabelPoint=chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation)
+                            },
+
+                            new PieSeries
+                            {                                
+                                Title = "Powierzchnie przynależne", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.AdditionalArea)},
+                                LabelPoint=chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation)
+                            }
+                        },
+
+                        BuildingAreaSeries = new SeriesCollection 
+                        {
+                            new PieSeries
+                            {
+                                Title = "Powierzchnia mieszkania", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea)}, 
+                                LabelPoint=chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation)
+                            },
+
+                            new PieSeries
+                            {                                
+                                Title = "Reszta budynku", Values = new ChartValues<ObservableValue> 
+                                {
+                                    new ObservableValue(
+                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.ApartmentArea).DefaultIfEmpty(0).Sum() +                                    
+                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.AdditionalArea).DefaultIfEmpty(0).Sum()
+                                    )
+                                },
+                                LabelPoint=chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation)
+                            }
+                        }
                     };                   
                     Apartments.Add(a);
                 }
@@ -236,6 +278,8 @@ namespace DomenaManager.Pages
                 }
             }
         }
+
+        public Func<ChartPoint, string> PointLabel { get; set; }
 
         private async void AddApartment(object param)
         {
