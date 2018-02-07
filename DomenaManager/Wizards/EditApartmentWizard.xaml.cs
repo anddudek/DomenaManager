@@ -152,6 +152,17 @@ namespace DomenaManager.Wizards
         public string SelectedBuildingValue { get; set; }
         public string SelectedOwnerValue { get; set; }
 
+        private DateTime _boughtDate;
+        public DateTime BoughtDate
+        {
+            get { return _boughtDate; }
+            set
+            {
+                _boughtDate = value;
+                OnPropertyChanged("BoughtDate");
+            }
+        }
+
         public ICommand UpdateAllFieldsCommand
         {
             get
@@ -189,11 +200,15 @@ namespace DomenaManager.Wizards
             {
                 _buildingsNames = new ObservableCollection<Building>(db.Buildings.ToList());
                 _ownersNames = new ObservableCollection<Owner>(db.Owners.ToList());
-            }
+            }            
 
             if (_apartmentLocalCopy == null)
-                return;            
+            {
+                _boughtDate = DateTime.Today;
+                return;
+            }
 
+            _boughtDate = _apartmentLocalCopy.BoughtDate;
             _additionalArea = _apartmentLocalCopy.AdditionalArea.ToString();
             _apartmentArea = _apartmentLocalCopy.ApartmentArea.ToString();
             _apartmentNumber = _apartmentLocalCopy.ApartmentNumber;

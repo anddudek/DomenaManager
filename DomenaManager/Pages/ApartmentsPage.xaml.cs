@@ -49,7 +49,8 @@ namespace DomenaManager.Pages
             {
                 _selectedApartment = value;
                 OnPropertyChanged("SelectedApartment");
-                OpenDrawer();   
+                if (value != null)
+                    OpenDrawer();   
             }
         }
 
@@ -202,9 +203,6 @@ namespace DomenaManager.Pages
             DataContext = this;
             InitializeCollection();
             InitializeComponent();
-
-            PointLabel = chartPoint =>
-                string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation);
         }
 
         public void InitializeCollection()
@@ -231,40 +229,40 @@ namespace DomenaManager.Pages
                         HasWaterMeter = apar.HasWaterMeter,
                         BoughtDate = apar.BoughtDate,
                         ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
-                        
-                        ApartmentAreaSeries = new SeriesCollection 
+
+                        ApartmentAreaSeries = new SeriesCollection
                         {
                             new PieSeries
                             {
-                                Title = "Powierzchnia mieszkania", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea)}, 
-                                LabelPoint=chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation)
+                                Title = "Powierzchnia mieszkania (m2)", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea)},
+                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
                             },
 
                             new PieSeries
-                            {                                
-                                Title = "Powierzchnie przynależne", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.AdditionalArea)},
-                                LabelPoint=chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation)
+                            {
+                                Title = "Powierzchnie przynależne (m2)", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.AdditionalArea)},
+                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
                             }
                         },
 
-                        BuildingAreaSeries = new SeriesCollection 
+                        BuildingAreaSeries = new SeriesCollection
                         {
                             new PieSeries
                             {
-                                Title = "Powierzchnia mieszkania", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea)}, 
-                                LabelPoint=chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation)
+                                Title = "Całkowita powierzchnia (m2)", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea + apar.AdditionalArea) },
+                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
                             },
 
                             new PieSeries
-                            {                                
-                                Title = "Reszta budynku", Values = new ChartValues<ObservableValue> 
+                            {
+                                Title = "Reszta budynku (m2)", Values = new ChartValues<ObservableValue>
                                 {
                                     new ObservableValue(
-                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.ApartmentArea).DefaultIfEmpty(0).Sum() +                                    
+                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.ApartmentArea).DefaultIfEmpty(0).Sum() +
                                     db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.AdditionalArea).DefaultIfEmpty(0).Sum()
                                     )
                                 },
-                                LabelPoint=chartPoint => string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation)
+                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
                             }
                         }
                     };                   
@@ -277,9 +275,7 @@ namespace DomenaManager.Pages
                     //TODO
                 }
             }
-        }
-
-        public Func<ChartPoint, string> PointLabel { get; set; }
+        }       
 
         private async void AddApartment(object param)
         {
@@ -315,6 +311,7 @@ namespace DomenaManager.Pages
                     var a = new ApartmentDataGrid
                     {
                         BuildingName = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().Name,
+                        BulidingAddress = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().GetAddress(),
                         ApartmentId = apar.ApartmentId,
                         ApartmentNumber = apar.ApartmentNumber,
                         ApartmentArea = apar.ApartmentArea,
@@ -322,7 +319,44 @@ namespace DomenaManager.Pages
                         ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
                         ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
                         HasWaterMeter = apar.HasWaterMeter,
-                        BoughtDate = apar.BoughtDate
+                        BoughtDate = apar.BoughtDate,
+                        ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
+
+                        ApartmentAreaSeries = new SeriesCollection
+                        {
+                            new PieSeries
+                            {
+                                Title = "Powierzchnia mieszkania (m2)", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea)},
+                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
+                            },
+
+                            new PieSeries
+                            {
+                                Title = "Powierzchnie przynależne (m2)", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.AdditionalArea)},
+                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
+                            }
+                        },
+
+                        BuildingAreaSeries = new SeriesCollection
+                        {
+                            new PieSeries
+                            {
+                                Title = "Całkowita powierzchnia (m2)", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea + apar.AdditionalArea)},
+                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
+                            },
+
+                            new PieSeries
+                            {
+                                Title = "Reszta budynku (m2)", Values = new ChartValues<ObservableValue>
+                                {
+                                    new ObservableValue(
+                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.ApartmentArea).DefaultIfEmpty(0).Sum() +
+                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.AdditionalArea).DefaultIfEmpty(0).Sum()
+                                    )
+                                },
+                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
+                            }
+                        }
                     };
                     Apartments.Add(a);
                 }
@@ -406,7 +440,7 @@ namespace DomenaManager.Pages
                     //Add new apartment
                     using (var db = new DB.DomenaDBContext())
                     {
-                        var newApartment = new LibDataModel.Apartment { ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), HasWaterMeter = dc.HasWaterMeter == 1, IsDeleted=false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber };
+                        var newApartment = new LibDataModel.Apartment { BoughtDate = dc.BoughtDate, ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), HasWaterMeter = dc.HasWaterMeter == 1, IsDeleted=false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber };
                         db.Apartments.Add(newApartment);
                         db.SaveChanges();
                     }
@@ -422,6 +456,7 @@ namespace DomenaManager.Pages
                     using (var db = new DB.DomenaDBContext())
                     {
                         var q = db.Apartments.Where(x => x.ApartmentId.Equals(dc._apartmentLocalCopy.ApartmentId)).FirstOrDefault();
+                        q.BoughtDate = dc.BoughtDate;
                         q.AdditionalArea = double.Parse(dc.AdditionalArea);
                         q.ApartmentArea = double.Parse(dc.ApartmentArea);
                         q.ApartmentNumber = dc.ApartmentNumber;

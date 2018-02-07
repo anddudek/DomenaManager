@@ -16,24 +16,24 @@
     </UserControl.Resources>
     
     <materialDesign:DrawerHost x:Name="DH"
-                               
+                         
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         BorderThickness="2">
         <materialDesign:DrawerHost.BottomDrawerContent>
-            <Grid>
+            <Grid Height="500">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="45"/>
                     <RowDefinition />
                     <RowDefinition Height="0.5*"/>
                     <RowDefinition Height="0.5*"/>
-                    <RowDefinition />
+                    <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
 
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zamknij" Grid.Row="0" Grid.Column="3"                        
@@ -42,13 +42,13 @@
 
                 <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0">
                     <TextBlock Text="Budynek:" FontWeight="Bold" Margin="10,0,10,0"/>
-                    <TextBlock Text="{Binding SelectedApartment.BuildingName}" Margin="10,0,10,0"/>
+                    <TextBlock Text="{Binding SelectedApartment.BuildingName}" Margin="10,0,10,10"/>
                     <TextBlock Text="{Binding SelectedApartment.BulidingAddress}" Margin="10,0,10,0"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1">
                     <TextBlock Text="Właściciel:" FontWeight="Bold" Margin="10,0,10,0"/>
-                    <TextBlock Text="{Binding SelectedApartment.ApartmentOwner}" Margin="10,0,10,0"/>
+                    <TextBlock Text="{Binding SelectedApartment.ApartmentOwner}" Margin="10,0,10,10"/>
                     <TextBlock Text="{Binding SelectedApartment.ApartmentOwnerAddress}" Margin="10,0,10,0"/>
                 </StackPanel>
 
@@ -59,7 +59,7 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
                     <TextBlock Text="Data zakupu: " FontWeight="Bold" Margin="10"/>
-                    <TextBlock Text="{Binding SelectedApartment.BoughtDate}" Margin="10"/>
+                    <TextBlock Text="{Binding SelectedApartment.BoughtDate, StringFormat='{}{0:dd-MM-yyyy}'}" Margin="10"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
@@ -82,7 +82,7 @@
                     <ListBox ItemsSource="{Binding SelectedApartment.PaymentHistory}" Margin="10"/>
                 </StackPanel>
 
-                <lvc:PieChart InnerRadius="80" Width="300"  Margin="40" Grid.Row="1" Grid.RowSpan="4" Grid.Column="2" LegendLocation="Bottom" Series="{Binding SelectedApartment.BuildingAreaSeries}">
+                <lvc:PieChart InnerRadius="110" Width="300"  Margin="40" Grid.Row="1" Grid.RowSpan="4" Grid.Column="2" LegendLocation="Bottom" Series="{Binding SelectedApartment.BuildingAreaSeries}">
                     <lvc:PieChart.Resources>
                         <Style TargetType="lvc:PieSeries">
                             <Setter Property="DataLabels" Value="True"></Setter>
@@ -94,7 +94,7 @@
                     </lvc:PieChart.Resources>
                 </lvc:PieChart>
 
-                <lvc:PieChart InnerRadius="60" Width="300"  Margin="40" Grid.Row="1" Grid.RowSpan="4" Grid.Column="3" LegendLocation="Bottom" Series="{Binding SelectedApartment.ApartmentAreaSeries}">
+                <lvc:PieChart InnerRadius="110" Width="300"  Margin="40" Grid.Row="1" Grid.RowSpan="4" Grid.Column="3" LegendLocation="Bottom" Series="{Binding SelectedApartment.ApartmentAreaSeries}">
                     <lvc:PieChart.Resources>
                         <Style TargetType="lvc:PieSeries">
                             <Setter Property="DataLabels" Value="True"></Setter>
