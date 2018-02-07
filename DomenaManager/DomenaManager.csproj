@@ -108,6 +108,9 @@
     <Compile Include="Pages\ApartmentsPage.xaml.cs">
       <DependentUpon>ApartmentsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Window1.xaml.cs">
+      <DependentUpon>Window1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewSource\ApartmentsVS.cs" />
     <Compile Include="Wizards\EditApartmentWizard.xaml.cs">
       <DependentUpon>EditApartmentWizard.xaml</DependentUpon>
@@ -126,6 +129,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\ApartmentsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Window1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

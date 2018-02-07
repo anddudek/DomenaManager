@@ -17,6 +17,7 @@ namespace LibDataModel
         public double ApartmentArea { get; set; }
         public double AdditionalArea { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime BoughtDate { get; set; }
         public bool HasWaterMeter { get; set; }
         public bool IsDeleted { get; set; }
 
@@ -38,6 +39,7 @@ namespace LibDataModel
             this.CreatedDate = CopySource.CreatedDate;
             this.HasWaterMeter = CopySource.HasWaterMeter;
             this.IsDeleted = CopySource.IsDeleted;
+            this.BoughtDate = CopySource.BoughtDate;
         }
     }
 }

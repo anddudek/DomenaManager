@@ -215,13 +215,16 @@ namespace DomenaManager.Pages
                     var a = new ApartmentDataGrid
                     {
                         BuildingName = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().Name,
+                        BulidingAddress = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().GetAddress(),
                         ApartmentId = apar.ApartmentId,
                         ApartmentNumber = apar.ApartmentNumber,
                         ApartmentArea = apar.ApartmentArea,
                         ApartmentAdditionalArea = apar.AdditionalArea,
                         ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
                         ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
-                        HasWaterMeter = apar.HasWaterMeter
+                        HasWaterMeter = apar.HasWaterMeter,
+                        BoughtDate = apar.BoughtDate,
+                        ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress
                     };                   
                     Apartments.Add(a);
                 }
@@ -274,7 +277,8 @@ namespace DomenaManager.Pages
                         ApartmentAdditionalArea = apar.AdditionalArea,
                         ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
                         ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
-                        HasWaterMeter = apar.HasWaterMeter
+                        HasWaterMeter = apar.HasWaterMeter,
+                        BoughtDate = apar.BoughtDate
                     };
                     Apartments.Add(a);
                 }
@@ -365,7 +369,7 @@ namespace DomenaManager.Pages
                 }
                 else
                 {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingAddress) || string.IsNullOrEmpty(dc.SelectedOwnerMailAddress) || dc.ApartmentNumber > 0 || double.Parse(dc.AdditionalArea) > 0 || double.Parse(dc.ApartmentArea) > 0))
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingAddress) || string.IsNullOrEmpty(dc.SelectedOwnerMailAddress) || dc.ApartmentNumber <= 0 || double.Parse(dc.AdditionalArea) <= 0 || double.Parse(dc.ApartmentArea) <= 0))
                     {
                         eventArgs.Cancel();
                         return;

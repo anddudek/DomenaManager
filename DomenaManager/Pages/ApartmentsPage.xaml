@@ -10,8 +10,7 @@
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:hlp="clr-namespace:DomenaManager.Helpers"
         mc:Ignorable="d" 
-        d:DesignHeight="600" d:DesignWidth="900" 
-        >
+        d:DesignHeight="600" d:DesignWidth="900" >
     <UserControl.Resources>
         <hlp:SumConverter x:Key="SumConverter"/>
     </UserControl.Resources>
@@ -22,14 +21,63 @@
         VerticalAlignment="Stretch"
         BorderThickness="2">
         <materialDesign:DrawerHost.BottomDrawerContent>
-            <StackPanel Orientation="Horizontal" Height="400">
-                <!--<MyControls:MetroButton MDTIcon="AccountCheck" MDTText="Close"
-                    Margin="4"
-                    HorizontalAlignment="Center"
-                    Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}"
-                    CommandParameter="{x:Static Dock.Bottom}"
-                        />-->
-                <lvc:PieChart InnerRadius="80" Width="300"  >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition />
+                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zamknij" Grid.Row="0" Grid.Column="3"                        
+                    Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5"
+                    CommandParameter="{x:Static Dock.Bottom}" />    
+
+                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0">
+                    <TextBlock Text="Budynek:" Margin="10"/>
+                    <TextBlock Text="{Binding SelectedApartment.BuildingName}" Margin="10"/>
+                    <TextBlock Text="{Binding SelectedApartment.BulidingAddress}" Margin="10"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1">
+                    <TextBlock Text="Właściciel:" Margin="10"/>
+                    <TextBlock Text="{Binding SelectedApartment.ApartmentOwner}" Margin="10"/>
+                    <TextBlock Text="{Binding SelectedApartment.ApartmentOwnerAddress}" Margin="10"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
+                    <TextBlock Text="Numer lokalu: " Margin="10"/>
+                    <TextBlock Text="{Binding SelectedApartment.ApartmentNumber}" Margin="10"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                    <TextBlock Text="Data zakupu: " Margin="10"/>
+                    <TextBlock Text="{Binding SelectedApartment.BoughtDate}" Margin="10"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
+                    <TextBlock Text="Zainstalowany wodomierz: " Margin="10"/>
+                    <TextBlock Text="{Binding SelectedApartment.HasWaterMeter}" Margin="10"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="4" Grid.Column="0">
+                    <TextBlock Text="Ostatnie naliczenia: " Margin="10"/>
+                    <ListBox ItemsSource="{Binding CostHistory}" Margin="10"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="4" Grid.Column="1">
+                    <TextBlock Text="Ostatnie wpłaty: " Margin="10"/>
+                    <ListBox ItemsSource="{Binding PaymentHistory}" Margin="10"/>
+                </StackPanel>
+
+                <lvc:PieChart InnerRadius="80" Width="300"  Margin="40" Grid.Row="1" Grid.RowSpan="4" Grid.Column="2">
                     <lvc:PieChart.Resources>
                         <Style TargetType="lvc:PieSeries">
                             <Setter Property="DataLabels" Value="True"></Setter>
@@ -44,7 +92,8 @@
                         <lvc:PieSeries Values="16"/>
                     </lvc:PieChart.Series>
                 </lvc:PieChart>
-                <lvc:PieChart InnerRadius="80" Width="300"  >
+
+                <lvc:PieChart InnerRadius="80" Width="300"  Margin="40" Grid.Row="1" Grid.RowSpan="4" Grid.Column="3">
                     <lvc:PieChart.Resources>
                         <Style TargetType="lvc:PieSeries">
                             <Setter Property="DataLabels" Value="True"></Setter>
@@ -59,7 +108,9 @@
                         <lvc:PieSeries Values="75"/>
                     </lvc:PieChart.Series>
                 </lvc:PieChart>
-            </StackPanel>
+
+            </Grid>
+            
         </materialDesign:DrawerHost.BottomDrawerContent>
         <Grid Background="#FFFFFF">
         <Grid.RowDefinitions>

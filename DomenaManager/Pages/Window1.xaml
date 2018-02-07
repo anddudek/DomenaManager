@@ -1,0 +1,56 @@
+﻿<Window x:Class="DomenaManager.Pages.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Window1" Height="400" Width="1300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition />
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0">
+            <TextBlock Text="Budynek:" Margin="10"/>
+            <TextBlock Text="{Binding BuildingName}" Margin="10"/>
+            <TextBlock Text="{Binding BuildingAddress}" Margin="10"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1">
+            <TextBlock Text="Właściciel:" Margin="10"/>
+            <TextBlock Text="{Binding OwnerName}" Margin="10"/>
+            <TextBlock Text="{Binding OwnerAddress}" Margin="10"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
+            <TextBlock Text="Numer lokalu: " Margin="10"/>
+            <TextBlock Text="{Binding ApartmentNumber}" Margin="10"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+            <TextBlock Text="Data zakupu: " Margin="10"/>
+            <TextBlock Text="{Binding BoughtDate}" Margin="10"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
+            <TextBlock Text="Zainstalowany wodomierz: " Margin="10"/>
+            <TextBlock Text="{Binding HasWaterMeter}" Margin="10"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical" Grid.Row="4" Grid.Column="0">
+            <TextBlock Text="Ostatnie naliczenia: " Margin="10"/>
+            <ListBox ItemsSource="{Binding CostHistory}" Margin="10"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical" Grid.Row="4" Grid.Column="1">
+            <TextBlock Text="Ostatnie wpłaty: " Margin="10"/>
+            <ListBox ItemsSource="{Binding PaymentHistory}" Margin="10"/>
+        </StackPanel>
+    </Grid>
+</Window>
