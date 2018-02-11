@@ -11,9 +11,9 @@ namespace LibDataModel
     {
         [Key]
         public Guid CostId { get; set; }
-        public Guid CostCategoryId { get; set; }
+        public int CostCategoryId { get; set; }
         public Guid BuildingId { get; set; }
-        public Guid CostDistributionId { get; set; }
+        public int CostDistributionId { get; set; }
         public DateTime PaymentTime { get; set; }
         public string InvoiceNumber { get; set; }
         public string ContractorName { get; set; }

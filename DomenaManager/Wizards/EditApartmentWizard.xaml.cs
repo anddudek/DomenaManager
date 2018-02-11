@@ -198,8 +198,8 @@ namespace DomenaManager.Wizards
         {
             using (var db = new DB.DomenaDBContext())
             {
-                _buildingsNames = new ObservableCollection<Building>(db.Buildings.ToList());
-                _ownersNames = new ObservableCollection<Owner>(db.Owners.ToList());
+                _buildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
+                _ownersNames = new ObservableCollection<Owner>(db.Owners.Where(x => x.IsDeleted == false).ToList());
             }            
 
             if (_apartmentLocalCopy == null)

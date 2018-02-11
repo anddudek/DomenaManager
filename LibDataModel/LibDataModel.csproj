@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumCostCategory.cs" />
+    <Compile Include="EnumCostDistribution.cs" />
     <Compile Include="Owner.cs" />
     <Compile Include="Apartment.cs" />
     <Compile Include="Building.cs" />
