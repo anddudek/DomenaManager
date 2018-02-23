@@ -90,6 +90,7 @@ namespace DomenaManager.Wizards
             set
             {
                 _selectedOwnerName = value;
+                _selectedOwnerMailAddress = _selectedOwnerName != null ? _selectedOwnerName.MailAddress : null;
                 OnPropertyChanged("SelectedOwnerName");
                 OnPropertyChanged("SelectedOwnerMailAddress");
             }
@@ -99,8 +100,7 @@ namespace DomenaManager.Wizards
         public string SelectedOwnerMailAddress
         {
             get 
-            {
-                _selectedOwnerMailAddress = _selectedOwnerName != null ? _selectedOwnerName.MailAddress : null;
+            {                
                 return _selectedOwnerMailAddress; 
             }
             set
@@ -146,6 +146,7 @@ namespace DomenaManager.Wizards
             {
                 _hasWaterMeter = value;
                 OnPropertyChanged("HasWaterMeter");
+                OnPropertyChanged("EnableWaterMeterExp");
             }
         }
 
@@ -161,6 +162,22 @@ namespace DomenaManager.Wizards
                 _boughtDate = value;
                 OnPropertyChanged("BoughtDate");
             }
+        }
+
+        private DateTime _waterMeterExp;
+        public DateTime WaterMeterExp
+        {
+            get { return _waterMeterExp; }
+            set
+            {
+                _waterMeterExp = value;
+                OnPropertyChanged("WaterMeterExp");
+            }
+        }
+
+        public bool EnableWaterMeterExp
+        {
+            get { return HasWaterMeter == 0; }            
         }
 
         public ICommand UpdateAllFieldsCommand
@@ -209,12 +226,14 @@ namespace DomenaManager.Wizards
             }
 
             _boughtDate = _apartmentLocalCopy.BoughtDate;
+            _waterMeterExp = _apartmentLocalCopy.WaterMeterExp;
             _additionalArea = _apartmentLocalCopy.AdditionalArea.ToString();
             _apartmentArea = _apartmentLocalCopy.ApartmentArea.ToString();
             _apartmentNumber = _apartmentLocalCopy.ApartmentNumber;
             _hasWaterMeter = _apartmentLocalCopy.HasWaterMeter ? 0 : 1;
             _selectedBuildingName = _buildingsNames.Where(x => x.BuildingId.Equals(_apartmentLocalCopy.BuildingId)).FirstOrDefault();
             _selectedOwnerName = _ownersNames.Where(x => x.OwnerId.Equals(_apartmentLocalCopy.OwnerId)).FirstOrDefault();
+            _selectedOwnerMailAddress = _apartmentLocalCopy.CorrespondenceAddress != null ? _apartmentLocalCopy.CorrespondenceAddress : (_selectedOwnerName != null ? _selectedOwnerName.MailAddress : null);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

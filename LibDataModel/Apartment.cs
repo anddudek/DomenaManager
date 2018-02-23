@@ -18,8 +18,10 @@ namespace LibDataModel
         public double AdditionalArea { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime BoughtDate { get; set; }
+        public DateTime WaterMeterExp { get; set; }
         public bool HasWaterMeter { get; set; }
         public bool IsDeleted { get; set; }
+        public string CorrespondenceAddress { get; set; }
 
         public Apartment()
         {
@@ -40,6 +42,8 @@ namespace LibDataModel
             this.HasWaterMeter = CopySource.HasWaterMeter;
             this.IsDeleted = CopySource.IsDeleted;
             this.BoughtDate = CopySource.BoughtDate;
+            this.WaterMeterExp = CopySource.WaterMeterExp;
+            this.CorrespondenceAddress = CopySource.CorrespondenceAddress;
         }
     }
 }

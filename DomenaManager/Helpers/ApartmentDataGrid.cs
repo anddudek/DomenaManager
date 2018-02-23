@@ -18,9 +18,11 @@ namespace DomenaManager.Helpers
         public double ApartmentArea { get; set; }
         public double ApartmentAdditionalArea { get; set; }
         public double ApartmentTotalArea { get; set; }
+        public string ApartmentPercentageDistribution { get; set; }
         public double Balance { get; set; }
         public bool HasWaterMeter { get; set; }
         public DateTime BoughtDate { get; set; }
+        public DateTime WaterMeterExp { get; set; }
         //public List<LibDataModel.Cost> CostHistory { get; set; }
         public SeriesCollection ApartmentAreaSeries { get; set; }
         public SeriesCollection BuildingAreaSeries { get; set; }

@@ -9,7 +9,7 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
         mc:Ignorable="d"
-        Height="400" Width="500">
+        Height="450" Width="500">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -22,6 +22,7 @@
             <RowDefinition Height="1.5*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="1.5*" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
@@ -91,7 +92,7 @@
 
         <TextBox materialDesign:HintAssist.Hint="Adres do korespondencji" Grid.RowSpan="1" Height="60"
                  TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" SpellCheck.IsEnabled="True" ScrollViewer.CanContentScroll="True"
-	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" IsReadOnly="True"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" IsReadOnly="False"
             Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" VerticalAlignment="Center" Margin="35,0,30,0" >
             <TextBox.Text>
                 <Binding Path="SelectedOwnerMailAddress" UpdateSourceTrigger="PropertyChanged">
@@ -123,7 +124,7 @@
             </TextBox.Text>
         </TextBox>
 
-        <ComboBox materialDesign:HintAssist.Hint="Mieszkanie posiada licznik"
+        <ComboBox materialDesign:HintAssist.Hint="Mieszkanie posiada wodomierz"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" SelectedIndex="{Binding HasWaterMeter}"
             Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,15,0" >
             <ComboBoxItem>Tak</ComboBoxItem>
@@ -131,11 +132,16 @@
         </ComboBox>
 
         <DatePicker 
-            Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" SelectedDate="{Binding BoughtDate}"
+            Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" SelectedDate="{Binding WaterMeterExp}" IsEnabled="{Binding EnableWaterMeterExp}"
+            VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
+            materialDesign:HintAssist.Hint="Legalizacja wodomierza" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+
+        <DatePicker 
+            Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2" SelectedDate="{Binding BoughtDate}"
             VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Data zakupu" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
 
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" Margin="5,0,5,2">
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="7" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>True</system:Boolean>
             </Button.CommandParameter>
@@ -145,7 +151,7 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="6" Margin="5,0,5,2">
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="7" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>False</system:Boolean>
             </Button.CommandParameter>

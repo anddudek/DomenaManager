@@ -36,6 +36,11 @@
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
 
+
+
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Edytuj lokal" Grid.Row="0" Grid.Column="2"                        
+                    Command="{Binding EditApartmentCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" />
+
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zamknij" Grid.Row="0" Grid.Column="3"                        
                     Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5"
                     CommandParameter="{x:Static Dock.Bottom}" />    
@@ -173,7 +178,10 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn Header="Numer lokalu" Binding="{Binding ApartmentNumber}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn Header="Powierzchnia" Binding="{Binding ApartmentTotalArea}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn Header="Pow. mieszkalna" Binding="{Binding ApartmentArea}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn Header="Pow. przynależna" Binding="{Binding ApartmentAdditionalArea}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn Header="Pow. całkowita" Binding="{Binding ApartmentTotalArea}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn Header="Udział procentowy" Binding="{Binding ApartmentPercentageDistribution}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn Header="Saldo" Binding="{Binding Saldo}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn Header="Właściciel" Binding="{Binding ApartmentOwner}" Width="*" FontSize="14"/>
                 </DataGrid.Columns>

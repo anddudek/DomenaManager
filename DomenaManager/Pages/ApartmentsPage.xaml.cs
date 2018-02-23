@@ -64,6 +64,7 @@ namespace DomenaManager.Pages
             // Wait till all events in bg that can takes focus away from drawer (thus cancel it) finishes
             await PutTaskDelay();
             DrawerHost.OpenDrawerCommand.Execute(Dock.Bottom, this.DH);
+            
         }
         
         public ICommand AddApartmentCommand
@@ -203,6 +204,7 @@ namespace DomenaManager.Pages
             DataContext = this;
             InitializeCollection();
             InitializeComponent();
+            GroupByBuilding = true;
         }
 
         public void InitializeCollection()
@@ -226,8 +228,15 @@ namespace DomenaManager.Pages
                         ApartmentAdditionalArea = apar.AdditionalArea,
                         ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
                         ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
+                        ApartmentPercentageDistribution = 
+                        (100 * (apar.ApartmentArea + apar.AdditionalArea) / 
+                        db.Apartments
+                        .Where(x => x.BuildingId == apar.BuildingId && !x.IsDeleted)
+                        .Select(x=>x.AdditionalArea + x.ApartmentArea)
+                        .Sum()).ToString("0.00") + " %",
                         HasWaterMeter = apar.HasWaterMeter,
                         BoughtDate = apar.BoughtDate,
+                        WaterMeterExp = apar.WaterMeterExp,
                         ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
 
                         ApartmentAreaSeries = new SeriesCollection
@@ -321,6 +330,7 @@ namespace DomenaManager.Pages
                         HasWaterMeter = apar.HasWaterMeter,
                         BoughtDate = apar.BoughtDate,
                         ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
+                        WaterMeterExp = apar.WaterMeterExp,
 
                         ApartmentAreaSeries = new SeriesCollection
                         {
@@ -441,6 +451,14 @@ namespace DomenaManager.Pages
                     using (var db = new DB.DomenaDBContext())
                     {
                         var newApartment = new LibDataModel.Apartment { BoughtDate = dc.BoughtDate, ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), HasWaterMeter = dc.HasWaterMeter == 1, IsDeleted=false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber };
+                        if (!dc.SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == dc._apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
+                        {
+                            newApartment.CorrespondenceAddress = dc.SelectedOwnerMailAddress;
+                        }
+                        else
+                        {
+                            newApartment.CorrespondenceAddress = null;
+                        }
                         db.Apartments.Add(newApartment);
                         db.SaveChanges();
                     }
@@ -464,7 +482,16 @@ namespace DomenaManager.Pages
                         q.CreatedDate = DateTime.Now;
                         q.HasWaterMeter = dc.HasWaterMeter == 0;
                         q.OwnerId = dc.SelectedOwnerName.OwnerId;
-                        
+
+                        if (!dc.SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == dc._apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
+                        {
+                            q.CorrespondenceAddress = dc.SelectedOwnerMailAddress;
+                        }
+                        else
+                        {
+                            q.CorrespondenceAddress = null;
+                        }
+
                         db.SaveChanges();
                     }
                 }
@@ -481,7 +508,7 @@ namespace DomenaManager.Pages
                 }
             }
             InitializeCollection();
-            
+            DrawerHost.CloseDrawerCommand.Execute(Dock.Bottom, this.DH);            
         }
 
         private bool IsValid(DependencyObject obj)

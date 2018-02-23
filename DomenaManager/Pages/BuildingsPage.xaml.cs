@@ -112,7 +112,7 @@ namespace DomenaManager.Pages
 
                     foreach (var c in costs)
                     {
-                        b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = db.CostCategories.Where(x => x.CostCategoryId == c.CostCategoryId).FirstOrDefault().CategoryName, CostString = c.CostAmount + " zł", DateString = c.PaymentTime.ToString("yyyy-MM-dd") });
+                        //b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = db.CostCategories.Where(x => x.CostCategoryId == c.CostCategoryId).FirstOrDefault().CategoryName, CostString = c.CostAmount + " zł", DateString = c.PaymentTime.ToString("yyyy-MM-dd") });
                     }
                     if (b.CostsList.Count == 0)
                     {

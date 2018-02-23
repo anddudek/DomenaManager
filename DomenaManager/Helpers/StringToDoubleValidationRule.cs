@@ -23,7 +23,7 @@ namespace DomenaManager.Helpers
                 {
                     return new ValidationResult(false, "Pole nie może być puste");
                 }
-                if (double.Parse((string)value, new CultureInfo("pl-PL")) > 0)
+                if (double.Parse((string)value, new CultureInfo("pl-PL")) >= 0)
                 {
                     return new ValidationResult(true, null);
                 }
