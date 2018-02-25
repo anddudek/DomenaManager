@@ -198,6 +198,183 @@ namespace DomenaManager.Wizards
             return true;
         }
 
+        public ICommand AddNewBuilding
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddBuilding, CanAddBuilding);
+            }
+        }
+
+        private async void AddBuilding(object param)
+        {
+            var ebw = new EditBuildingWizard();
+            var result = await DialogHost.Show(ebw, "HelperDialog", ExtendedEBWOpenedEventHandler, ExtendedEBWClosingEventHandler);
+        }
+
+        private bool CanAddBuilding()
+        {
+            return true;
+        }
+
+        private void ExtendedEBWOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+        {
+
+        }
+
+        private async void ExtendedEBWClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
+                //Accept
+                if (dc._buildingLocalCopy == null)
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.BuildingName) || string.IsNullOrEmpty(dc.BuildingCity) || string.IsNullOrEmpty(dc.BuildingZipCode) || string.IsNullOrEmpty(dc.BuildingRoadName) || string.IsNullOrEmpty(dc.BuildingRoadNumber)))
+
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Add new building
+
+                    var newBuilding = new LibDataModel.Building { BuildingId = Guid.NewGuid(), Name = dc.BuildingName, City = dc.BuildingCity, ZipCode = dc.BuildingZipCode, BuildingNumber = dc.BuildingRoadNumber, RoadName = dc.BuildingRoadName, IsDeleted = false };
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        db.Buildings.Add(newBuilding);
+                        db.SaveChanges();
+                    }
+
+                    InitializeBuildingList();
+                    SelectedBuildingName = BuildingsNames.Where(x => x.BuildingId.Equals(newBuilding.BuildingId)).FirstOrDefault();
+                }
+                else
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.BuildingName) || string.IsNullOrEmpty(dc.BuildingCity) || string.IsNullOrEmpty(dc.BuildingZipCode) || string.IsNullOrEmpty(dc.BuildingRoadName) || string.IsNullOrEmpty(dc.BuildingRoadNumber)))
+
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Edit building
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        var q = db.Buildings.Where(x => x.BuildingId.Equals(dc._buildingLocalCopy.BuildingId)).FirstOrDefault();
+                        q.BuildingNumber = dc.BuildingRoadNumber;
+                        q.City = dc.BuildingCity;
+                        q.Name = dc.BuildingName;
+                        q.RoadName = dc.BuildingRoadName;
+                        q.ZipCode = dc.BuildingZipCode;
+                        db.SaveChanges();
+                    }
+
+                    InitializeBuildingList();
+                    SelectedBuildingName = BuildingsNames.Where(x => x.BuildingId.Equals(dc._buildingLocalCopy.BuildingId)).FirstOrDefault();
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    //eventArgs.Cancel();
+                    var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
+                    var result = await DialogHost.Show(dc, "HelperDialog", ExtendedEBWOpenedEventHandler, ExtendedEBWClosingEventHandler);
+                }
+            }
+        }
+
+        public ICommand AddNewOwner
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddOwner, CanAddOwner);
+            }
+        }
+
+        private async void AddOwner(object param)
+        {
+            var eow = new EditOwnerWizard();
+            var result = await DialogHost.Show(eow, "HelperDialog", ExtendedEOWOpenedEventHandler, ExtendedEOWClosingEventHandler);
+        }
+
+        private bool CanAddOwner()
+        {
+            return true;
+        }
+
+        private void ExtendedEOWOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+        {
+
+        }
+
+        private async void ExtendedEOWClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditOwnerWizard);
+                //Accept
+                if (dc._ownerLocalCopy == null)
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.OwnerName) || string.IsNullOrEmpty(dc.MailAddress)))
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Add new owner
+                    var newOwner = new LibDataModel.Owner { OwnerId = Guid.NewGuid(), MailAddress = dc.MailAddress, OwnerName = dc.OwnerName, IsDeleted = false };
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        db.Owners.Add(newOwner);
+                        db.SaveChanges();
+                    }
+                    InitializeOwnerList();
+                    SelectedOwnerName = OwnersNames.Where(x => x.OwnerId.Equals(newOwner.OwnerId)).FirstOrDefault();
+                }
+                else
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.OwnerName) || string.IsNullOrEmpty(dc.MailAddress)))
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Edit Owner
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        var q = db.Owners.Where(x => x.OwnerId.Equals(dc._ownerLocalCopy.OwnerId)).FirstOrDefault();
+                        q.OwnerName = dc.OwnerName;
+                        q.MailAddress = dc.MailAddress;
+                        db.SaveChanges();
+                    }
+                    InitializeOwnerList();
+                    SelectedOwnerName = OwnersNames.Where(x => x.OwnerId.Equals(dc._ownerLocalCopy.OwnerId)).FirstOrDefault();
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    //eventArgs.Cancel();
+                    var dc = (eventArgs.Session.Content as Wizards.EditOwnerWizard);
+                    var result = await DialogHost.Show(dc, "HelperDialog", ExtendedEOWOpenedEventHandler, ExtendedEOWClosingEventHandler);
+                }
+            }
+        }
+
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
+        }
+
         public Apartment _apartmentLocalCopy;
 
         public EditApartmentWizard(Apartment SelectedApartment = null)
@@ -206,19 +383,31 @@ namespace DomenaManager.Wizards
             {
                 _apartmentLocalCopy = new Apartment(SelectedApartment);
             }
-            InitializeList();
+            InitializeBuildingList();
+            InitializeOwnerList();
+            InitializeFields();
             DataContext = this;            
             InitializeComponent();            
         }
 
-        private void InitializeList()
+        private void InitializeBuildingList()
         {
             using (var db = new DB.DomenaDBContext())
             {
-                _buildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
-                _ownersNames = new ObservableCollection<Owner>(db.Owners.Where(x => x.IsDeleted == false).ToList());
-            }            
+                BuildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
+            }
+        }
 
+        private void InitializeOwnerList()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                OwnersNames = new ObservableCollection<Owner>(db.Owners.Where(x => x.IsDeleted == false).ToList());
+            }
+        }
+
+        private void InitializeFields()
+        {
             if (_apartmentLocalCopy == null)
             {
                 _boughtDate = DateTime.Today;

@@ -11,6 +11,7 @@
         WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
     <materialDesign:DialogHost Identifier="MsgBoxDialog">
+        <materialDesign:DialogHost Identifier="HelperDialog">
         <materialDesign:DialogHost Identifier="RootDialog">
             <Grid >
                 <Grid.RowDefinitions>
@@ -45,6 +46,7 @@
                 </Grid>
                 <metro:TransitioningContentControl Grid.Row="1" Content="{Binding CurrentPage}" Margin="10,0,10,0" Transition="LeftReplace"/>
             </Grid>
+        </materialDesign:DialogHost >
         </materialDesign:DialogHost >
     </materialDesign:DialogHost >
 </metro:MetroWindow>
