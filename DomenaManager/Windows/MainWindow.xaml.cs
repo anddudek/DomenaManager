@@ -49,8 +49,8 @@ namespace DomenaManager.Windows
             using (var db = new DB.DomenaDBContext())
             {
                 /*
-                db.Buildings.Add(new LibDataModel.Building { Name = "ELO", BuildingId = Guid.NewGuid(), BuildingNumber = "7", City = "Świątniki", RoadName = "Kreta", ZipCode="32-040" });
-                db.Buildings.Add(new LibDataModel.Building { Name = "Grunwaldzka 61", BuildingId = Guid.NewGuid(), BuildingNumber = "61", City = "Jelenia Góra", RoadName = "Grunwaldzka", ZipCode = "58-500" });
+                //db.Buildings.Add(new LibDataModel.Building { Name = "ELO", BuildingId = Guid.NewGuid(), BuildingNumber = "7", City = "Świątniki", RoadName = "Kreta", ZipCode="32-040" });
+                //db.Buildings.Add(new LibDataModel.Building { Name = "Grunwaldzka 61", BuildingId = Guid.NewGuid(), BuildingNumber = "61", City = "Jelenia Góra", RoadName = "Grunwaldzka", ZipCode = "58-500" });
                 db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Prąd", CostCategoryId = Guid.NewGuid() });
                 db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Woda i ścieki", CostCategoryId = Guid.NewGuid() });
                 db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Utrzymanie czystości", CostCategoryId = Guid.NewGuid() });
@@ -61,8 +61,8 @@ namespace DomenaManager.Windows
                 db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Przeglądy", CostCategoryId = Guid.NewGuid() });
                 db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Wynagrodzenie zarządcy", CostCategoryId = Guid.NewGuid() });
                 db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Inne", CostCategoryId = Guid.NewGuid() });
-                db.CostDistributionTypes.Add(new LibDataModel.CostDistributionType { CostDistributionId = Guid.NewGuid(), CostDistributionName = "Od lokalu" });
-                db.CostDistributionTypes.Add(new LibDataModel.CostDistributionType { CostDistributionId = Guid.NewGuid(), CostDistributionName = "Od powierzchni" });
+                //db.CostDistributionTypes.Add(new LibDataModel.CostDistributionType { CostDistributionId = Guid.NewGuid(), CostDistributionName = "Od lokalu" });
+                //db.CostDistributionTypes.Add(new LibDataModel.CostDistributionType { CostDistributionId = Guid.NewGuid(), CostDistributionName = "Od powierzchni" });
                 
                 var GrunwGuid = db.Buildings.Where(x => x.BuildingNumber == "61").FirstOrDefault().BuildingId;
                 var ubez = db.CostCategories.Where(x => x.CategoryName == "Ubezpieczenie").FirstOrDefault().CostCategoryId;

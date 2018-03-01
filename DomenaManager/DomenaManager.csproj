@@ -88,20 +88,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Helpers\ApartmentDataGrid.cs" />
-    <Compile Include="Helpers\ApartmentListView.cs" />
-    <Compile Include="Helpers\StringToDoubleValidationRule.cs" />
-    <Compile Include="Helpers\StringToIntValidationRule.cs" />
-    <Compile Include="Helpers\OwnerDescriptionListView.cs" />
-    <Compile Include="Helpers\EmptyZipCodeValidationRule.cs" />
-    <Compile Include="Helpers\EmptyNumericValidationRule.cs" />
-    <Compile Include="Helpers\EmptyStringValidationRule.cs" />
-    <Compile Include="Helpers\EmptyPasswordValidationRule.cs" />
-    <Compile Include="Helpers\EmptyLoginValidationRule.cs" />
-    <Compile Include="Helpers\OwnerDataGrid.cs" />
-    <Compile Include="Helpers\SumConverter.cs" />
-    <Compile Include="Helpers\Validator.cs" />
-    <Compile Include="Helpers\YNMsg.cs" />
+    <Compile Include="Helpers\DataGrid\ApartmentDataGrid.cs" />
+    <Compile Include="Helpers\ListView\ApartmentListView.cs" />
+    <Compile Include="Helpers\CostDistributionCollectionItem.cs" />
+    <Compile Include="Helpers\ListView\CostListView.cs" />
+    <Compile Include="Helpers\ValidationRule\StringToDoubleValidationRule.cs" />
+    <Compile Include="Helpers\ValidationRule\StringToIntValidationRule.cs" />
+    <Compile Include="Helpers\ListView\OwnerDescriptionListView.cs" />
+    <Compile Include="Helpers\ValidationRule\EmptyZipCodeValidationRule.cs" />
+    <Compile Include="Helpers\ValidationRule\EmptyNumericValidationRule.cs" />
+    <Compile Include="Helpers\ValidationRule\EmptyStringValidationRule.cs" />
+    <Compile Include="Helpers\ValidationRule\EmptyPasswordValidationRule.cs" />
+    <Compile Include="Helpers\ValidationRule\EmptyLoginValidationRule.cs" />
+    <Compile Include="Helpers\DataGrid\OwnerDataGrid.cs" />
+    <Compile Include="Helpers\Converter\SumConverter.cs" />
+    <Compile Include="Helpers\ValidationRule\Validator.cs" />
+    <Compile Include="Dialogs\YNMsg.cs" />
     <Compile Include="Pages\OwnersPage.xaml.cs">
       <DependentUpon>OwnersPage.xaml</DependentUpon>
     </Compile>
@@ -142,9 +144,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DB\DomenaDBContext.cs" />
-    <Compile Include="Helpers\BuildingDataGrid.cs" />
-    <Compile Include="Helpers\BuildingDescriptionListView.cs" />
-    <Compile Include="Helpers\PageTitleToFAIconConverter.cs" />
+    <Compile Include="Helpers\DataGrid\BuildingDataGrid.cs" />
+    <Compile Include="Helpers\ListView\BuildingDescriptionListView.cs" />
+    <Compile Include="Helpers\Converter\PageTitleToFAIconConverter.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Windows\LoginWindow.xaml.cs">

@@ -14,7 +14,7 @@ namespace LibDataModel
             PerMeasurement = 1,
         }
 
-        public string CostDistributionToString(CostDistribution costDist)
+        public static string CostDistributionToString(CostDistribution costDist)
         {
             switch (costDist)
             {
