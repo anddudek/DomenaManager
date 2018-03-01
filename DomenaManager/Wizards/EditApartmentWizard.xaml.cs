@@ -411,6 +411,7 @@ namespace DomenaManager.Wizards
             if (_apartmentLocalCopy == null)
             {
                 _boughtDate = DateTime.Today;
+                _waterMeterExp = DateTime.Today;
                 return;
             }
 

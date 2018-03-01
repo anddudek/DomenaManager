@@ -442,7 +442,7 @@ namespace DomenaManager.Pages
                 //Accept
                 if (dc._apartmentLocalCopy == null)
                 {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingAddress) || string.IsNullOrEmpty(dc.SelectedOwnerMailAddress) || dc.ApartmentNumber <= 0 || double.Parse(dc.AdditionalArea) <= 0 || double.Parse(dc.ApartmentArea) <= 0))
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingAddress) || string.IsNullOrEmpty(dc.SelectedOwnerMailAddress) || dc.ApartmentNumber <= 0 || double.Parse(dc.AdditionalArea) < 0 || double.Parse(dc.ApartmentArea) <= 0))
                     {
                         eventArgs.Cancel();
                         return;
