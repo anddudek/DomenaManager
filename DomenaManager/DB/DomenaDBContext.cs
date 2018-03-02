@@ -18,9 +18,7 @@ namespace DomenaManager.DB
 
         public DbSet<Building> Buildings { get; set; }
         public DbSet<Owner> Owners { get; set; }
-        public DbSet<CostCategory> CostCategories { get; set; }
-        public DbSet<CostDistributionType> CostDistributionTypes { get; set; }
-        public DbSet<Cost> Costs { get; set; }
+        public DbSet<CostCategory> CostCategories { get; set; }     
         public DbSet<Apartment> Apartments { get; set; }
     }
 }

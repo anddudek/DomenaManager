@@ -87,20 +87,11 @@ namespace DomenaManager.Pages
             Buildings = new ObservableCollection<Helpers.BuildingDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                var q = db.Buildings.Where(x => x.IsDeleted == false);
+                var q = db.Buildings.Include(x => x.CostCollection).Where(x => x.IsDeleted == false);
                 foreach (var build in q)
                 {
-                    var b = new Helpers.BuildingDataGrid { Name = build.Name, ApartmentsCount = 1 };
+                    var b = new Helpers.BuildingDataGrid { Name = build.Name, ApartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(build.BuildingId)).Count() };
                     b.BuildingId = build.BuildingId;
-                    /*var address = new StringBuilder();
-                    address.Append(build.City);
-                    address.Append(" ");
-                    address.Append(build.ZipCode);
-                    address.Append(", ul. ");
-                    address.Append(build.RoadName);
-                    address.Append(" ");
-                    address.Append(build.BuildingNumber);
-                    b.Address = address.ToString();*/
                     b.Address = build.GetAddress();
                     Buildings.Add(b);
                 }
@@ -108,12 +99,12 @@ namespace DomenaManager.Pages
                 foreach (var b in Buildings)
                 {
                     b.CostsList = new List<Helpers.BuildingDescriptionListView>();
-                    var costs = db.Costs.Where(x => x.BuildingId == b.BuildingId && (DbFunctions.TruncateTime(DbFunctions.AddMonths(DateTime.Now, -1))).Value.Month == DbFunctions.TruncateTime(x.PaymentTime).Value.Month && (DbFunctions.TruncateTime(DbFunctions.AddMonths(DateTime.Now, -1))).Value.Year == DbFunctions.TruncateTime(x.PaymentTime).Value.Year);
+                    //var costs = db.Costs.Where(x => x.BuildingId == b.BuildingId && (DbFunctions.TruncateTime(DbFunctions.AddMonths(DateTime.Now, -1))).Value.Month == DbFunctions.TruncateTime(x.PaymentTime).Value.Month && (DbFunctions.TruncateTime(DbFunctions.AddMonths(DateTime.Now, -1))).Value.Year == DbFunctions.TruncateTime(x.PaymentTime).Value.Year);
 
-                    foreach (var c in costs)
-                    {
+                    //foreach (var c in costs)
+                    //{
                         //b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = db.CostCategories.Where(x => x.CostCategoryId == c.CostCategoryId).FirstOrDefault().CategoryName, CostString = c.CostAmount + " zł", DateString = c.PaymentTime.ToString("yyyy-MM-dd") });
-                    }
+                    //}
                     if (b.CostsList.Count == 0)
                     {
                         b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = "Brak kosztów" });
@@ -144,7 +135,7 @@ namespace DomenaManager.Pages
             Wizards.EditBuildingWizard ebw;
             using (var db = new DB.DomenaDBContext())
             {
-                var sb = db.Buildings.Where(x => x.Name.Equals(SelectedBuilding.Name)).FirstOrDefault();
+                var sb = db.Buildings.Include(x => x.CostCollection).Where(x => x.Name.Equals(SelectedBuilding.Name)).FirstOrDefault();
                 ebw = new Wizards.EditBuildingWizard(sb);
             }
 
@@ -175,6 +166,14 @@ namespace DomenaManager.Pages
                     using (var db = new DB.DomenaDBContext())
                     {
                         var newBuilding = new LibDataModel.Building { BuildingId = Guid.NewGuid(), Name = dc.BuildingName, City = dc.BuildingCity, ZipCode = dc.BuildingZipCode, BuildingNumber = dc.BuildingRoadNumber, RoadName = dc.BuildingRoadName, IsDeleted = false };
+                        List<LibDataModel.Cost> costs = new List<LibDataModel.Cost>();
+                        foreach (var c in dc.CostCollection)
+                        {
+                            var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().CostCategoryId;
+                            var cost = new LibDataModel.Cost { CostId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, CostDistribution = c.CostUnit.EnumValue, CostCategoryId=catId };
+                            costs.Add(cost);
+                        }
+                        newBuilding.CostCollection = costs;
                         db.Buildings.Add(newBuilding);
                         db.SaveChanges();
                     }
@@ -196,6 +195,16 @@ namespace DomenaManager.Pages
                         q.Name = dc.BuildingName;
                         q.RoadName = dc.BuildingRoadName;
                         q.ZipCode = dc.BuildingZipCode;
+
+                        List<LibDataModel.Cost> costs = new List<LibDataModel.Cost>();
+                        foreach (var c in dc.CostCollection)
+                        {
+                            var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().CostCategoryId;
+                            var cost = new LibDataModel.Cost { CostId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, CostDistribution = c.CostUnit.EnumValue, CostCategoryId = catId };
+                            costs.Add(cost);
+                        }
+                        q.CostCollection = costs;
+
                         db.SaveChanges();
                     }
                 }

@@ -48,7 +48,7 @@ namespace DomenaManager.Helpers
                 if (BindingOperations.IsDataBound(parent, dp))
                 {
                     Binding binding = BindingOperations.GetBinding(parent, dp);
-                    if (binding.ValidationRules.Count > 0)
+                    if (binding != null && binding.ValidationRules != null && binding.ValidationRules.Count > 0)
                     {
                         BindingExpression expression = BindingOperations.GetBindingExpression(parent, dp);
                         switch (binding.Mode)

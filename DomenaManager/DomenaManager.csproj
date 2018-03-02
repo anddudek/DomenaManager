@@ -88,7 +88,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\Converter\DatesToCurrentDateMultiConverter.cs" />
+    <Compile Include="Helpers\Converter\NullToDateConverter.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentDataGrid.cs" />
+    <Compile Include="Helpers\IsDateNull.cs" />
     <Compile Include="Helpers\ListView\ApartmentListView.cs" />
     <Compile Include="Helpers\CostDistributionCollectionItem.cs" />
     <Compile Include="Helpers\ListView\CostListView.cs" />
@@ -116,6 +119,9 @@
     </Compile>
     <Compile Include="Wizards\EditBuildingWizard.xaml.cs">
       <DependentUpon>EditBuildingWizard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditCostCategories.xaml.cs">
+      <DependentUpon>EditCostCategories.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\EditOwnerWizard.xaml.cs">
       <DependentUpon>EditOwnerWizard.xaml</DependentUpon>
@@ -165,6 +171,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Wizards\EditBuildingWizard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizards\EditCostCategories.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

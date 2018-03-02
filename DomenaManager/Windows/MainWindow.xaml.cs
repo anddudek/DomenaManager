@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using DomenaManager.Helpers;
 using MahApps.Metro.Controls;
+using MaterialDesignThemes.Wpf;
 
 namespace DomenaManager.Windows
 {
@@ -37,6 +38,21 @@ namespace DomenaManager.Windows
             }
         }
         
+        public ICommand SwitchPageCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(param => SwitchPage(param), CanSwitchPage);
+            }
+        }
+
+        public ICommand EditCostCategoriesCommand
+        {
+            get
+            {
+                return new RelayCommand(EditCostCategories, CanEditCostCategories);
+            }
+        }
 
         public MainWindow()
         {
@@ -108,11 +124,40 @@ namespace DomenaManager.Windows
             return true;
         }
 
-        public ICommand SwitchPageCommand
+        private bool CanEditCostCategories()
         {
-            get
+            return true;
+        }
+
+        private async void EditCostCategories(object obj)
+        {
+            Wizards.EditCostCategories ecc;            
+            ecc = new Wizards.EditCostCategories();
+            var result = await DialogHost.Show(ecc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+        }
+
+        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+        {
+
+        }
+
+        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+
+            if ((bool)eventArgs.Parameter)
             {
-                return new Helpers.RelayCommand(param => SwitchPage(param), CanSwitchPage);
+                //var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
+                //Accept                
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    var dc = (eventArgs.Session.Content as Wizards.EditCostCategories);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                }
             }
         }
 

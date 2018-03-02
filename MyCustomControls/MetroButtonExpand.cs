@@ -35,11 +35,21 @@ namespace MyCustomControls
                 }
             }
 
-            public static readonly DependencyProperty MDTIconProperty = DependencyProperty.Register("MDTIcon", typeof(PackIconKind), typeof(MetroButtonExpand), new PropertyMetadata(null));
+        public StackPanel ExpandContent
+        {
+            get { return (StackPanel)GetValue(ExpandContentProperty); }
+            set { SetValue(ExpandContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty MDTIconProperty = DependencyProperty.Register("MDTIcon", typeof(PackIconKind), typeof(MetroButtonExpand), new PropertyMetadata(null));
 
             public static readonly DependencyProperty MDTTextProperty = DependencyProperty.Register("MDTText", typeof(string), typeof(MetroButtonExpand), new PropertyMetadata(null));
 
-            static MetroButtonExpand()
+            public static readonly DependencyProperty ExpandContentProperty = DependencyProperty.Register("ExpandContent", typeof(StackPanel), typeof(MetroButtonExpand), new PropertyMetadata(null));
+
+
+
+        static MetroButtonExpand()
             {
                 DefaultStyleKeyProperty.OverrideMetadata(typeof(MetroButtonExpand), new FrameworkPropertyMetadata(typeof(MetroButtonExpand)));
             }

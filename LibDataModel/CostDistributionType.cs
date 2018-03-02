@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibDataModel
 {
-    public class CostDistributionType
+    public class CostDistributionTyp2e
     {
         [Key]
         public Guid CostDistributionId { get; set; }

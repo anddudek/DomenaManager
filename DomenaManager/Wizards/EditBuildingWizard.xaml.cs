@@ -196,6 +196,27 @@ namespace DomenaManager.Wizards
                 }
             }
         }
+
+        private Helpers.CostListView _selectedCost;
+        public Helpers.CostListView SelectedCost
+        {
+            get { return _selectedCost; }
+            set
+            {
+                if (value != _selectedCost)
+                {
+                    _selectedCost = value;
+                    if (value != null)
+                    {
+                        SelectedCategoryName = CategoriesNames.Where(x => x.CategoryName == value.CategoryName).FirstOrDefault();
+                        SelectedUnitName = UnitsNames.Where(x => x == value.CostUnit).FirstOrDefault();
+                        UnitCost = value.Cost.ToString();
+                        CostBeggining = value.BegginingDate.Date;
+                    }
+                    OnPropertyChanged("SelectedCost");
+                }
+            }
+        }
         
         public Building _buildingLocalCopy;
 
@@ -217,6 +238,12 @@ namespace DomenaManager.Wizards
                 BuildingZipCode = SelectedBuilding.ZipCode;
                 BuildingRoadName = SelectedBuilding.RoadName;
                 BuildingRoadNumber = SelectedBuilding.BuildingNumber;
+
+                foreach (var c in SelectedBuilding.CostCollection)
+                {
+                    var clv = new Helpers.CostListView { BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, Cost = c.CostPerUnit, CostUnit =  UnitsNames.Where(x => x.EnumValue == c.CostDistribution).FirstOrDefault(), CategoryName = CategoriesNames.Where(x => x.CostCategoryId.Equals(c.CostCategoryId)).FirstOrDefault().CategoryName };
+                    CostCollection.Add(clv);
+                }
             }
         }
 
@@ -245,6 +272,44 @@ namespace DomenaManager.Wizards
             CostCollection = new ObservableCollection<Helpers.CostListView>();
             ICollectionView cvCostCollection = (CollectionView)CollectionViewSource.GetDefaultView(CostCollection);
             cvCostCollection.GroupDescriptions.Add(new PropertyGroupDescription("CategoryName"));
+            cvCostCollection.SortDescriptions.Add(new SortDescription("BegginingDate", ListSortDirection.Ascending));
+        }
+
+        public ICommand DeleteSelectedCost
+        {
+            get
+            {
+                return new Helpers.RelayCommand(DeleteCost, CanDeleteCost);
+            }
+        }
+
+        private void DeleteCost(object param)
+        {
+            CostCollection.Remove(SelectedCost);
+        }
+
+        private bool CanDeleteCost()
+        {
+            return SelectedCost != null;
+        }
+
+        public ICommand ModifySelectedCost
+        {
+            get
+            {
+                return new Helpers.RelayCommand(ModifyCost, CanModifyCost);
+            }
+        }
+
+        private void ModifyCost(object param)
+        {
+            DeleteCost(null);
+            AddNewCost(null);
+        }
+
+        private bool CanModifyCost()
+        {
+            return SelectedCost != null;
         }
 
         public ICommand AddCost
@@ -278,8 +343,52 @@ namespace DomenaManager.Wizards
                 LabelError = "Podaj poprawną datę początku obowiązywania";
                 return;
             }
+            var q = CostCollection.Where(x => x.BegginingDate.Date.CompareTo(CostBeggining.Date) == 0 && x.CategoryName == SelectedCategoryValue).Count();
+            if (q > 0)
+            {
+                LabelError = "Istnieje już rekord z taką samą kategorią i datą";
+                return;
+            }
             LabelError = null;
-            var c = new Helpers.CostListView() { BegginingDate = CostBeggining, CategoryName = SelectedCategoryValue, Cost = uc, CostUnit = SelectedUnitName };
+            var endingDate = new DateTime(1900, 01, 01);
+
+            // Add to the end 
+            var last = CostCollection.Where(x => Helpers.DateTimeOperations.IsDateNull(x.EndingDate)).FirstOrDefault();
+
+            if (last != null && last.BegginingDate.Date < CostBeggining.Date)
+            {
+                last.EndingDate = CostBeggining.AddDays(-1);
+            }
+            else
+            {
+                var before = CostCollection.Where(x => x.BegginingDate.Date < CostBeggining.Date && x.EndingDate.Date >= CostBeggining.Date).FirstOrDefault();
+                // Add in the middle of collection
+                if (before != null)
+                {
+                    endingDate = before.EndingDate.Date;
+                    before.EndingDate = CostBeggining.Date.AddDays(-1);
+                }
+                else
+                {
+                    // Add at the beggining of collection
+                    var first = CostCollection.OrderBy(x => x.BegginingDate).FirstOrDefault();
+                    if (first != null && first.BegginingDate.Date > CostBeggining.Date)
+                    {
+                        endingDate = first.BegginingDate.Date.AddDays(-1);
+                    }
+                    else
+                    {
+                        if (CostCollection.Where(x => x.CategoryName == SelectedCategoryValue).Count() > 0)
+                        {
+                            LabelError = "Błąd dodawania kosztu";
+                            return;
+                        }
+                    }
+                }
+            }
+
+            var c = new Helpers.CostListView() { BegginingDate = CostBeggining, CategoryName = SelectedCategoryValue, Cost = uc, CostUnit = SelectedUnitName, EndingDate = endingDate };
+
             CostCollection.Add(c);
         }
 

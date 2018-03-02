@@ -18,6 +18,7 @@ namespace LibDataModel
             RoadName = b.RoadName;
             BuildingNumber = b.BuildingNumber;
             IsDeleted = b.IsDeleted;
+            CostCollection = b.CostCollection;
         }
 
         public Building()
@@ -29,6 +30,7 @@ namespace LibDataModel
             RoadName = null;
             BuildingNumber = null;
             IsDeleted = false;
+            CostCollection = new List<Cost>();
         }
 
         public string GetAddress()
@@ -44,5 +46,6 @@ namespace LibDataModel
         public string RoadName { get; set; }
         public string BuildingNumber { get; set; }
         public bool IsDeleted { get; set; }
+        public List<Cost> CostCollection { get; set; }
     }
 }

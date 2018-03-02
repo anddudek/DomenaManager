@@ -43,6 +43,13 @@
                  Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="BookOpenPageVariant" MDTText="Pisma" Foreground="White"/>
                         <MyControls:MetroButton Grid.Column="5" Command="{Binding SwitchPageCommand}" CommandParameter="Owners"
                  Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="Account" MDTText="Właściciele" Foreground="White"/>
+                            <MyControls:MetroButtonExpand Grid.Column="6" Style="{StaticResource MetroButtonExpandStyle}" Background="#87B04D" MDTIcon="Settings" MDTText="Konfiguracja" Foreground="White">
+                                <MyControls:MetroButtonExpand.ExpandContent>
+                                    <StackPanel>
+                                        <Button Content="Kategorie naliczeń" Command="{Binding Path=EditCostCategoriesCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}"/>
+                                    </StackPanel>
+                                </MyControls:MetroButtonExpand.ExpandContent>
+                            </MyControls:MetroButtonExpand>
                     </Grid>
                 </Grid>
                 <metro:TransitioningContentControl Grid.Row="1" Content="{Binding CurrentPage}" Margin="10,0,10,0" Transition="LeftReplace"/>

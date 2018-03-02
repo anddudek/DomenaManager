@@ -50,9 +50,14 @@
                         <materialDesign:PackIcon x:Name="MDTIcon" Kind="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MetroButtonExpand}, Path=MDTIcon}" VerticalAlignment="Center" HorizontalAlignment="Left"
                                                  Width="32" Height="32"                                                 
                                                  />
-                        <TextBlock x:Name="MDTText"  Grid.Row="1" Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MetroButtonExpand}, Path=MDTText}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="MDTText"  Grid.Row="1" Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MetroButtonExpand}, Path=MDTText}" VerticalAlignment="Center" FontSize="12"/>
                         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{Binding ElementName=MDTIcon, Path=Foreground}"/>
-                        <materialDesign:PackIcon Kind="ChevronDown" Grid.Column="2" Grid.RowSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Width="32" Height="32" />
+                        <!--<materialDesign:PackIcon Kind="ChevronDown" Grid.Column="2" Grid.RowSpan="2" VerticalAlignment="Center"  HorizontalAlignment="Stretch" Width="32" Height="32" />-->
+                        <materialDesign:PopupBox x:Name="arrowPopup" Width="32" Height="32" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="2" Grid.RowSpan="2" StaysOpen="False" PlacementMode="BottomAndAlignRightEdges">
+                            <StackPanel>
+                                <ContentControl Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MetroButtonExpand}, Path=ExpandContent}"/>
+                            </StackPanel>
+                        </materialDesign:PopupBox>
                     </Grid>
                 </DataTemplate>
             </Setter.Value>
