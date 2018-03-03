@@ -125,9 +125,9 @@
                 </ComboBox.ItemsSource>
             </ComboBox>
 
-            <Button Grid.Column="0" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewCategory}" Width="45" HorizontalAlignment="Right">
+            <Button Grid.Column="0" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewCategory}" Width="45" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 <ContentControl>
-                    <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <materialDesign:PackIcon Kind="Pencil" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </ContentControl>
             </Button>
 

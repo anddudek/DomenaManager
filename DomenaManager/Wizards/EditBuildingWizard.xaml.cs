@@ -251,7 +251,7 @@ namespace DomenaManager.Wizards
         {
             using (var db = new DB.DomenaDBContext())
             {
-                CategoriesNames = new ObservableCollection<CostCategory>(db.CostCategories.ToList());               
+                CategoriesNames = new ObservableCollection<CostCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());               
                
             }
         }

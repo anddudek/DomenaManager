@@ -146,8 +146,31 @@ namespace DomenaManager.Windows
 
             if ((bool)eventArgs.Parameter)
             {
-                //var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
-                //Accept                
+                var dc = (eventArgs.Session.Content as Wizards.EditCostCategories);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    foreach (var cmd in dc.commandBuffer)
+                    {
+                        switch (cmd.category)
+                        {
+                            default:
+                                break;
+                            case CostCategoryEnum.CostCategoryCommandEnum.Add:
+                                db.CostCategories.Add(cmd.costItem);
+                                db.SaveChanges();
+                                break;
+                            case CostCategoryEnum.CostCategoryCommandEnum.Remove:
+                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().IsDeleted = true;
+                                db.SaveChanges();
+                                break;
+                            case CostCategoryEnum.CostCategoryCommandEnum.Update:
+                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                }
             }
             else if (!(bool)eventArgs.Parameter)
             {

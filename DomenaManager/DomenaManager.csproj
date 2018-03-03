@@ -90,6 +90,8 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\Converter\DatesToCurrentDateMultiConverter.cs" />
     <Compile Include="Helpers\Converter\NullToDateConverter.cs" />
+    <Compile Include="Helpers\CostCategoryCommand.cs" />
+    <Compile Include="Helpers\CostCategoryEnum.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentDataGrid.cs" />
     <Compile Include="Helpers\IsDateNull.cs" />
     <Compile Include="Helpers\ListView\ApartmentListView.cs" />

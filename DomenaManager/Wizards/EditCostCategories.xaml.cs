@@ -97,10 +97,13 @@ namespace DomenaManager.Wizards
             get { return new Helpers.RelayCommand(ModifyCategory, CanModifyCategory); }
         }
 
+        public List<Helpers.CostCategoryCommand> commandBuffer;
+
         public EditCostCategories()
         {
             DataContext = this;
             InitializeComponent();
+            commandBuffer = new List<Helpers.CostCategoryCommand>();
             using (var db = new DB.DomenaDBContext())
             {
                 CategoryCollection = new ObservableCollection<CostCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
@@ -116,7 +119,8 @@ namespace DomenaManager.Wizards
             }
             var cc = new CostCategory { CategoryName = CategoryName, CostCategoryId = Guid.NewGuid(), IsDeleted = false };
             CategoryCollection.Add(cc);
-            //TODO
+
+            commandBuffer.Add(new Helpers.CostCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add, costItem = cc });
         }
 
         private bool CanAddCategory()
@@ -132,7 +136,8 @@ namespace DomenaManager.Wizards
                 return;
             }
             SelectedCostCategory.CategoryName = CategoryName;
-            //TODO
+
+            commandBuffer.Add(new Helpers.CostCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update, costItem = SelectedCostCategory });
         }
 
         private bool CanModifyCategory()
@@ -142,8 +147,9 @@ namespace DomenaManager.Wizards
 
         private void DeleteCategory(object param)
         {
-            CategoryCollection.Remove(SelectedCostCategory);
-            //TODO
+            commandBuffer.Add(new Helpers.CostCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove, costItem = SelectedCostCategory });
+
+            CategoryCollection.Remove(SelectedCostCategory);            
         }
 
         private bool CanDeleteCategory()
