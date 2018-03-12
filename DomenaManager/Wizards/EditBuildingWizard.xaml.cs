@@ -415,6 +415,74 @@ namespace DomenaManager.Wizards
             return true;
         }
 
+        public ICommand AddNewCategory
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddNewCat, CanAddNewCat);
+            }
+        }
+
+        private async void AddNewCat(object param)
+        {
+            var ecc = new Wizards.EditCostCategories();
+            var result = await DialogHost.Show(ecc, "HelperDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+        }
+
+        private bool CanAddNewCat()
+        {
+            return true;
+        }
+
+        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+        {
+
+        }
+
+        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditCostCategories);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    foreach (var cmd in dc.commandBuffer)
+                    {
+                        switch (cmd.category)
+                        {
+                            default:
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add:
+                                db.CostCategories.Add(cmd.costItem);
+                                db.SaveChanges();
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove:
+                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().IsDeleted = true;
+                                db.SaveChanges();
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update:
+                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    //eventArgs.Cancel();
+                    var dc = (eventArgs.Session.Content as Wizards.EditCostCategories);
+                    var result = await DialogHost.Show(dc, "HelperDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                }
+            }
+            InitializeCategoriesList();
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
