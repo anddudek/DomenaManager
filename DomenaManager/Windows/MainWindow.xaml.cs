@@ -116,6 +116,10 @@ namespace DomenaManager.Windows
                     CurrentPage = new Pages.ApartmentsPage();
                     OnPropertyChanged("CurrentPage");
                     return;
+                case "Charges":
+                    CurrentPage = new Pages.ChargesPage();
+                    OnPropertyChanged("CurrentPage");
+                    return;
             }
         }
 

@@ -37,7 +37,7 @@
                  Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="AccountMultiple" MDTText="Lokale" Foreground="White"/>
                         <MyControls:MetroButton Grid.Column="2" Command="{Binding SwitchPageCommand}" CommandParameter="Payments"
                  Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="CreditCard" MDTText="Wpłaty" Foreground="White"/>
-                        <MyControls:MetroButton Grid.Column="3" Command="{Binding SwitchPageCommand}" CommandParameter="PaymentOrders"
+                        <MyControls:MetroButton Grid.Column="3" Command="{Binding SwitchPageCommand}" CommandParameter="Charges"
                  Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="SquareIncCash" MDTText="Naliczenia" Foreground="White"/>
                         <MyControls:MetroButton Grid.Column="4" Command="{Binding SwitchPageCommand}" CommandParameter="Letters"
                  Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="BookOpenPageVariant" MDTText="Pisma" Foreground="White"/>

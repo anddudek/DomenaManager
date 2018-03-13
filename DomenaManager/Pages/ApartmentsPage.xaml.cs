@@ -450,7 +450,7 @@ namespace DomenaManager.Pages
                     //Add new apartment
                     using (var db = new DB.DomenaDBContext())
                     {
-                        var newApartment = new LibDataModel.Apartment { BoughtDate = dc.BoughtDate, ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), HasWaterMeter = dc.HasWaterMeter == 1, IsDeleted=false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber };
+                        var newApartment = new LibDataModel.Apartment { BoughtDate = dc.BoughtDate.Date, ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), HasWaterMeter = dc.HasWaterMeter == 1, IsDeleted=false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber, WaterMeterExp= dc.WaterMeterExp.Date };
                         if (!dc.SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == dc._apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
                         {
                             newApartment.CorrespondenceAddress = dc.SelectedOwnerMailAddress;
@@ -474,13 +474,14 @@ namespace DomenaManager.Pages
                     using (var db = new DB.DomenaDBContext())
                     {
                         var q = db.Apartments.Where(x => x.ApartmentId.Equals(dc._apartmentLocalCopy.ApartmentId)).FirstOrDefault();
-                        q.BoughtDate = dc.BoughtDate;
+                        q.BoughtDate = dc.BoughtDate.Date;
                         q.AdditionalArea = double.Parse(dc.AdditionalArea);
                         q.ApartmentArea = double.Parse(dc.ApartmentArea);
                         q.ApartmentNumber = dc.ApartmentNumber;
                         q.BuildingId = dc.SelectedBuildingName.BuildingId;
                         q.CreatedDate = DateTime.Now;
                         q.HasWaterMeter = dc.HasWaterMeter == 0;
+                        q.WaterMeterExp = dc.WaterMeterExp.Date;
                         q.OwnerId = dc.SelectedOwnerName.OwnerId;
 
                         if (!dc.SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == dc._apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))

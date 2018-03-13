@@ -109,6 +109,9 @@
     <Compile Include="Helpers\Converter\SumConverter.cs" />
     <Compile Include="Helpers\ValidationRule\Validator.cs" />
     <Compile Include="Dialogs\YNMsg.cs" />
+    <Compile Include="Pages\ChargesPage.xaml.cs">
+      <DependentUpon>ChargesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\OwnersPage.xaml.cs">
       <DependentUpon>OwnersPage.xaml</DependentUpon>
     </Compile>
@@ -131,6 +134,10 @@
     <Compile Include="Wizards\YNMsgBox.xaml.cs">
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="Pages\ChargesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\OwnersPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
