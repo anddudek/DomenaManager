@@ -30,14 +30,14 @@ namespace DomenaManager.Pages
     /// </summary>
     public partial class ChargesPage : UserControl, INotifyPropertyChanged
     {
-        private ObservableCollection<ApartmentDataGrid> _apartments;
-        public ObservableCollection<ApartmentDataGrid> Apartments
+        private ObservableCollection<ChargeDataGrid> _charges;
+        public ObservableCollection<ChargeDataGrid> Charges
         {
-            get { return _apartments; }
+            get { return _charges; }
             set
             {
-                _apartments = value;
-                OnPropertyChanged("Apartments");
+                _charges = value;
+                OnPropertyChanged("Charges");
             }
         }
 
@@ -57,7 +57,7 @@ namespace DomenaManager.Pages
         {
             get { return _groupByBuilding; }
             set
-            {
+            {/*
                 if (value != _groupByBuilding)
                 {
                     ICollectionView cvApartments = (CollectionView)CollectionViewSource.GetDefaultView(Apartments);
@@ -71,7 +71,7 @@ namespace DomenaManager.Pages
                     }
                     _groupByBuilding = value;
                     OnPropertyChanged("GroupByBuilding");
-                }
+                }*/
             }
         }
 
@@ -81,7 +81,7 @@ namespace DomenaManager.Pages
             get { return _groupByApartment; }
             set
             {
-                if (value != _groupByApartment)
+                /*if (value != _groupByApartment)
                 {
                     ICollectionView cvApartments = (CollectionView)CollectionViewSource.GetDefaultView(Apartments);
                     if (value)
@@ -94,11 +94,11 @@ namespace DomenaManager.Pages
                     }
                     _groupByApartment = value;
                     OnPropertyChanged("GroupByApartment");
-                }
+                }*/
             }
         }
 
-        public ICommand AddApartment
+        public ICommand AddApartmentCommand
         {
             get { return new Helpers.RelayCommand(Add, CanAdd); }
         }
@@ -110,12 +110,38 @@ namespace DomenaManager.Pages
 
         private void Add(object param)
         {
+            Charges = new ObservableCollection<ChargeDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                foreach (var a in db.Apartments.Where(x => db.Buildings.Include(b => b.CostCollection).Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count>0 ))
+                var q = db.Buildings.Include(b => b.CostCollection);
+                foreach (var a in db.Apartments.Where(x => q.Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count>0 ))
                 {
-                    
+                    var c = new Charge() { ApartmentId = a.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, CreatedTime = DateTime.Today };
+                    c.Components = new List<ChargeComponent>();
+                    foreach (var costCollection in db.Buildings.Include(b=>b.CostCollection).Where(x => x.BuildingId.Equals(a.BuildingId)).FirstOrDefault().CostCollection)
+                    {
+                        var cc = new ChargeComponent() {ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.CostCategoryId, CostDistribution = costCollection.CostDistribution, CostPerUnit = costCollection.CostPerUnit };
+                        double units;
+                        switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
+                        {
+                            case EnumCostDistribution.CostDistribution.PerApartment:
+                                units = 1;
+                                break;
+                            case EnumCostDistribution.CostDistribution.PerMeasurement:
+                                units = a.AdditionalArea + a.ApartmentArea;
+                                break;
+                            default:
+                                units = 0;
+                                break;
+                        }
+                        cc.Sum = units * cc.CostPerUnit;
+                        c.Components.Add(cc);
+                        db.Charges.Add(c);
+                        var cdg = new ChargeDataGrid(c);
+                        Charges.Add(cdg);
+                    }    
                 }
+                db.SaveChanges();
             }
         }
 
@@ -191,7 +217,7 @@ namespace DomenaManager.Pages
 
         public void InitializeCollection()
         {
-            Apartments = new ObservableCollection<ApartmentDataGrid>();
+            Charges = new ObservableCollection<ChargeDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
                 _buildingsNames = new ObservableCollection<Building>(db.Buildings.ToList());
@@ -200,37 +226,16 @@ namespace DomenaManager.Pages
                 var q = db.Apartments.Where(x => x.IsDeleted == false);
                 foreach (var apar in q)
                 {
-                    var a = new ApartmentDataGrid
-                    {
-                        BuildingName = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().Name,
-                        BulidingAddress = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().GetAddress(),
-                        ApartmentId = apar.ApartmentId,
-                        ApartmentNumber = apar.ApartmentNumber,
-                        ApartmentArea = apar.ApartmentArea,
-                        ApartmentAdditionalArea = apar.AdditionalArea,
-                        ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
-                        ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
-                        ApartmentPercentageDistribution = 
-                        (100 * (apar.ApartmentArea + apar.AdditionalArea) / 
-                        db.Apartments
-                        .Where(x => x.BuildingId == apar.BuildingId && !x.IsDeleted)
-                        .Select(x=>x.AdditionalArea + x.ApartmentArea)
-                        .Sum()).ToString("0.00") + " %",
-                        HasWaterMeter = apar.HasWaterMeter,
-                        BoughtDate = apar.BoughtDate,
-                        WaterMeterExp = apar.WaterMeterExp,
-                        ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
-
-                        
-                    };                   
-                    Apartments.Add(a);
+                    //var cdg = new ChargeDataGrid();
+                                      
+                    //Apartments.Add(a);
                 }
 
-                foreach (var apartment in Apartments)
+                /*foreach (var apartment in Apartments)
                 {
                     apartment.Balance = 0;
                     //TODO
-                }
+                }*/
             }
         }       
                 
@@ -238,7 +243,7 @@ namespace DomenaManager.Pages
         {
             using (var db = new DB.DomenaDBContext())
             {
-                Apartments.Clear();
+                //Apartments.Clear();
                 IQueryable<Apartment> q = db.Apartments.Where(x => x.IsDeleted == false);
                 if (SelectedBuildingName != null)
                 {
@@ -269,14 +274,14 @@ namespace DomenaManager.Pages
                         WaterMeterExp = apar.WaterMeterExp,
                                                 
                     };
-                    Apartments.Add(a);
+                    //Apartments.Add(a);
                 }
 
-                foreach (var apartment in Apartments)
+                /*foreach (var apartment in Apartments)
                 {
                     apartment.Balance = 0;
                     //TODO
-                }
+                }*/
             }
         }
 

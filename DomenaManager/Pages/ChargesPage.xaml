@@ -33,6 +33,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <ToggleButton
                   Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
@@ -46,7 +47,13 @@
                   IsChecked="{Binding GroupByApartment}" />
             <Label Content="Grupuj wg lokali" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" />
 
-            <StackPanel Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" Margin="40,0,0,0">
+            <ToggleButton Grid.Row="2"
+                  Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
+                  ToolTip="MaterialDesignSwitchDarkToggleButton"
+                  IsChecked="{Binding ShowClosed}" />
+            <Label Content="Pokaż zamknięte" Grid.Column="1" Grid.Row="2" VerticalContentAlignment="Center" />
+
+            <StackPanel Grid.Column="2" Grid.RowSpan="3" Orientation="Horizontal" Margin="40,0,0,0">
                 <ComboBox materialDesign:HintAssist.Hint="Budynek"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"  Width="140"
                   IsEditable="True" SelectedItem="{Binding SelectedBuildingName}" ItemsSource="{Binding BuildingsNames}" DisplayMemberPath="Name" Margin="15,0,15,0"
@@ -54,7 +61,7 @@
                 
                 <ComboBox materialDesign:HintAssist.Hint="Lokal"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" Width="140"
-                  IsEditable="True" SelectedItem="{Binding SelectedApartmentNumber}" ItemsSource="{Binding ApartmentsNumbers}" DisplayMemberPath="OwnerName" Margin="15,0,15,0"
+                  IsEditable="True" SelectedItem="{Binding SelectedApartmentNumber}" ItemsSource="{Binding ApartmentsNumbers}" DisplayMemberPath="ApartmentNumber" Margin="15,0,15,0"
              VerticalAlignment="Center" />
 
                 <ComboBox materialDesign:HintAssist.Hint="Właściciel"
@@ -78,8 +85,8 @@
             </StackPanel>
         </Grid>
         <DataGrid
-                SelectedItem="{Binding SelectedApartment}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                ItemsSource="{Binding Apartments}" Foreground="Black" Padding="5" Margin="5"
+                SelectedItem="{Binding SelectedCharge}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                ItemsSource="{Binding Charges}" Foreground="Black" Padding="5" Margin="5"
                 CanUserAddRows="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
