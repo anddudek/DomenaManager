@@ -12,7 +12,6 @@ namespace DomenaManager.Helpers
         public Building Building { get; set;}
         public Apartment Apartment { get; set; }
         public Owner Owner { get; set; }
-        public bool IsClosed { get; set; }
         public double Sum { get; set; }
 
         public ChargeDataGrid(Charge _charge)
@@ -21,7 +20,7 @@ namespace DomenaManager.Helpers
             this.ChargeId = _charge.ChargeId;
             this.Components = _charge.Components;
             this.CreatedTime = _charge.CreatedTime;
-            this.IsClosed = false;
+            this.IsClosed = _charge.IsClosed;
 
             using (var db = new DB.DomenaDBContext())
             {

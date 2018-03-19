@@ -30,6 +30,8 @@ namespace DomenaManager.Pages
     /// </summary>
     public partial class ChargesPage : UserControl, INotifyPropertyChanged
     {
+        public ObservableCollection<CostCategory> Categories { get; set; }
+
         private ObservableCollection<ChargeDataGrid> _charges;
         public ObservableCollection<ChargeDataGrid> Charges
         {
@@ -41,14 +43,14 @@ namespace DomenaManager.Pages
             }
         }
 
-        private ApartmentDataGrid _selectedApartment;
-        public ApartmentDataGrid SelectedApartment
+        private ChargeDataGrid _selectedCharge;
+        public ChargeDataGrid SelectedCharge
         {
-            get { return _selectedApartment; }
+            get { return _selectedCharge; }
             set
             {
-                _selectedApartment = value;
-                OnPropertyChanged("SelectedApartment");                
+                _selectedCharge = value;
+                OnPropertyChanged("SelectedCharge");                
             }
         }
 
@@ -57,17 +59,17 @@ namespace DomenaManager.Pages
         {
             get { return _groupByBuilding; }
             set
-            {/*
+            { /*
                 if (value != _groupByBuilding)
                 {
-                    ICollectionView cvApartments = (CollectionView)CollectionViewSource.GetDefaultView(Apartments);
+                    ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
                     if (value)
                     {
-                        cvApartments.GroupDescriptions.Add(new PropertyGroupDescription("BuildingName"));
+                        cvCharges.GroupDescriptions.Add(new PropertyGroupDescription("Building")); //nameof(Building.BUildingName)
                     }
                     else
                     {
-                        cvApartments.GroupDescriptions.Remove(cvApartments.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "BuildingName").FirstOrDefault());
+                        cvCharges.GroupDescriptions.Remove(cvCharges.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "Building.BuildingName").FirstOrDefault());
                     }
                     _groupByBuilding = value;
                     OnPropertyChanged("GroupByBuilding");
@@ -96,6 +98,36 @@ namespace DomenaManager.Pages
                     OnPropertyChanged("GroupByApartment");
                 }*/
             }
+        }
+
+        private bool _showClosed;
+        public bool ShowClosed
+        {
+            get { return _showClosed; }
+            set
+            {
+                if (value != _showClosed)
+                {
+                    _showClosed = value;
+                    InitializeCollection();
+                    OnPropertyChanged("ShowClosed");
+                }
+            }
+        }
+
+        public ICommand EditApartmentCommand
+        {
+            get { return new Helpers.RelayCommand(Edit, CanEdit); }
+        }
+
+        private bool CanEdit()
+        {
+            return true;
+        }
+
+        private void Edit(object param)
+        {
+            var a = SelectedCharge;
         }
 
         public ICommand AddApartmentCommand
@@ -145,6 +177,7 @@ namespace DomenaManager.Pages
             }
         }
 
+
         private ObservableCollection<Owner> _ownersNames;
         public ObservableCollection<Owner> OwnersNames
         {
@@ -186,8 +219,38 @@ namespace DomenaManager.Pages
             set
             {
                 _selectedBuildingName = value;
+                InitializeApartmentsNumbers();
+                OnPropertyChanged("ApartmentsNumbers");
                 OnPropertyChanged("SelectedBuildingName");
                 OnPropertyChanged("SelectedBuildingAddress");
+            }
+        }
+
+        private ObservableCollection<int> _apartmentsNumbers;
+        public ObservableCollection<int> ApartmentsNumbers
+        {
+            get { return _apartmentsNumbers; }
+            set
+            {
+                if (value != _apartmentsNumbers)
+                {
+                    _apartmentsNumbers = value;
+                    OnPropertyChanged("ApartmentsNumbers");
+                }
+            }
+        }
+
+        private int? _selectedApartmentNumber;
+        public int? SelectedApartmentNumber
+        {
+            get { return _selectedApartmentNumber; }
+            set
+            {
+                if (value != _selectedApartmentNumber)
+                {
+                    _selectedApartmentNumber = value;
+                    OnPropertyChanged("SelectedApartmentNumber");
+                }
             }
         }
 
@@ -211,6 +274,9 @@ namespace DomenaManager.Pages
         {
             DataContext = this;
             InitializeCollection();
+            InitializeCategories();
+            InitializeLists();
+            InitializeApartmentsNumbers();
             InitializeComponent();
             GroupByBuilding = true;
         }
@@ -219,69 +285,71 @@ namespace DomenaManager.Pages
         {
             Charges = new ObservableCollection<ChargeDataGrid>();
             using (var db = new DB.DomenaDBContext())
+            {      
+                var q = db.Charges.Include(x => x.Components);
+                if (!ShowClosed)
+                {
+                    q = q.Where(x => !x.IsClosed);
+                }
+                foreach (var ch in q)
+                {
+                    var cdg = new ChargeDataGrid(ch);
+                    Charges.Add(cdg); 
+                }
+            }
+        }
+
+        public void InitializeLists()
+        {
+            using (var db = new DB.DomenaDBContext())
             {
                 _buildingsNames = new ObservableCollection<Building>(db.Buildings.ToList());
                 _ownersNames = new ObservableCollection<Owner>(db.Owners.ToList());
-
-                var q = db.Apartments.Where(x => x.IsDeleted == false);
-                foreach (var apar in q)
-                {
-                    //var cdg = new ChargeDataGrid();
-                                      
-                    //Apartments.Add(a);
-                }
-
-                /*foreach (var apartment in Apartments)
-                {
-                    apartment.Balance = 0;
-                    //TODO
-                }*/
             }
-        }       
+        }
+
+        public void InitializeCategories()
+        {            
+            using (var db = new DB.DomenaDBContext())
+            {
+                Categories = new ObservableCollection<CostCategory>(db.CostCategories.ToList());
+            }
+        }
+
+        public void InitializeApartmentsNumbers()
+        {            
+            if (Charges != null && SelectedBuildingName != null)
+            {
+                var a = SelectedBuildingName.BuildingId;
+                var b = Charges.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).ToList();
+                var c = b.Select(x => x.Apartment.ApartmentNumber).ToList();
+                var d = c.Distinct().ToList();
+                ApartmentsNumbers = new ObservableCollection<int>(Charges.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).Select(x => x.Apartment.ApartmentNumber).Distinct().OrderBy(x => x).ToList());
+            }            
+        }
                 
         private void Filter(object param)
         {
             using (var db = new DB.DomenaDBContext())
             {
-                //Apartments.Clear();
-                IQueryable<Apartment> q = db.Apartments.Where(x => x.IsDeleted == false);
+                InitializeCollection();
+                IEnumerable<ChargeDataGrid> q = Charges as IEnumerable<ChargeDataGrid>;
                 if (SelectedBuildingName != null)
                 {
-                    q = q.Where(x => x.BuildingId == SelectedBuildingName.BuildingId);                    
+                    q = q.Where(x => x.Building.BuildingId == SelectedBuildingName.BuildingId);  
+                }
+
+                if (SelectedApartmentNumber != null)
+                {
+                    q = q.Where(x => x.Apartment.ApartmentNumber == SelectedApartmentNumber);
                 }
 
                 if (SelectedOwnerName != null)
                 {
-                    q = q.Where(x => x.OwnerId == SelectedOwnerName.OwnerId);
+                    q = q.Where(x => x.Owner.OwnerId == SelectedOwnerName.OwnerId);
                 }
-
-
-                foreach (var apar in q)
-                {
-                    var a = new ApartmentDataGrid
-                    {
-                        BuildingName = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().Name,
-                        BulidingAddress = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().GetAddress(),
-                        ApartmentId = apar.ApartmentId,
-                        ApartmentNumber = apar.ApartmentNumber,
-                        ApartmentArea = apar.ApartmentArea,
-                        ApartmentAdditionalArea = apar.AdditionalArea,
-                        ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
-                        ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
-                        HasWaterMeter = apar.HasWaterMeter,
-                        BoughtDate = apar.BoughtDate,
-                        ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
-                        WaterMeterExp = apar.WaterMeterExp,
-                                                
-                    };
-                    //Apartments.Add(a);
-                }
-
-                /*foreach (var apartment in Apartments)
-                {
-                    apartment.Balance = 0;
-                    //TODO
-                }*/
+                Charges = new ObservableCollection<ChargeDataGrid>(q.ToList());
+                
             }
         }
 
@@ -294,6 +362,7 @@ namespace DomenaManager.Pages
         {
             SelectedOwnerName = null;
             SelectedBuildingName = null;
+            SelectedApartmentNumber = null;
             Filter(null);
         }
 
