@@ -68,6 +68,7 @@
     <Compile Include="ActionButton.cs" />
     <Compile Include="MetroButton.cs" />
     <Compile Include="MetroButtonExpand.cs" />
+    <Compile Include="MultipleDataGrid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

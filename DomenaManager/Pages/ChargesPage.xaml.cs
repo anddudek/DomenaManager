@@ -22,6 +22,7 @@ using LibDataModel;
 using LiveCharts;
 using LiveCharts.Wpf;
 using LiveCharts.Defaults;
+using System.Collections;
 
 namespace DomenaManager.Pages
 {
@@ -30,6 +31,20 @@ namespace DomenaManager.Pages
     /// </summary>
     public partial class ChargesPage : UserControl, INotifyPropertyChanged
     {
+        private IList _testSelected;
+        public IList TestSelected
+        {
+            get { return _testSelected; }
+            set
+            {
+                if (value != _testSelected)
+                {
+                    _testSelected = value;
+                    OnPropertyChanged("TestSelected");
+                }
+            }
+        }
+
         public ObservableCollection<CostCategory> Categories { get; set; }
 
         private ObservableCollection<ChargeDataGrid> _charges;
@@ -40,6 +55,23 @@ namespace DomenaManager.Pages
             {
                 _charges = value;
                 OnPropertyChanged("Charges");
+            }
+        }
+
+        private ICollectionView _chargesCV;
+        public ICollectionView ChargesCV
+        {
+            get
+            {
+                return _chargesCV;
+            }
+            set
+            {
+                if (value != _chargesCV)
+                {
+                    _chargesCV = value;
+                    OnPropertyChanged("ChargesCV");
+                }
             }
         }
 
@@ -59,21 +91,21 @@ namespace DomenaManager.Pages
         {
             get { return _groupByBuilding; }
             set
-            { /*
+            { 
                 if (value != _groupByBuilding)
                 {
                     ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
                     if (value)
                     {
-                        cvCharges.GroupDescriptions.Add(new PropertyGroupDescription("Building")); //nameof(Building.BUildingName)
+                        cvCharges.GroupDescriptions.Add(new PropertyGroupDescription("Building.Name")); //nameof(Building.BUildingName)
                     }
                     else
                     {
-                        cvCharges.GroupDescriptions.Remove(cvCharges.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "Building.BuildingName").FirstOrDefault());
+                        cvCharges.GroupDescriptions.Remove(cvCharges.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "Building.Name").FirstOrDefault());
                     }
                     _groupByBuilding = value;
                     OnPropertyChanged("GroupByBuilding");
-                }*/
+                }
             }
         }
 
@@ -83,20 +115,20 @@ namespace DomenaManager.Pages
             get { return _groupByApartment; }
             set
             {
-                /*if (value != _groupByApartment)
+                if (value != _groupByApartment)
                 {
-                    ICollectionView cvApartments = (CollectionView)CollectionViewSource.GetDefaultView(Apartments);
+                    ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
                     if (value)
                     {
-                        cvApartments.GroupDescriptions.Add(new PropertyGroupDescription("ApartmentOwner"));
+                        cvCharges.GroupDescriptions.Add(new PropertyGroupDescription("Apartment.ApartmentNumber"));
                     }
                     else
                     {
-                        cvApartments.GroupDescriptions.Remove(cvApartments.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "ApartmentOwner").FirstOrDefault());
+                        cvCharges.GroupDescriptions.Remove(cvCharges.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "Apartment.ApartmentNumber").FirstOrDefault());
                     }
                     _groupByApartment = value;
                     OnPropertyChanged("GroupByApartment");
-                }*/
+                }
             }
         }
 
@@ -109,7 +141,7 @@ namespace DomenaManager.Pages
                 if (value != _showClosed)
                 {
                     _showClosed = value;
-                    InitializeCollection();
+                    ChargesCV.Refresh();
                     OnPropertyChanged("ShowClosed");
                 }
             }
@@ -128,6 +160,7 @@ namespace DomenaManager.Pages
         private void Edit(object param)
         {
             var a = SelectedCharge;
+            var b = TestSelected;
         }
 
         public ICommand AddApartmentCommand
@@ -177,6 +210,21 @@ namespace DomenaManager.Pages
             }
         }
 
+        public ICommand ShowChargeDetails
+        {
+            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
+        }
+
+        private bool CanShowDetails()
+        {
+            return true;
+        }
+
+        private void ShowDetails(object param)
+        {
+            //Todo
+        }
+
 
         private ObservableCollection<Owner> _ownersNames;
         public ObservableCollection<Owner> OwnersNames
@@ -197,7 +245,7 @@ namespace DomenaManager.Pages
             {
                 _selectedOwnerName = value;
                 OnPropertyChanged("SelectedOwnerName");
-                OnPropertyChanged("SelectedOwnerMailAddress");
+                ChargesCV.Refresh();
             }
         }
 
@@ -222,7 +270,7 @@ namespace DomenaManager.Pages
                 InitializeApartmentsNumbers();
                 OnPropertyChanged("ApartmentsNumbers");
                 OnPropertyChanged("SelectedBuildingName");
-                OnPropertyChanged("SelectedBuildingAddress");
+                ChargesCV.Refresh();
             }
         }
 
@@ -250,15 +298,8 @@ namespace DomenaManager.Pages
                 {
                     _selectedApartmentNumber = value;
                     OnPropertyChanged("SelectedApartmentNumber");
+                    ChargesCV.Refresh();
                 }
-            }
-        }
-
-        public ICommand FilterCommand
-        {
-            get
-            {
-                return new Helpers.RelayCommand(Filter, CanFilter);
             }
         }
         
@@ -277,29 +318,31 @@ namespace DomenaManager.Pages
             InitializeCategories();
             InitializeLists();
             InitializeApartmentsNumbers();
+            TestSelected = new List<ChargeDataGrid>();
             InitializeComponent();
             GroupByBuilding = true;
         }
 
-        public void InitializeCollection()
+        private void InitializeCollection()
         {
             Charges = new ObservableCollection<ChargeDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {      
                 var q = db.Charges.Include(x => x.Components);
-                if (!ShowClosed)
-                {
-                    q = q.Where(x => !x.IsClosed);
-                }
                 foreach (var ch in q)
                 {
                     var cdg = new ChargeDataGrid(ch);
                     Charges.Add(cdg); 
                 }
             }
+            
+            ChargesCV = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
+            ChargesCV.SortDescriptions.Add(new SortDescription("CreatedTime", ListSortDirection.Ascending)); 
+            ChargesCV.Filter = FilterCollection;
+
         }
 
-        public void InitializeLists()
+        private void InitializeLists()
         {
             using (var db = new DB.DomenaDBContext())
             {
@@ -308,7 +351,7 @@ namespace DomenaManager.Pages
             }
         }
 
-        public void InitializeCategories()
+        private void InitializeCategories()
         {            
             using (var db = new DB.DomenaDBContext())
             {
@@ -316,7 +359,7 @@ namespace DomenaManager.Pages
             }
         }
 
-        public void InitializeApartmentsNumbers()
+        private void InitializeApartmentsNumbers()
         {            
             if (Charges != null && SelectedBuildingName != null)
             {
@@ -327,43 +370,13 @@ namespace DomenaManager.Pages
                 ApartmentsNumbers = new ObservableCollection<int>(Charges.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).Select(x => x.Apartment.ApartmentNumber).Distinct().OrderBy(x => x).ToList());
             }            
         }
-                
-        private void Filter(object param)
-        {
-            using (var db = new DB.DomenaDBContext())
-            {
-                InitializeCollection();
-                IEnumerable<ChargeDataGrid> q = Charges as IEnumerable<ChargeDataGrid>;
-                if (SelectedBuildingName != null)
-                {
-                    q = q.Where(x => x.Building.BuildingId == SelectedBuildingName.BuildingId);  
-                }
-
-                if (SelectedApartmentNumber != null)
-                {
-                    q = q.Where(x => x.Apartment.ApartmentNumber == SelectedApartmentNumber);
-                }
-
-                if (SelectedOwnerName != null)
-                {
-                    q = q.Where(x => x.Owner.OwnerId == SelectedOwnerName.OwnerId);
-                }
-                Charges = new ObservableCollection<ChargeDataGrid>(q.ToList());
-                
-            }
-        }
-
-        private bool CanFilter()
-        {
-            return true;
-        }
 
         private void ClearFilter(object param)
         {
             SelectedOwnerName = null;
             SelectedBuildingName = null;
             SelectedApartmentNumber = null;
-            Filter(null);
+            ChargesCV.Refresh();
         }
 
         private bool CanClearFilter()
@@ -371,7 +384,28 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        
+        private bool FilterCollection(object item)
+        {
+            var cdg = item as ChargeDataGrid;
+            if (SelectedBuildingName != null && !cdg.Building.BuildingId.Equals(SelectedBuildingName.BuildingId))
+            {
+                return false;
+            }
+            if (SelectedApartmentNumber != null && !cdg.Apartment.ApartmentNumber.Equals(SelectedApartmentNumber))
+            {
+                return false;
+            }
+            if (SelectedOwnerName != null && !cdg.Owner.OwnerId.Equals(SelectedOwnerName.OwnerId))
+            {
+                return false;
+            }
+            if (!ShowClosed && cdg.IsClosed)
+            {
+                return false;
+            }
+            
+            return true;
+        }
 
         private bool IsValid(DependencyObject obj)
         {

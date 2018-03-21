@@ -8,7 +8,8 @@
         xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-             xmlns:hlp="clr-namespace:DomenaManager.Helpers"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:hlp="clr-namespace:DomenaManager.Helpers"
         mc:Ignorable="d" 
         d:DesignHeight="600" d:DesignWidth="900" >
     <UserControl.Resources>
@@ -70,9 +71,6 @@
                   IsEditable="True" SelectedItem="{Binding SelectedOwnerName}" ItemsSource="{Binding OwnersNames}" DisplayMemberPath="OwnerName" Margin="15,0,15,0"
              VerticalAlignment="Center" />
 
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Filtruj" Command="{Binding FilterCommand}" />
-
-
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Wyczyść" Command="{Binding ClearFilterCommand}" />
 
             </StackPanel>
@@ -85,10 +83,15 @@
                 <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteApartmentCommand}" Margin="10,0,10,0"/>
             </StackPanel>
         </Grid>
-        <DataGrid
+        <MyControls:MultipleDataGrid
                 SelectedItem="{Binding SelectedCharge}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                ItemsSource="{Binding Charges}" Foreground="Black" Padding="5" Margin="5"
-                CanUserAddRows="False" IsReadOnly="True">
+                ItemsSource="{Binding Charges}" Foreground="Black" Padding="5" Margin="5" SelectedItemsList="{Binding TestSelected}"
+                CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column" >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding ShowChargeDetails}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Budynek" Binding="{Binding Building.Name}" Width="auto" FontSize="14"/>
                 <DataGridTextColumn Header="Numer lokalu" Binding="{Binding Apartment.ApartmentNumber}" Width="auto" FontSize="14"/>
@@ -154,7 +157,7 @@
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
-            <DataGrid.RowDetailsTemplate>
+            <!--<DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <ListView ItemsSource="{Binding Components}" Padding="0,0,0,0">
                         <ListView.Resources>
@@ -177,7 +180,7 @@
                         </ListView.View>
                     </ListView>
                 </DataTemplate>
-            </DataGrid.RowDetailsTemplate>
-        </DataGrid>
+            </DataGrid.RowDetailsTemplate>-->
+        </MyControls:MultipleDataGrid>
     </Grid>
 </UserControl>
