@@ -92,6 +92,7 @@
     <Compile Include="Helpers\Converter\DatesToCurrentDateMultiConverter.cs" />
     <Compile Include="Helpers\Converter\BoolToStringConverter.cs" />
     <Compile Include="Helpers\Converter\NullToDateConverter.cs" />
+    <Compile Include="Helpers\Converter\IntToCostDistributionConverter.cs" />
     <Compile Include="Helpers\CostCategoryCommand.cs" />
     <Compile Include="Helpers\CostCategoryEnum.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentDataGrid.cs" />
@@ -127,6 +128,9 @@
     </Compile>
     <Compile Include="Wizards\EditBuildingWizard.xaml.cs">
       <DependentUpon>EditBuildingWizard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditChargeWizard.xaml.cs">
+      <DependentUpon>EditChargeWizard.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\EditCostCategories.xaml.cs">
       <DependentUpon>EditCostCategories.xaml</DependentUpon>
@@ -164,7 +168,6 @@
     <Compile Include="DB\DomenaDBContext.cs" />
     <Compile Include="Helpers\DataGrid\BuildingDataGrid.cs" />
     <Compile Include="Helpers\ListView\BuildingDescriptionListView.cs" />
-    <Compile Include="Helpers\Converter\PageTitleToFAIconConverter.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Windows\LoginWindow.xaml.cs">
@@ -183,6 +186,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Wizards\EditBuildingWizard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizards\EditChargeWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

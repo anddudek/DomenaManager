@@ -220,11 +220,15 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private void ShowDetails(object param)
+        private async void ShowDetails(object param)
         {
-            //Todo
-        }
+            Wizards.EditChargeWizard ecw;
+            
+                ecw = new Wizards.EditChargeWizard(SelectedCharge);
+            
 
+            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+        }
 
         private ObservableCollection<Owner> _ownersNames;
         public ObservableCollection<Owner> OwnersNames
@@ -327,7 +331,8 @@ namespace DomenaManager.Pages
         {
             Charges = new ObservableCollection<ChargeDataGrid>();
             using (var db = new DB.DomenaDBContext())
-            {      
+            {
+                var qa = db.Charges.Include(c => c.Components).Where(x => x.IsClosed).FirstOrDefault();
                 var q = db.Charges.Include(x => x.Components);
                 foreach (var ch in q)
                 {
@@ -417,6 +422,15 @@ namespace DomenaManager.Pages
             .All(IsValid);
         }
 
+        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+
+        }
+
+        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+        {
+
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)

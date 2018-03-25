@@ -247,7 +247,7 @@ namespace DomenaManager.Wizards
             }
         }
 
-        public void InitializeCategoriesList()
+        private void InitializeCategoriesList()
         {
             using (var db = new DB.DomenaDBContext())
             {
@@ -256,7 +256,7 @@ namespace DomenaManager.Wizards
             }
         }
 
-        public void InitializeUnitsList()
+        private void InitializeUnitsList()
         {
             var values = (EnumCostDistribution.CostDistribution[])Enum.GetValues(typeof(EnumCostDistribution.CostDistribution));
             UnitsNames = new ObservableCollection<Helpers.CostDistributionCollectionItem>();
