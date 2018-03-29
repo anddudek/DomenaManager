@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using LibDataModel;
 using DomenaManager.Helpers;
 using System.Data.Entity;
+using MaterialDesignThemes.Wpf;
 
 namespace DomenaManager.Wizards
 {
@@ -221,6 +222,19 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand AddNewCategory
+        {
+            get { return new RelayCommand(AddNew, CanAddNew); }
+        }
+
+        public ICommand UpdateAllFieldsCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(UpdateAllFields, CanUpdateAllFields);
+            }
+        }
+
         public ObservableCollection<CostCategory> Categories { get; set; }
 
         #endregion
@@ -291,6 +305,76 @@ namespace DomenaManager.Wizards
             {
                 Categories = new ObservableCollection<CostCategory>(db.CostCategories.ToList());
             }
+        }
+
+        private async void AddNew(object param)
+        {
+            var ecc = new Wizards.EditCostCategories();
+            var result = await DialogHost.Show(ecc, "HelperDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+        }
+
+        private bool CanAddNew()
+        {
+            return true;
+        }
+
+        private void UpdateAllFields(object param)
+        {
+            Helpers.Validator.IsValid(this);
+        }
+
+        private bool CanUpdateAllFields()
+        {
+            return true;
+        }
+
+        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+        {
+
+        }
+
+        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditCostCategories);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    foreach (var cmd in dc.commandBuffer)
+                    {
+                        switch (cmd.category)
+                        {
+                            default:
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add:
+                                db.CostCategories.Add(cmd.costItem);
+                                db.SaveChanges();
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove:
+                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().IsDeleted = true;
+                                db.SaveChanges();
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update:
+                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    //eventArgs.Cancel();
+                    var dc = (eventArgs.Session.Content as Wizards.EditCostCategories);
+                    var result = await DialogHost.Show(dc, "HelperDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                }
+            }
+            InitializeCategoriesList();
         }
 
         #endregion
