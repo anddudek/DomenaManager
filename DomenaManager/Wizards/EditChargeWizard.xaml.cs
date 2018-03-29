@@ -212,6 +212,10 @@ namespace DomenaManager.Wizards
                 if (value != _selectedChargeComponent)
                 {
                     _selectedChargeComponent = value;
+                    SelectedCategoryName = CategoriesNames.Where(x => x.CostCategoryId.Equals(_selectedChargeComponent.CostCategoryId)).FirstOrDefault();
+                    SelectedUnitName = UnitsNames.Where(x => x.EnumValue.Equals(_selectedChargeComponent.CostDistribution)).FirstOrDefault();
+                    UnitCost = _selectedChargeComponent.CostPerUnit.ToString();
+                    ChargeSum = _selectedChargeComponent.Sum.ToString();
                     OnPropertyChanged("SelectedChargeComponent");
                 }
             }

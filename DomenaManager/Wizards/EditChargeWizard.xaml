@@ -10,12 +10,12 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="400">
+             d:DesignHeight="600" d:DesignWidth="450">
     <UserControl.Resources>
         <Helpers:IntToCostDistributionConverter x:Key="IntToCostDistributionConverter"/>
         <Helpers:GuidToCategoryNameMultiConverter x:Key="GuidToCategoryNameMultiConverter" />
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
@@ -40,7 +40,7 @@
 
         <TextBox materialDesign:HintAssist.Hint="Numer lokalu" Text="{Binding ApartmentNumber}"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" IsReadOnly="True"
-            Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center" Margin="10,0,105,0" >
+            Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center" Margin="10,0,105,0" Width="80">
         </TextBox>
 
         <ComboBox materialDesign:HintAssist.Hint="Status"
@@ -139,7 +139,7 @@
             <ListView.View>
                 <GridView>
                     <!--<GridViewColumn Header="Kategoria" Width="auto" DisplayMemberBinding="{Binding CategoryName}" />-->
-                    <GridViewColumn Header="Kategoria" Width="150" >
+                    <GridViewColumn Header="Kategoria" Width="200" >
                         <GridViewColumn.DisplayMemberBinding>
                             <MultiBinding Converter="{StaticResource GuidToCategoryNameMultiConverter}" >
                                 <Binding Path="CostCategoryId"/>

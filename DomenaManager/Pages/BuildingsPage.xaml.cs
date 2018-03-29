@@ -189,13 +189,14 @@ namespace DomenaManager.Pages
                     //Edit building
                     using (var db = new DB.DomenaDBContext())
                     {
-                        var q = db.Buildings.Where(x => x.BuildingId.Equals(dc._buildingLocalCopy.BuildingId)).FirstOrDefault();
+                        var q = db.Buildings.Include(x => x.CostCollection).Where(x => x.BuildingId.Equals(dc._buildingLocalCopy.BuildingId)).FirstOrDefault();
                         q.BuildingNumber = dc.BuildingRoadNumber;
                         q.City = dc.BuildingCity;
                         q.Name = dc.BuildingName;
                         q.RoadName = dc.BuildingRoadName;
                         q.ZipCode = dc.BuildingZipCode;
-
+                        //q.CostCollection.RemoveAll(x => true);
+                        
                         List<LibDataModel.Cost> costs = new List<LibDataModel.Cost>();
                         foreach (var c in dc.CostCollection)
                         {
