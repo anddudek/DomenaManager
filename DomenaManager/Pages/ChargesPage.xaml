@@ -79,14 +79,16 @@
         <Grid Grid.Row="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddApartmentCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="Przelicz otwarte" MDTIcon="Calculator"  Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditApartmentCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="Zamknij" MDTIcon="CloseCircle" Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteApartmentCommand}" Margin="10,0,10,0"/>
             </StackPanel>
         </Grid>
         <MyControls:MultipleDataGrid
                 SelectedItem="{Binding SelectedCharge}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                 ItemsSource="{Binding Charges}" Foreground="Black" Padding="5" Margin="5" SelectedItemsList="{Binding TestSelected}"
-                CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column" >
+                CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="All" >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding ShowChargeDetails}" />
