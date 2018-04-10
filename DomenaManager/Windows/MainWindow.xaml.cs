@@ -120,6 +120,10 @@ namespace DomenaManager.Windows
                     CurrentPage = new Pages.ChargesPage();
                     OnPropertyChanged("CurrentPage");
                     return;
+                case "Invoices":
+                    CurrentPage = new Pages.InvoicesPage();
+                    OnPropertyChanged("CurrentPage");
+                    return;
             }
         }
 

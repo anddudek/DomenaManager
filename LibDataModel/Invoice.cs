@@ -7,14 +7,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibDataModel
 {
-    public class Payment
+    public class Invoice
     {
         [Key]
-        public Guid CostId { get; set; }
-        public int CostCategoryId { get; set; }
-        public Guid BuildingId { get; set; }
-        public int CostDistributionId { get; set; }
-        public DateTime PaymentTime { get; set; }
+        public Guid InvoiceId { get; set; }
+        public int InvoiceCategoryId { get; set; }
+        public Guid BuildingId { get; set; }        
+        public DateTime InvoiceDate { get; set; }
         public string InvoiceNumber { get; set; }
         public string ContractorName { get; set; }
         public DateTime CreatedTime { get; set; }

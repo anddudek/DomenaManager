@@ -47,7 +47,7 @@
     <Compile Include="Owner.cs" />
     <Compile Include="Apartment.cs" />
     <Compile Include="Building.cs" />
-    <Compile Include="Payment.cs" />
+    <Compile Include="Invoice.cs" />
     <Compile Include="CostCategory.cs" />
     <Compile Include="CostDistributionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

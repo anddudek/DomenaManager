@@ -54,13 +54,16 @@
                                 </MyControls:MetroButtonExpand.ExpandContent>
                         </MyControls:MetroButtonExpand>
 
-                        <MyControls:MetroButton Grid.Column="4" Command="{Binding SwitchPageCommand}" CommandParameter="Letters"
+                            <MyControls:MetroButton Grid.Column="4" Command="{Binding SwitchPageCommand}" CommandParameter="Invoices"
+                            Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="CashMultiple" MDTText="Faktury" Foreground="White"/>
+
+                            <MyControls:MetroButton Grid.Column="5" Command="{Binding SwitchPageCommand}" CommandParameter="Letters"
                             Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="BookOpenPageVariant" MDTText="Pisma" Foreground="White"/>
                         
-                        <MyControls:MetroButton Grid.Column="5" Command="{Binding SwitchPageCommand}" CommandParameter="Owners"
+                        <MyControls:MetroButton Grid.Column="6" Command="{Binding SwitchPageCommand}" CommandParameter="Owners"
                             Style="{StaticResource MetroButtonStyle}" Background="#87B04D" MDTIcon="Account" MDTText="Właściciele" Foreground="White"/>
                         
-                        <MyControls:MetroButtonExpand Grid.Column="6" Style="{StaticResource MetroButtonExpandStyle}" Background="#87B04D" MDTIcon="Settings" MDTText="Konfiguracja" Foreground="White">
+                        <MyControls:MetroButtonExpand Grid.Column="7" Style="{StaticResource MetroButtonExpandStyle}" Background="#87B04D" MDTIcon="Settings" MDTText="Konfiguracja" Foreground="White">
                             <MyControls:MetroButtonExpand.ExpandContent>
                                 <StackPanel>
                                     <Button Content="Kategorie naliczeń" Command="{Binding Path=EditCostCategoriesCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}"/>
