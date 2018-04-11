@@ -34,35 +34,17 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition />
             </Grid.RowDefinitions>
             <ToggleButton
                   Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
                   ToolTip="MaterialDesignSwitchDarkToggleButton"
                   IsChecked="{Binding GroupByBuilding}" />
             <Label Content="Grupuj wg budynków" Grid.Column="1" VerticalContentAlignment="Center" />
-
-            <ToggleButton Grid.Row="1"
-                  Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
-                  ToolTip="MaterialDesignSwitchDarkToggleButton"
-                  IsChecked="{Binding GroupByApartment}" />
-            <Label Content="Grupuj wg lokali" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" />
-
-
+            
             <StackPanel Grid.Column="2" Grid.RowSpan="3" Orientation="Horizontal" Margin="40,0,0,0">
                 <ComboBox materialDesign:HintAssist.Hint="Budynek"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"  Width="140"
                   IsEditable="True" SelectedItem="{Binding SelectedBuildingName}" ItemsSource="{Binding BuildingsNames}" DisplayMemberPath="Name" Margin="15,0,15,0"
-             VerticalAlignment="Center" />
-                
-                <ComboBox materialDesign:HintAssist.Hint="Lokal"
-	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" Width="140"
-                  IsEditable="True" SelectedItem="{Binding SelectedApartmentNumber}" ItemsSource="{Binding ApartmentsNumbers}" Margin="15,0,15,0"
-             VerticalAlignment="Center" />
-
-                <ComboBox materialDesign:HintAssist.Hint="Właściciel"
-	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" Width="140"
-                  IsEditable="True" SelectedItem="{Binding SelectedOwnerName}" ItemsSource="{Binding OwnersNames}" DisplayMemberPath="OwnerName" Margin="15,0,15,0"
              VerticalAlignment="Center" />
 
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Wyczyść" Command="{Binding ClearFilterCommand}" />
@@ -72,18 +54,18 @@
         </Grid>
         <Grid Grid.Row="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddApartmentCommand}" Margin="10,0,10,0"/>
-                <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditApartmentCommand}" Margin="10,0,10,0"/>
-                <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteApartmentCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddInvoiceCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditInvoiceCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteInvoiceCommand}" Margin="10,0,10,0"/>
             </StackPanel>
         </Grid>
         <MyControls:MultipleDataGrid
-                SelectedItem="{Binding SelectedCharge}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                ItemsSource="{Binding Charges}" Foreground="Black" Padding="5" Margin="5" SelectedItemsList="{Binding TestSelected}"
+                SelectedItem="{Binding SelectedInvoice}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                ItemsSource="{Binding Invoices}" Foreground="Black" Padding="5" Margin="5" SelectedItemsList="{Binding SelectedInvoicesList}"
                 CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="All" >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding ShowChargeDetails}" />
+                    <i:InvokeCommandAction Command="{Binding ShowInvoiceDetails}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <DataGrid.Columns>
@@ -91,8 +73,8 @@
                 <!--<DataGridTextColumn Header="Pow. mieszkalna" Binding="{Binding Apartment.ApartmentArea}" Width="auto" FontSize="14"/>-->
                 <!--<DataGridTextColumn Header="Pow. dodatkowa" Binding="{Binding Apartment.AdditionalArea}" Width="auto" FontSize="14"/>-->
                 <DataGridTextColumn Header="Data księgowania" Binding="{Binding CreatedTime, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
-                <DataGridTextColumn Header="Kwota" Binding="{Binding Sum, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
-                <DataGridTextColumn Header="Kategoria" Binding="{Binding Category}" Width="auto" FontSize="14" />
+                <DataGridTextColumn Header="Kwota" Binding="{Binding CostAmount, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
+                <DataGridTextColumn Header="Kategoria" Binding="{Binding Category.CategoryName}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Numer faktury" Binding="{Binding InvoiceNumber}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Nazwa kontrahenta" Binding="{Binding ContractorName}" Width="auto" FontSize="14" />
             </DataGrid.Columns>
@@ -121,51 +103,12 @@
                         </Style>
                     </GroupStyle.ContainerStyle>
                 </GroupStyle>
-                <!-- Style for groups under the top level. -->
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <DockPanel >
-                                <TextBlock Text="{Binding Path=Name}" FontWeight="Bold" Foreground="Black" Margin="15,0,0,0"/>
-                            </DockPanel>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                </GroupStyle>
             </DataGrid.GroupStyle>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Foreground" Value="Black" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsClosed}" Value="True">
-                            <Setter Property="Foreground" Value="Gray" />
-                        </DataTrigger>
-                    </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
-            <!--<DataGrid.RowDetailsTemplate>
-                <DataTemplate>
-                    <ListView ItemsSource="{Binding Components}" Padding="0,0,0,0">
-                        <ListView.Resources>
-                            <Style TargetType="GridViewColumnHeader">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </Style>
-                        </ListView.Resources>
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Width="250" Header="Kategoria">
-                                    <GridViewColumn.DisplayMemberBinding>
-                                        <MultiBinding Converter="{StaticResource GuidToCategoryConverter}" >
-                                            <Binding Path="CostCategoryId"/>
-                                            <Binding Path="Categories" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
-                                        </MultiBinding>
-                                    </GridViewColumn.DisplayMemberBinding>
-                                </GridViewColumn>
-                                <GridViewColumn Header="Kwota" DisplayMemberBinding="{Binding Path=Sum, StringFormat={}{0} zł}" Width="100"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </DataTemplate>
-            </DataGrid.RowDetailsTemplate>-->
         </MyControls:MultipleDataGrid>
     </Grid>
 </UserControl>

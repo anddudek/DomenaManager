@@ -42,7 +42,9 @@
   <ItemGroup>
     <Compile Include="Charge.cs" />
     <Compile Include="ChargeComponent.cs" />
+    <Compile Include="ContractorsName.cs" />
     <Compile Include="Cost.cs" />
+    <Compile Include="InvoiceCategory.cs" />
     <Compile Include="EnumCostDistribution.cs" />
     <Compile Include="Owner.cs" />
     <Compile Include="Apartment.cs" />

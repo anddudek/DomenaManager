@@ -93,10 +93,12 @@
     <Compile Include="Helpers\Converter\BoolToStringConverter.cs" />
     <Compile Include="Helpers\Converter\NullToDateConverter.cs" />
     <Compile Include="Helpers\Converter\IntToCostDistributionConverter.cs" />
+    <Compile Include="Helpers\InvoiceCategoryCommand.cs" />
     <Compile Include="Helpers\CostCategoryCommand.cs" />
     <Compile Include="Helpers\CostCategoryEnum.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ChargeDataGrid.cs" />
+    <Compile Include="Helpers\DataGrid\InvoiceDataGrid.cs" />
     <Compile Include="Helpers\IsDateNull.cs" />
     <Compile Include="Helpers\ListView\ApartmentListView.cs" />
     <Compile Include="Helpers\CostDistributionCollectionItem.cs" />
@@ -135,8 +137,14 @@
     <Compile Include="Wizards\EditChargeWizard.xaml.cs">
       <DependentUpon>EditChargeWizard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Wizards\EditInvoiceCategories.xaml.cs">
+      <DependentUpon>EditInvoiceCategories.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\EditCostCategories.xaml.cs">
       <DependentUpon>EditCostCategories.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditInvoiceWizard.xaml.cs">
+      <DependentUpon>EditInvoiceWizard.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\EditOwnerWizard.xaml.cs">
       <DependentUpon>EditOwnerWizard.xaml</DependentUpon>
@@ -200,7 +208,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Wizards\EditInvoiceCategories.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Wizards\EditCostCategories.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizards\EditInvoiceWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

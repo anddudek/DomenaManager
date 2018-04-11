@@ -54,6 +54,14 @@ namespace DomenaManager.Windows
             }
         }
 
+        public ICommand EditInvoiceCategoriesCommand
+        {
+            get
+            {
+                return new RelayCommand(EditInvoiceCategories, CanEditInvoiceCategories);
+            }
+        }
+
         public MainWindow()
         {
             DataContext = this;
@@ -94,6 +102,8 @@ namespace DomenaManager.Windows
                 //db.Owners.Add(new LibDataModel.Owner { OwnerId = Guid.NewGuid(), IsDeleted = false, MailAddress = "ul. Krzaczasta 5, /r/n 30-389 Kraków", OwnerName="Dominik Biegański" });
                 
                 //db.Apartments.Add(new LibDataModel.Apartment { ApartmentId=Guid.NewGuid(), AdditionalArea = 15, ApartmentArea=45, ApartmentNumber = 7, CreatedDate = DateTime.Today, HasWaterMeter=false, IsDeleted= false, OwnerId = Guid.Parse("2FE5BADA-1FF5-4F01-81B5-F4A7470B5DDC"), BuildingId=Guid.Parse("CDBBEEDB-EC2F-49E1-9B74-71AAB9ED2102")  });
+                //db.Invoices.Add(new LibDataModel.Invoice() { BuildingId = db.Buildings.FirstOrDefault().BuildingId, ContractorName = "Wodnik", CostAmount = 100, CreatedTime = DateTime.Today, InvoiceCategoryId = Guid.NewGuid(), InvoiceDate = DateTime.Today.AddDays(-1), InvoiceId = Guid.NewGuid(), InvoiceNumber = "ASB01/2018" });
+                
                 //db.SaveChanges();
             }
         }
@@ -141,7 +151,7 @@ namespace DomenaManager.Windows
         {
             Wizards.EditCostCategories ecc;            
             ecc = new Wizards.EditCostCategories();
-            var result = await DialogHost.Show(ecc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            var result = await DialogHost.Show(ecc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingCostCategoriesEventHandler);
         }
 
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
@@ -149,7 +159,7 @@ namespace DomenaManager.Windows
 
         }
 
-        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        private async void ExtendedClosingCostCategoriesEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
 
             if ((bool)eventArgs.Parameter)
@@ -187,7 +197,62 @@ namespace DomenaManager.Windows
                 if (!ynResult)
                 {
                     var dc = (eventArgs.Session.Content as Wizards.EditCostCategories);
-                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingCostCategoriesEventHandler);
+                }
+            }
+        }
+
+        private bool CanEditInvoiceCategories()
+        {
+            return true;
+        }
+
+        private async void EditInvoiceCategories(object obj)
+        {
+            Wizards.EditInvoiceCategories eic;
+            eic = new Wizards.EditInvoiceCategories();
+            var result = await DialogHost.Show(eic, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
+        }
+
+        private async void ExtendedClosingInvoiceCategoriesEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    foreach (var cmd in dc.commandBuffer)
+                    {
+                        switch (cmd.category)
+                        {
+                            default:
+                                break;
+                            case CostCategoryEnum.CostCategoryCommandEnum.Add:
+                                db.InvoiceCategories.Add(cmd.Item);
+                                db.SaveChanges();
+                                break;
+                            case CostCategoryEnum.CostCategoryCommandEnum.Remove:
+                                db.InvoiceCategories.Where(x => x.CategoryId.Equals(cmd.Item.CategoryId)).FirstOrDefault().IsDeleted = true;
+                                db.SaveChanges();
+                                break;
+                            case CostCategoryEnum.CostCategoryCommandEnum.Update:
+                                db.InvoiceCategories.Where(x => x.CategoryId.Equals(cmd.Item.CategoryId)).FirstOrDefault().CategoryName = cmd.Item.CategoryName;
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
                 }
             }
         }

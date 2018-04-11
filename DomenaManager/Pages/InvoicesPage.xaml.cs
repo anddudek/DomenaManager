@@ -31,58 +31,58 @@ namespace DomenaManager.Pages
     /// </summary>
     public partial class InvoicesPage : UserControl, INotifyPropertyChanged
     {
-        private IList _testSelected;
-        public IList TestSelected
+        private IList _selectedInvoicesList;
+        public IList SelectedInvoicesList
         {
-            get { return _testSelected; }
+            get { return _selectedInvoicesList; }
             set
             {
-                if (value != _testSelected)
+                if (value != _selectedInvoicesList)
                 {
-                    _testSelected = value;
-                    OnPropertyChanged("TestSelected");
+                    _selectedInvoicesList = value;
+                    OnPropertyChanged("SelectedInvoicesList");
                 }
             }
         }
 
-        public ObservableCollection<CostCategory> Categories { get; set; }
+        public ObservableCollection<InvoiceCategory> Categories { get; set; }
 
-        private ObservableCollection<ChargeDataGrid> _charges;
-        public ObservableCollection<ChargeDataGrid> Charges
+        private ObservableCollection<InvoiceDataGrid> _invoices;
+        public ObservableCollection<InvoiceDataGrid> Invoices
         {
-            get { return _charges; }
+            get { return _invoices; }
             set
             {
-                _charges = value;
-                OnPropertyChanged("Charges");
+                _invoices = value;
+                OnPropertyChanged("Invoices");
             }
         }
 
-        private ICollectionView _chargesCV;
-        public ICollectionView ChargesCV
+        private ICollectionView _invoicesCV;
+        public ICollectionView InvoicesCV
         {
             get
             {
-                return _chargesCV;
+                return _invoicesCV;
             }
             set
             {
-                if (value != _chargesCV)
+                if (value != _invoicesCV)
                 {
-                    _chargesCV = value;
-                    OnPropertyChanged("ChargesCV");
+                    _invoicesCV = value;
+                    OnPropertyChanged("InvoicesCV");
                 }
             }
         }
 
-        private ChargeDataGrid _selectedCharge;
-        public ChargeDataGrid SelectedCharge
+        private InvoiceDataGrid _selectedInvoice;
+        public InvoiceDataGrid SelectedInvoice
         {
-            get { return _selectedCharge; }
+            get { return _selectedInvoice; }
             set
             {
-                _selectedCharge = value;
-                OnPropertyChanged("SelectedCharge");                
+                _selectedInvoice = value;
+                OnPropertyChanged("SelectedInvoice");                
             }
         }
 
@@ -92,78 +92,59 @@ namespace DomenaManager.Pages
             get { return _groupByBuilding; }
             set
             { 
-                if (value != _groupByBuilding)
-                {
-                    ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
+                
+                    ICollectionView cvInvoices = (CollectionView)CollectionViewSource.GetDefaultView(Invoices);
                     if (value)
                     {
-                        cvCharges.GroupDescriptions.Add(new PropertyGroupDescription("Building.Name")); //nameof(Building.BUildingName)
+                        cvInvoices.GroupDescriptions.Add(new PropertyGroupDescription("Building.Name")); 
                     }
                     else
                     {
-                        cvCharges.GroupDescriptions.Remove(cvCharges.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "Building.Name").FirstOrDefault());
+                        cvInvoices.GroupDescriptions.Remove(cvInvoices.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "Building.Name").FirstOrDefault());
                     }
                     _groupByBuilding = value;
                     OnPropertyChanged("GroupByBuilding");
-                }
+                
             }
         }
 
-        private bool _groupByApartment;
-        public bool GroupByApartment
+        public ICommand DeleteInvoiceCommand
         {
-            get { return _groupByApartment; }
-            set
-            {
-                if (value != _groupByApartment)
-                {
-                    ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
-                    if (value)
-                    {
-                        cvCharges.GroupDescriptions.Add(new PropertyGroupDescription("Apartment.ApartmentNumber"));
-                    }
-                    else
-                    {
-                        cvCharges.GroupDescriptions.Remove(cvCharges.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "Apartment.ApartmentNumber").FirstOrDefault());
-                    }
-                    _groupByApartment = value;
-                    OnPropertyChanged("GroupByApartment");
-                }
-            }
+            get { return new Helpers.RelayCommand(Delete, CanDelete);}
         }
 
-        private bool _showClosed;
-        public bool ShowClosed
+        private bool CanDelete()
         {
-            get { return _showClosed; }
-            set
-            {
-                if (value != _showClosed)
-                {
-                    _showClosed = value;
-                    ChargesCV.Refresh();
-                    OnPropertyChanged("ShowClosed");
-                }
-            }
+            return SelectedInvoice != null;
         }
 
-        public ICommand EditApartmentCommand
+        private void Delete(object param)
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                db.Invoices.Where(x => x.InvoiceId.Equals(SelectedInvoice.InvoiceId)).FirstOrDefault().IsDeleted = true;
+                db.SaveChanges();
+            }
+            InitializeCollection();
+        } 
+
+        public ICommand EditInvoiceCommand
         {
             get { return new Helpers.RelayCommand(Edit, CanEdit); }
         }
 
         private bool CanEdit()
         {
-            return true;
+            return SelectedInvoice != null;
         }
 
-        private void Edit(object param)
+        private async void Edit(object param)
         {
-            var a = SelectedCharge;
-            var b = TestSelected;
+            var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
+            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
         }
 
-        public ICommand AddApartmentCommand
+        public ICommand AddInvoiceCommand
         {
             get { return new Helpers.RelayCommand(Add, CanAdd); }
         }
@@ -173,44 +154,13 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private void Add(object param)
+        private async void Add(object param)
         {
-            Charges = new ObservableCollection<ChargeDataGrid>();
-            using (var db = new DB.DomenaDBContext())
-            {
-                var q = db.Buildings.Include(b => b.CostCollection);
-                foreach (var a in db.Apartments.Where(x => q.Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count>0 ))
-                {
-                    var c = new Charge() { ApartmentId = a.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, CreatedTime = DateTime.Today };
-                    c.Components = new List<ChargeComponent>();
-                    foreach (var costCollection in db.Buildings.Include(b=>b.CostCollection).Where(x => x.BuildingId.Equals(a.BuildingId)).FirstOrDefault().CostCollection)
-                    {
-                        var cc = new ChargeComponent() {ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.CostCategoryId, CostDistribution = costCollection.CostDistribution, CostPerUnit = costCollection.CostPerUnit };
-                        double units;
-                        switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
-                        {
-                            case EnumCostDistribution.CostDistribution.PerApartment:
-                                units = 1;
-                                break;
-                            case EnumCostDistribution.CostDistribution.PerMeasurement:
-                                units = a.AdditionalArea + a.ApartmentArea;
-                                break;
-                            default:
-                                units = 0;
-                                break;
-                        }
-                        cc.Sum = units * cc.CostPerUnit;
-                        c.Components.Add(cc);
-                        db.Charges.Add(c);
-                        var cdg = new ChargeDataGrid(c);
-                        Charges.Add(cdg);
-                    }    
-                }
-                db.SaveChanges();
-            }
+            var eiw = new Wizards.EditInvoiceWizard();
+            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
         }
 
-        public ICommand ShowChargeDetails
+        public ICommand ShowInvoiceDetails
         {
             get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
         }
@@ -222,35 +172,8 @@ namespace DomenaManager.Pages
 
         private async void ShowDetails(object param)
         {
-            Wizards.EditChargeWizard ecw;
-            
-                ecw = new Wizards.EditChargeWizard(SelectedCharge);
-            
-
-            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-        }
-
-        private ObservableCollection<Owner> _ownersNames;
-        public ObservableCollection<Owner> OwnersNames
-        {
-            get { return _ownersNames; }
-            set
-            {
-                _ownersNames = value;
-                OnPropertyChanged("OwnersNames");
-            }
-        }
-
-        private Owner _selectedOwnerName;
-        public Owner SelectedOwnerName
-        {
-            get { return _selectedOwnerName; }
-            set
-            {
-                _selectedOwnerName = value;
-                OnPropertyChanged("SelectedOwnerName");
-                ChargesCV.Refresh();
-            }
+            var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
+            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
         }
 
         private ObservableCollection<Building> _buildingsNames;
@@ -271,10 +194,8 @@ namespace DomenaManager.Pages
             set
             {
                 _selectedBuildingName = value;
-                InitializeApartmentsNumbers();
-                OnPropertyChanged("ApartmentsNumbers");
                 OnPropertyChanged("SelectedBuildingName");
-                ChargesCV.Refresh();
+                InvoicesCV.Refresh();
             }
         }
 
@@ -288,21 +209,6 @@ namespace DomenaManager.Pages
                 {
                     _apartmentsNumbers = value;
                     OnPropertyChanged("ApartmentsNumbers");
-                }
-            }
-        }
-
-        private int? _selectedApartmentNumber;
-        public int? SelectedApartmentNumber
-        {
-            get { return _selectedApartmentNumber; }
-            set
-            {
-                if (value != _selectedApartmentNumber)
-                {
-                    _selectedApartmentNumber = value;
-                    OnPropertyChanged("SelectedApartmentNumber");
-                    ChargesCV.Refresh();
                 }
             }
         }
@@ -321,30 +227,29 @@ namespace DomenaManager.Pages
             InitializeCollection();
             InitializeCategories();
             InitializeLists();
-            InitializeApartmentsNumbers();
-            TestSelected = new List<ChargeDataGrid>();
+            SelectedInvoicesList = new List<InvoiceDataGrid>();
             InitializeComponent();
             GroupByBuilding = true;
         }
 
         private void InitializeCollection()
         {
-            Charges = new ObservableCollection<ChargeDataGrid>();
+            Invoices = new ObservableCollection<InvoiceDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                var qa = db.Charges.Include(c => c.Components).Where(x => x.IsClosed).FirstOrDefault();
-                var q = db.Charges.Include(x => x.Components);
-                foreach (var ch in q)
+                var q = db.Invoices.Where(x => x.IsDeleted == false);
+                foreach (var inv in q)
                 {
-                    var cdg = new ChargeDataGrid(ch);
-                    Charges.Add(cdg); 
+                    var idg = new InvoiceDataGrid(inv);
+                    Invoices.Add(idg); 
                 }
             }
             
-            ChargesCV = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
-            ChargesCV.SortDescriptions.Add(new SortDescription("CreatedTime", ListSortDirection.Ascending)); 
-            ChargesCV.Filter = FilterCollection;
+            InvoicesCV = (CollectionView)CollectionViewSource.GetDefaultView(Invoices);
+            InvoicesCV.SortDescriptions.Add(new SortDescription("CreatedTime", ListSortDirection.Ascending));
+            InvoicesCV.Filter = FilterCollection;
 
+            GroupByBuilding = GroupByBuilding;
         }
 
         private void InitializeLists()
@@ -352,7 +257,6 @@ namespace DomenaManager.Pages
             using (var db = new DB.DomenaDBContext())
             {
                 _buildingsNames = new ObservableCollection<Building>(db.Buildings.ToList());
-                _ownersNames = new ObservableCollection<Owner>(db.Owners.ToList());
             }
         }
 
@@ -360,28 +264,14 @@ namespace DomenaManager.Pages
         {            
             using (var db = new DB.DomenaDBContext())
             {
-                Categories = new ObservableCollection<CostCategory>(db.CostCategories.ToList());
+                Categories = new ObservableCollection<InvoiceCategory>(db.InvoiceCategories.ToList());
             }
-        }
-
-        private void InitializeApartmentsNumbers()
-        {            
-            if (Charges != null && SelectedBuildingName != null)
-            {
-                var a = SelectedBuildingName.BuildingId;
-                var b = Charges.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).ToList();
-                var c = b.Select(x => x.Apartment.ApartmentNumber).ToList();
-                var d = c.Distinct().ToList();
-                ApartmentsNumbers = new ObservableCollection<int>(Charges.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).Select(x => x.Apartment.ApartmentNumber).Distinct().OrderBy(x => x).ToList());
-            }            
         }
 
         private void ClearFilter(object param)
         {
-            SelectedOwnerName = null;
             SelectedBuildingName = null;
-            SelectedApartmentNumber = null;
-            ChargesCV.Refresh();
+            InvoicesCV.Refresh();
         }
 
         private bool CanClearFilter()
@@ -391,20 +281,8 @@ namespace DomenaManager.Pages
 
         private bool FilterCollection(object item)
         {
-            var cdg = item as ChargeDataGrid;
-            if (SelectedBuildingName != null && !cdg.Building.BuildingId.Equals(SelectedBuildingName.BuildingId))
-            {
-                return false;
-            }
-            if (SelectedApartmentNumber != null && !cdg.Apartment.ApartmentNumber.Equals(SelectedApartmentNumber))
-            {
-                return false;
-            }
-            if (SelectedOwnerName != null && !cdg.Owner.OwnerId.Equals(SelectedOwnerName.OwnerId))
-            {
-                return false;
-            }
-            if (!ShowClosed && cdg.IsClosed)
+            var idg = item as InvoiceDataGrid;
+            if (SelectedBuildingName != null && !idg.Building.BuildingId.Equals(SelectedBuildingName.BuildingId))
             {
                 return false;
             }
@@ -430,6 +308,83 @@ namespace DomenaManager.Pages
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
         {
 
+        }
+
+        private void ExtendedEIWOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+        {
+
+        }
+
+        private async void ExtendedEIWClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditInvoiceWizard);
+                //Accept
+                if (dc._lic == null)
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingName.Name) || string.IsNullOrEmpty(dc.SelectedCategoryName.CategoryName)))
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Add new invoice
+                    var newInvoice = new LibDataModel.Invoice { BuildingId = dc.SelectedBuildingName.BuildingId, ContractorName = dc.SelectedContractorsValue, CostAmount = double.Parse(dc.CostAmount), CreatedTime = DateTime.Now, InvoiceCategoryId = dc.SelectedCategoryName.CategoryId, InvoiceDate = dc.InvoiceDate.Date, InvoiceId = Guid.NewGuid(), InvoiceNumber = dc.InvoiceNumber, IsDeleted = false };
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        db.Invoices.Add(newInvoice);
+
+                        if (!db.InvoiceContractors.Any(x => x.Name.Equals(dc.SelectedContractorsValue)))
+                        {
+                            db.InvoiceContractors.Add(new ContractorsName() { Name = dc.SelectedContractorsValue });
+                        }
+
+                        db.SaveChanges();
+                    }
+                    InitializeCollection();
+                }
+                else
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingName.Name) || string.IsNullOrEmpty(dc.SelectedCategoryName.CategoryName)))
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Edit Invoice
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        var q = db.Invoices.Where(x => x.InvoiceId.Equals(dc._lic.InvoiceId)).FirstOrDefault();
+                        q.BuildingId = dc.SelectedBuildingName.BuildingId;
+                        q.ContractorName = dc.SelectedContractorsValue;
+                        q.CostAmount = double.Parse(dc.CostAmount);
+                        q.CreatedTime = DateTime.Now;
+                        q.InvoiceCategoryId = dc.SelectedCategoryName.CategoryId;
+                        q.InvoiceDate = dc.InvoiceDate.Date;
+                        q.InvoiceNumber = dc.InvoiceNumber;
+
+                        if (!db.InvoiceContractors.Any(x => x.Name.Equals(dc.SelectedContractorsValue)))
+                        {
+                            db.InvoiceContractors.Add(new ContractorsName() { Name = dc.SelectedContractorsValue });
+                        }
+                        
+                        db.SaveChanges();
+                    }
+                    InitializeCollection();
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    //eventArgs.Cancel();
+                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceWizard);
+                    var result = await DialogHost.Show(dc, "HelperDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
+                }
+            }
+             
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
