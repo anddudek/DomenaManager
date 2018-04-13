@@ -53,8 +53,8 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private ObservableCollection<CostCategory> _categoryCollection;
-        public ObservableCollection<CostCategory> CategoryCollection
+        private ObservableCollection<BuildingChargeBasisCategory> _categoryCollection;
+        public ObservableCollection<BuildingChargeBasisCategory> CategoryCollection
         {
             get { return _categoryCollection; }
             set
@@ -67,8 +67,8 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private CostCategory _selectedCostCategory;
-        public CostCategory SelectedCostCategory
+        private BuildingChargeBasisCategory _selectedCostCategory;
+        public BuildingChargeBasisCategory SelectedCostCategory
         {
             get { return _selectedCostCategory; }
             set
@@ -106,7 +106,7 @@ namespace DomenaManager.Wizards
             commandBuffer = new List<Helpers.CostCategoryCommand>();
             using (var db = new DB.DomenaDBContext())
             {
-                CategoryCollection = new ObservableCollection<CostCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
+                CategoryCollection = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
             }
         }
 
@@ -117,7 +117,7 @@ namespace DomenaManager.Wizards
                 LabelError = "Błędna nazwa";
                 return;
             }
-            var cc = new CostCategory { CategoryName = CategoryName, CostCategoryId = Guid.NewGuid(), IsDeleted = false };
+            var cc = new BuildingChargeBasisCategory { CategoryName = CategoryName, BuildingChargeBasisCategoryId = Guid.NewGuid(), IsDeleted = false };
             CategoryCollection.Add(cc);
 
             commandBuffer.Add(new Helpers.CostCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add, costItem = cc });

@@ -7,11 +7,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibDataModel
 {
-    public class CostDistributionTyp2e
+    public class BuildingChargeBasisDistributionType
     {
         [Key]
-        public Guid CostDistributionId { get; set; }
-        public string CostDistributionName { get; set; }
+        public Guid BuildingChargeBasisDistributionId { get; set; }
+        public string BuildingChargeBasisDistributionName { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

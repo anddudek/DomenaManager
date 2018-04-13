@@ -30,7 +30,7 @@ namespace LibDataModel
             RoadName = null;
             BuildingNumber = null;
             IsDeleted = false;
-            CostCollection = new List<Cost>();
+            CostCollection = new List<BuildingChargeBasis>();
         }
 
         public string GetAddress()
@@ -46,6 +46,6 @@ namespace LibDataModel
         public string RoadName { get; set; }
         public string BuildingNumber { get; set; }
         public bool IsDeleted { get; set; }
-        public List<Cost> CostCollection { get; set; }
+        public List<BuildingChargeBasis> CostCollection { get; set; }
     }
 }

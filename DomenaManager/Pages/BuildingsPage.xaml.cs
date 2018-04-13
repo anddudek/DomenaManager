@@ -166,11 +166,11 @@ namespace DomenaManager.Pages
                     using (var db = new DB.DomenaDBContext())
                     {
                         var newBuilding = new LibDataModel.Building { BuildingId = Guid.NewGuid(), Name = dc.BuildingName, City = dc.BuildingCity, ZipCode = dc.BuildingZipCode, BuildingNumber = dc.BuildingRoadNumber, RoadName = dc.BuildingRoadName, IsDeleted = false };
-                        List<LibDataModel.Cost> costs = new List<LibDataModel.Cost>();
+                        List<LibDataModel.BuildingChargeBasis> costs = new List<LibDataModel.BuildingChargeBasis>();
                         foreach (var c in dc.CostCollection)
                         {
-                            var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().CostCategoryId;
-                            var cost = new LibDataModel.Cost { CostId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, CostDistribution = c.CostUnit.EnumValue, CostCategoryId=catId };
+                            var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
+                            var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId=catId };
                             costs.Add(cost);
                         }
                         newBuilding.CostCollection = costs;
@@ -197,11 +197,11 @@ namespace DomenaManager.Pages
                         q.ZipCode = dc.BuildingZipCode;
                         //q.CostCollection.RemoveAll(x => true);
                         
-                        List<LibDataModel.Cost> costs = new List<LibDataModel.Cost>();
+                        List<LibDataModel.BuildingChargeBasis> costs = new List<LibDataModel.BuildingChargeBasis>();
                         foreach (var c in dc.CostCollection)
                         {
-                            var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().CostCategoryId;
-                            var cost = new LibDataModel.Cost { CostId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, CostDistribution = c.CostUnit.EnumValue, CostCategoryId = catId };
+                            var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
+                            var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId };
                             costs.Add(cost);
                         }
                         q.CostCollection = costs;

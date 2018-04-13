@@ -13,7 +13,7 @@ namespace DomenaManager.Helpers
         {
             try
             {
-                return ((IEnumerable<LibDataModel.CostCategory>)values[1]).Where(x => x.CostCategoryId.Equals((Guid)values[0])).FirstOrDefault().CategoryName;                
+                return ((IEnumerable<LibDataModel.BuildingChargeBasisCategory>)values[1]).Where(x => x.BuildingChargeBasisCategoryId.Equals((Guid)values[0])).FirstOrDefault().CategoryName;                
             }
             catch
             {

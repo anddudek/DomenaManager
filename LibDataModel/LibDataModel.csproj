@@ -43,15 +43,16 @@
     <Compile Include="Charge.cs" />
     <Compile Include="ChargeComponent.cs" />
     <Compile Include="ContractorsName.cs" />
-    <Compile Include="Cost.cs" />
+    <Compile Include="BuildingChargeBasis.cs" />
     <Compile Include="InvoiceCategory.cs" />
     <Compile Include="EnumCostDistribution.cs" />
     <Compile Include="Owner.cs" />
     <Compile Include="Apartment.cs" />
     <Compile Include="Building.cs" />
     <Compile Include="Invoice.cs" />
-    <Compile Include="CostCategory.cs" />
-    <Compile Include="CostDistributionType.cs" />
+    <Compile Include="BuildingChargeBasisCategory.cs" />
+    <Compile Include="BuildingChargeBasisDistributionType.cs" />
+    <Compile Include="Payment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

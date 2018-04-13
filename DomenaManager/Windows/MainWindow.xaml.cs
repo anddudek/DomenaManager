@@ -179,11 +179,11 @@ namespace DomenaManager.Windows
                                 db.SaveChanges();
                                 break;
                             case CostCategoryEnum.CostCategoryCommandEnum.Remove:
-                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().IsDeleted = true;
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().IsDeleted = true;
                                 db.SaveChanges();
                                 break;
                             case CostCategoryEnum.CostCategoryCommandEnum.Update:
-                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
                                 db.SaveChanges();
                                 break;
                         }

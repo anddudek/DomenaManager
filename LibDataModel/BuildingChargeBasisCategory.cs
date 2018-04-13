@@ -8,12 +8,12 @@ using System.ComponentModel;
 
 namespace LibDataModel
 {
-    public class CostCategory : INotifyPropertyChanged
+    public class BuildingChargeBasisCategory : INotifyPropertyChanged
     {
         private string _categoryName;
 
         [Key]
-        public Guid CostCategoryId { get; set; }
+        public Guid BuildingChargeBasisCategoryId { get; set; }
         public string CategoryName
         {
             get { return _categoryName; }

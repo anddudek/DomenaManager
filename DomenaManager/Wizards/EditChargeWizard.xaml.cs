@@ -104,8 +104,8 @@ namespace DomenaManager.Wizards
 
         public string SelectedCategoryValue { get; set; }
 
-        private ObservableCollection<CostCategory> _categoriesNames;
-        public ObservableCollection<CostCategory> CategoriesNames
+        private ObservableCollection<BuildingChargeBasisCategory> _categoriesNames;
+        public ObservableCollection<BuildingChargeBasisCategory> CategoriesNames
         {
             get { return _categoriesNames; }
             set
@@ -118,8 +118,8 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private CostCategory _selectedCategoryName;
-        public CostCategory SelectedCategoryName
+        private BuildingChargeBasisCategory _selectedCategoryName;
+        public BuildingChargeBasisCategory SelectedCategoryName
         {
             get { return _selectedCategoryName; }
             set
@@ -213,7 +213,7 @@ namespace DomenaManager.Wizards
                 if (value != _selectedChargeComponent)
                 {
                     _selectedChargeComponent = value;
-                    SelectedCategoryName = CategoriesNames.Where(x => x.CostCategoryId.Equals(_selectedChargeComponent.CostCategoryId)).FirstOrDefault();
+                    SelectedCategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(_selectedChargeComponent.CostCategoryId)).FirstOrDefault();
                     SelectedUnitName = UnitsNames.Where(x => x.EnumValue.Equals(_selectedChargeComponent.CostDistribution)).FirstOrDefault();
                     UnitCost = _selectedChargeComponent.CostPerUnit.ToString();
                     ChargeSum = _selectedChargeComponent.Sum.ToString();
@@ -235,7 +235,7 @@ namespace DomenaManager.Wizards
             }
         }
 
-        public ObservableCollection<CostCategory> Categories { get; set; }
+        public ObservableCollection<BuildingChargeBasisCategory> Categories { get; set; }
 
         #endregion
 
@@ -275,7 +275,7 @@ namespace DomenaManager.Wizards
         {
             using (var db = new DB.DomenaDBContext())
             {
-                CategoriesNames = new ObservableCollection<CostCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
+                CategoriesNames = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
 
             }
         }
@@ -303,7 +303,7 @@ namespace DomenaManager.Wizards
         {
             using (var db = new DB.DomenaDBContext())
             {
-                Categories = new ObservableCollection<CostCategory>(db.CostCategories.ToList());
+                Categories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.ToList());
             }
         }
 
@@ -352,11 +352,11 @@ namespace DomenaManager.Wizards
                                 db.SaveChanges();
                                 break;
                             case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove:
-                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().IsDeleted = true;
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().IsDeleted = true;
                                 db.SaveChanges();
                                 break;
                             case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update:
-                                db.CostCategories.Where(x => x.CostCategoryId.Equals(cmd.costItem.CostCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
                                 db.SaveChanges();
                                 break;
                         }

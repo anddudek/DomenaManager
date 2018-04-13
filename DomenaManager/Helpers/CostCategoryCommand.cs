@@ -9,6 +9,6 @@ namespace DomenaManager.Helpers
     public class CostCategoryCommand
     {
         public CostCategoryEnum.CostCategoryCommandEnum category { get; set; }
-        public LibDataModel.CostCategory costItem { get; set; }
+        public LibDataModel.BuildingChargeBasisCategory costItem { get; set; }
     }
 }

@@ -18,11 +18,12 @@ namespace DomenaManager.DB
 
         public DbSet<Building> Buildings { get; set; }
         public DbSet<Owner> Owners { get; set; }
-        public DbSet<CostCategory> CostCategories { get; set; }     
+        public DbSet<BuildingChargeBasisCategory> CostCategories { get; set; }     
         public DbSet<Apartment> Apartments { get; set; }
         public DbSet<Charge> Charges { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<InvoiceCategory> InvoiceCategories { get; set; }
         public DbSet<ContractorsName> InvoiceContractors { get; set; }
+        public DbSet<Payment> Payments { get; set; }
     }
 }

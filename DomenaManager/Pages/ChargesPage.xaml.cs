@@ -45,7 +45,7 @@ namespace DomenaManager.Pages
             }
         }
 
-        public ObservableCollection<CostCategory> Categories { get; set; }
+        public ObservableCollection<BuildingChargeBasisCategory> Categories { get; set; }
 
         private ObservableCollection<ChargeDataGrid> _charges;
         public ObservableCollection<ChargeDataGrid> Charges
@@ -185,7 +185,7 @@ namespace DomenaManager.Pages
                     c.Components = new List<ChargeComponent>();
                     foreach (var costCollection in db.Buildings.Include(b=>b.CostCollection).Where(x => x.BuildingId.Equals(a.BuildingId)).FirstOrDefault().CostCollection)
                     {
-                        var cc = new ChargeComponent() {ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.CostCategoryId, CostDistribution = costCollection.CostDistribution, CostPerUnit = costCollection.CostPerUnit };
+                        var cc = new ChargeComponent() {ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit };
                         double units;
                         switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
                         {
@@ -360,7 +360,7 @@ namespace DomenaManager.Pages
         {            
             using (var db = new DB.DomenaDBContext())
             {
-                Categories = new ObservableCollection<CostCategory>(db.CostCategories.ToList());
+                Categories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.ToList());
             }
         }
 
