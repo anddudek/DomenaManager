@@ -14,5 +14,6 @@ namespace LibDataModel
         public Guid ApartmentId { get; set; }
         public double PaymentAmount { get; set; }
         public DateTime PaymentRegistrationDate { get; set; }
+        public DateTime PaymentAddDate { get; set; }
     }
 }

@@ -10,7 +10,7 @@
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="300">
-    <Grid Background="White">
+    <Grid Background="White" Width="300">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />

@@ -93,6 +93,7 @@
     <Compile Include="Helpers\Converter\BoolToStringConverter.cs" />
     <Compile Include="Helpers\Converter\NullToDateConverter.cs" />
     <Compile Include="Helpers\Converter\IntToCostDistributionConverter.cs" />
+    <Compile Include="Helpers\DataGrid\PaymentDataGrid.cs" />
     <Compile Include="Helpers\InvoiceCategoryCommand.cs" />
     <Compile Include="Helpers\CostCategoryCommand.cs" />
     <Compile Include="Helpers\CostCategoryEnum.cs" />
@@ -115,6 +116,9 @@
     <Compile Include="Helpers\Converter\SumConverter.cs" />
     <Compile Include="Helpers\ValidationRule\Validator.cs" />
     <Compile Include="Dialogs\YNMsg.cs" />
+    <Compile Include="Pages\PaymentsPage.xaml.cs">
+      <DependentUpon>PaymentsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\InvoicesPage.xaml.cs">
       <DependentUpon>InvoicesPage.xaml</DependentUpon>
     </Compile>
@@ -149,9 +153,16 @@
     <Compile Include="Wizards\EditOwnerWizard.xaml.cs">
       <DependentUpon>EditOwnerWizard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Wizards\EditPaymentWizard.xaml.cs">
+      <DependentUpon>EditPaymentWizard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\YNMsgBox.xaml.cs">
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="Pages\PaymentsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\InvoicesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -221,6 +232,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Wizards\EditOwnerWizard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizards\EditPaymentWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

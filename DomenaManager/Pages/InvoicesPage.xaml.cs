@@ -140,8 +140,11 @@ namespace DomenaManager.Pages
 
         private async void Edit(object param)
         {
-            var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
-            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
+            if (SelectedInvoice != null)
+            {
+                var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
+                var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
+            }
         }
 
         public ICommand AddInvoiceCommand
@@ -167,7 +170,7 @@ namespace DomenaManager.Pages
 
         private bool CanShowDetails()
         {
-            return true;
+            return SelectedInvoice != null;
         }
 
         private async void ShowDetails(object param)

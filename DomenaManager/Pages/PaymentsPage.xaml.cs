@@ -29,60 +29,58 @@ namespace DomenaManager.Pages
     /// <summary>
     /// Interaction logic for OwnersPage.xaml
     /// </summary>
-    public partial class ChargesPage : UserControl, INotifyPropertyChanged
+    public partial class PaymentsPage : UserControl, INotifyPropertyChanged
     {
-        private IList _testSelected;
-        public IList TestSelected
+        private IList _selectedPayments;
+        public IList SelectedPayments
         {
-            get { return _testSelected; }
+            get { return _selectedPayments; }
             set
             {
-                if (value != _testSelected)
+                if (value != _selectedPayments)
                 {
-                    _testSelected = value;
-                    OnPropertyChanged("TestSelected");
+                    _selectedPayments = value;
+                    OnPropertyChanged("SelectedPayments");
                 }
             }
         }
-
-        public ObservableCollection<BuildingChargeBasisCategory> Categories { get; set; }
-
-        private ObservableCollection<ChargeDataGrid> _charges;
-        public ObservableCollection<ChargeDataGrid> Charges
+       
+        private ObservableCollection<PaymentDataGrid> _payments;
+        public ObservableCollection<PaymentDataGrid> Payments
         {
-            get { return _charges; }
+            get { return _payments; }
             set
             {
-                _charges = value;
-                OnPropertyChanged("Charges");
+                _payments = value;
+                OnPropertyChanged("Payments");
             }
         }
 
-        private ICollectionView _chargesCV;
-        public ICollectionView ChargesCV
+        private ICollectionView _paymentsCV;
+        public ICollectionView PaymentsCV
         {
             get
             {
-                return _chargesCV;
+                return _paymentsCV;
             }
             set
             {
-                if (value != _chargesCV)
+                if (value != _paymentsCV)
                 {
-                    _chargesCV = value;
-                    OnPropertyChanged("ChargesCV");
+                    _paymentsCV = value;
+                    OnPropertyChanged("PaymentsCV");
                 }
             }
         }
 
-        private ChargeDataGrid _selectedCharge;
-        public ChargeDataGrid SelectedCharge
+        private PaymentDataGrid _selectedPayment;
+        public PaymentDataGrid SelectedPayment
         {
-            get { return _selectedCharge; }
+            get { return _selectedPayment; }
             set
             {
-                _selectedCharge = value;
-                OnPropertyChanged("SelectedCharge");                
+                _selectedPayment = value;
+                OnPropertyChanged("SelectedPayment");                
             }
         }
 
@@ -94,7 +92,7 @@ namespace DomenaManager.Pages
             { 
                 if (value != _groupByBuilding)
                 {
-                    ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
+                    ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Payments);
                     if (value)
                     {
                         cvCharges.GroupDescriptions.Add(new PropertyGroupDescription("Building.Name")); //nameof(Building.BUildingName)
@@ -117,7 +115,7 @@ namespace DomenaManager.Pages
             {
                 if (value != _groupByApartment)
                 {
-                    ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
+                    ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Payments);
                     if (value)
                     {
                         cvCharges.GroupDescriptions.Add(new PropertyGroupDescription("Apartment.ApartmentNumber"));
@@ -132,22 +130,7 @@ namespace DomenaManager.Pages
             }
         }
 
-        private bool _showClosed;
-        public bool ShowClosed
-        {
-            get { return _showClosed; }
-            set
-            {
-                if (value != _showClosed)
-                {
-                    _showClosed = value;
-                    ChargesCV.Refresh();
-                    OnPropertyChanged("ShowClosed");
-                }
-            }
-        }
-
-        public ICommand EditApartmentCommand
+        public ICommand EditPaymentCommand
         {
             get { return new Helpers.RelayCommand(Edit, CanEdit); }
         }
@@ -157,13 +140,14 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private void Edit(object param)
+        private async void Edit(object param)
         {
-            var a = SelectedCharge;
-            var b = TestSelected;
+            Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard();
+
+            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
-        public ICommand AddApartmentCommand
+        public ICommand AddPaymentCommand
         {
             get { return new Helpers.RelayCommand(Add, CanAdd); }
         }
@@ -175,47 +159,14 @@ namespace DomenaManager.Pages
 
         private void Add(object param)
         {
-            Charges = new ObservableCollection<ChargeDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                var q = db.Buildings.Include(b => b.CostCollection);
-                foreach (var a in db.Apartments.Where(x => q.Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count>0 ))
-                {
-                    var c = new Charge() { ApartmentId = a.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, CreatedTime = DateTime.Today };
-                    c.Components = new List<ChargeComponent>();
-                    foreach (var costCollection in db.Buildings.Include(b=>b.CostCollection).Where(x => x.BuildingId.Equals(a.BuildingId)).FirstOrDefault().CostCollection)
-                    {
-                        if (costCollection.BegginingDate < DateTime.Today || costCollection.EndingDate > DateTime.Today)
-                        {
-                            continue;
-                        }
-                        var cc = new ChargeComponent() {ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit };
-                        double units;
-                        switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
-                        {
-                            case EnumCostDistribution.CostDistribution.PerApartment:
-                                units = 1;
-                                break;
-                            case EnumCostDistribution.CostDistribution.PerMeasurement:
-                                units = a.AdditionalArea + a.ApartmentArea;
-                                break;
-                            default:
-                                units = 0;
-                                break;
-                        }
-                        cc.Sum = units * cc.CostPerUnit;
-                        c.Components.Add(cc);
-                        db.Charges.Add(c);
-                        var cdg = new ChargeDataGrid(c);
-                        //Charges.Add(cdg);
-                    }    
-                }
+                db.Payments.Add(new Payment() { ApartmentId = db.Apartments.FirstOrDefault().ApartmentId, PaymentAddDate = DateTime.Today, PaymentAmount = 100, PaymentId = Guid.NewGuid(), PaymentRegistrationDate = DateTime.Today.AddMonths(-1) });
                 db.SaveChanges();
             }
-            InitializeCollection();
         }
 
-        public ICommand ShowChargeDetails
+        public ICommand ShowPaymentDetails
         {
             get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
         }
@@ -227,12 +178,12 @@ namespace DomenaManager.Pages
 
         private async void ShowDetails(object param)
         {
-            Wizards.EditChargeWizard ecw;
+            //Wizards.EditChargeWizard ecw;
             
-                ecw = new Wizards.EditChargeWizard(SelectedCharge);
+                //ecw = new Wizards.EditChargeWizard(SelectedCharge);
             
 
-            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            //var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
         private ObservableCollection<Owner> _ownersNames;
@@ -254,7 +205,7 @@ namespace DomenaManager.Pages
             {
                 _selectedOwnerName = value;
                 OnPropertyChanged("SelectedOwnerName");
-                ChargesCV.Refresh();
+                PaymentsCV.Refresh();
             }
         }
 
@@ -279,7 +230,7 @@ namespace DomenaManager.Pages
                 InitializeApartmentsNumbers();
                 OnPropertyChanged("ApartmentsNumbers");
                 OnPropertyChanged("SelectedBuildingName");
-                ChargesCV.Refresh();
+                PaymentsCV.Refresh();
             }
         }
 
@@ -307,7 +258,7 @@ namespace DomenaManager.Pages
                 {
                     _selectedApartmentNumber = value;
                     OnPropertyChanged("SelectedApartmentNumber");
-                    ChargesCV.Refresh();
+                    PaymentsCV.Refresh();
                 }
             }
         }
@@ -320,35 +271,32 @@ namespace DomenaManager.Pages
             }
         }
 
-        public ChargesPage()
+        public PaymentsPage()
         {
             DataContext = this;
             InitializeCollection();
-            InitializeCategories();
             InitializeLists();
             InitializeApartmentsNumbers();
-            TestSelected = new List<ChargeDataGrid>();
+            SelectedPayments = new List<PaymentDataGrid>();
             InitializeComponent();
             GroupByBuilding = true;
         }
 
         private void InitializeCollection()
         {
-            Charges = new ObservableCollection<ChargeDataGrid>();
+            Payments = new ObservableCollection<PaymentDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                var qa = db.Charges.Include(c => c.Components).Where(x => x.IsClosed).FirstOrDefault();
-                var q = db.Charges.Include(x => x.Components);
-                foreach (var ch in q)
+                foreach (var p in db.Payments)
                 {
-                    var cdg = new ChargeDataGrid(ch);
-                    Charges.Add(cdg); 
+                    var pdg = new PaymentDataGrid(p);
+                    Payments.Add(pdg); 
                 }
             }
-            
-            ChargesCV = (CollectionView)CollectionViewSource.GetDefaultView(Charges);
-            ChargesCV.SortDescriptions.Add(new SortDescription("CreatedTime", ListSortDirection.Ascending)); 
-            ChargesCV.Filter = FilterCollection;
+
+            PaymentsCV = (CollectionView)CollectionViewSource.GetDefaultView(Payments);
+            PaymentsCV.SortDescriptions.Add(new SortDescription("PaymentRegistrationDate", ListSortDirection.Ascending));
+            PaymentsCV.Filter = FilterCollection;
 
         }
 
@@ -361,23 +309,15 @@ namespace DomenaManager.Pages
             }
         }
 
-        private void InitializeCategories()
-        {            
-            using (var db = new DB.DomenaDBContext())
-            {
-                Categories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.ToList());
-            }
-        }
-
         private void InitializeApartmentsNumbers()
         {            
-            if (Charges != null && SelectedBuildingName != null)
+            if (Payments != null && SelectedBuildingName != null)
             {
                 var a = SelectedBuildingName.BuildingId;
-                var b = Charges.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).ToList();
+                var b = Payments.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).ToList();
                 var c = b.Select(x => x.Apartment.ApartmentNumber).ToList();
                 var d = c.Distinct().ToList();
-                ApartmentsNumbers = new ObservableCollection<int>(Charges.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).Select(x => x.Apartment.ApartmentNumber).Distinct().OrderBy(x => x).ToList());
+                ApartmentsNumbers = new ObservableCollection<int>(Payments.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).Select(x => x.Apartment.ApartmentNumber).Distinct().OrderBy(x => x).ToList());
             }            
         }
 
@@ -386,7 +326,7 @@ namespace DomenaManager.Pages
             SelectedOwnerName = null;
             SelectedBuildingName = null;
             SelectedApartmentNumber = null;
-            ChargesCV.Refresh();
+            PaymentsCV.Refresh();
         }
 
         private bool CanClearFilter()
@@ -396,20 +336,16 @@ namespace DomenaManager.Pages
 
         private bool FilterCollection(object item)
         {
-            var cdg = item as ChargeDataGrid;
-            if (SelectedBuildingName != null && !cdg.Building.BuildingId.Equals(SelectedBuildingName.BuildingId))
+            var pdg = item as PaymentDataGrid;
+            if (SelectedBuildingName != null && !pdg.Building.BuildingId.Equals(SelectedBuildingName.BuildingId))
             {
                 return false;
             }
-            if (SelectedApartmentNumber != null && !cdg.Apartment.ApartmentNumber.Equals(SelectedApartmentNumber))
+            if (SelectedApartmentNumber != null && !pdg.Apartment.ApartmentNumber.Equals(SelectedApartmentNumber))
             {
                 return false;
             }
-            if (SelectedOwnerName != null && !cdg.Owner.OwnerId.Equals(SelectedOwnerName.OwnerId))
-            {
-                return false;
-            }
-            if (!ShowClosed && cdg.IsClosed)
+            if (SelectedOwnerName != null && !pdg.Owner.OwnerId.Equals(SelectedOwnerName.OwnerId))
             {
                 return false;
             }
