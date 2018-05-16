@@ -15,5 +15,6 @@ namespace LibDataModel
         public DateTime CreatedTime { get; set; }
         public bool IsClosed { get; set; }
         public List<ChargeComponent> Components { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

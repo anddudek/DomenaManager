@@ -31,16 +31,26 @@ namespace DomenaManager.Pages
     /// </summary>
     public partial class ChargesPage : UserControl, INotifyPropertyChanged
     {
-        private IList _testSelected;
-        public IList TestSelected
+        public string OpenCloseButtonText
         {
-            get { return _testSelected; }
+            get { return SelectedCharge == null || !SelectedCharge.IsClosed ? "Zamknij" : "Otwórz"; }
+        }
+
+        public PackIconKind OpenCloseButtonIcon
+        {
+            get { return SelectedCharge == null || !SelectedCharge.IsClosed ? PackIconKind.CloseCircle : PackIconKind.CheckCircle; }
+        }
+
+        private IList _selectedChargesList;
+        public IList SelectedChargesList
+        {
+            get { return _selectedChargesList; }
             set
             {
-                if (value != _testSelected)
+                if (value != _selectedChargesList)
                 {
-                    _testSelected = value;
-                    OnPropertyChanged("TestSelected");
+                    _selectedChargesList = value;
+                    OnPropertyChanged("SelectedChargesList");
                 }
             }
         }
@@ -82,7 +92,9 @@ namespace DomenaManager.Pages
             set
             {
                 _selectedCharge = value;
-                OnPropertyChanged("SelectedCharge");                
+                OnPropertyChanged("SelectedCharge");
+                OnPropertyChanged("OpenCloseButtonText");
+                OnPropertyChanged("OpenCloseButtonIcon");
             }
         }
 
@@ -147,23 +159,27 @@ namespace DomenaManager.Pages
             }
         }
 
-        public ICommand EditApartmentCommand
+        public ICommand EditChargeCommand
         {
             get { return new Helpers.RelayCommand(Edit, CanEdit); }
         }
 
         private bool CanEdit()
         {
-            return true;
+            return SelectedCharge != null && !SelectedCharge.IsClosed;
         }
 
-        private void Edit(object param)
+        private async void Edit(object param)
         {
-            var a = SelectedCharge;
-            var b = TestSelected;
+            Wizards.EditChargeWizard ecw;
+
+            ecw = new Wizards.EditChargeWizard(SelectedCharge);
+
+
+            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
-        public ICommand AddApartmentCommand
+        public ICommand AddChargeCommand
         {
             get { return new Helpers.RelayCommand(Add, CanAdd); }
         }
@@ -233,6 +249,53 @@ namespace DomenaManager.Pages
             
 
             var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+        }
+
+        public ICommand OpenCloseChargeCommand
+        {
+            get { return new Helpers.RelayCommand(OpenCloseCharge, CanOpenCloseCharge); }
+        }
+
+        private bool CanOpenCloseCharge()
+        {
+            return SelectedCharge != null;
+        }
+
+        private void OpenCloseCharge(object param)
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                foreach (var sc in (List<ChargeDataGrid>)SelectedChargesList)
+                {
+                    var charge = db.Charges.FirstOrDefault(x => x.ChargeId.Equals(sc.ChargeId));
+                    if (OpenCloseButtonText == "Otwórz")
+                    {
+                        charge.IsClosed = false;
+                    }
+                    else
+                    {
+                        charge.IsClosed = true;
+                    }
+                }
+                db.SaveChanges();
+            }
+            InitializeCollection();
+        }
+
+        public ICommand DeleteChargeCommand
+        {
+            get { return new Helpers.RelayCommand(DeleteCharge, CanDeleteCharge); }
+        }
+
+        private bool CanDeleteCharge()
+        {
+            return SelectedCharge != null && !SelectedCharge.IsClosed;
+        }
+
+        private void DeleteCharge(object param)
+        {
+            SelectedCharge.IsDeleted = true;
+            InitializeCollection();
         }
 
         private ObservableCollection<Owner> _ownersNames;
@@ -327,7 +390,7 @@ namespace DomenaManager.Pages
             InitializeCategories();
             InitializeLists();
             InitializeApartmentsNumbers();
-            TestSelected = new List<ChargeDataGrid>();
+            SelectedChargesList = new List<ChargeDataGrid>();
             InitializeComponent();
             GroupByBuilding = true;
         }
@@ -350,6 +413,15 @@ namespace DomenaManager.Pages
             ChargesCV.SortDescriptions.Add(new SortDescription("CreatedTime", ListSortDirection.Ascending)); 
             ChargesCV.Filter = FilterCollection;
 
+            if (GroupByApartment)
+            {
+                ChargesCV.GroupDescriptions.Add(new PropertyGroupDescription("Apartment.ApartmentNumber"));
+            }
+            if (GroupByBuilding)
+            {
+                ChargesCV.GroupDescriptions.Add(new PropertyGroupDescription("Building.Name"));
+            }
+            ChargesCV.Refresh();
         }
 
         private void InitializeLists()
