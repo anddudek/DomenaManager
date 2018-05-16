@@ -33,16 +33,42 @@
         </Grid.ColumnDefinitions>
         <Label Grid.ColumnSpan="2" Content="Edytuj naliczenie" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
-        <TextBox materialDesign:HintAssist.Hint="Budynek" Text="{Binding BuildingName}"
+        <!--<TextBox materialDesign:HintAssist.Hint="Budynek" Text="{Binding BuildingName}"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" IsReadOnly="True"
             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="15,0,10,0" >
-        </TextBox>
+        </TextBox>-->
 
-        <TextBox materialDesign:HintAssist.Hint="Numer lokalu" Text="{Binding ApartmentNumber}"
+        <ComboBox materialDesign:HintAssist.Hint="Budynek"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" ItemsSource="{Binding BuildingsCollection, Mode=TwoWay}" DisplayMemberPath="Name"
+            Grid.Row="1" Grid.Column="0" SelectedItem="{Binding SelectedBuilding}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="15,0,10,0" >
+            <ComboBox.Text>
+                <Binding Path="SelectedBuildingValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </ComboBox.Text>
+        </ComboBox>
+
+        <!--<TextBox materialDesign:HintAssist.Hint="Numer lokalu" Text="{Binding ApartmentNumber}"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" IsReadOnly="True"
-            Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center" Margin="10,0,105,0" Width="80">
-        </TextBox>
+            Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center" Margin="5,0,150,0" Width="70">
+        </TextBox>-->
 
+        <ComboBox materialDesign:HintAssist.Hint="Numer lokalu"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" ItemsSource="{Binding ApartmentsNumbersCollection, Mode=TwoWay}"
+            Grid.Row="1" Grid.Column="1" SelectedItem="{Binding SelectedApartmentNumber}" Width="80"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="5,0,140,0" >
+            <ComboBox.Text>
+                <Binding Path="SelectedApartmentNumberValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </ComboBox.Text>
+        </ComboBox>
+        
         <ComboBox materialDesign:HintAssist.Hint="Status"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" ItemsSource="{Binding ChargeStatusCollection, Mode=TwoWay}"

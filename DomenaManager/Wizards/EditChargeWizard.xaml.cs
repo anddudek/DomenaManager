@@ -28,21 +28,7 @@ namespace DomenaManager.Wizards
     {
         #region Bindings
 
-        private Guid ChargeId { get; set; }
-
-        private string _buildingName;
-        public string BuildingName
-        {
-            get { return _buildingName; }
-            set
-            {
-                if (value != _buildingName)
-                {
-                    _buildingName = value;
-                    OnPropertyChanged("BuildingName");
-                }
-            }
-        }
+        private Charge _charge;
 
         private int _apartmentNumber;
         public int ApartmentNumber
@@ -57,6 +43,42 @@ namespace DomenaManager.Wizards
                 }
             }
         }
+
+        private ObservableCollection<Apartment> ApartmentsCollection { get; set; }
+
+        private ObservableCollection<Owner> OwnersCollection { get; set; }
+
+        private ObservableCollection<int> _apartmentsNumbersCollection;
+        public ObservableCollection<int> ApartmentsNumbersCollection
+        {
+            get { return _apartmentsNumbersCollection;  }
+            set
+            {
+                if (value != _apartmentsNumbersCollection)
+                {
+                    _apartmentsNumbersCollection = value;
+                    OnPropertyChanged("ApartmentsNumbersCollection");
+                }
+            }
+        }
+
+        private int _selectedApartmentNumber;
+        public int SelectedApartmentNumber
+        {
+            get { return _selectedApartmentNumber; }
+            set
+            {
+                if (value != _selectedApartmentNumber)
+                {
+                    _selectedApartmentNumber = value;
+                    OnPropertyChanged("SelectedApartmentNumber");
+                    var ow = OwnersCollection.FirstOrDefault(o => o.OwnerId.Equals(ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber)).OwnerId));
+                    OwnerName = ow.OwnerName + Environment.NewLine + ow.MailAddress;
+                }
+            }
+        }
+
+        public string SelectedApartmentNumberValue { get; set; }
 
         private List<String> _chargeStatusCollection;
         public List<String> ChargeStatusCollection
@@ -103,6 +125,37 @@ namespace DomenaManager.Wizards
         }
 
         public string SelectedCategoryValue { get; set; }
+
+        private ObservableCollection<Building> _buildingsCollection;
+        public ObservableCollection<Building> BuildingsCollection
+        {
+            get { return _buildingsCollection; }
+            set
+            {
+                if (value != _buildingsCollection)
+                {
+                    _buildingsCollection = value;
+                    OnPropertyChanged("BuildingsCollection");
+                }
+            }
+        }
+
+        private Building _selectedBuilding;
+        public Building SelectedBuilding
+        {
+            get { return _selectedBuilding; }
+            set
+            {
+                if (value != _selectedBuilding)
+                {
+                    _selectedBuilding = value;
+                    OnPropertyChanged("SelectedBuilding");
+                    UpdateApartmentsNumbers();
+                }
+            }
+        }
+
+        public string SelectedBuildingValue { get; set; }
 
         private ObservableCollection<BuildingChargeBasisCategory> _categoriesNames;
         public ObservableCollection<BuildingChargeBasisCategory> CategoriesNames
@@ -245,15 +298,16 @@ namespace DomenaManager.Wizards
 
         public EditChargeWizard(ChargeDataGrid charge)
         {
-            DataContext = this;
-            InitializeComponent();
+            _charge = charge;
             InitializeChargeStatusCollection();
-            ChargeId = charge.ChargeId;
-            LoadCharge(charge);
+            InitializeBuildingsList();
             InitializeCategoriesList();
             InitializeUnitsList();
-            InitializeChargeComponents();
             InitializeCategories();
+            LoadCharge(charge);
+            InitializeChargeComponents(charge);
+            DataContext = this;
+            InitializeComponent();              
         }
 
         #region Functions
@@ -265,10 +319,14 @@ namespace DomenaManager.Wizards
 
         private void LoadCharge(ChargeDataGrid charge)
         {
-            BuildingName = charge.Building.Name;
-            ApartmentNumber = charge.Apartment.ApartmentNumber;
-            OwnerName = charge.Owner.OwnerName + Environment.NewLine + charge.Owner.MailAddress;
-            ChargeStatus = charge.IsClosed ? ChargeStatusCollection[1] : ChargeStatusCollection[0];
+            if (charge != null)
+            {
+                SelectedBuilding = BuildingsCollection.FirstOrDefault(x => x.BuildingId.Equals(charge.Building.BuildingId));
+                //ApartmentNumber = charge.Apartment.ApartmentNumber;
+                SelectedApartmentNumber = ApartmentsNumbersCollection.FirstOrDefault(x => x.Equals(charge.Apartment.ApartmentNumber));
+                OwnerName = charge.Owner.OwnerName + Environment.NewLine + charge.Owner.MailAddress;
+                ChargeStatus = charge.IsClosed ? ChargeStatusCollection[1] : ChargeStatusCollection[0];
+            }
         }
 
         private void InitializeCategoriesList()
@@ -291,12 +349,16 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private void InitializeChargeComponents()
+        private void InitializeChargeComponents(Charge charge)
         {
-            using (var db = new DB.DomenaDBContext())
+            if (charge != null)
             {
-                ChargeComponents = new ObservableCollection<ChargeComponent>(db.Charges.Include(c => c.Components).Where(x => x.ChargeId.Equals(ChargeId)).FirstOrDefault().Components.ToList());
-            }            
+                using (var db = new DB.DomenaDBContext())
+                {
+                    ChargeComponents = new ObservableCollection<ChargeComponent>(db.Charges.Include(c => c.Components).Where(x => x.ChargeId.Equals(charge.ChargeId)).FirstOrDefault().Components.ToList());
+                }
+            }
+            else ChargeComponents = new ObservableCollection<ChargeComponent>();
         }
 
         private void InitializeCategories()
@@ -305,6 +367,19 @@ namespace DomenaManager.Wizards
             {
                 Categories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.ToList());
             }
+        }
+
+        private void InitializeBuildingsList()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                BuildingsCollection = new ObservableCollection<Building>(db.Buildings.ToList());
+                ApartmentsCollection = new ObservableCollection<Apartment>(db.Apartments.ToList());
+                OwnersCollection = new ObservableCollection<Owner>(db.Owners.ToList());
+                OwnerName = null;
+            }
+            ApartmentsNumbersCollection = new ObservableCollection<int>();
+            SelectedApartmentNumberValue = null;
         }
 
         private async void AddNew(object param)
@@ -375,6 +450,20 @@ namespace DomenaManager.Wizards
                 }
             }
             InitializeCategoriesList();
+        }
+
+        private void UpdateApartmentsNumbers()
+        {
+            if (SelectedBuilding != null)
+            {
+                ApartmentsNumbersCollection = new ObservableCollection<int>(ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuilding.BuildingId)).Select(x => x.ApartmentNumber).ToList());                
+                SelectedApartmentNumberValue = null;
+            }
+            else
+            {
+                ApartmentsNumbersCollection = new ObservableCollection<int>();
+                SelectedApartmentNumberValue = null;
+            }
         }
 
         #endregion

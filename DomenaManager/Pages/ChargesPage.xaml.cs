@@ -171,12 +171,14 @@ namespace DomenaManager.Pages
 
         private async void Edit(object param)
         {
-            Wizards.EditChargeWizard ecw;
+            if (SelectedCharge != null)
+            {
+                Wizards.EditChargeWizard ecw;
 
-            ecw = new Wizards.EditChargeWizard(SelectedCharge);
+                ecw = new Wizards.EditChargeWizard(SelectedCharge);
 
-
-            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            }
         }
 
         public ICommand AddChargeCommand
@@ -191,42 +193,29 @@ namespace DomenaManager.Pages
 
         private void Add(object param)
         {
-            Charges = new ObservableCollection<ChargeDataGrid>();
+            
+        }
+
+        public ICommand RecalculateChargeCommand
+        {
+            get { return new Helpers.RelayCommand(RecalculateCharge, CanRecalculateCharge); }
+        }
+
+        private bool CanRecalculateCharge()
+        {
+            return true;
+        }
+
+        private void RecalculateCharge(object param)
+        {
+
             using (var db = new DB.DomenaDBContext())
             {
-                var q = db.Buildings.Include(b => b.CostCollection);
-                foreach (var a in db.Apartments.Where(x => q.Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count>0 ))
+                var q = db.Charges.Include(x => x.Components).Where(y => !y.IsClosed);
+                foreach (var charge in q)
                 {
-                    var c = new Charge() { ApartmentId = a.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, CreatedTime = DateTime.Today };
-                    c.Components = new List<ChargeComponent>();
-                    foreach (var costCollection in db.Buildings.Include(b=>b.CostCollection).Where(x => x.BuildingId.Equals(a.BuildingId)).FirstOrDefault().CostCollection)
-                    {
-                        if (costCollection.BegginingDate < DateTime.Today || costCollection.EndingDate > DateTime.Today)
-                        {
-                            continue;
-                        }
-                        var cc = new ChargeComponent() {ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit };
-                        double units;
-                        switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
-                        {
-                            case EnumCostDistribution.CostDistribution.PerApartment:
-                                units = 1;
-                                break;
-                            case EnumCostDistribution.CostDistribution.PerMeasurement:
-                                units = a.AdditionalArea + a.ApartmentArea;
-                                break;
-                            default:
-                                units = 0;
-                                break;
-                        }
-                        cc.Sum = units * cc.CostPerUnit;
-                        c.Components.Add(cc);
-                        db.Charges.Add(c);
-                        var cdg = new ChargeDataGrid(c);
-                        //Charges.Add(cdg);
-                    }    
+                    ChargesOperations.RecalculateCharge(charge);
                 }
-                db.SaveChanges();
             }
             InitializeCollection();
         }
@@ -243,12 +232,14 @@ namespace DomenaManager.Pages
 
         private async void ShowDetails(object param)
         {
-            Wizards.EditChargeWizard ecw;
-            
-                ecw = new Wizards.EditChargeWizard(SelectedCharge);
-            
+            if (SelectedCharge != null)
+            {
+                Wizards.EditChargeWizard ecw;
 
-            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                ecw = new Wizards.EditChargeWizard(SelectedCharge);
+
+                var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            }
         }
 
         public ICommand OpenCloseChargeCommand
