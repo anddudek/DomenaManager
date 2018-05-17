@@ -28,7 +28,9 @@ namespace DomenaManager.Wizards
     {
         #region Bindings
 
-        private Charge _charge;
+        public Charge _charge;
+
+        public bool CanEditApartment { get; set; }
 
         private int _apartmentNumber;
         public int ApartmentNumber
@@ -211,6 +213,7 @@ namespace DomenaManager.Wizards
                 {
                     _selectedUnitName = value;
                     OnPropertyChanged("SelectedUnitName");
+                    CalculateSum();
                 }
             }
         }
@@ -225,6 +228,7 @@ namespace DomenaManager.Wizards
                 {
                     _unitCost = value;
                     OnPropertyChanged("UnitCost");
+                    CalculateSum();
                 }
             }
         }
@@ -266,25 +270,15 @@ namespace DomenaManager.Wizards
                 if (value != _selectedChargeComponent)
                 {
                     _selectedChargeComponent = value;
-                    SelectedCategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(_selectedChargeComponent.CostCategoryId)).FirstOrDefault();
-                    SelectedUnitName = UnitsNames.Where(x => x.EnumValue.Equals(_selectedChargeComponent.CostDistribution)).FirstOrDefault();
-                    UnitCost = _selectedChargeComponent.CostPerUnit.ToString();
-                    ChargeSum = _selectedChargeComponent.Sum.ToString();
                     OnPropertyChanged("SelectedChargeComponent");
+                    if (value != null)
+                    {
+                        SelectedCategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(_selectedChargeComponent.CostCategoryId)).FirstOrDefault();
+                        SelectedUnitName = UnitsNames.Where(x => x.EnumValue.Equals(_selectedChargeComponent.CostDistribution)).FirstOrDefault();
+                        UnitCost = _selectedChargeComponent.CostPerUnit.ToString();
+                        ChargeSum = _selectedChargeComponent.Sum.ToString();
+                    }
                 }
-            }
-        }
-
-        public ICommand AddNewCategory
-        {
-            get { return new RelayCommand(AddNew, CanAddNew); }
-        }
-
-        public ICommand UpdateAllFieldsCommand
-        {
-            get
-            {
-                return new Helpers.RelayCommand(UpdateAllFields, CanUpdateAllFields);
             }
         }
 
@@ -294,20 +288,49 @@ namespace DomenaManager.Wizards
 
         #region Commands
 
+        public ICommand AddNewCategory
+        {
+            get { return new RelayCommand(AddNew, CanAddNew); }
+        }
+
+        public ICommand UpdateAllFieldsCommand
+        {
+            get { return new Helpers.RelayCommand(UpdateAllFields, CanUpdateAllFields); }
+        }
+
+        public ICommand AddNewChargeCommand
+        {
+            get { return new Helpers.RelayCommand(AddNewCharge, CanAddNewCharge); }
+        }
+
+        public ICommand ModifySelectedChargeCommand
+        {
+            get { return new RelayCommand(ModifySelectedCharge, CanModifySelectedCharge); }
+        }
+
+        public ICommand DeleteSelectedChargeCommand
+        {
+            get { return new RelayCommand(DeleteSelectedCharge, CanDeleteSelectedCharge); }
+        }
+
         #endregion
 
         public EditChargeWizard(ChargeDataGrid charge)
         {
             _charge = charge;
+            if (_charge == null)
+                CanEditApartment = true;
+            else
+                CanEditApartment = false;
+            DataContext = this;
+            InitializeComponent();
             InitializeChargeStatusCollection();
             InitializeBuildingsList();
             InitializeCategoriesList();
             InitializeUnitsList();
             InitializeCategories();
             LoadCharge(charge);
-            InitializeChargeComponents(charge);
-            DataContext = this;
-            InitializeComponent();              
+            InitializeChargeComponents(charge);      
         }
 
         #region Functions
@@ -403,6 +426,96 @@ namespace DomenaManager.Wizards
             return true;
         }
 
+        private void ModifySelectedCharge(object param)
+        {
+            if (SelectedChargeComponent != null && SelectedCategoryName != null && SelectedUnitName != null)
+            {
+                SelectedChargeComponent.CostCategoryId = SelectedCategoryName.BuildingChargeBasisCategoryId;
+                SelectedChargeComponent.CostDistribution = SelectedUnitName.EnumValue;
+                double uc;
+                if (!double.TryParse(UnitCost, out uc))
+                    return;
+                SelectedChargeComponent.CostPerUnit = uc;
+                double cs;
+                if (!double.TryParse(ChargeSum, out cs))
+                    return;
+                SelectedChargeComponent.Sum = cs;
+            }
+        }
+
+        private bool CanModifySelectedCharge()
+        {
+            return (SelectedChargeComponent != null && UnitCost != null && ChargeSum != null);
+        }
+
+        private void AddNewCharge(object param)
+        {
+            if (SelectedCategoryName != null && SelectedUnitName != null)
+            {
+                double uc;
+                if (!double.TryParse(UnitCost, out uc))
+                    return;
+                double cs;
+                if (!double.TryParse(ChargeSum, out cs))
+                    return;
+                ChargeComponents.Add(new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = SelectedCategoryName.BuildingChargeBasisCategoryId, CostDistribution = SelectedUnitName.EnumValue, CostPerUnit = uc, Sum = cs });
+            }
+        }
+
+        private bool CanAddNewCharge()
+        {
+            return (UnitCost != null && ChargeSum != null);
+        }
+
+        private void DeleteSelectedCharge(object param)
+        {
+            if (SelectedChargeComponent != null)
+            {
+                ChargeComponents.Remove(SelectedChargeComponent);
+            }
+        }
+
+        private bool CanDeleteSelectedCharge()
+        {
+            return SelectedChargeComponent != null;
+        }
+
+        private void UpdateApartmentsNumbers()
+        {
+            if (SelectedBuilding != null)
+            {
+                ApartmentsNumbersCollection = new ObservableCollection<int>(ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuilding.BuildingId)).Select(x => x.ApartmentNumber).ToList());
+                SelectedApartmentNumberValue = null;
+            }
+            else
+            {
+                ApartmentsNumbersCollection = new ObservableCollection<int>();
+                SelectedApartmentNumberValue = null;
+            }
+        }
+
+        private void CalculateSum()
+        { 
+            double uc;
+            if (!double.TryParse(UnitCost, out uc) || SelectedCategoryName == null || SelectedUnitName == null || SelectedApartmentNumberValue == null || SelectedBuilding == null)
+                return;
+            double units;
+            switch ((EnumCostDistribution.CostDistribution)SelectedUnitName.EnumValue)
+            {
+                case EnumCostDistribution.CostDistribution.PerApartment:
+                    units = 1;
+                    break;
+                case EnumCostDistribution.CostDistribution.PerMeasurement:
+                    var a = ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber));
+                    units = a.AdditionalArea + a.ApartmentArea;
+                    break;
+                default:
+                    units = 0;
+                    break;
+            }
+            ChargeSum = (units * uc).ToString();
+        }
+
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
         {
 
@@ -437,6 +550,7 @@ namespace DomenaManager.Wizards
                         }
                     }
                 }
+                InitializeCategoriesList();
             }
             else if (!(bool)eventArgs.Parameter)
             {
@@ -450,20 +564,6 @@ namespace DomenaManager.Wizards
                 }
             }
             InitializeCategoriesList();
-        }
-
-        private void UpdateApartmentsNumbers()
-        {
-            if (SelectedBuilding != null)
-            {
-                ApartmentsNumbersCollection = new ObservableCollection<int>(ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuilding.BuildingId)).Select(x => x.ApartmentNumber).ToList());                
-                SelectedApartmentNumberValue = null;
-            }
-            else
-            {
-                ApartmentsNumbersCollection = new ObservableCollection<int>();
-                SelectedApartmentNumberValue = null;
-            }
         }
 
         #endregion

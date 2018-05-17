@@ -38,7 +38,7 @@
             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="15,0,10,0" >
         </TextBox>-->
 
-        <ComboBox materialDesign:HintAssist.Hint="Budynek"
+        <ComboBox materialDesign:HintAssist.Hint="Budynek" IsEnabled="{Binding CanEditApartment}"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" ItemsSource="{Binding BuildingsCollection, Mode=TwoWay}" DisplayMemberPath="Name"
             Grid.Row="1" Grid.Column="0" SelectedItem="{Binding SelectedBuilding}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="15,0,10,0" >
@@ -56,7 +56,7 @@
             Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center" Margin="5,0,150,0" Width="70">
         </TextBox>-->
 
-        <ComboBox materialDesign:HintAssist.Hint="Numer lokalu"
+        <ComboBox materialDesign:HintAssist.Hint="Numer lokalu" IsEnabled="{Binding CanEditApartment}"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" ItemsSource="{Binding ApartmentsNumbersCollection, Mode=TwoWay}"
             Grid.Row="1" Grid.Column="1" SelectedItem="{Binding SelectedApartmentNumber}" Width="80"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="5,0,140,0" >

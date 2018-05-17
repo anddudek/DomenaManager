@@ -49,22 +49,17 @@ namespace DomenaManager.Pages
             {
                 _selectedApartment = value;
                 OnPropertyChanged("SelectedApartment");
-                if (value != null)
-                    OpenDrawer();   
+                //if (value != null)
+                    //OpenDrawer();   
             }
         }
 
-        async Task PutTaskDelay()
+        public ICommand ExpandApartmentCommand
         {
-            await Task.Delay(300);
-        }
-
-        private async void OpenDrawer()
-        {
-            // Wait till all events in bg that can takes focus away from drawer (thus cancel it) finishes
-            await PutTaskDelay();
-            DrawerHost.OpenDrawerCommand.Execute(Dock.Bottom, this.DH);
-            
+            get
+            {
+                return new RelayCommand(ExpandApartment, CanExpandApartment);
+            }
         }
         
         public ICommand AddApartmentCommand
@@ -284,7 +279,20 @@ namespace DomenaManager.Pages
                     //TODO
                 }
             }
-        }       
+        }
+
+        async Task PutTaskDelay()
+        {
+            await Task.Delay(300);
+        }
+
+        private void OpenDrawer()
+        {
+            // Wait till all events in bg that can takes focus away from drawer (thus cancel it) finishes
+            //await PutTaskDelay();
+            DrawerHost.OpenDrawerCommand.Execute(Dock.Bottom, this.DH);
+
+        }
 
         private async void AddApartment(object param)
         {
@@ -296,6 +304,16 @@ namespace DomenaManager.Pages
         private bool CanAddApartment()
         {
             return true;
+        }
+
+        private void ExpandApartment(object param)
+        {
+            OpenDrawer();
+        }
+
+        private bool CanExpandApartment()
+        {
+            return SelectedApartment != null;
         }
 
         private void Filter(object param)

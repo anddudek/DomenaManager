@@ -9,10 +9,12 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:hlp="clr-namespace:DomenaManager.Helpers"
+        
         mc:Ignorable="d" 
         d:DesignHeight="600" d:DesignWidth="900" >
     <UserControl.Resources>
         <hlp:SumConverter x:Key="SumConverter"/>
+        <hlp:BuildingsFooterConverter x:Key="footerConverter" />
     </UserControl.Resources>
     
     <materialDesign:DrawerHost x:Name="DH"
@@ -133,17 +135,17 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <ToggleButton
+                <ToggleButton Grid.RowSpan="2"
                   Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
                   ToolTip="MaterialDesignSwitchDarkToggleButton"
                   IsChecked="{Binding GroupByBuilding}" />
-                <Label Content="Grupuj wg budynków" Grid.Column="1" VerticalContentAlignment="Center" />
+                <Label Content="Grupuj wg budynków" Grid.RowSpan="2" Grid.Column="1" VerticalContentAlignment="Center" />
 
-                <ToggleButton Grid.Row="1"
+                <!--<ToggleButton Grid.Row="1"
                   Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
                   ToolTip="MaterialDesignSwitchDarkToggleButton"
                   IsChecked="{Binding GroupByOwner}" />
-                <Label Content="Grupuj wg właścicieli" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" />
+                <Label Content="Grupuj wg właścicieli" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" />-->
 
                 <StackPanel Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" Margin="40,0,0,0">
                     <ComboBox materialDesign:HintAssist.Hint="Właściciel"
@@ -169,21 +171,22 @@
                     <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddApartmentCommand}" Margin="10,0,10,0"/>
                     <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditApartmentCommand}" Margin="10,0,10,0"/>
                     <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteApartmentCommand}" Margin="10,0,10,0"/>
+                    <MyControls:ActionButton MDTText="Szczegóły" MDTIcon="ClipboardText" Command="{Binding ExpandApartmentCommand}" Margin="10,0,10,0"/>
                 </StackPanel>
             </Grid>
-            <DataGrid
+            <DataGrid x:Name="ApartmentsDG"
                 SelectedItem="{Binding SelectedApartment}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                 ItemsSource="{Binding Apartments}" Foreground="Black" Padding="5" Margin="5"
                 CanUserAddRows="False" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn Header="Numer lokalu" Binding="{Binding ApartmentNumber}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn Header="Pow. mieszkalna" Binding="{Binding ApartmentArea}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn Header="Pow. przynależna" Binding="{Binding ApartmentAdditionalArea}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn Header="Pow. całkowita" Binding="{Binding ApartmentTotalArea}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn Header="Udział procentowy" Binding="{Binding ApartmentPercentageDistribution}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn Header="Saldo" Binding="{Binding Saldo}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn Header="Właściciel" Binding="{Binding ApartmentOwner}" Width="*" FontSize="14"/>
+                    <DataGridTextColumn x:Name="BuildingHeader" Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="AppNumberHeader" Header="Numer lokalu" Binding="{Binding ApartmentNumber}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="AppAreaHeader" Header="Pow. mieszkalna" Binding="{Binding ApartmentArea}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="AddAreaHeader" Header="Pow. przynależna" Binding="{Binding ApartmentAdditionalArea}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="TotalAreaHeader" Header="Pow. całkowita" Binding="{Binding ApartmentTotalArea}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="PercentHeader" Header="Udział procentowy" Binding="{Binding ApartmentPercentageDistribution}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="SaldoHeader" Header="Saldo" Binding="{Binding Saldo}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="OwnerHeader" Header="Właściciel" Binding="{Binding ApartmentOwner}" Width="*" FontSize="14"/>
                 </DataGrid.Columns>
                 <DataGrid.GroupStyle>
                     <!-- Style for groups at top level. -->
@@ -194,16 +197,28 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type GroupItem}">
-                                            <Expander IsExpanded="True" Background="#87B04D" Foreground="#FFEEEEEE" >
-                                                <Expander.Header>
-                                                    <DockPanel>
-                                                        <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="100"/>
-                                                    </DockPanel>
-                                                </Expander.Header>
-                                                <Expander.Content>
-                                                    <ItemsPresenter />
-                                                </Expander.Content>
-                                            </Expander>
+                                            <DockPanel>
+                                                <Expander IsExpanded="True" Background="#87B04D" Foreground="#FFEEEEEE" DockPanel.Dock="Top">
+                                                    <Expander.Header>
+                                                        <DockPanel>
+                                                            <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="100"/>
+                                                        </DockPanel>
+                                                    </Expander.Header>
+                                                    <Expander.Content>
+                                                        <ItemsPresenter />
+                                                    </Expander.Content>
+                                                </Expander>
+                                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" DockPanel.Dock="Bottom" Background="#87B04D" VerticalAlignment="Stretch">
+                                                    <TextBlock FontWeight="Bold" FontSize="14" Width="{Binding ElementName=BuildingHeader,Path=ActualWidth}" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Suma: " Margin="20,0,0,0"/>
+                                                    <TextBlock FontWeight="Bold" FontSize="14" Width="{Binding ElementName=AppNumberHeader,Path=ActualWidth}" VerticalAlignment="Center" Text="{Binding Path=Items, Converter={StaticResource footerConverter}, ConverterParameter=AppNumber}" Margin="0,0,0,0"/>
+                                                    <TextBlock FontWeight="Bold" FontSize="14" Width="{Binding ElementName=AppAreaHeader,Path=ActualWidth}" VerticalAlignment="Center" Text="{Binding Path=Items, Converter={StaticResource footerConverter}, ConverterParameter=AppArea}" Margin="0,0,0,0"/>
+                                                    <TextBlock FontWeight="Bold" FontSize="14" Width="{Binding ElementName=AddAreaHeader,Path=ActualWidth}" VerticalAlignment="Center" Text="{Binding Path=Items, Converter={StaticResource footerConverter}, ConverterParameter=AddArea}" Margin="0,0,0,0"/>
+                                                    <TextBlock FontWeight="Bold" FontSize="14" Width="{Binding ElementName=TotalAreaHeader,Path=ActualWidth}" VerticalAlignment="Center" Text="{Binding Path=Items, Converter={StaticResource footerConverter}, ConverterParameter=TotalArea}" Margin="0,0,0,0"/>
+                                                    <TextBlock FontWeight="Bold" FontSize="14" Width="{Binding ElementName=PercentHeader,Path=ActualWidth}" VerticalAlignment="Center" Text="100%" Margin="0,0,0,0"/>
+                                                    <TextBlock Width="1800" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                                    <!--<TextBlock Width="{Binding ElementName=OwnerHeader,Path=ActualWidth}" VerticalAlignment="Center" Text="Footer2" Margin="5,0,0,0"/>-->                                             
+                                                </StackPanel>
+                                            </DockPanel>
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
