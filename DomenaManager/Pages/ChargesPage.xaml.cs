@@ -191,9 +191,13 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private void Add(object param)
+        private async void Add(object param)
         {
-            
+            Wizards.EditChargeWizard ecw;
+
+            ecw = new Wizards.EditChargeWizard(null);
+
+            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
         public ICommand RecalculateChargeCommand
@@ -285,7 +289,11 @@ namespace DomenaManager.Pages
 
         private void DeleteCharge(object param)
         {
-            SelectedCharge.IsDeleted = true;
+            using (var db = new DB.DomenaDBContext())
+            {
+                db.Charges.FirstOrDefault(x => x.ChargeId.Equals(SelectedCharge.ChargeId)).IsDeleted = true;
+                db.SaveChanges();
+            }
             InitializeCollection();
         }
 
@@ -386,13 +394,34 @@ namespace DomenaManager.Pages
             GroupByBuilding = true;
         }
 
+        public ChargesPage(Apartment apartment)
+        {
+            DataContext = this;
+            InitializeCollection();
+            InitializeCategories();
+            InitializeLists();
+            InitializeApartmentsNumbers();
+            SelectedChargesList = new List<ChargeDataGrid>();
+            InitializeComponent();
+            GroupByBuilding = false;
+
+            using (var db = new DB.DomenaDBContext())
+            {
+                var b = db.Buildings.FirstOrDefault(x => x.BuildingId.Equals(apartment.BuildingId));
+                var o = db.Owners.FirstOrDefault(x => x.OwnerId.Equals(apartment.OwnerId));
+                SelectedBuildingName = b;
+                SelectedApartmentNumber = apartment.ApartmentNumber;
+                SelectedOwnerName = o;
+            }
+        }
+
         private void InitializeCollection()
         {
             Charges = new ObservableCollection<ChargeDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                var qa = db.Charges.Include(c => c.Components).Where(x => x.IsClosed).FirstOrDefault();
-                var q = db.Charges.Include(x => x.Components);
+                //var qa = db.Charges.Include(c => c.Components).Where(x => x.IsClosed).FirstOrDefault();
+                var q = db.Charges.Include(x => x.Components).Where(x => !x.IsDeleted);
                 foreach (var ch in q)
                 {
                     var cdg = new ChargeDataGrid(ch);

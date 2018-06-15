@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DomenaManager.Pages.ApartmentsPage" x:Name="apartmentsPage"
+﻿<UserControl x:Class="DomenaManager.Pages.SummaryPage" x:Name="SummaryPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:vs="clr-namespace:DomenaManager.ViewSource"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

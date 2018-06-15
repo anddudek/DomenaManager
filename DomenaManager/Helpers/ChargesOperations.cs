@@ -56,10 +56,11 @@ namespace DomenaManager.Helpers
                 var a = db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(charge.ApartmentId));
                 var b = db.Buildings.Include(x => x.CostCollection).FirstOrDefault(y => y.BuildingId.Equals(db.Apartments.FirstOrDefault(z => z.ApartmentId.Equals(charge.ApartmentId)).BuildingId));
                 charge.Components.RemoveAll(x => true);
-                
+                var nullDate = new DateTime(1900, 01, 01);
+
                 foreach (var costCollection in b.CostCollection)
                 {
-                    if (costCollection.BegginingDate < DateTime.Today || costCollection.EndingDate > DateTime.Today)
+                    if (costCollection.EndingDate != nullDate && (costCollection.EndingDate < charge.CreatedTime || costCollection.BegginingDate > charge.CreatedTime))
                     {
                         continue;
                     }
