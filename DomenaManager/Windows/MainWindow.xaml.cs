@@ -138,6 +138,10 @@ namespace DomenaManager.Windows
                     CurrentPage = new Pages.PaymentsPage();
                     OnPropertyChanged("CurrentPage");
                     return;
+                case "Summary":
+                    CurrentPage = new Pages.SummaryPage();
+                    OnPropertyChanged("CurrentPage");
+                    return;
             }
         }
 
