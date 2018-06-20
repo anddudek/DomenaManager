@@ -29,7 +29,7 @@
             <RowDefinition Height="90" />
         </Grid.RowDefinitions>
             
-        <Label Grid.Row="0" Content="Lokale" FontSize="28"/>
+        <Label Grid.Row="0" Content="Zestawienie roczne" FontSize="28"/>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="70" />
@@ -40,34 +40,22 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <ToggleButton Grid.RowSpan="2"
-                  Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
-                  ToolTip="MaterialDesignSwitchDarkToggleButton"
-                  IsChecked="{Binding GroupByBuilding}" />
-                <Label Content="Grupuj wg budynków" Grid.RowSpan="2" Grid.Column="1" VerticalContentAlignment="Center" />
-
-                <!--<ToggleButton Grid.Row="1"
-                  Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
-                  ToolTip="MaterialDesignSwitchDarkToggleButton"
-                  IsChecked="{Binding GroupByOwner}" />
-                <Label Content="Grupuj wg właścicieli" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" />-->
 
                 <StackPanel Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" Margin="40,0,0,0">
-                    <ComboBox materialDesign:HintAssist.Hint="Właściciel"
-	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" Width="180"
-                  IsEditable="True" SelectedItem="{Binding SelectedOwnerName}" ItemsSource="{Binding OwnersNames}" DisplayMemberPath="OwnerName" Margin="15,0,15,0"
-             VerticalAlignment="Center" />
-
+                    
                     <ComboBox materialDesign:HintAssist.Hint="Budynek"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"  Width="180"
                   IsEditable="True" SelectedItem="{Binding SelectedBuildingName}" ItemsSource="{Binding BuildingsNames}" DisplayMemberPath="Name" Margin="15,0,15,0"
              VerticalAlignment="Center" />
 
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Filtruj" Command="{Binding FilterCommand}" />
+                    <ComboBox materialDesign:HintAssist.Hint="Lokal"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" Width="140"
+                  IsEditable="True" SelectedItem="{Binding SelectedApartmentNumber}" ItemsSource="{Binding ApartmentsNumbers}" DisplayMemberPath="ApartmentNumber" Margin="15,0,15,0"
+             VerticalAlignment="Center" />
 
+                    <TextBox Width="200" IsReadOnly="True" VerticalAlignment="Center" Text="{Binding SelectedOwner}" materialDesign:HintAssist.Hint="Właściciel" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
 
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Wyczyść" Command="{Binding ClearFilterCommand}" />
-
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Wyświetl" Command="{Binding FilterCommand}" />
                 </StackPanel>         
 
             </Grid>
