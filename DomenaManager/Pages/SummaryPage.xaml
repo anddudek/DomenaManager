@@ -79,7 +79,7 @@
                     <MyControls:ActionButton MDTText="Szczegóły" MDTIcon="ClipboardText" Command="{Binding ExpandApartmentCommand}" Margin="10,0,10,0"/>
                 </StackPanel>
             </Grid>
-            <ContentControl Grid.Row="2" Content="{Binding SummaryDG}" />
+            <ContentControl Margin="50,0,50,0" Grid.Row="2" Content="{Binding SummaryDG}" HorizontalContentAlignment="Center"/>
         </Grid>
     </Grid>
 </UserControl>
