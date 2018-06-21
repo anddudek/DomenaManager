@@ -127,11 +127,11 @@
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Foreground" Value="Black" />
-                    <Style.Triggers>
+                    <!--<Style.Triggers>
                         <DataTrigger Binding="{Binding IsClosed}" Value="True">
                             <Setter Property="Foreground" Value="Gray" />
                         </DataTrigger>
-                    </Style.Triggers>
+                    </Style.Triggers>-->
                 </Style>
             </DataGrid.RowStyle>
             <!--<DataGrid.RowDetailsTemplate>

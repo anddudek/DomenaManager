@@ -286,6 +286,7 @@ namespace DomenaManager.Wizards
         private void DeleteCost(object param)
         {
             CostCollection.Remove(SelectedCost);
+            CalculateCostsDates();
         }
 
         private bool CanDeleteCost()
@@ -352,6 +353,7 @@ namespace DomenaManager.Wizards
             LabelError = null;
             var endingDate = new DateTime(1900, 01, 01);
 
+            /*
             // Add to the end 
             var last = CostCollection.Where(x => Helpers.DateTimeOperations.IsDateNull(x.EndingDate)).FirstOrDefault();
 
@@ -385,11 +387,26 @@ namespace DomenaManager.Wizards
                         }
                     }
                 }
-            }
+            }*/
 
             var c = new Helpers.CostListView() { BegginingDate = CostBeggining, CategoryName = SelectedCategoryValue, Cost = uc, CostUnit = SelectedUnitName, EndingDate = endingDate };
 
             CostCollection.Add(c);
+            CalculateCostsDates();
+        }
+
+        private void CalculateCostsDates()
+        {
+            var categories = CostCollection.GroupBy(x => x.CategoryName).Select(c => c.First()).Select(x => x.CategoryName);
+            foreach (var cat in categories)
+            {
+                Helpers.CostListView[] costs = CostCollection.Where(x => x.CategoryName.Equals(cat)).OrderBy(x => x.BegginingDate).ToArray();
+                costs[costs.Length - 1].EndingDate = new DateTime(1900, 1, 1);
+                for (int i = 0; i < costs.Length - 1; i++)
+                {
+                    costs[i].EndingDate = costs[i + 1].BegginingDate.AddDays(-1);
+                }
+            }
         }
 
         private bool CanAddCost()

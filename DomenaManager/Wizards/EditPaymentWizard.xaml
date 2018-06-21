@@ -27,7 +27,7 @@
         </Grid.RowDefinitions>
         <Label Grid.ColumnSpan="2" Content="Wpłata indywidualna" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Medium" FontSize="19"/>
 
-        <ComboBox materialDesign:HintAssist.Hint="Budynek"
+        <ComboBox materialDesign:HintAssist.Hint="Budynek" IsEnabled="{Binding CanEdit}"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="Name"
             Grid.Row="1" Grid.Column="0" SelectedItem="{Binding SelectedBuildingName}"  Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="10,5,10,5" >
@@ -47,7 +47,7 @@
             </ComboBox.ItemsSource>
         </ComboBox>
 
-        <ComboBox materialDesign:HintAssist.Hint="Numer lokalu"
+        <ComboBox materialDesign:HintAssist.Hint="Numer lokalu" IsEnabled="{Binding CanEdit}"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="ApartmentNumber"
             Grid.Row="2" Grid.Column="0" SelectedItem="{Binding SelectedApartmentNumber}"  Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="10,5,10,5" >
@@ -67,7 +67,7 @@
             </ComboBox.ItemsSource>
         </ComboBox>
 
-        <TextBox materialDesign:HintAssist.Hint="Właściciel" Grid.RowSpan="1" VerticalAlignment="Stretch"
+        <TextBox materialDesign:HintAssist.Hint="Właściciel" Grid.RowSpan="1" VerticalAlignment="Stretch" IsReadOnly="True"
                  TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" SpellCheck.IsEnabled="True" ScrollViewer.CanContentScroll="True"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
             Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"  Margin="10,15,10,15" >

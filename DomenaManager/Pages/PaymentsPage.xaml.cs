@@ -142,7 +142,7 @@ namespace DomenaManager.Pages
 
         private async void Edit(object param)
         {
-            Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard();
+            Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard(SelectedPayment);
 
             var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
@@ -157,13 +157,11 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private void Add(object param)
+        private async void Add(object param)
         {
-            using (var db = new DB.DomenaDBContext())
-            {
-                db.Payments.Add(new Payment() { ApartmentId = db.Apartments.FirstOrDefault().ApartmentId, PaymentAddDate = DateTime.Today, PaymentAmount = 100, PaymentId = Guid.NewGuid(), PaymentRegistrationDate = DateTime.Today.AddMonths(-1) });
-                db.SaveChanges();
-            }
+            Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard();
+
+            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
         public ICommand ShowPaymentDetails

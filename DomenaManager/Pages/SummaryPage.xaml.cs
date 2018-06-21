@@ -188,18 +188,31 @@ namespace DomenaManager.Pages
                 sdg.apartment = apartment;
                 sdg.building = bu;
                 sdg.owner = ow;
-                sdg.year = DateTime.Today.Year;
+                sdg.year = year;
                 sdg.categories = db.CostCategories.ToArray();
                 sdg.rows = new SummaryDataGridRow[12];
 
-                for (int i = 0; i < 12; i++)
+                var charges = db.Charges.Include(x => x.Components).Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.CreatedTime.Year.Equals(sdg.year));
+
+                for (int i = 0; i < 12; i++)//months
                 {
                     sdg.rows[i] = new SummaryDataGridRow();
                     sdg.rows[i].month = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(new DateTime(2000, i + 1, 1).ToString("MMMM"));
                     sdg.rows[i].charges = new string[sdg.categories.Length];
-                    for (int j = 0; j < sdg.categories.Length; j++)
+                    for (int j = 0; j < sdg.categories.Length; j++)//each categories
                     {
-                        sdg.rows[i].charges[j] = (j + i).ToString();
+                        double sum = 0;
+                        foreach (var c in charges.Where(x=>x.CreatedTime.Month.Equals(i+1)))
+                        {
+                            foreach (var cc in c.Components)
+                            {
+                                if (cc.CostCategoryId.Equals(sdg.categories[j].BuildingChargeBasisCategoryId))
+                                {
+                                    sum += cc.Sum;
+                                }
+                            }
+                        }
+                        sdg.rows[i].charges[j] = sum.ToString() + " zł";                            
                     }
                 }
             }
@@ -217,7 +230,9 @@ namespace DomenaManager.Pages
 
         private void Filter(object param)
         {
-            PrepareData(SelectedApartmentNumber, 2018);
+            int y;
+            if (int.TryParse(SelectedYear, out y))
+                PrepareData(SelectedApartmentNumber, y);
         }
 
         private bool CanFilter()

@@ -136,6 +136,20 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get { return _canEdit; }
+            set
+            {
+                if (value != _canEdit)
+                {
+                    _canEdit = value;
+                    OnPropertyChanged("CanEdit");
+                }
+            }
+        }
+
         public Payment _lpc;
 
         public EditPaymentWizard(Payment _payment = null)
@@ -143,12 +157,19 @@ namespace DomenaManager.Wizards
             DataContext = this;
             InitializeComponent();
             InitializeBuildingList();
-            using (var db = new DB.DomenaDBContext())
-            {
-                _apartmentsOC = new ObservableCollection<Apartment>(db.Apartments.ToList());
-                _ownersOC = new ObservableCollection<Owner>(db.Owners.ToList());
-            }
             InitializeApartmentsNumbers();
+            _lpc = _payment;
+            if (_payment != null)
+            {
+                CanEdit = false;
+                PaymentRegistrationDate = _payment.PaymentRegistrationDate;
+                PaymentAmount = _payment.PaymentAmount.ToString();
+                SelectedBuildingName = BuildingsNames.FirstOrDefault(x => x.BuildingId.Equals( _apartmentsOC.FirstOrDefault(a => a.ApartmentId.Equals(_payment.ApartmentId)).BuildingId ));
+                SelectedApartmentNumber = ApartmentsNumbers.FirstOrDefault(x => x.ApartmentId.Equals(_payment.ApartmentId));
+                OwnerMailAddress = _ownersOC.FirstOrDefault(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).MailAddress;
+                return;
+            }
+            CanEdit = true;
             PaymentRegistrationDate = DateTime.Today;
         }
 
@@ -230,6 +251,8 @@ namespace DomenaManager.Wizards
             using (var db = new DB.DomenaDBContext())
             {
                 BuildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
+                _apartmentsOC = new ObservableCollection<Apartment>(db.Apartments.ToList());
+                _ownersOC = new ObservableCollection<Owner>(db.Owners.ToList());
             }
         }
 
