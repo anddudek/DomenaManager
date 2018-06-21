@@ -42,7 +42,9 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" Margin="40,0,0,0">
-                    
+
+                    <TextBox Width="50" VerticalAlignment="Center" Text="{Binding SelectedYear}" materialDesign:HintAssist.Hint="Rok" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+
                     <ComboBox materialDesign:HintAssist.Hint="Budynek"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"  Width="180"
                   IsEditable="True" SelectedItem="{Binding SelectedBuildingName}" ItemsSource="{Binding BuildingsNames}" DisplayMemberPath="Name" Margin="15,0,15,0"
@@ -67,7 +69,10 @@
                     <MyControls:ActionButton MDTText="Szczegóły" MDTIcon="ClipboardText" Command="{Binding ExpandApartmentCommand}" Margin="10,0,10,0"/>
                 </StackPanel>
             </Grid>
-            <ContentControl Margin="50,0,50,0" Grid.Row="2" Content="{Binding SummaryDG}" HorizontalContentAlignment="Center"/>
+            <StackPanel Orientation="Vertical" Grid.Row="2" >
+                <Label Content="{Binding SelectedYear}" FontSize="20" Margin="60,0,0,0"/>
+                <ContentControl Margin="50,0,50,0" Content="{Binding SummaryDG}" HorizontalContentAlignment="Center"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

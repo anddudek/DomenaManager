@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace DomenaManager.Helpers
 {
-    public class SummaryDataGrid 
+    public class SummaryDataGrid : INotifyPropertyChanged
     {
         public Owner owner { get; set; }
         public Apartment apartment { get; set; }
@@ -34,6 +34,16 @@ namespace DomenaManager.Helpers
                 "Grudzień"
             };
         }*/
+        
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 
     public class SummaryDataGridRow

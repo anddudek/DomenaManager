@@ -136,6 +136,23 @@ namespace DomenaManager.Pages
             }
         }
 
+        private string _selectedYear;
+        public string SelectedYear 
+        {
+            get
+            {
+                return _selectedYear;
+            }
+            set
+            {
+                if (value != _selectedYear)
+                {
+                    _selectedYear = value;
+                    OnPropertyChanged("SelectedYear");
+                }
+            }
+        }
+
         public ICommand FilterCommand
         {
             get { return new RelayCommand(Filter, CanFilter); }
@@ -147,7 +164,6 @@ namespace DomenaManager.Pages
             InitializeComponent();
             InitializeLists();
             InitializeApartmentsNumbers();
-            //PrepareData();
         }
 
         private void PrepareData(Apartment apartment, int year)
@@ -196,6 +212,7 @@ namespace DomenaManager.Pages
             }
             a.ItemsSource = sdg.rows;
             SummaryDG = a;
+            SelectedYear = sdg.year.ToString();
         }
 
         private void Filter(object param)
@@ -205,7 +222,9 @@ namespace DomenaManager.Pages
 
         private bool CanFilter()
         {
-            return SelectedBuildingName != null && SelectedApartmentNumber != null;
+            int y;
+            bool tp = int.TryParse(SelectedYear, out y);
+            return SelectedBuildingName != null && SelectedApartmentNumber != null && tp && y > 2000 && y <= DateTime.Now.Year;
         }
 
         private void InitializeApartmentsNumbers()
