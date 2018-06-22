@@ -20,6 +20,7 @@ namespace DomenaManager.Helpers
             this.PaymentAmount = _payment.PaymentAmount;
             this.PaymentId = _payment.PaymentId;
             this.PaymentRegistrationDate = _payment.PaymentRegistrationDate;
+            this.IsDeleted = _payment.IsDeleted;
 
             using (var db = new DB.DomenaDBContext())
             {

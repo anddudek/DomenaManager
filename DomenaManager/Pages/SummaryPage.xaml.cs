@@ -190,19 +190,30 @@ namespace DomenaManager.Pages
                 sdg.owner = ow;
                 sdg.year = year;
                 sdg.categories = db.CostCategories.ToArray();
-                sdg.rows = new SummaryDataGridRow[12];
+                sdg.rows = new SummaryDataGridRow[14];
 
                 var charges = db.Charges.Include(x => x.Components).Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.CreatedTime.Year.Equals(sdg.year));
 
-                for (int i = 0; i < 12; i++)//months
+                sdg.rows[0] = new SummaryDataGridRow()
+                {
+                    month = "Zeszły rok",
+                    charges = new string[sdg.categories.Length + 2],                
+                };
+                for (int k = 0; k < sdg.categories.Length + 1; k++)
+                {
+                    sdg.rows[0].charges[k] = "-";
+                }
+                sdg.rows[0].charges[sdg.categories.Length + 1] = " zł";//////////////////////
+                for (int i = 1; i < 13; i++)//months
                 {
                     sdg.rows[i] = new SummaryDataGridRow();
-                    sdg.rows[i].month = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(new DateTime(2000, i + 1, 1).ToString("MMMM"));
-                    sdg.rows[i].charges = new string[sdg.categories.Length];
+                    sdg.rows[i].month = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(new DateTime(2000, i, 1).ToString("MMMM"));
+                    sdg.rows[i].charges = new string[sdg.categories.Length + 2];
+                    double allCat = 0;
                     for (int j = 0; j < sdg.categories.Length; j++)//each categories
                     {
                         double sum = 0;
-                        foreach (var c in charges.Where(x=>x.CreatedTime.Month.Equals(i+1)))
+                        foreach (var c in charges.Where(x => x.CreatedTime.Month.Equals(i)))
                         {
                             foreach (var cc in c.Components)
                             {
@@ -212,9 +223,22 @@ namespace DomenaManager.Pages
                                 }
                             }
                         }
-                        sdg.rows[i].charges[j] = sum.ToString() + " zł";                            
+                        allCat += sum;
+                        sdg.rows[i].charges[j] = sum.ToString() + " zł";
                     }
+                    sdg.rows[i].charges[sdg.categories.Length] = db.Payments.Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.PaymentRegistrationDate.Year == year && x.PaymentRegistrationDate.Month == i).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum().ToString() + " zł";
+                    sdg.rows[i].charges[sdg.categories.Length + 1] = (100 - allCat).ToString() + " zł";
                 }
+                sdg.rows[sdg.rows.Length - 1] = new SummaryDataGridRow()
+                {
+                    month = "Razem",
+                    charges = new string[sdg.categories.Length + 2],
+                };
+                for (int k = 0; k < sdg.categories.Length + 1; k++)
+                {
+                    sdg.rows[sdg.rows.Length - 1].charges[k] = "-";
+                }
+                sdg.rows[sdg.rows.Length - 1].charges[sdg.categories.Length + 1] = "SUM";//////////////////////
             }
             for (int i = 0; i < sdg.categories.Length; i++)
             {
@@ -223,6 +247,14 @@ namespace DomenaManager.Pages
                 ncol.Binding = new Binding("charges[" + i + "]");
                 a.Columns.Add(ncol);
             }
+            var paym = new DataGridTextColumn();
+            paym.Header = "Wpłaty";
+            paym.Binding = new Binding("charges[" + (sdg.categories.Length) + "]");
+            a.Columns.Add(paym);
+            var saldo = new DataGridTextColumn();
+            saldo.Header = "Saldo";
+            saldo.Binding = new Binding("charges[" + (sdg.categories.Length + 1) + "]");
+            a.Columns.Add(saldo);
             a.ItemsSource = sdg.rows;
             SummaryDG = a;
             SelectedYear = sdg.year.ToString();

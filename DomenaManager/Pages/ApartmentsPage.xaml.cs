@@ -431,14 +431,20 @@ namespace DomenaManager.Pages
             return SelectedApartment != null;
         }
 
-        public void DeleteApartment(object param)
+        public async void DeleteApartment(object param)
         {
-            using (var db = new DB.DomenaDBContext())
+            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć lokal " + SelectedApartment.BuildingName + " " + SelectedApartment.ApartmentNumber + "?");
+            if (ynResult)
             {
-                var sa = db.Apartments.Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
-                sa.IsDeleted = true;
-                db.SaveChanges();
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var sa = db.Apartments.Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
+                    sa.IsDeleted = true;
+                    db.SaveChanges();
+                }
             }
+            InitializeCollection();
+            
         }
 
         private bool CanDeleteApartment()

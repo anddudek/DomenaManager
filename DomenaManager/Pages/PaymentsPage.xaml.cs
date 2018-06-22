@@ -269,6 +269,14 @@ namespace DomenaManager.Pages
             }
         }
 
+        public ICommand DeletePaymentCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(DeletePayment, CanDeletePayment);
+            }
+        }
+
         public PaymentsPage()
         {
             DataContext = this;
@@ -285,7 +293,7 @@ namespace DomenaManager.Pages
             Payments = new ObservableCollection<PaymentDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                foreach (var p in db.Payments)
+                foreach (var p in db.Payments.Where(x => !x.IsDeleted))
                 {
                     var pdg = new PaymentDataGrid(p);
                     Payments.Add(pdg); 
@@ -295,7 +303,11 @@ namespace DomenaManager.Pages
             PaymentsCV = (CollectionView)CollectionViewSource.GetDefaultView(Payments);
             PaymentsCV.SortDescriptions.Add(new SortDescription("PaymentRegistrationDate", ListSortDirection.Ascending));
             PaymentsCV.Filter = FilterCollection;
-
+            if (GroupByBuilding)
+            {
+                ICollectionView cvCharges = (CollectionView)CollectionViewSource.GetDefaultView(Payments);
+                cvCharges.GroupDescriptions.Add(new PropertyGroupDescription("Building.Name")); //nameof(Building.BUildingName)
+            }
         }
 
         private void InitializeLists()
@@ -351,6 +363,25 @@ namespace DomenaManager.Pages
             return true;
         }
 
+        private async void DeletePayment(object param)
+        {
+            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć zaznaczoną wpłatę?");
+            if (ynResult)
+            {
+                using (var db = new DB.DomenaDBContext())
+                {
+                    db.Payments.Where(x => x.PaymentId.Equals(SelectedPayment.PaymentId)).FirstOrDefault().IsDeleted = true;
+                    db.SaveChanges();
+                }
+                InitializeCollection();
+            }
+        }
+
+        private bool CanDeletePayment()
+        {
+            return SelectedPayment != null;
+        }
+
         private bool IsValid(DependencyObject obj)
         {
             // The dependency object is valid if it has no errors and all
@@ -363,7 +394,57 @@ namespace DomenaManager.Pages
 
         private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditPaymentWizard);
+                double amount;
+                bool isAmountValid = double.TryParse(dc.PaymentAmount, out amount);
+                //Accept
+                if (dc._lpc == null)
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingValue) || string.IsNullOrEmpty(dc.SelectedApartmentNumberValue) || !isAmountValid))
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Add new payment
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        var newPayment = new Payment() { IsDeleted=false, ApartmentId = dc.SelectedApartmentNumber.ApartmentId, PaymentAddDate = DateTime.Today, PaymentAmount = amount, PaymentId = Guid.NewGuid(), PaymentRegistrationDate = dc.PaymentRegistrationDate };
+                        db.Payments.Add(newPayment);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingValue) || string.IsNullOrEmpty(dc.SelectedApartmentNumberValue) || !isAmountValid))
+                    {
+                        eventArgs.Cancel();
+                        return;
+                    }
+                    //Edit payment
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        var q = db.Payments.Where(x => x.PaymentId.Equals(dc._lpc.PaymentId)).FirstOrDefault();
+                        q.PaymentAddDate = DateTime.Today;
+                        q.PaymentRegistrationDate = dc.PaymentRegistrationDate;
+                        q.PaymentAmount = amount;
+                        db.SaveChanges();
+                    }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
 
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    //eventArgs.Cancel();
+                    var dc = (eventArgs.Session.Content as Wizards.EditOwnerWizard);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                }
+            }
+            InitializeCollection();
         }
 
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)

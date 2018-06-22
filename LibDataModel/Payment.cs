@@ -15,5 +15,6 @@ namespace LibDataModel
         public double PaymentAmount { get; set; }
         public DateTime PaymentRegistrationDate { get; set; }
         public DateTime PaymentAddDate { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

@@ -118,14 +118,18 @@ namespace DomenaManager.Pages
             return SelectedInvoice != null;
         }
 
-        private void Delete(object param)
+        private async void Delete(object param)
         {
-            using (var db = new DB.DomenaDBContext())
+            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć zaznaczoną fakturę?");
+            if (ynResult)
             {
-                db.Invoices.Where(x => x.InvoiceId.Equals(SelectedInvoice.InvoiceId)).FirstOrDefault().IsDeleted = true;
-                db.SaveChanges();
+                using (var db = new DB.DomenaDBContext())
+                {
+                    db.Invoices.Where(x => x.InvoiceId.Equals(SelectedInvoice.InvoiceId)).FirstOrDefault().IsDeleted = true;
+                    db.SaveChanges();
+                }
+                InitializeCollection();
             }
-            InitializeCollection();
         } 
 
         public ICommand EditInvoiceCommand

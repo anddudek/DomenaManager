@@ -287,12 +287,16 @@ namespace DomenaManager.Pages
             return SelectedCharge != null && !SelectedCharge.IsClosed;
         }
 
-        private void DeleteCharge(object param)
+        private async void DeleteCharge(object param)
         {
-            using (var db = new DB.DomenaDBContext())
+            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć zaznaczoną wpłatę?");
+            if (ynResult)
             {
-                db.Charges.FirstOrDefault(x => x.ChargeId.Equals(SelectedCharge.ChargeId)).IsDeleted = true;
-                db.SaveChanges();
+                using (var db = new DB.DomenaDBContext())
+                {
+                    db.Charges.FirstOrDefault(x => x.ChargeId.Equals(SelectedCharge.ChargeId)).IsDeleted = true;
+                    db.SaveChanges();
+                }
             }
             InitializeCollection();
         }
