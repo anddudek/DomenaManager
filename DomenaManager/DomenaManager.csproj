@@ -88,7 +88,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Helpers\ChargesOperations.cs" />
+    <Compile Include="Helpers\Payments\ChargesOperations.cs" />
     <Compile Include="Helpers\Converter\BuildingsFooterConverter.cs" />
     <Compile Include="Helpers\Converter\GuidToCategoryNameMultiConverter.cs" />
     <Compile Include="Helpers\Converter\DatesToCurrentDateMultiConverter.cs" />
@@ -107,6 +107,7 @@
     <Compile Include="Helpers\ListView\ApartmentListView.cs" />
     <Compile Include="Helpers\CostDistributionCollectionItem.cs" />
     <Compile Include="Helpers\ListView\CostListView.cs" />
+    <Compile Include="Helpers\Payments\Payments.cs" />
     <Compile Include="Helpers\ValidationRule\StringToDoubleValidationRule.cs" />
     <Compile Include="Helpers\ValidationRule\StringToIntValidationRule.cs" />
     <Compile Include="Helpers\ListView\OwnerDescriptionListView.cs" />

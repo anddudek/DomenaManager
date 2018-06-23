@@ -158,6 +158,16 @@ namespace DomenaManager.Pages
             get { return new RelayCommand(Filter, CanFilter); }
         }
 
+        public ICommand PreviousYearCommand
+        {
+            get { return new RelayCommand(SwitchPreviousYear, CanSwitchYear); }
+        }
+
+        public ICommand NextYearCommand
+        {
+            get { return new RelayCommand(SwitchNextYear, CanSwitchYear); }
+        }
+
         public SummaryPage()
         {
             DataContext = this;
@@ -203,7 +213,11 @@ namespace DomenaManager.Pages
                 {
                     sdg.rows[0].charges[k] = "-";
                 }
-                sdg.rows[0].charges[sdg.categories.Length + 1] = " zł";//////////////////////
+                double lastYearSaldo = Payments.CalculateSaldo(year-1, apartment);
+                sdg.rows[0].chargesSum = "-";
+                sdg.rows[0].charges[sdg.categories.Length + 1] = lastYearSaldo.ToString() + " zł"; // lastYear
+
+                double yearSum = 0;
                 for (int i = 1; i < 13; i++)//months
                 {
                     sdg.rows[i] = new SummaryDataGridRow();
@@ -226,8 +240,11 @@ namespace DomenaManager.Pages
                         allCat += sum;
                         sdg.rows[i].charges[j] = sum.ToString() + " zł";
                     }
-                    sdg.rows[i].charges[sdg.categories.Length] = db.Payments.Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.PaymentRegistrationDate.Year == year && x.PaymentRegistrationDate.Month == i).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum().ToString() + " zł";
-                    sdg.rows[i].charges[sdg.categories.Length + 1] = (100 - allCat).ToString() + " zł";
+                    double thisMonthPayments = db.Payments.Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.PaymentRegistrationDate.Year == year && x.PaymentRegistrationDate.Month == i).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
+                    sdg.rows[i].chargesSum = allCat.ToString() + " zł";
+                    sdg.rows[i].charges[sdg.categories.Length] = thisMonthPayments.ToString() + " zł";
+                    sdg.rows[i].charges[sdg.categories.Length + 1] = (thisMonthPayments - allCat).ToString() + " zł"; //SALDO
+                    yearSum += thisMonthPayments - allCat;
                 }
                 sdg.rows[sdg.rows.Length - 1] = new SummaryDataGridRow()
                 {
@@ -238,7 +255,8 @@ namespace DomenaManager.Pages
                 {
                     sdg.rows[sdg.rows.Length - 1].charges[k] = "-";
                 }
-                sdg.rows[sdg.rows.Length - 1].charges[sdg.categories.Length + 1] = "SUM";//////////////////////
+                sdg.rows[sdg.rows.Length - 1].charges[sdg.categories.Length + 1] = (Payments.CalculateSaldo(year, apartment)).ToString() + " zł"; //AllYears year
+                sdg.rows[sdg.rows.Length - 1].chargesSum = "-";
             }
             for (int i = 0; i < sdg.categories.Length; i++)
             {
@@ -247,6 +265,17 @@ namespace DomenaManager.Pages
                 ncol.Binding = new Binding("charges[" + i + "]");
                 a.Columns.Add(ncol);
             }
+            var sepColumn = new DataGridTextColumn();
+            sepColumn.MaxWidth = 3;
+            sepColumn.MinWidth = 3;
+            sepColumn.Width = 3;            
+            sepColumn.CellStyle = new Style(typeof(DataGridCell));
+            sepColumn.CellStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, new SolidColorBrush(Colors.LightGray)));
+            a.Columns.Add(sepColumn);
+            var sumCol = new DataGridTextColumn();
+            sumCol.Header = "Razem";
+            sumCol.Binding = new Binding("chargesSum");
+            a.Columns.Add(sumCol);
             var paym = new DataGridTextColumn();
             paym.Header = "Wpłaty";
             paym.Binding = new Binding("charges[" + (sdg.categories.Length) + "]");
@@ -255,9 +284,10 @@ namespace DomenaManager.Pages
             saldo.Header = "Saldo";
             saldo.Binding = new Binding("charges[" + (sdg.categories.Length + 1) + "]");
             a.Columns.Add(saldo);
-            a.ItemsSource = sdg.rows;
+            a.ItemsSource = sdg.rows;            
             SummaryDG = a;
             SelectedYear = sdg.year.ToString();
+            SelectedSummary = sdg;            
         }
 
         private void Filter(object param)
@@ -272,6 +302,23 @@ namespace DomenaManager.Pages
             int y;
             bool tp = int.TryParse(SelectedYear, out y);
             return SelectedBuildingName != null && SelectedApartmentNumber != null && tp && y > 2000 && y <= DateTime.Now.Year;
+        }
+
+        private void SwitchPreviousYear(object param)
+        {
+            SelectedYear = (SelectedSummary.year - 1).ToString();
+            PrepareData(SelectedSummary.apartment, SelectedSummary.year - 1);
+        }
+
+        private void SwitchNextYear(object param)
+        {
+            SelectedYear = (SelectedSummary.year + 1).ToString();
+            PrepareData(SelectedSummary.apartment, SelectedSummary.year + 1);
+        }
+
+        private bool CanSwitchYear()
+        {
+            return SelectedSummary != null;
         }
 
         private void InitializeApartmentsNumbers()

@@ -50,5 +50,6 @@ namespace DomenaManager.Helpers
     {
         public string month { get; set; }
         public string[] charges { get; set; }
+        public string chargesSum { get; set; }
     }
 }
