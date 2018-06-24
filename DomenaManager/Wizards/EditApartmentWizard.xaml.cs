@@ -188,6 +188,84 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand AddNewBuilding
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddBuilding, CanAddBuilding);
+            }
+        }
+
+        public ICommand AddNewOwner
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddOwner, CanAddOwner);
+            }
+        }
+
+        public Apartment _apartmentLocalCopy;
+
+        public EditApartmentWizard(Apartment SelectedApartment = null)
+        {
+            if (SelectedApartment != null)
+            {
+                _apartmentLocalCopy = new Apartment(SelectedApartment);
+            }
+            InitializeBuildingList();
+            InitializeOwnerList();
+            InitializeFields();
+            DataContext = this;            
+            InitializeComponent();            
+        }
+
+        private void InitializeBuildingList()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                BuildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
+            }
+        }
+
+        private void InitializeOwnerList()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                OwnersNames = new ObservableCollection<Owner>(db.Owners.Where(x => x.IsDeleted == false).ToList());
+            }
+        }
+
+        private void InitializeFields()
+        {
+            if (_apartmentLocalCopy == null)
+            {
+                _boughtDate = DateTime.Today;
+                _waterMeterExp = DateTime.Today;
+                return;
+            }
+
+            _boughtDate = _apartmentLocalCopy.BoughtDate;
+            _waterMeterExp = _apartmentLocalCopy.WaterMeterExp;
+            _additionalArea = _apartmentLocalCopy.AdditionalArea.ToString();
+            _apartmentArea = _apartmentLocalCopy.ApartmentArea.ToString();
+            _apartmentNumber = _apartmentLocalCopy.ApartmentNumber;
+            _hasWaterMeter = _apartmentLocalCopy.HasWaterMeter ? 0 : 1;
+            _selectedBuildingName = _buildingsNames.Where(x => x.BuildingId.Equals(_apartmentLocalCopy.BuildingId)).FirstOrDefault();
+            _selectedOwnerName = _ownersNames.Where(x => x.OwnerId.Equals(_apartmentLocalCopy.OwnerId)).FirstOrDefault();
+            _selectedOwnerMailAddress = _apartmentLocalCopy.CorrespondenceAddress != null ? _apartmentLocalCopy.CorrespondenceAddress : (_selectedOwnerName != null ? _selectedOwnerName.MailAddress : null);
+        }
+
+        private async void AddOwner(object param)
+        {
+            var eow = new EditOwnerWizard();
+            var result = await DialogHost.Show(eow, "HelperDialog", ExtendedEOWOpenedEventHandler, ExtendedEOWClosingEventHandler);
+        }
+
+        private bool CanAddOwner()
+        {
+            return true;
+        }
+
         private void UpdateAllFields(object param)
         {
             Helpers.Validator.IsValid(this);
@@ -196,14 +274,6 @@ namespace DomenaManager.Wizards
         private bool CanUpdateAllFields()
         {
             return true;
-        }
-
-        public ICommand AddNewBuilding
-        {
-            get
-            {
-                return new Helpers.RelayCommand(AddBuilding, CanAddBuilding);
-            }
         }
 
         private async void AddBuilding(object param)
@@ -286,25 +356,6 @@ namespace DomenaManager.Wizards
             }
         }
 
-        public ICommand AddNewOwner
-        {
-            get
-            {
-                return new Helpers.RelayCommand(AddOwner, CanAddOwner);
-            }
-        }
-
-        private async void AddOwner(object param)
-        {
-            var eow = new EditOwnerWizard();
-            var result = await DialogHost.Show(eow, "HelperDialog", ExtendedEOWOpenedEventHandler, ExtendedEOWClosingEventHandler);
-        }
-
-        private bool CanAddOwner()
-        {
-            return true;
-        }
-
         private void ExtendedEOWOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
         {
 
@@ -373,57 +424,6 @@ namespace DomenaManager.Wizards
             LogicalTreeHelper.GetChildren(obj)
             .OfType<DependencyObject>()
             .All(IsValid);
-        }
-
-        public Apartment _apartmentLocalCopy;
-
-        public EditApartmentWizard(Apartment SelectedApartment = null)
-        {
-            if (SelectedApartment != null)
-            {
-                _apartmentLocalCopy = new Apartment(SelectedApartment);
-            }
-            InitializeBuildingList();
-            InitializeOwnerList();
-            InitializeFields();
-            DataContext = this;            
-            InitializeComponent();            
-        }
-
-        private void InitializeBuildingList()
-        {
-            using (var db = new DB.DomenaDBContext())
-            {
-                BuildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
-            }
-        }
-
-        private void InitializeOwnerList()
-        {
-            using (var db = new DB.DomenaDBContext())
-            {
-                OwnersNames = new ObservableCollection<Owner>(db.Owners.Where(x => x.IsDeleted == false).ToList());
-            }
-        }
-
-        private void InitializeFields()
-        {
-            if (_apartmentLocalCopy == null)
-            {
-                _boughtDate = DateTime.Today;
-                _waterMeterExp = DateTime.Today;
-                return;
-            }
-
-            _boughtDate = _apartmentLocalCopy.BoughtDate;
-            _waterMeterExp = _apartmentLocalCopy.WaterMeterExp;
-            _additionalArea = _apartmentLocalCopy.AdditionalArea.ToString();
-            _apartmentArea = _apartmentLocalCopy.ApartmentArea.ToString();
-            _apartmentNumber = _apartmentLocalCopy.ApartmentNumber;
-            _hasWaterMeter = _apartmentLocalCopy.HasWaterMeter ? 0 : 1;
-            _selectedBuildingName = _buildingsNames.Where(x => x.BuildingId.Equals(_apartmentLocalCopy.BuildingId)).FirstOrDefault();
-            _selectedOwnerName = _ownersNames.Where(x => x.OwnerId.Equals(_apartmentLocalCopy.OwnerId)).FirstOrDefault();
-            _selectedOwnerMailAddress = _apartmentLocalCopy.CorrespondenceAddress != null ? _apartmentLocalCopy.CorrespondenceAddress : (_selectedOwnerName != null ? _selectedOwnerName.MailAddress : null);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

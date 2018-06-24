@@ -159,148 +159,6 @@ namespace DomenaManager.Pages
             }
         }
 
-        public ICommand EditChargeCommand
-        {
-            get { return new Helpers.RelayCommand(Edit, CanEdit); }
-        }
-
-        private bool CanEdit()
-        {
-            return SelectedCharge != null && !SelectedCharge.IsClosed;
-        }
-
-        private async void Edit(object param)
-        {
-            if (SelectedCharge != null)
-            {
-                Wizards.EditChargeWizard ecw;
-
-                ecw = new Wizards.EditChargeWizard(SelectedCharge);
-
-                var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-            }
-        }
-
-        public ICommand AddChargeCommand
-        {
-            get { return new Helpers.RelayCommand(Add, CanAdd); }
-        }
-
-        private bool CanAdd()
-        {
-            return true;
-        }
-
-        private async void Add(object param)
-        {
-            Wizards.EditChargeWizard ecw;
-
-            ecw = new Wizards.EditChargeWizard(null);
-
-            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-        }
-
-        public ICommand RecalculateChargeCommand
-        {
-            get { return new Helpers.RelayCommand(RecalculateCharge, CanRecalculateCharge); }
-        }
-
-        private bool CanRecalculateCharge()
-        {
-            return true;
-        }
-
-        private void RecalculateCharge(object param)
-        {
-
-            using (var db = new DB.DomenaDBContext())
-            {
-                var q = db.Charges.Include(x => x.Components).Where(y => !y.IsClosed);
-                foreach (var charge in q)
-                {
-                    ChargesOperations.RecalculateCharge(charge);
-                }
-            }
-            InitializeCollection();
-        }
-
-        public ICommand ShowChargeDetails
-        {
-            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
-        }
-
-        private bool CanShowDetails()
-        {
-            return true;
-        }
-
-        private async void ShowDetails(object param)
-        {
-            if (SelectedCharge != null)
-            {
-                Wizards.EditChargeWizard ecw;
-
-                ecw = new Wizards.EditChargeWizard(SelectedCharge);
-
-                var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-            }
-        }
-
-        public ICommand OpenCloseChargeCommand
-        {
-            get { return new Helpers.RelayCommand(OpenCloseCharge, CanOpenCloseCharge); }
-        }
-
-        private bool CanOpenCloseCharge()
-        {
-            return SelectedCharge != null;
-        }
-
-        private void OpenCloseCharge(object param)
-        {
-            using (var db = new DB.DomenaDBContext())
-            {
-                foreach (var sc in (List<ChargeDataGrid>)SelectedChargesList)
-                {
-                    var charge = db.Charges.FirstOrDefault(x => x.ChargeId.Equals(sc.ChargeId));
-                    if (OpenCloseButtonText == "Otwórz")
-                    {
-                        charge.IsClosed = false;
-                    }
-                    else
-                    {
-                        charge.IsClosed = true;
-                    }
-                }
-                db.SaveChanges();
-            }
-            InitializeCollection();
-        }
-
-        public ICommand DeleteChargeCommand
-        {
-            get { return new Helpers.RelayCommand(DeleteCharge, CanDeleteCharge); }
-        }
-
-        private bool CanDeleteCharge()
-        {
-            return SelectedCharge != null && !SelectedCharge.IsClosed;
-        }
-
-        private async void DeleteCharge(object param)
-        {
-            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć zaznaczoną wpłatę?");
-            if (ynResult)
-            {
-                using (var db = new DB.DomenaDBContext())
-                {
-                    db.Charges.FirstOrDefault(x => x.ChargeId.Equals(SelectedCharge.ChargeId)).IsDeleted = true;
-                    db.SaveChanges();
-                }
-            }
-            InitializeCollection();
-        }
-
         private ObservableCollection<Owner> _ownersNames;
         public ObservableCollection<Owner> OwnersNames
         {
@@ -377,7 +235,37 @@ namespace DomenaManager.Pages
                 }
             }
         }
-        
+
+        public ICommand EditChargeCommand
+        {
+            get { return new Helpers.RelayCommand(Edit, CanEdit); }
+        }
+
+        public ICommand AddChargeCommand
+        {
+            get { return new Helpers.RelayCommand(Add, CanAdd); }
+        }
+
+        public ICommand RecalculateChargeCommand
+        {
+            get { return new Helpers.RelayCommand(RecalculateCharge, CanRecalculateCharge); }
+        }
+
+        public ICommand ShowChargeDetails
+        {
+            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
+        }
+
+        public ICommand OpenCloseChargeCommand
+        {
+            get { return new Helpers.RelayCommand(OpenCloseCharge, CanOpenCloseCharge); }
+        }
+
+        public ICommand DeleteChargeCommand
+        {
+            get { return new Helpers.RelayCommand(DeleteCharge, CanDeleteCharge); }
+        }
+
         public ICommand ClearFilterCommand
         {
             get
@@ -408,14 +296,13 @@ namespace DomenaManager.Pages
             SelectedChargesList = new List<ChargeDataGrid>();
             InitializeComponent();
             GroupByBuilding = false;
+            ShowClosed = true;
 
             using (var db = new DB.DomenaDBContext())
             {
-                var b = db.Buildings.FirstOrDefault(x => x.BuildingId.Equals(apartment.BuildingId));
-                var o = db.Owners.FirstOrDefault(x => x.OwnerId.Equals(apartment.OwnerId));
-                SelectedBuildingName = b;
-                SelectedApartmentNumber = apartment.ApartmentNumber;
-                SelectedOwnerName = o;
+                SelectedBuildingName = BuildingsNames.FirstOrDefault(x => x.BuildingId.Equals(apartment.BuildingId));
+                SelectedApartmentNumber = ApartmentsNumbers.FirstOrDefault(x => x == apartment.ApartmentNumber);
+                SelectedOwnerName = OwnersNames.FirstOrDefault(x => x.OwnerId.Equals(apartment.OwnerId)); ;
             }
         }
 
@@ -474,7 +361,86 @@ namespace DomenaManager.Pages
                 var c = b.Select(x => x.Apartment.ApartmentNumber).ToList();
                 var d = c.Distinct().ToList();
                 ApartmentsNumbers = new ObservableCollection<int>(Charges.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).Select(x => x.Apartment.ApartmentNumber).Distinct().OrderBy(x => x).ToList());
-            }            
+            }
+        }
+
+        private bool CanShowDetails()
+        {
+            return true;
+        }
+
+        private async void ShowDetails(object param)
+        {
+            if (SelectedCharge != null)
+            {
+                Wizards.EditChargeWizard ecw;
+
+                ecw = new Wizards.EditChargeWizard(SelectedCharge);
+
+                var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            }
+        }
+
+        private bool CanOpenCloseCharge()
+        {
+            return SelectedCharge != null;
+        }
+
+        private void OpenCloseCharge(object param)
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                foreach (var sc in (List<ChargeDataGrid>)SelectedChargesList)
+                {
+                    var charge = db.Charges.FirstOrDefault(x => x.ChargeId.Equals(sc.ChargeId));
+                    if (OpenCloseButtonText == "Otwórz")
+                    {
+                        charge.IsClosed = false;
+                    }
+                    else
+                    {
+                        charge.IsClosed = true;
+                    }
+                }
+                db.SaveChanges();
+            }
+            InitializeCollection();
+        }
+
+        private bool CanDeleteCharge()
+        {
+            return SelectedCharge != null && !SelectedCharge.IsClosed;
+        }
+
+        private async void DeleteCharge(object param)
+        {
+            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć zaznaczoną wpłatę?");
+            if (ynResult)
+            {
+                using (var db = new DB.DomenaDBContext())
+                {
+                    db.Charges.FirstOrDefault(x => x.ChargeId.Equals(SelectedCharge.ChargeId)).IsDeleted = true;
+                    db.SaveChanges();
+                }
+            }
+            InitializeCollection();
+        }
+
+        private bool CanEdit()
+        {
+            return SelectedCharge != null && !SelectedCharge.IsClosed;
+        }
+
+        private async void Edit(object param)
+        {
+            if (SelectedCharge != null)
+            {
+                Wizards.EditChargeWizard ecw;
+
+                ecw = new Wizards.EditChargeWizard(SelectedCharge);
+
+                var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            }
         }
 
         private void ClearFilter(object param)
@@ -513,14 +479,37 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private bool IsValid(DependencyObject obj)
+        private bool CanAdd()
         {
-            // The dependency object is valid if it has no errors and all
-            // of its children (that are dependency objects) are error-free.
-            return !Validation.GetHasError(obj) &&
-            LogicalTreeHelper.GetChildren(obj)
-            .OfType<DependencyObject>()
-            .All(IsValid);
+            return true;
+        }
+
+        private async void Add(object param)
+        {
+            Wizards.EditChargeWizard ecw;
+
+            ecw = new Wizards.EditChargeWizard(null);
+
+            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+        }
+
+        private bool CanRecalculateCharge()
+        {
+            return true;
+        }
+
+        private void RecalculateCharge(object param)
+        {
+
+            using (var db = new DB.DomenaDBContext())
+            {
+                var q = db.Charges.Include(x => x.Components).Where(y => !y.IsClosed);
+                foreach (var charge in q)
+                {
+                    ChargesOperations.RecalculateCharge(charge);
+                }
+            }
+            InitializeCollection();
         }
 
         private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
@@ -593,6 +582,16 @@ namespace DomenaManager.Pages
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
         {
 
+        }
+
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

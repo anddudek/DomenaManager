@@ -108,81 +108,6 @@ namespace DomenaManager.Pages
             }
         }
 
-        public ICommand DeleteInvoiceCommand
-        {
-            get { return new Helpers.RelayCommand(Delete, CanDelete);}
-        }
-
-        private bool CanDelete()
-        {
-            return SelectedInvoice != null;
-        }
-
-        private async void Delete(object param)
-        {
-            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć zaznaczoną fakturę?");
-            if (ynResult)
-            {
-                using (var db = new DB.DomenaDBContext())
-                {
-                    db.Invoices.Where(x => x.InvoiceId.Equals(SelectedInvoice.InvoiceId)).FirstOrDefault().IsDeleted = true;
-                    db.SaveChanges();
-                }
-                InitializeCollection();
-            }
-        } 
-
-        public ICommand EditInvoiceCommand
-        {
-            get { return new Helpers.RelayCommand(Edit, CanEdit); }
-        }
-
-        private bool CanEdit()
-        {
-            return SelectedInvoice != null;
-        }
-
-        private async void Edit(object param)
-        {
-            if (SelectedInvoice != null)
-            {
-                var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
-                var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
-            }
-        }
-
-        public ICommand AddInvoiceCommand
-        {
-            get { return new Helpers.RelayCommand(Add, CanAdd); }
-        }
-
-        private bool CanAdd()
-        {
-            return true;
-        }
-
-        private async void Add(object param)
-        {
-            var eiw = new Wizards.EditInvoiceWizard();
-            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
-        }
-
-        public ICommand ShowInvoiceDetails
-        {
-            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
-        }
-
-        private bool CanShowDetails()
-        {
-            return SelectedInvoice != null;
-        }
-
-        private async void ShowDetails(object param)
-        {
-            var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
-            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
-        }
-
         private ObservableCollection<Building> _buildingsNames;
         public ObservableCollection<Building> BuildingsNames
         {
@@ -222,10 +147,27 @@ namespace DomenaManager.Pages
         
         public ICommand ClearFilterCommand
         {
-            get
-            {
-                return new Helpers.RelayCommand(ClearFilter, CanClearFilter);
-            }
+            get { return new Helpers.RelayCommand(ClearFilter, CanClearFilter); }
+        }
+
+        public ICommand DeleteInvoiceCommand
+        {
+            get { return new Helpers.RelayCommand(Delete, CanDelete); }
+        }
+
+        public ICommand EditInvoiceCommand
+        {
+            get { return new Helpers.RelayCommand(Edit, CanEdit); }
+        }
+
+        public ICommand AddInvoiceCommand
+        {
+            get { return new Helpers.RelayCommand(Add, CanAdd); }
+        }
+
+        public ICommand ShowInvoiceDetails
+        {
+            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
         }
 
         public InvoicesPage()
@@ -275,6 +217,62 @@ namespace DomenaManager.Pages
             }
         }
 
+        private bool CanDelete()
+        {
+            return SelectedInvoice != null;
+        }
+
+        private async void Delete(object param)
+        {
+            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć zaznaczoną fakturę?");
+            if (ynResult)
+            {
+                using (var db = new DB.DomenaDBContext())
+                {
+                    db.Invoices.Where(x => x.InvoiceId.Equals(SelectedInvoice.InvoiceId)).FirstOrDefault().IsDeleted = true;
+                    db.SaveChanges();
+                }
+                InitializeCollection();
+            }
+        }
+
+        private bool CanEdit()
+        {
+            return SelectedInvoice != null;
+        }
+
+        private async void Edit(object param)
+        {
+            if (SelectedInvoice != null)
+            {
+                var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
+                var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
+            }
+        }
+
+        private bool CanAdd()
+        {
+            return true;
+        }
+
+        private async void Add(object param)
+        {
+            var eiw = new Wizards.EditInvoiceWizard();
+            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
+        }
+
+
+        private bool CanShowDetails()
+        {
+            return SelectedInvoice != null;
+        }
+
+        private async void ShowDetails(object param)
+        {
+            var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
+            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
+        }
+
         private void ClearFilter(object param)
         {
             SelectedBuildingName = null;
@@ -295,16 +293,6 @@ namespace DomenaManager.Pages
             }
             
             return true;
-        }
-
-        private bool IsValid(DependencyObject obj)
-        {
-            // The dependency object is valid if it has no errors and all
-            // of its children (that are dependency objects) are error-free.
-            return !Validation.GetHasError(obj) &&
-            LogicalTreeHelper.GetChildren(obj)
-            .OfType<DependencyObject>()
-            .All(IsValid);
         }
 
         private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
@@ -392,6 +380,16 @@ namespace DomenaManager.Pages
                 }
             }
              
+        }
+
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

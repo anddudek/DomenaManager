@@ -86,7 +86,8 @@ namespace DomenaManager.Pages
                 var q = db.Owners.Where(x => x.IsDeleted == false);
                 foreach (var own in q)
                 {
-                    var o = new OwnerDataGrid {Name = own.OwnerName, Address= own.MailAddress, ApartmentsCount=1 };
+                    int apartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.OwnerId.Equals(own.OwnerId)).Count(x => true);
+                    var o = new OwnerDataGrid {Name = own.OwnerName, Address= own.MailAddress, ApartmentsCount= apartmentsCount };
                     o.OwnerId = own.OwnerId;                    
                     Owners.Add(o);
                 }
@@ -107,6 +108,8 @@ namespace DomenaManager.Pages
                         address.Append(build.RoadName);
                         address.Append(" ");
                         address.Append(build.BuildingNumber);
+                        address.Append("/");
+                        address.Append(a.ApartmentNumber);
                         owner.ApartmensList.Add(new OwnerDescriptionListView { DateString = a.CreatedDate.ToString("yyyy-MM-dd"), BuildingName = build.Name, BuildingAddress= address.ToString()});
                     } 
                     if (owner.ApartmensList.Count == 0)

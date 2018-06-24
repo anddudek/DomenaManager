@@ -22,6 +22,7 @@ using LibDataModel;
 using LiveCharts;
 using LiveCharts.Wpf;
 using LiveCharts.Defaults;
+using System.Data.Objects.SqlClient;
 
 namespace DomenaManager.Pages
 {
@@ -51,38 +52,6 @@ namespace DomenaManager.Pages
                 OnPropertyChanged("SelectedApartment");
                 //if (value != null)
                     //OpenDrawer();   
-            }
-        }
-
-        public ICommand ExpandApartmentCommand
-        {
-            get
-            {
-                return new RelayCommand(ExpandApartment, CanExpandApartment);
-            }
-        }
-        
-        public ICommand AddApartmentCommand
-        {
-            get
-            {
-                return new Helpers.RelayCommand(AddApartment, CanAddApartment);
-            }
-        }
-
-        public ICommand EditApartmentCommand
-        {
-            get
-            {
-                return new Helpers.RelayCommand(EditApartment, CanEditApartment);
-            }
-        }
-
-        public ICommand DeleteApartmentCommand
-        {
-            get
-            {
-                return new Helpers.RelayCommand(DeleteApartment, CanDeleteApartment);
             }
         }
 
@@ -185,12 +154,60 @@ namespace DomenaManager.Pages
                 return new Helpers.RelayCommand(Filter, CanFilter);
             }
         }
-        
+
+        public ICommand ExpandApartmentCommand
+        {
+            get
+            {
+                return new RelayCommand(ExpandApartment, CanExpandApartment);
+            }
+        }
+
+        public ICommand AddApartmentCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddApartment, CanAddApartment);
+            }
+        }
+
+        public ICommand EditApartmentCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(EditApartment, CanEditApartment);
+            }
+        }
+
+        public ICommand DeleteApartmentCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(DeleteApartment, CanDeleteApartment);
+            }
+        }
+
         public ICommand ClearFilterCommand
         {
             get
             {
                 return new Helpers.RelayCommand(ClearFilter, CanClearFilter);
+            }
+        }
+
+        public ICommand ShowChargesCommand
+        {
+            get
+            {
+                return new RelayCommand(ShowCharges, CanShowCharges);
+            }
+        }
+
+        public ICommand ShowPaymentsCommand
+        {
+            get
+            {
+                return new RelayCommand(ShowPayments, CanShowPayments);
             }
         }
 
@@ -207,10 +224,15 @@ namespace DomenaManager.Pages
             Apartments = new ObservableCollection<ApartmentDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                _buildingsNames = new ObservableCollection<Building>(db.Buildings.ToList());
-                _ownersNames = new ObservableCollection<Owner>(db.Owners.ToList());
-
                 var q = db.Apartments.Where(x => x.IsDeleted == false);
+                InitializeApartments(q);
+            }
+        }
+
+        private void InitializeApartments(IQueryable<Apartment> q)
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
                 foreach (var apar in q)
                 {
                     var a = new ApartmentDataGrid
@@ -223,13 +245,13 @@ namespace DomenaManager.Pages
                         ApartmentAdditionalArea = apar.AdditionalArea,
                         ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
                         ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
-                        ApartmentPercentageDistribution = 
-                        (100 * (apar.ApartmentArea + apar.AdditionalArea) / 
+                        ApartmentPercentageDistribution =
+                        (100 * (apar.ApartmentArea + apar.AdditionalArea) /
                         db.Apartments
                         .Where(x => x.BuildingId == apar.BuildingId && !x.IsDeleted)
-                        .Select(x=>x.AdditionalArea + x.ApartmentArea)
+                        .Select(x => x.AdditionalArea + x.ApartmentArea)
                         .Sum()).ToString("0.00") + " %",
-                        HasWaterMeter = apar.HasWaterMeter,
+                        HasWaterMeter = apar.HasWaterMeter ? "Tak" : "Nie",
                         BoughtDate = apar.BoughtDate,
                         WaterMeterExp = apar.WaterMeterExp,
                         ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
@@ -268,30 +290,21 @@ namespace DomenaManager.Pages
                                 },
                                 LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
                             }
-                        }
-                    };                   
-                    Apartments.Add(a);
-                }
+                        },
 
-                foreach (var apartment in Apartments)
-                {
-                    apartment.Balance = 0;
-                    //TODO
+
+                    };
+                    a.Balance = Payments.CalculateSaldo(DateTime.Today.Year, db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(a.ApartmentId)));
+                    a.CostHistory = new ObservableCollection<string>(db.Charges.Include(x => x.Components).Where(x => x.ApartmentId.Equals(a.ApartmentId) && !x.IsDeleted).OrderByDescending(x => x.CreatedTime).Take(5).ToList().Select(x => new { costConc = x.CreatedTime.ToString("dd-MM-yyyy") + " : " + x.Components.Select(y => y.Sum).DefaultIfEmpty(0).Sum() + " zł" }).Select(x => x.costConc).ToList());
+                    a.PaymentHistory = new ObservableCollection<string>(db.Payments.Where(x => !x.IsDeleted && x.ApartmentId.Equals(a.ApartmentId)).OrderByDescending(x => x.PaymentRegistrationDate).Take(5).ToList().Select(x => new { paymConc = x.PaymentRegistrationDate.ToString("dd-MM-yyyy") + " : " + x.PaymentAmount + " zł" }).Select(x => x.paymConc).ToList());
+                    Apartments.Add(a);
                 }
             }
         }
 
-        async Task PutTaskDelay()
-        {
-            await Task.Delay(300);
-        }
-
         private void OpenDrawer()
         {
-            // Wait till all events in bg that can takes focus away from drawer (thus cancel it) finishes
-            //await PutTaskDelay();
             DrawerHost.OpenDrawerCommand.Execute(Dock.Bottom, this.DH);
-
         }
 
         private async void AddApartment(object param)
@@ -316,6 +329,34 @@ namespace DomenaManager.Pages
             return SelectedApartment != null;
         }
 
+        private void ShowCharges(object param)
+        {
+            var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
+            using (var db = new DB.DomenaDBContext())
+            {
+                mw.CurrentPage = new ChargesPage(db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)));
+            }
+        }
+
+        private bool CanShowCharges()
+        {
+            return SelectedApartment != null;
+        }
+
+        private void ShowPayments(object param)
+        {
+            var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
+            using (var db = new DB.DomenaDBContext())
+            {
+                mw.CurrentPage = new PaymentsPage(db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)));
+            }
+        }
+
+        private bool CanShowPayments()
+        {
+            return SelectedApartment != null;
+        }
+
         private void Filter(object param)
         {
             using (var db = new DB.DomenaDBContext())
@@ -331,69 +372,8 @@ namespace DomenaManager.Pages
                 {
                     q = q.Where(x => x.OwnerId == SelectedOwnerName.OwnerId);
                 }
-
-
-                foreach (var apar in q)
-                {
-                    var a = new ApartmentDataGrid
-                    {
-                        BuildingName = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().Name,
-                        BulidingAddress = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().GetAddress(),
-                        ApartmentId = apar.ApartmentId,
-                        ApartmentNumber = apar.ApartmentNumber,
-                        ApartmentArea = apar.ApartmentArea,
-                        ApartmentAdditionalArea = apar.AdditionalArea,
-                        ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
-                        ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
-                        HasWaterMeter = apar.HasWaterMeter,
-                        BoughtDate = apar.BoughtDate,
-                        ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
-                        WaterMeterExp = apar.WaterMeterExp,
-
-                        ApartmentAreaSeries = new SeriesCollection
-                        {
-                            new PieSeries
-                            {
-                                Title = "Powierzchnia mieszkania (m2)", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea)},
-                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
-                            },
-
-                            new PieSeries
-                            {
-                                Title = "Powierzchnie przynależne (m2)", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.AdditionalArea)},
-                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
-                            }
-                        },
-
-                        BuildingAreaSeries = new SeriesCollection
-                        {
-                            new PieSeries
-                            {
-                                Title = "Całkowita powierzchnia (m2)", Values = new ChartValues<ObservableValue> {new ObservableValue(apar.ApartmentArea + apar.AdditionalArea)},
-                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
-                            },
-
-                            new PieSeries
-                            {
-                                Title = "Reszta budynku (m2)", Values = new ChartValues<ObservableValue>
-                                {
-                                    new ObservableValue(
-                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.ApartmentArea).DefaultIfEmpty(0).Sum() +
-                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.AdditionalArea).DefaultIfEmpty(0).Sum()
-                                    )
-                                },
-                                LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
-                            }
-                        }
-                    };
-                    Apartments.Add(a);
-                }
-
-                foreach (var apartment in Apartments)
-                {
-                    apartment.Balance = 0;
-                    //TODO
-                }
+                
+                InitializeApartments(q);
             }
         }
 

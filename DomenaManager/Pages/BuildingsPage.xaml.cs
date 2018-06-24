@@ -103,8 +103,19 @@ namespace DomenaManager.Pages
 
                     //foreach (var c in costs)
                     //{
-                        //b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = db.CostCategories.Where(x => x.CostCategoryId == c.CostCategoryId).FirstOrDefault().CategoryName, CostString = c.CostAmount + " zł", DateString = c.PaymentTime.ToString("yyyy-MM-dd") });
+                    //b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = db.CostCategories.Where(x => x.CostCategoryId == c.CostCategoryId).FirstOrDefault().CategoryName, CostString = c.CostAmount + " zł", DateString = c.PaymentTime.ToString("yyyy-MM-dd") });
                     //}
+
+                    var invoices = db.Invoices.Where(x => !x.IsDeleted && x.BuildingId.Equals(b.BuildingId)).OrderByDescending(x => x.InvoiceDate).Take(5);
+                    foreach (var inv in invoices)
+                    {
+                        b.CostsList.Add(new Helpers.BuildingDescriptionListView()
+                        {
+                            Category = db.InvoiceCategories.FirstOrDefault(x => x.CategoryId.Equals(inv.InvoiceCategoryId)).CategoryName,
+                            CostString = inv.CostAmount + " zł",
+                            DateString = inv.InvoiceDate.ToString("dd-MM-yyyy")
+                        });
+                    }
                     if (b.CostsList.Count == 0)
                     {
                         b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = "Brak kosztów" });

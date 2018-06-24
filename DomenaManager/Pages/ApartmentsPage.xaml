@@ -76,18 +76,19 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
                     <TextBlock Text="Aktualne saldo: " FontWeight="Bold" Margin="10"/>
-                    <TextBlock Text="{Binding SelectedApartment.Saldo}" Margin="10"/>
+                    <TextBlock Text="{Binding SelectedApartment.Balance, StringFormat={}{0} zł}" Margin="10"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Row="4" Grid.Column="0">
                     <TextBlock Text="Ostatnie naliczenia: " FontWeight="Bold" Margin="10"/>
                     <ListBox ItemsSource="{Binding SelectedApartment.CostHistory}" Margin="10"/>
+                    <TextBlock Margin="10"><Hyperlink Command="{Binding ShowChargesCommand}">Pokaż wszystkie...</Hyperlink></TextBlock>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Row="4" Grid.Column="1">
                     <TextBlock Text="Ostatnie wpłaty: " FontWeight="Bold" Margin="10"/>
                     <ListBox ItemsSource="{Binding SelectedApartment.PaymentHistory}" Margin="10"/>
-                    <TextBlock Text="Ostatnie wpłaty: " FontWeight="Bold" Margin="10"/>
+                    <TextBlock Margin="10"><Hyperlink Command="{Binding ShowPaymentsCommand}">Pokaż wszystkie...</Hyperlink></TextBlock>
                 </StackPanel>
 
                 <lvc:PieChart InnerRadius="110" Width="300"  Margin="40" Grid.Row="1" Grid.RowSpan="4" Grid.Column="2" LegendLocation="Bottom" Series="{Binding SelectedApartment.BuildingAreaSeries}">

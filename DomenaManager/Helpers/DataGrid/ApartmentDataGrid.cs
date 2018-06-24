@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using LiveCharts;
 
 namespace DomenaManager.Helpers
@@ -20,10 +21,11 @@ namespace DomenaManager.Helpers
         public double ApartmentTotalArea { get; set; }
         public string ApartmentPercentageDistribution { get; set; }
         public double Balance { get; set; }
-        public bool HasWaterMeter { get; set; }
+        public string HasWaterMeter { get; set; }
         public DateTime BoughtDate { get; set; }
         public DateTime WaterMeterExp { get; set; }
-        //public List<LibDataModel.Cost> CostHistory { get; set; }
+        public ObservableCollection<string> CostHistory { get; set; }
+        public ObservableCollection<string> PaymentHistory { get; set; }
         public SeriesCollection ApartmentAreaSeries { get; set; }
         public SeriesCollection BuildingAreaSeries { get; set; }
     }

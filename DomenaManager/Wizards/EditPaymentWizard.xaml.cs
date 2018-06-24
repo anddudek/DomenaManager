@@ -189,63 +189,6 @@ namespace DomenaManager.Wizards
             OnPropertyChanged("ApartmentsNumbers");
         }
 
-        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
-        {
-
-        }
-
-        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
-        {
-            /*if ((bool)eventArgs.Parameter)
-            {
-                var dc = (eventArgs.Session.Content as Wizards.EditOwnerWizard);
-                //Accept
-                if (dc._ownerLocalCopy == null)
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.OwnerName) || string.IsNullOrEmpty(dc.MailAddress)))
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Add new owner
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var newOwner = new LibDataModel.Owner { OwnerId = Guid.NewGuid(), MailAddress = dc.MailAddress, OwnerName = dc.OwnerName, IsDeleted = false };
-                        db.Owners.Add(newOwner);
-                        db.SaveChanges();
-                    }
-                }
-                else
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.OwnerName) || string.IsNullOrEmpty(dc.MailAddress)))
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Edit Owner
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var q = db.Owners.Where(x => x.OwnerId.Equals(dc._ownerLocalCopy.OwnerId)).FirstOrDefault();
-                        q.OwnerName = dc.OwnerName;
-                        q.MailAddress = dc.MailAddress;
-                        db.SaveChanges();
-                    }
-                }
-            }
-            else if (!(bool)eventArgs.Parameter)
-            {
-
-                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
-                if (!ynResult)
-                {
-                    //eventArgs.Cancel();
-                    var dc = (eventArgs.Session.Content as Wizards.EditOwnerWizard);
-                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-                }
-            }
-            InitializeCollection();*/
-        }
-
         private void InitializeBuildingList()
         {
             using (var db = new DB.DomenaDBContext())

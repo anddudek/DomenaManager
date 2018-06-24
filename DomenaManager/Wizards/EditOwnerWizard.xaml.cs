@@ -65,6 +65,14 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand UpdateAllFieldsCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(UpdateAllFields, CanUpdateAllFields);
+            }
+        }
+
         public Owner _ownerLocalCopy;
 
         public EditOwnerWizard(Owner SelectedOwner = null)
@@ -88,14 +96,6 @@ namespace DomenaManager.Wizards
                         ApartmentsOwned.Add(apartment);
                     }
                 }
-            }
-        }
-
-        public ICommand UpdateAllFieldsCommand
-        {
-            get
-            {
-                return new Helpers.RelayCommand(UpdateAllFields, CanUpdateAllFields);
             }
         }
 

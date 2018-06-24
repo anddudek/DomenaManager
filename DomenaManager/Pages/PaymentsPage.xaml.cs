@@ -130,60 +130,6 @@ namespace DomenaManager.Pages
             }
         }
 
-        public ICommand EditPaymentCommand
-        {
-            get { return new Helpers.RelayCommand(Edit, CanEdit); }
-        }
-
-        private bool CanEdit()
-        {
-            return true;
-        }
-
-        private async void Edit(object param)
-        {
-            Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard(SelectedPayment);
-
-            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-        }
-
-        public ICommand AddPaymentCommand
-        {
-            get { return new Helpers.RelayCommand(Add, CanAdd); }
-        }
-
-        private bool CanAdd()
-        {
-            return true;
-        }
-
-        private async void Add(object param)
-        {
-            Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard();
-
-            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-        }
-
-        public ICommand ShowPaymentDetails
-        {
-            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
-        }
-
-        private bool CanShowDetails()
-        {
-            return true;
-        }
-
-        private async void ShowDetails(object param)
-        {
-            //Wizards.EditChargeWizard ecw;
-            
-                //ecw = new Wizards.EditChargeWizard(SelectedCharge);
-            
-
-            //var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-        }
-
         private ObservableCollection<Owner> _ownersNames;
         public ObservableCollection<Owner> OwnersNames
         {
@@ -263,18 +209,27 @@ namespace DomenaManager.Pages
         
         public ICommand ClearFilterCommand
         {
-            get
-            {
-                return new Helpers.RelayCommand(ClearFilter, CanClearFilter);
-            }
+            get { return new Helpers.RelayCommand(ClearFilter, CanClearFilter); }
         }
 
         public ICommand DeletePaymentCommand
         {
-            get
-            {
-                return new Helpers.RelayCommand(DeletePayment, CanDeletePayment);
-            }
+            get { return new Helpers.RelayCommand(DeletePayment, CanDeletePayment); }
+        }
+
+        public ICommand EditPaymentCommand
+        {
+            get { return new Helpers.RelayCommand(Edit, CanEdit); }
+        }
+
+        public ICommand AddPaymentCommand
+        {
+            get { return new Helpers.RelayCommand(Add, CanAdd); }
+        }
+
+        public ICommand ShowPaymentDetails
+        {
+            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
         }
 
         public PaymentsPage()
@@ -286,6 +241,25 @@ namespace DomenaManager.Pages
             SelectedPayments = new List<PaymentDataGrid>();
             InitializeComponent();
             GroupByBuilding = true;
+        }
+
+        public PaymentsPage(Apartment apartment)
+        {
+            DataContext = this;
+            InitializeCollection();
+            InitializeLists();
+            InitializeApartmentsNumbers();
+            SelectedPayments = new List<PaymentDataGrid>();
+            InitializeComponent();
+            GroupByBuilding = true;
+
+            using (var db = new DB.DomenaDBContext())
+            {
+                var apar = db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(apartment.ApartmentId));
+                SelectedBuildingName = BuildingsNames.FirstOrDefault(x => x.BuildingId.Equals(apar.BuildingId));
+                SelectedApartmentNumber = apar.ApartmentNumber;
+                SelectedOwnerName = OwnersNames.FirstOrDefault(x => x.OwnerId.Equals(apar.OwnerId));
+            }
         }
 
         private void InitializeCollection()
@@ -328,7 +302,43 @@ namespace DomenaManager.Pages
                 var c = b.Select(x => x.Apartment.ApartmentNumber).ToList();
                 var d = c.Distinct().ToList();
                 ApartmentsNumbers = new ObservableCollection<int>(Payments.Where(x => x.Building.BuildingId.Equals(SelectedBuildingName.BuildingId)).Select(x => x.Apartment.ApartmentNumber).Distinct().OrderBy(x => x).ToList());
-            }            
+            }
+        }
+
+        private bool CanEdit()
+        {
+            return true;
+        }
+
+        private async void Edit(object param)
+        {
+            Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard(SelectedPayment);
+
+            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+        }
+
+        private bool CanAdd()
+        {
+            return true;
+        }
+
+        private async void Add(object param)
+        {
+            Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard();
+
+            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+        }
+
+        private bool CanShowDetails()
+        {
+            return true;
+        }
+
+        private async void ShowDetails(object param)
+        {
+            Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard(SelectedPayment);
+
+            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
         private void ClearFilter(object param)
@@ -380,16 +390,6 @@ namespace DomenaManager.Pages
         private bool CanDeletePayment()
         {
             return SelectedPayment != null;
-        }
-
-        private bool IsValid(DependencyObject obj)
-        {
-            // The dependency object is valid if it has no errors and all
-            // of its children (that are dependency objects) are error-free.
-            return !Validation.GetHasError(obj) &&
-            LogicalTreeHelper.GetChildren(obj)
-            .OfType<DependencyObject>()
-            .All(IsValid);
         }
 
         private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
@@ -450,6 +450,16 @@ namespace DomenaManager.Pages
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
         {
 
+        }
+
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

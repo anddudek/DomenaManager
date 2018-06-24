@@ -220,6 +220,46 @@ namespace DomenaManager.Wizards
         
         public Building _buildingLocalCopy;
 
+        public ICommand DeleteSelectedCost
+        {
+            get
+            {
+                return new Helpers.RelayCommand(DeleteCost, CanDeleteCost);
+            }
+        }
+
+        public ICommand ModifySelectedCost
+        {
+            get
+            {
+                return new Helpers.RelayCommand(ModifyCost, CanModifyCost);
+            }
+        }
+
+        public ICommand AddCost
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddNewCost, CanAddCost);
+            }
+        }
+
+        public ICommand UpdateAllFieldsCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(UpdateAllFields, CanUpdateAllFields);
+            }
+        }
+
+        public ICommand AddNewCategory
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddNewCat, CanAddNewCat);
+            }
+        }
+
         public EditBuildingWizard(Building SelectedBuilding = null)
         {
             DataContext = this;
@@ -275,14 +315,6 @@ namespace DomenaManager.Wizards
             cvCostCollection.SortDescriptions.Add(new SortDescription("BegginingDate", ListSortDirection.Ascending));
         }
 
-        public ICommand DeleteSelectedCost
-        {
-            get
-            {
-                return new Helpers.RelayCommand(DeleteCost, CanDeleteCost);
-            }
-        }
-
         private void DeleteCost(object param)
         {
             CostCollection.Remove(SelectedCost);
@@ -294,14 +326,6 @@ namespace DomenaManager.Wizards
             return SelectedCost != null;
         }
 
-        public ICommand ModifySelectedCost
-        {
-            get
-            {
-                return new Helpers.RelayCommand(ModifyCost, CanModifyCost);
-            }
-        }
-
         private void ModifyCost(object param)
         {
             DeleteCost(null);
@@ -311,14 +335,6 @@ namespace DomenaManager.Wizards
         private bool CanModifyCost()
         {
             return SelectedCost != null;
-        }
-
-        public ICommand AddCost
-        {
-            get
-            {
-                return new Helpers.RelayCommand(AddNewCost, CanAddCost);
-            }
         }
 
         private void AddNewCost(object param)
@@ -414,14 +430,6 @@ namespace DomenaManager.Wizards
             return true;
         }
 
-        public ICommand UpdateAllFieldsCommand
-        {
-            get
-            {
-                return new Helpers.RelayCommand(UpdateAllFields, CanUpdateAllFields);
-            }
-        }
-
         private void UpdateAllFields(object param)
         {
             Helpers.Validator.IsValid(this);
@@ -430,14 +438,6 @@ namespace DomenaManager.Wizards
         private bool CanUpdateAllFields()
         {
             return true;
-        }
-
-        public ICommand AddNewCategory
-        {
-            get
-            {
-                return new Helpers.RelayCommand(AddNewCat, CanAddNewCat);
-            }
         }
 
         private async void AddNewCat(object param)

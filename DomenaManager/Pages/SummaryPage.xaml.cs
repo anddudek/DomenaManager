@@ -199,10 +199,17 @@ namespace DomenaManager.Pages
                 sdg.building = bu;
                 sdg.owner = ow;
                 sdg.year = year;
-                sdg.categories = db.CostCategories.ToArray();
                 sdg.rows = new SummaryDataGridRow[14];
 
                 var charges = db.Charges.Include(x => x.Components).Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.CreatedTime.Year.Equals(sdg.year));
+                var cat = db.Charges.Include(c => c.Components).Where(x=> x.ApartmentId.Equals(apartment.ApartmentId) && !x.IsDeleted && x.CreatedTime.Year == year).Select(x => x.Components);
+                List<ChargeComponent> allComponents = new List<ChargeComponent>();
+                foreach (var c in cat)
+                {
+                    allComponents.AddRange(c);
+                }
+                var uniqueCategories = allComponents.GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
+                sdg.categories = db.CostCategories.Where(p => uniqueCategories.Any(g => g.Equals(p.BuildingChargeBasisCategoryId))).ToArray();
 
                 sdg.rows[0] = new SummaryDataGridRow()
                 {

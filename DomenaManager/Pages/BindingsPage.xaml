@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="DomenaManager.Pages.BindingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
+      
+      xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="600" 
+	>
+    <Grid Background="#FFFFFF">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="90" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Content="Powiązania" FontSize="28"/>
+        <Grid Grid.Row="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddBindingCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="{Binding AcceptText}" MDTIcon="{Binding AcceptIcon}" Command="{Binding ButtonCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="{Binding CancelText}" MDTIcon="{Binding CancelIcon}" Command="{Binding DeleteBindingCommand}" Margin="10,0,10,0"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="2" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="5">
+                <Label Content="Powiązania" FontSize="15"/>
+                <ListView ItemsSource="{Binding BindingsList}" SelectedItem="{Binding SelectedBinding}" DisplayMemberPath="Name"/>
+            </StackPanel>
+            <Rectangle Grid.Column="1" Fill="Gray"/>
+            <StackPanel Grid.Column="2" Margin="5">
+                <TextBox materialDesign:HintAssist.Hint="Nazwa" Height="35"
+	            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                VerticalAlignment="Center" >
+                    <TextBox.Text>
+                        <Binding Path="SelectedBinding.Name" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Label Content="Powiązane lokale:" Height="30" VerticalContentAlignment="Bottom"/>
+                <DataGrid ItemsSource="{Binding SelectedBinding.BoundApartments}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Numer" Binding="{Binding ApartmentNumber}" Width="*" FontSize="14"/>
+                        <DataGridTextColumn Header="Właściciel" Binding="{Binding OwnerName}" Width="auto" FontSize="14"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+            <Rectangle Grid.Column="3" Fill="Gray"/>
+            <StackPanel Grid.Column="4" Margin="5">
+                <Label Height="65" Content="Dostępne mieszkania:"  VerticalContentAlignment="Bottom"/>
+                <DataGrid ItemsSource="{Binding AvailableApartments}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Numer" Binding="{Binding ApartmentNumber}" Width="*" FontSize="14"/>
+                        <DataGridTextColumn Header="Właściciel" Binding="{Binding OwnerName}" Width="auto" FontSize="14"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

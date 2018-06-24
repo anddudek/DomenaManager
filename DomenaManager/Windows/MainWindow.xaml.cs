@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,6 +17,8 @@ using System.ComponentModel;
 using DomenaManager.Helpers;
 using MahApps.Metro.Controls;
 using MaterialDesignThemes.Wpf;
+using Serilog;
+using System.Data.Entity;
 
 namespace DomenaManager.Windows
 {
@@ -64,6 +67,31 @@ namespace DomenaManager.Windows
 
         public MainWindow()
         {
+            System.IO.Directory.CreateDirectory(@"C:/DomenaManager/Logs");
+            System.IO.Directory.CreateDirectory(@"C:/DomenaManager/Backup");
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.RollingFile(@"C:/DomenaManager/Logs/DomenaManager-{Date}.log")
+                .CreateLogger();
+
+            // this is the line you really want 
+            AppDomain.CurrentDomain.UnhandledException +=
+                (sender, args) => CurrentDomainOnUnhandledException(args, Log.Logger);
+
+            // optional: hooking up some more handlers
+            // remember that you need to hook up additional handlers when 
+            // logging from other dispatchers, shedulers, or applications
+
+            //Application.Dispatcher.UnhandledException +=
+            //    (sender, args) => DispatcherOnUnhandledException(args, Log.Logger);
+
+            Application.Current.DispatcherUnhandledException +=
+                (sender, args) => CurrentOnDispatcherUnhandledException(args, Log.Logger);
+
+            TaskScheduler.UnobservedTaskException +=
+                (sender, args) => TaskSchedulerOnUnobservedTaskException(args, Log.Logger);
+                        
+
             DataContext = this;
             InitializeComponent();
 
@@ -72,39 +100,12 @@ namespace DomenaManager.Windows
 
             using (var db = new DB.DomenaDBContext())
             {
-                /*
-                //db.Buildings.Add(new LibDataModel.Building { Name = "ELO", BuildingId = Guid.NewGuid(), BuildingNumber = "7", City = "Świątniki", RoadName = "Kreta", ZipCode="32-040" });
-                //db.Buildings.Add(new LibDataModel.Building { Name = "Grunwaldzka 61", BuildingId = Guid.NewGuid(), BuildingNumber = "61", City = "Jelenia Góra", RoadName = "Grunwaldzka", ZipCode = "58-500" });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Prąd", CostCategoryId = Guid.NewGuid() });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Woda i ścieki", CostCategoryId = Guid.NewGuid() });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Utrzymanie czystości", CostCategoryId = Guid.NewGuid() });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Teren zewnętrzny", CostCategoryId = Guid.NewGuid() });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Ubezpieczenie", CostCategoryId = Guid.NewGuid() });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Remonty", CostCategoryId = Guid.NewGuid() });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Naprawy i konserwacje", CostCategoryId = Guid.NewGuid() });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Przeglądy", CostCategoryId = Guid.NewGuid() });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Wynagrodzenie zarządcy", CostCategoryId = Guid.NewGuid() });
-                db.CostCategories.Add(new LibDataModel.CostCategory { CategoryName = "Inne", CostCategoryId = Guid.NewGuid() });
-                //db.CostDistributionTypes.Add(new LibDataModel.CostDistributionType { CostDistributionId = Guid.NewGuid(), CostDistributionName = "Od lokalu" });
-                //db.CostDistributionTypes.Add(new LibDataModel.CostDistributionType { CostDistributionId = Guid.NewGuid(), CostDistributionName = "Od powierzchni" });
-                
-                var GrunwGuid = db.Buildings.Where(x => x.BuildingNumber == "61").FirstOrDefault().BuildingId;
-                var ubez = db.CostCategories.Where(x => x.CategoryName == "Ubezpieczenie").FirstOrDefault().CostCategoryId;
-                var domena = db.CostCategories.Where(x => x.CategoryName == "Wynagrodzenie zarządcy").FirstOrDefault().CostCategoryId;
-                var woda = db.CostCategories.Where(x => x.CategoryName == "Woda i ścieki").FirstOrDefault().CostCategoryId;
-                var dist = db.CostDistributionTypes.Where(x => x.CostDistributionName == "Od powierzchni").FirstOrDefault().CostDistributionId;
-                var lok = db.CostDistributionTypes.Where(x => x.CostDistributionName == "Od lokalu").FirstOrDefault().CostDistributionId;
-                db.Costs.Add(new LibDataModel.Cost { BuildingId=GrunwGuid, ContractorName="Allianz ubezpieczenia", CostAmount=429, CostCategoryId=ubez, CostDistributionId=dist, CostId=Guid.NewGuid(), CreatedTime=DateTime.Now, InvoiceNumber="Polisa nr 6356947", PaymentTime= new DateTime(2017,11,22)});
-                db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "ZN Domena", CostAmount = 255, CostCategoryId = domena, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 1/2017", PaymentTime = new DateTime(2017, 11, 12) });
-                db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "Wodnik", CostAmount = 105.78, CostCategoryId = woda, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 89219/2017", PaymentTime = new DateTime(2017, 11, 29) });
-                db.Costs.Add(new LibDataModel.Cost { BuildingId = GrunwGuid, ContractorName = "ZN Domena", CostAmount = 255, CostCategoryId = domena, CostDistributionId = lok, CostId = Guid.NewGuid(), CreatedTime = DateTime.Now, InvoiceNumber = "Faktura nr 3/2017", PaymentTime = new DateTime(2017, 12, 2) });
-                */
-                //db.Owners.Add(new LibDataModel.Owner { OwnerId = Guid.NewGuid(), IsDeleted = false, MailAddress = "ul. Krzaczasta 5, /r/n 30-389 Kraków", OwnerName="Dominik Biegański" });
-                
-                //db.Apartments.Add(new LibDataModel.Apartment { ApartmentId=Guid.NewGuid(), AdditionalArea = 15, ApartmentArea=45, ApartmentNumber = 7, CreatedDate = DateTime.Today, HasWaterMeter=false, IsDeleted= false, OwnerId = Guid.Parse("2FE5BADA-1FF5-4F01-81B5-F4A7470B5DDC"), BuildingId=Guid.Parse("CDBBEEDB-EC2F-49E1-9B74-71AAB9ED2102")  });
-                //db.Invoices.Add(new LibDataModel.Invoice() { BuildingId = db.Buildings.FirstOrDefault().BuildingId, ContractorName = "Wodnik", CostAmount = 100, CreatedTime = DateTime.Today, InvoiceCategoryId = Guid.NewGuid(), InvoiceDate = DateTime.Today.AddDays(-1), InvoiceId = Guid.NewGuid(), InvoiceNumber = "ASB01/2018" });
-                
-                //db.SaveChanges();
+                string name = @"C:/DomenaManager/Backup/DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
+                if (!System.IO.File.Exists(name))
+                {
+                    //string cmd = String.Format("BACKUP DATABASE {0} TO DISK = '{1}'", "DBDomena", name);
+                    //int backup = db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, cmd);
+                }
             }
         }
 
@@ -115,7 +116,7 @@ namespace DomenaManager.Windows
                 default:
                     return;
                 case "Buildings":
-                    CurrentPage = new Pages.BuildingsPage();
+                    CurrentPage = new Pages.BuildingsPage();                    
                     OnPropertyChanged("CurrentPage");
                     return;
                 case "Owners":
@@ -140,6 +141,10 @@ namespace DomenaManager.Windows
                     return;
                 case "Summary":
                     CurrentPage = new Pages.SummaryPage();
+                    OnPropertyChanged("CurrentPage");
+                    return;
+                case "Bindings":
+                    CurrentPage = new Pages.BindingsPage();
                     OnPropertyChanged("CurrentPage");
                     return;
             }
@@ -263,6 +268,31 @@ namespace DomenaManager.Windows
                     var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
                 }
             }
+        }
+
+        private static void TaskSchedulerOnUnobservedTaskException(UnobservedTaskExceptionEventArgs args, ILogger log)
+        {
+            log.Error(args.Exception, args.Exception.Message);
+            args.SetObserved();
+        }
+
+        private static void CurrentOnDispatcherUnhandledException(DispatcherUnhandledExceptionEventArgs args, ILogger log)
+        {
+            log.Error(args.Exception, args.Exception.Message);
+        }
+
+        private static void DispatcherOnUnhandledException(DispatcherUnhandledExceptionEventArgs args, ILogger log)
+        {
+            log.Error(args.Exception, args.Exception.Message);
+        }
+
+        private static void CurrentDomainOnUnhandledException(UnhandledExceptionEventArgs args, ILogger log)
+        {
+            var exception = args.ExceptionObject as Exception;
+            var terminatingMessage = args.IsTerminating ? " The application is terminating." : string.Empty;
+            var exceptionMessage = exception?.Message ?? "An unmanaged exception occured.";
+            var message = string.Concat(exceptionMessage, terminatingMessage);
+            log.Error(exception, message);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
