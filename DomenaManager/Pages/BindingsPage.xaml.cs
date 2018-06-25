@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using MaterialDesignThemes.Wpf;
 using DomenaManager.Helpers;
+using LibDataModel;
 
 namespace DomenaManager.Pages
 {
@@ -44,6 +45,20 @@ namespace DomenaManager.Pages
                 }
             }
         }
+
+        private string _bindingName;
+        public string BindingName
+        {
+            get { return _bindingName; }
+            set
+            {
+                if (value != _bindingName)
+                {
+                    _bindingName = value;
+                    OnPropertyChanged("BindingName");
+                }
+            }
+        }
         
         public string AcceptText
         {
@@ -64,6 +79,8 @@ namespace DomenaManager.Pages
         {
             get { return IsEditMode ? PackIconKind.CloseCircle : PackIconKind.DeleteForever; }
         }
+
+        public ObservableCollection<Apartment> Apartments;
 
         private ObservableCollection<BindingDataGrid> _availableApartments;
         public ObservableCollection<BindingDataGrid> AvailableApartments
@@ -103,6 +120,28 @@ namespace DomenaManager.Pages
                 {
                     _selectedBinding = value;
                     OnPropertyChanged("SelectedBinding");
+                    if (value != null)
+                    {
+                        BindingName = value.Name;                        
+                    }
+                    AvailableCV.Refresh();
+                }
+            }
+        }
+
+        private ICollectionView _availableCV;
+        public ICollectionView AvailableCV
+        {
+            get
+            {
+                return _availableCV;
+            }
+            set
+            {
+                if (value != _availableCV)
+                {
+                    _availableCV = value;
+                    OnPropertyChanged("AvailableCV");
                 }
             }
         }
@@ -138,12 +177,69 @@ namespace DomenaManager.Pages
             DataContext = this;
             InitializeComponent();
             InitializeCollection();
-            
+            InitializeAvailableApartmentsCollection();
         }
 
         public void InitializeCollection()
         {
-            
+            BindingsList = new ObservableCollection<ApartmentBinding>();
+            using (var db = new DB.DomenaDBContext())
+            {
+                Apartments = new ObservableCollection<Apartment>(db.Apartments.Where(x => !x.IsDeleted).ToList());
+                foreach (var b in db.Bindings.Where(x => !x.IsDeleted))
+                {
+                    var ab = new ApartmentBinding() { BindingId = b.BindingId, Name = b.Name };
+                    ab.BoundApartments = new ObservableCollection<BindingDataGrid>();
+                    var apartments = db.Apartments.Where(x => x.BindingParent.Equals(b.BindingId) && !x.IsDeleted);
+                    foreach (var a in apartments)
+                    {
+                        var bdg = new BindingDataGrid();
+                        bdg.apartment = a;
+                        bdg.building = db.Buildings.FirstOrDefault(x => x.BuildingId.Equals(a.BuildingId));
+                        bdg.owner = db.Owners.FirstOrDefault(x => x.OwnerId.Equals(a.OwnerId));
+                        ab.BoundApartments.Add(bdg);
+                    }
+                    BindingsList.Add(ab);
+                }
+            }
+        }
+
+        public void InitializeAvailableApartmentsCollection()
+        {
+            AvailableApartments = new ObservableCollection<BindingDataGrid>();
+            using (var db = new DB.DomenaDBContext())
+            {
+                Apartments = new ObservableCollection<Apartment>(db.Apartments.Where(x => !x.IsDeleted).ToList());
+
+                foreach (var a in Apartments)
+                {
+                    var bdg = new BindingDataGrid() { apartment = a, building = db.Buildings.FirstOrDefault(x => x.BuildingId.Equals(a.BuildingId)), owner = db.Owners.FirstOrDefault(x => x.OwnerId.Equals(a.OwnerId)) };
+                    AvailableApartments.Add(bdg);
+                }
+            }
+
+            FilterAvailableApartments();
+        }
+
+        public void FilterAvailableApartments()
+        {
+            AvailableCV = (CollectionView)CollectionViewSource.GetDefaultView(AvailableApartments);
+            AvailableCV.SortDescriptions.Add(new SortDescription("building.Name", ListSortDirection.Ascending));
+            AvailableCV.Filter = FilterCollection;
+
+            AvailableCV.Refresh();
+        }
+
+        private bool FilterCollection(object item)
+        {
+            var bdg = item as BindingDataGrid;
+            if (SelectedBinding != null && SelectedBinding.BoundApartments != null && 
+                SelectedBinding.BoundApartments.Any(x => x.apartment.ApartmentId.Equals(bdg.apartment.ApartmentId)))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private bool CanAddBinding()
@@ -153,27 +249,92 @@ namespace DomenaManager.Pages
 
         private void AddBinding(object obj)
         {
-
+            IsEditMode = true;
+            ApartmentBinding newBind = new ApartmentBinding() { BindingId = Guid.NewGuid(), Name = "Nowa grupa" };
+            BindingsList.Add(newBind);
+            SelectedBinding = newBind;
         }
 
         private bool CanAccept()
         {
-            return true;
+            return IsEditMode ? true : SelectedBinding != null;
         }
 
         private void Accept(object param)
         {
-            
+            if (IsEditMode) // Accept
+            {
+                IsEditMode = false;
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var bind = db.Bindings.FirstOrDefault(x => !x.IsDeleted && x.BindingId.Equals(SelectedBinding.BindingId));
+                    if (bind != null) // edit
+                    {
+                        SelectedBinding.Name = BindingName;
+                        bind.Name = SelectedBinding.Name;
+                        foreach (var ap in db.Apartments)
+                        {
+                            if (ap.BindingParent.Equals(SelectedBinding.BindingId))
+                            {
+                                ap.BindingParent = Guid.Empty;
+                            }
+                            if (SelectedBinding.BoundApartments.Any(x => x.apartment.ApartmentId.Equals(ap.ApartmentId)))
+                            {
+                                ap.BindingParent = SelectedBinding.BindingId;
+                            }
+                        }
+                    }
+                    else // add new
+                    {
+                        SelectedBinding.Name = BindingName;
+                        db.Bindings.Add(new BindingParent() { BindingId = SelectedBinding.BindingId, IsDeleted = SelectedBinding.IsDeleted, Name = BindingName });
+                        foreach (var ap in db.Apartments)
+                        {
+                            if (ap.BindingParent.Equals(SelectedBinding.BindingId))
+                            {
+                                ap.BindingParent = Guid.Empty;
+                            }
+                            if (SelectedBinding.BoundApartments.Any(x => x.apartment.ApartmentId.Equals(ap.ApartmentId)))
+                            {
+                                ap.BindingParent = SelectedBinding.BindingId;
+                            }
+                        }
+                    }
+                    db.SaveChanges();                                        
+                }
+            }
+            else // Edit
+            {
+                IsEditMode = true;
+            }
         }
 
         private bool CanDeleteBinding()
         {
-            return true;
+            return IsEditMode ? true : SelectedBinding != null;
         }
 
         private void DeleteBinding(object param)
         {
-            
+            if (IsEditMode) // cancel
+            {
+                IsEditMode = false;
+                InitializeCollection();
+                InitializeAvailableApartmentsCollection();
+            }
+            else // delete
+            {
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var bind = db.Bindings.FirstOrDefault(x => !x.IsDeleted && x.BindingId.Equals(SelectedBinding.BindingId));
+                    if (bind != null) // delete
+                    {
+                        bind.IsDeleted = true;
+                        BindingsList.Remove(SelectedBinding);                        
+                    }
+                    db.SaveChanges();
+                }
+            }
         }
 
         private bool IsValid(DependencyObject obj)

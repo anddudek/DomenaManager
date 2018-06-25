@@ -187,7 +187,7 @@
                     <DataGridTextColumn x:Name="AddAreaHeader" Header="Pow. przynależna" Binding="{Binding ApartmentAdditionalArea}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn x:Name="TotalAreaHeader" Header="Pow. całkowita" Binding="{Binding ApartmentTotalArea}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn x:Name="PercentHeader" Header="Udział procentowy" Binding="{Binding ApartmentPercentageDistribution}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn x:Name="SaldoHeader" Header="Saldo" Binding="{Binding Saldo}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="SaldoHeader" Header="Saldo" Binding="{Binding Balance}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn x:Name="OwnerHeader" Header="Właściciel" Binding="{Binding ApartmentOwner}" Width="*" FontSize="14"/>
                 </DataGrid.Columns>
                 <DataGrid.GroupStyle>

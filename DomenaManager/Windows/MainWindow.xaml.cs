@@ -290,7 +290,15 @@ namespace DomenaManager.Windows
         {
             var exception = args.ExceptionObject as Exception;
             var terminatingMessage = args.IsTerminating ? " The application is terminating." : string.Empty;
-            var exceptionMessage = exception?.Message ?? "An unmanaged exception occured.";
+            string exceptionMessage;
+            if (exception != null && exception.Message != null)
+            {
+                exceptionMessage = exception.Message;
+            }
+            else
+            {
+                exceptionMessage = "An unmanaged exception occured.";
+            }
             var message = string.Concat(exceptionMessage, terminatingMessage);
             log.Error(exception, message);
         }

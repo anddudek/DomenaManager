@@ -23,6 +23,10 @@ using LiveCharts;
 using LiveCharts.Wpf;
 using LiveCharts.Defaults;
 using System.Collections;
+using PdfSharp;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 
 namespace DomenaManager.Pages
 {
@@ -274,6 +278,11 @@ namespace DomenaManager.Pages
             }
         }
 
+        public ICommand PreparePdfCommand
+        {
+            get { return new Helpers.RelayCommand(PreparePdf, CanPreparePdf); }
+        }
+
         public ChargesPage()
         {
             DataContext = this;
@@ -441,6 +450,18 @@ namespace DomenaManager.Pages
 
                 var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
             }
+        }
+
+        private bool CanPreparePdf()
+        {
+            return SelectedCharge != null && !SelectedCharge.IsClosed;
+        }
+
+        private void PreparePdf(object param)
+        {
+            PdfDocument doc = Helpers.PDFOperations.CreateTemplate();
+            doc.Save("test.pdf");
+            
         }
 
         private void ClearFilter(object param)

@@ -67,6 +67,14 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.3.1.953, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.2.3.1.953\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.Charting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.2.7.1\lib\net46\Serilog.dll</HintPath>
     </Reference>
@@ -101,6 +109,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\Converter\InverseBooleanConverter.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentBinding.cs" />
     <Compile Include="Helpers\DataGrid\BindingDataGrid.cs" />
     <Compile Include="Helpers\Payments\ChargesOperations.cs" />
@@ -123,6 +132,7 @@
     <Compile Include="Helpers\CostDistributionCollectionItem.cs" />
     <Compile Include="Helpers\ListView\CostListView.cs" />
     <Compile Include="Helpers\Payments\Payments.cs" />
+    <Compile Include="Helpers\PDF\PDFOperations.cs" />
     <Compile Include="Helpers\ValidationRule\StringToDoubleValidationRule.cs" />
     <Compile Include="Helpers\ValidationRule\StringToIntValidationRule.cs" />
     <Compile Include="Helpers\ListView\OwnerDescriptionListView.cs" />

@@ -22,12 +22,14 @@ namespace LibDataModel
         public bool HasWaterMeter { get; set; }
         public bool IsDeleted { get; set; }
         public string CorrespondenceAddress { get; set; }
+        public Guid BindingParent { get; set; }
 
         public Apartment()
         {
             this.ApartmentId = Guid.NewGuid();
             this.CreatedDate = DateTime.Now;
             this.IsDeleted = false;
+            this.BindingParent = Guid.Empty;
         }
 
         public Apartment(Apartment CopySource)
@@ -44,6 +46,7 @@ namespace LibDataModel
             this.BoughtDate = CopySource.BoughtDate;
             this.WaterMeterExp = CopySource.WaterMeterExp;
             this.CorrespondenceAddress = CopySource.CorrespondenceAddress;
+            this.BindingParent = CopySource.BindingParent;
         }
     }
 }

@@ -83,6 +83,7 @@
                 <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditChargeCommand}" Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="{Binding OpenCloseButtonText}" MDTIcon="{Binding OpenCloseButtonIcon}" Command="{Binding OpenCloseChargeCommand}" Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteChargeCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="Do pliku PDF" MDTIcon="FilePdfBox" Command="{Binding PreparePdfCommand}" Margin="10,0,10,0"/>
             </StackPanel>
         </Grid>
         <MyControls:MultipleDataGrid

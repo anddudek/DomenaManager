@@ -4,12 +4,16 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
+             xmlns:dd="urn:gong-wpf-dragdrop"
       
       xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="600" 
 	>
+    <UserControl.Resources>
+        <Helpers:InverseBooleanConverter x:Key="InverseBoolean" />
+    </UserControl.Resources>
     <Grid Background="#FFFFFF">
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
@@ -32,43 +36,47 @@
                 <ColumnDefinition Width="2"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Margin="5">
+            <StackPanel Grid.Column="0" Margin="5" IsEnabled="{Binding IsEditMode, Converter={StaticResource InverseBoolean}}">
                 <Label Content="Powiązania" FontSize="15"/>
-                <ListView ItemsSource="{Binding BindingsList}" SelectedItem="{Binding SelectedBinding}" DisplayMemberPath="Name"/>
+                <ListView ItemsSource="{Binding BindingsList}" SelectedItem="{Binding SelectedBinding}" DisplayMemberPath="Name" FontSize="16" FontWeight="Bold"/>
             </StackPanel>
-            <Rectangle Grid.Column="1" Fill="Gray"/>
-            <StackPanel Grid.Column="2" Margin="5">
-                <TextBox materialDesign:HintAssist.Hint="Nazwa" Height="35"
+            <Rectangle Grid.Column="1" Fill="Gray" Margin="0,75,0,0"/>
+            <DockPanel Grid.Column="2" Margin="5" IsEnabled="{Binding IsEditMode}">
+                <TextBox materialDesign:HintAssist.Hint="Nazwa" Height="45" DockPanel.Dock="Top"
 	            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                 VerticalAlignment="Center" >
                     <TextBox.Text>
-                        <Binding Path="SelectedBinding.Name" UpdateSourceTrigger="PropertyChanged">
+                        <Binding Path="BindingName" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
                                 <Helpers:EmptyStringValidationRule/>
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Label Content="Powiązane lokale:" Height="30" VerticalContentAlignment="Bottom"/>
-                <DataGrid ItemsSource="{Binding SelectedBinding.BoundApartments}">
+                <Label Content="Powiązane lokale:" Height="30" VerticalContentAlignment="Bottom"  DockPanel.Dock="Top"/>
+                <DataGrid ItemsSource="{Binding SelectedBinding.BoundApartments}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                          dd:DragDrop.IsDragSource="True"
+                          dd:DragDrop.IsDropTarget="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
-                        <DataGridTextColumn Header="Numer" Binding="{Binding ApartmentNumber}" Width="*" FontSize="14"/>
-                        <DataGridTextColumn Header="Właściciel" Binding="{Binding OwnerName}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Budynek" Binding="{Binding building.Name}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Numer" Binding="{Binding apartment.ApartmentNumber}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Właściciel" Binding="{Binding owner.OwnerName}" Width="*" FontSize="14"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
-            <Rectangle Grid.Column="3" Fill="Gray"/>
-            <StackPanel Grid.Column="4" Margin="5">
-                <Label Height="65" Content="Dostępne mieszkania:"  VerticalContentAlignment="Bottom"/>
-                <DataGrid ItemsSource="{Binding AvailableApartments}">
+            </DockPanel>
+            <Rectangle Grid.Column="3" Fill="Gray" Margin="0,75,0,0"/>
+            <DockPanel Grid.Column="4" Margin="5" IsEnabled="{Binding IsEditMode}">
+                <Label Height="75" Content="Dostępne mieszkania:"  VerticalContentAlignment="Bottom" DockPanel.Dock="Top"/>
+                <DataGrid ItemsSource="{Binding AvailableApartments}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                          dd:DragDrop.IsDragSource="True"
+                          dd:DragDrop.IsDropTarget="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
-                        <DataGridTextColumn Header="Numer" Binding="{Binding ApartmentNumber}" Width="*" FontSize="14"/>
-                        <DataGridTextColumn Header="Właściciel" Binding="{Binding OwnerName}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Budynek" Binding="{Binding building.Name}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Numer" Binding="{Binding apartment.ApartmentNumber}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Właściciel" Binding="{Binding owner.OwnerName}" Width="*" FontSize="14"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
+            </DockPanel>
         </Grid>
     </Grid>
 </UserControl>
