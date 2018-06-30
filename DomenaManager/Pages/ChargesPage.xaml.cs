@@ -459,7 +459,10 @@ namespace DomenaManager.Pages
 
         private void PreparePdf(object param)
         {
-            PdfDocument doc = Helpers.PDFOperations.CreateTemplate();
+            PdfDocument doc = PDFOperations.CreateTemplate();
+            var page = doc.Pages[0];
+            PDFOperations.AddTitle(page, "Naliczenie z dnia: " + SelectedCharge.CreatedTime.ToString("dd-MM-yyyy"));
+            PDFOperations.AddChargeTable(page, SelectedCharge);
             doc.Save("test.pdf");
             
         }

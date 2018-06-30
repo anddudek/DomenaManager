@@ -161,7 +161,7 @@
 
         <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Dodaj" Grid.Row="5" Grid.Column="1" Command="{Binding AddNewChargeCommand}" Margin="10,0,10,0" />
 
-        <ListView Grid.Row="6" Grid.ColumnSpan="2" Margin="10,0,10,0" ItemsSource="{Binding ChargeComponents}" SelectedItem="{Binding SelectedChargeComponent}">
+        <ListView Grid.Row="6" Grid.ColumnSpan="2" Margin="10,0,10,0" ItemsSource="{Binding ChargeComponents}" SelectedItem="{Binding SelectedChargeComponent}" x:Name="cListView">
             <ListView.View>
                 <GridView>
                     <!--<GridViewColumn Header="Kategoria" Width="auto" DisplayMemberBinding="{Binding CategoryName}" />-->
@@ -173,7 +173,7 @@
                             </MultiBinding>
                         </GridViewColumn.DisplayMemberBinding>
                     </GridViewColumn>
-                    <GridViewColumn Header="Jednostka" Width="auto" DisplayMemberBinding="{Binding CostDistribution, Converter={StaticResource IntToCostDistributionConverter}}" />
+                    <GridViewColumn Header="Jednostka" Width="120" DisplayMemberBinding="{Binding CostDistribution, Converter={StaticResource IntToCostDistributionConverter}}" />
                     <GridViewColumn Header="Koszt jedn." Width="auto" DisplayMemberBinding="{Binding CostPerUnit}" />
                     <GridViewColumn Header="Suma" Width="auto" DisplayMemberBinding="{Binding Sum}" />
                 </GridView>

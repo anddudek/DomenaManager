@@ -18,6 +18,7 @@ using LibDataModel;
 using DomenaManager.Helpers;
 using System.Data.Entity;
 using MaterialDesignThemes.Wpf;
+using System.IO;
 
 namespace DomenaManager.Wizards
 {
@@ -334,7 +335,7 @@ namespace DomenaManager.Wizards
         }
 
         #region Functions
-
+        
         private void InitializeChargeStatusCollection()
         {
             ChargeStatusCollection = new List<string>() { "Otwarte", "Zamknięte" };
