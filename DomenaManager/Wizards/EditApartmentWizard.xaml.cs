@@ -23,6 +23,8 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class EditApartmentWizard : UserControl, INotifyPropertyChanged
     {
+        private ObservableCollection<Apartment> ApartmentsCollection;
+
         private ObservableCollection<Building> _buildingsNames;
         public ObservableCollection<Building> BuildingsNames
         {
@@ -40,9 +42,13 @@ namespace DomenaManager.Wizards
             get { return _selectedBuildingName; }
             set
             {
-                _selectedBuildingName = value;
-                OnPropertyChanged("SelectedBuildingName");
-                OnPropertyChanged("SelectedBuildingAddress");
+                if (value != _selectedBuildingName)
+                {
+                    _selectedBuildingName = value;
+                    OnPropertyChanged("SelectedBuildingName");
+                    OnPropertyChanged("SelectedBuildingAddress");
+                    ApartmentNumber = 0;
+                }
             }
         }
 
@@ -52,8 +58,31 @@ namespace DomenaManager.Wizards
             get { return _apartmentNumber; }
             set
             {
-                _apartmentNumber = value;
-                OnPropertyChanged("ApartmentNumber");
+                if (value != _apartmentNumber)
+                {
+                    _apartmentNumber = value;
+                    OnPropertyChanged("ApartmentNumber");                    
+                }
+                if (_apartmentLocalCopy != null)
+                {
+                    var q = ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId) && !x.IsDeleted && !x.ApartmentId.Equals(_apartmentLocalCopy.ApartmentId)).Select(x => x.ApartmentNumber).ToList();
+                    if (q.Any(x => x == value))
+                    {
+                        ValidationError verr = new ValidationError(new Helpers.StringToIntValidationRule(), apartmentNumberTB.GetBindingExpression(TextBox.TextProperty));
+                        verr.ErrorContent = "Numer już istnieje";
+                        Validation.MarkInvalid(apartmentNumberTB.GetBindingExpression(TextBox.TextProperty), verr);
+                    }
+                }
+                else
+                {
+                    var q = ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId) && !x.IsDeleted).Select(x => x.ApartmentNumber).ToList();
+                    if (q.Any(x => x == value))
+                    {
+                        ValidationError verr = new ValidationError(new Helpers.StringToIntValidationRule(), apartmentNumberTB.GetBindingExpression(TextBox.TextProperty));
+                        verr.ErrorContent = "Numer już istnieje";
+                        Validation.MarkInvalid(apartmentNumberTB.GetBindingExpression(TextBox.TextProperty), verr);
+                    }
+                }
             }
         }
 
@@ -224,6 +253,7 @@ namespace DomenaManager.Wizards
             using (var db = new DB.DomenaDBContext())
             {
                 BuildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
+                ApartmentsCollection = new ObservableCollection<Apartment>(db.Apartments.ToList());
             }
         }
 

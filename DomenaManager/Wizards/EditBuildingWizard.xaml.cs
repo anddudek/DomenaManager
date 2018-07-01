@@ -217,6 +217,48 @@ namespace DomenaManager.Wizards
                 }
             }
         }
+
+        private string _meterName;
+        public string MeterName
+        {
+            get { return _meterName; }
+            set
+            {
+                if (value != _meterName)
+                {
+                    _meterName = value;
+                    OnPropertyChanged("MeterName");
+                }
+            }
+        }
+
+        private ObservableCollection<MeterType> _metersCollection;
+        public ObservableCollection<MeterType> MetersCollection
+        {
+            get { return _metersCollection; }
+            set
+            {
+                if (value != _metersCollection)
+                {
+                    _metersCollection = value;
+                    OnPropertyChanged("MetersCollection");
+                }
+            }
+        }
+
+        private MeterType _selectedMeter;
+        public MeterType SelectedMeter
+        {
+            get { return _selectedMeter; }
+            set
+            {
+                if (value != _selectedMeter)
+                {
+                    _selectedMeter = value;
+                    OnPropertyChanged("SelectedMeter");
+                }
+            }
+        }
         
         public Building _buildingLocalCopy;
 
@@ -260,11 +302,36 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand AddMeter
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddNewMeter, CanAddNewMeter);
+            }
+        }
+
+        public ICommand ModifySelectedMeter
+        {
+            get
+            {
+                return new Helpers.RelayCommand(ModifyMeter, CanModifyMeter);
+            }
+        }
+
+        public ICommand DeleteSelectedMeter
+        {
+            get
+            {
+                return new Helpers.RelayCommand(DeleteMeter, CanDeleteMeter);
+            }
+        }
+
         public EditBuildingWizard(Building SelectedBuilding = null)
         {
             DataContext = this;
             InitializeComponent();
 
+            MetersCollection = new ObservableCollection<MeterType>();
             InitializeCategoriesList();
             InitializeUnitsList();
             InitializeCostCollection();
@@ -284,6 +351,7 @@ namespace DomenaManager.Wizards
                     var clv = new Helpers.CostListView { BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, Cost = c.CostPerUnit, CostUnit =  UnitsNames.Where(x => x.EnumValue == c.BuildingChargeBasisDistribution).FirstOrDefault(), CategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(c.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName };
                     CostCollection.Add(clv);
                 }
+                MetersCollection = new ObservableCollection<MeterType>(SelectedBuilding.MeterCollection);
             }
         }
 
@@ -449,6 +517,37 @@ namespace DomenaManager.Wizards
         private bool CanAddNewCat()
         {
             return true;
+        }
+
+        private void AddNewMeter(object param)
+        {
+            MeterType mt = new MeterType() { Name = MeterName, IsDeleted = false, MeterId = Guid.NewGuid() };
+            MetersCollection.Add(mt);
+        }
+
+        private bool CanAddNewMeter()
+        {
+            return true;
+        }
+
+        private void ModifyMeter(object param)
+        {
+            SelectedMeter.Name = MeterName;
+        }
+
+        private bool CanModifyMeter()
+        {
+            return SelectedMeter != null;
+        }
+
+        private void DeleteMeter(object param)
+        {
+            MetersCollection.Remove(SelectedMeter);
+        }
+
+        private bool CanDeleteMeter()
+        {
+            return SelectedMeter != null;
         }
 
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)

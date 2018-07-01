@@ -19,6 +19,7 @@ namespace LibDataModel
             BuildingNumber = b.BuildingNumber;
             IsDeleted = b.IsDeleted;
             CostCollection = b.CostCollection;
+            MeterCollection = b.MeterCollection;
         }
 
         public Building()
@@ -31,6 +32,7 @@ namespace LibDataModel
             BuildingNumber = null;
             IsDeleted = false;
             CostCollection = new List<BuildingChargeBasis>();
+            MeterCollection = new List<MeterType>();
         }
 
         public string GetAddress()
@@ -47,5 +49,6 @@ namespace LibDataModel
         public string BuildingNumber { get; set; }
         public bool IsDeleted { get; set; }
         public List<BuildingChargeBasis> CostCollection { get; set; }
+        public List<MeterType> MeterCollection { get; set; }
     }
 }

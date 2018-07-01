@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 using PdfSharp;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
-using PdfSharp.Pdf.IO;
 using PdfSharp.Drawing.Layout;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.IO;
-using MaterialDesignThemes.Wpf;
-using System.Windows;
+using MigraDoc.DocumentObjectModel.Tables;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Shapes;
 
 namespace DomenaManager.Helpers
 {
@@ -49,7 +46,10 @@ namespace DomenaManager.Helpers
                 RegularFont(), XBrushes.Black,
                 new XRect(40, 30, page.Width / 3 + 20, page.Height / 5), XStringFormats.TopLeft);
 
-            XImage img = XImage.FromGdiPlusImage(DomenaManager.Properties.Resources.Domena);
+            var bitmap = Properties.Resources.Domena;
+            var drawable = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+            XImage img = XImage.FromBitmapSource(drawable);
 
             gfx.DrawImage(img, 2 * page.Width / 3, 30, (page.Width / 3) - 40, page.Width * img.PixelHeight / (3 * img.PixelWidth) - 28);
             gfx.Dispose();
@@ -70,80 +70,34 @@ namespace DomenaManager.Helpers
 
         public static void AddChargeTable(PdfPage page, ChargeDataGrid selectedCharge)
         {
-            var ecw = new Wizards.EditChargeWizard(selectedCharge);
-            ecw.Measure(new Size(720, 750));
-            ecw.Arrange(new Rect(new Size(720, 750)));
-            ecw.UpdateLayout();
+            Document doc = new Document();
+            Style style = doc.Styles["Normal"];
+            style.Font.Name = "Calibri";            
+            style = doc.Styles.AddStyle("Table", "Normal");
+            style.Font.Name = "Calibri";
+            style.Font.Size = 12;
 
-            /*
-            
+            var section = doc.AddSection();
+            var ownerFrame = section.AddTextFrame();
+            ownerFrame.Height = "3.0cm";
+            ownerFrame.Width = "7.0cm";
+            ownerFrame.Left = ShapePosition.Left;
+            ownerFrame.RelativeHorizontal = RelativeHorizontal.Margin;
+            ownerFrame.Top = "5.0cm";
+            ownerFrame.RelativeVertical = RelativeVertical.Page;
 
+            var paragraph = ownerFrame.AddParagraph(selectedCharge.Owner.OwnerName + Environment.NewLine + selectedCharge.Owner.MailAddress);
+            paragraph.Style = "Table";
 
-            System.Windows.Window w = new System.Windows.Window();
-            w.Width = 550;
-            w.Height = 600;
-            w.Content = ecw;
+            MigraDoc.Rendering.DocumentRenderer docRenderer = new MigraDoc.Rendering.DocumentRenderer(doc);
+            docRenderer.PrepareDocument();
 
-
-           */
-            var lv = ecw.cListView;
-            lv.FontSize = 20;
-            ecw.UpdateLayout();
-                        
-            GridView gridView = lv.View as GridView;
-            if (gridView != null)
-            {
-                foreach (var column in gridView.Columns)
-                {
-                    if (double.IsNaN(column.Width))
-                        column.Width = column.ActualWidth;
-                    column.Width = double.NaN;
-                    
-                }
-            }
-            
-            var myStream = SnapShotPNG(lv, 1);
-            
-                
-
-            XImage img = XImage.FromGdiPlusImage(System.Drawing.Bitmap.FromStream(myStream));
             XGraphics gfx = XGraphics.FromPdfPage(page);
-            gfx.DrawImage(img, 40, page.Height / 5 + 60, page.Width - 80, (img.PointHeight / img.PointWidth) * (page.Width - 80));
+            gfx.MUH = PdfFontEncoding.Unicode;
+            gfx.MFEH = PdfFontEmbedding.Default;
 
-            myStream.Dispose();
+            docRenderer.RenderObject(gfx, XUnit.FromCentimeter(1.5), XUnit.FromCentimeter(8.5), "12cm", paragraph);
             gfx.Dispose();
-        }
-
-        private static MemoryStream SnapShotPNG(ListView source, int zoom)
-        {
-            double actualWidth = source.ActualWidth;
-            source.Measure(new Size(source.ActualWidth, Double.PositiveInfinity));
-            source.Arrange(new Rect(0, 0, actualWidth, source.DesiredSize.Height));
-            double actualHeight = source.ActualHeight;
-
-            double renderHeight = actualHeight * zoom;
-            double renderWidth = actualWidth * zoom;
-
-            RenderTargetBitmap renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, 96, 96, PixelFormats.Pbgra32);
-            VisualBrush sourceBrush = new VisualBrush(source);
-
-            DrawingVisual drawingVisual = new DrawingVisual();
-            DrawingContext drawingContext = drawingVisual.RenderOpen();
-
-            using (drawingContext)
-            {
-                drawingContext.PushTransform(new ScaleTransform(zoom, zoom));
-                drawingContext.DrawRectangle(sourceBrush, null, new Rect(new Point(0, 0), new Point(actualWidth, actualHeight)));
-            }
-            renderTarget.Render(drawingVisual);
-
-            PngBitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(renderTarget));
-
-            MemoryStream ms = new MemoryStream();
-            encoder.Save(ms);
-
-            return ms;            
-        }
+        }        
     }
 }

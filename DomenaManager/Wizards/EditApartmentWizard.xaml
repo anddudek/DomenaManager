@@ -9,7 +9,7 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
         mc:Ignorable="d"
-        Height="500" Width="500">
+        Height="600" Width="500" Background="White">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -26,7 +26,7 @@
             <RowDefinition Height="2*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="3*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
@@ -56,7 +56,7 @@
             </ContentControl>
         </Button>
 
-        <TextBox materialDesign:HintAssist.Hint="Numer lokalu"
+        <TextBox materialDesign:HintAssist.Hint="Numer lokalu" x:Name="apartmentNumberTB"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
             Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="5,0,30,0" >
             <TextBox.Text>
@@ -138,20 +138,23 @@
             </TextBox.Text>
         </TextBox>
 
-        <ComboBox materialDesign:HintAssist.Hint="Mieszkanie posiada wodomierz"
+        <!--<ComboBox materialDesign:HintAssist.Hint="Mieszkanie posiada wodomierz"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" SelectedIndex="{Binding HasWaterMeter}"
-            Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,15,0" >
+            Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,15,0" >
             <ComboBoxItem>Tak</ComboBoxItem>
             <ComboBoxItem>Nie</ComboBoxItem>
         </ComboBox>
 
         <DatePicker 
-            Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="4" SelectedDate="{Binding WaterMeterExp}" IsEnabled="{Binding EnableWaterMeterExp}"
+            Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="4" SelectedDate="{Binding WaterMeterExp}" IsEnabled="{Binding EnableWaterMeterExp}"
             VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
-            materialDesign:HintAssist.Hint="Legalizacja wodomierza" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+            materialDesign:HintAssist.Hint="Legalizacja wodomierza" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />-->
+        <DataGrid Grid.Row="6" Grid.ColumnSpan="6" Margin="35,10,30,10" ItemsSource="{Binding MetersCollection}">
+            
+        </DataGrid>
 
         <DatePicker 
-            Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="4" SelectedDate="{Binding BoughtDate}"
+            Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="4" SelectedDate="{Binding BoughtDate}"
             VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Data zakupu" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
 

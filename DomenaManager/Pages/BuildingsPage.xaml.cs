@@ -87,7 +87,7 @@ namespace DomenaManager.Pages
             Buildings = new ObservableCollection<Helpers.BuildingDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                var q = db.Buildings.Include(x => x.CostCollection).Where(x => x.IsDeleted == false);
+                var q = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => x.IsDeleted == false);
                 foreach (var build in q)
                 {
                     var b = new Helpers.BuildingDataGrid { Name = build.Name, ApartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(build.BuildingId)).Count() };
@@ -146,7 +146,7 @@ namespace DomenaManager.Pages
             Wizards.EditBuildingWizard ebw;
             using (var db = new DB.DomenaDBContext())
             {
-                var sb = db.Buildings.Include(x => x.CostCollection).Where(x => x.Name.Equals(SelectedBuilding.Name)).FirstOrDefault();
+                var sb = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => x.Name.Equals(SelectedBuilding.Name)).FirstOrDefault();
                 ebw = new Wizards.EditBuildingWizard(sb);
             }
 
@@ -185,6 +185,10 @@ namespace DomenaManager.Pages
                             costs.Add(cost);
                         }
                         newBuilding.CostCollection = costs;
+                        foreach (var m in dc.MetersCollection)
+                        {
+                            newBuilding.MeterCollection.Add(m);
+                        }
                         db.Buildings.Add(newBuilding);
                         db.SaveChanges();
                     }
@@ -200,7 +204,7 @@ namespace DomenaManager.Pages
                     //Edit building
                     using (var db = new DB.DomenaDBContext())
                     {
-                        var q = db.Buildings.Include(x => x.CostCollection).Where(x => x.BuildingId.Equals(dc._buildingLocalCopy.BuildingId)).FirstOrDefault();
+                        var q = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => x.BuildingId.Equals(dc._buildingLocalCopy.BuildingId)).FirstOrDefault();
                         q.BuildingNumber = dc.BuildingRoadNumber;
                         q.City = dc.BuildingCity;
                         q.Name = dc.BuildingName;
@@ -216,6 +220,24 @@ namespace DomenaManager.Pages
                             costs.Add(cost);
                         }
                         q.CostCollection = costs;
+                     
+                        //Add new
+                        foreach (var m in dc.MetersCollection)
+                        {
+                            if (!q.MeterCollection.Any(x => x.MeterId.Equals(m.MeterId)))
+                            {
+                                q.MeterCollection.Add(m);
+                            }
+                        }
+
+                        //Remove necessary
+                        for (int i = q.MeterCollection.Count - 1; i>=0; i--)
+                        {
+                            if (!dc.MetersCollection.Any(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)))
+                            {
+                                q.MeterCollection.RemoveAt(i);
+                            }
+                        }
 
                         db.SaveChanges();
                     }
