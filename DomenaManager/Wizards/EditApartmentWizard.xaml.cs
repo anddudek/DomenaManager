@@ -48,6 +48,7 @@ namespace DomenaManager.Wizards
                     OnPropertyChanged("SelectedBuildingName");
                     OnPropertyChanged("SelectedBuildingAddress");
                     ApartmentNumber = 0;
+                    InitializeMeterCollection();
                 }
             }
         }
@@ -204,6 +205,20 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private ObservableCollection<ApartmentMeter> _meterCollection;
+        public ObservableCollection<ApartmentMeter> MeterCollection
+        {
+            get { return _meterCollection; }
+            set
+            {
+                if (value != _meterCollection)
+                {
+                    _meterCollection = value;
+                    OnPropertyChanged("MeterCollection");
+                }
+            }
+        }
+
         public bool EnableWaterMeterExp
         {
             get { return HasWaterMeter == 0; }            
@@ -244,8 +259,53 @@ namespace DomenaManager.Wizards
             InitializeBuildingList();
             InitializeOwnerList();
             InitializeFields();
+            InitializeMeterCollection();
             DataContext = this;            
             InitializeComponent();            
+        }
+
+        private void InitializeMeterCollection()
+        {
+            if (_apartmentLocalCopy != null && SelectedBuildingName != null && _apartmentLocalCopy.BuildingId.Equals(SelectedBuildingName.BuildingId))
+            {
+                MeterCollection = new ObservableCollection<ApartmentMeter>(_apartmentLocalCopy.MeterCollection);
+            }
+            else if (_apartmentLocalCopy != null && SelectedBuildingName != null)
+            {
+                foreach (var m in SelectedBuildingName.MeterCollection)
+                {
+                    if (!MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)))
+                    {
+                        MeterCollection.Add(new ApartmentMeter() { MeterId = Guid.NewGuid(), MeterTypeParent = m, IsDeleted = false, LastMeasure = 0, LegalizationDate = DateTime.Today.AddDays(-1) });
+                    }
+                    else
+                    {
+                        MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)).IsDeleted = false;
+                    }
+                }
+                for (int i = SelectedBuildingName.MeterCollection.Count - 1; i >= 0; i--)
+                {
+                    if (!MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)))
+                    {
+                        MeterCollection.Add(new ApartmentMeter() { MeterId = Guid.NewGuid(), MeterTypeParent = SelectedBuildingName.MeterCollection[i], IsDeleted = false, LastMeasure = 0, LegalizationDate = DateTime.Today.AddDays(-1) });
+                    }
+                    else
+                    {
+                        MeterCollection.Remove(MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)));
+                    }
+                }
+                for (int i = MeterCollection.Count - 1; i >= 0; i--)
+                {
+                    if (!SelectedBuildingName.MeterCollection.Any(x => MeterCollection[i].MeterId.Equals(MeterCollection[i].MeterTypeParent.MeterId)))
+                    {
+                        MeterCollection.RemoveAt(i);
+                    }
+                }
+            }
+            else
+            {
+                MeterCollection = new ObservableCollection<ApartmentMeter>();
+            }
         }
 
         private void InitializeBuildingList()
@@ -275,11 +335,9 @@ namespace DomenaManager.Wizards
             }
 
             _boughtDate = _apartmentLocalCopy.BoughtDate;
-            _waterMeterExp = _apartmentLocalCopy.WaterMeterExp;
             _additionalArea = _apartmentLocalCopy.AdditionalArea.ToString();
             _apartmentArea = _apartmentLocalCopy.ApartmentArea.ToString();
             _apartmentNumber = _apartmentLocalCopy.ApartmentNumber;
-            _hasWaterMeter = _apartmentLocalCopy.HasWaterMeter ? 0 : 1;
             _selectedBuildingName = _buildingsNames.Where(x => x.BuildingId.Equals(_apartmentLocalCopy.BuildingId)).FirstOrDefault();
             _selectedOwnerName = _ownersNames.Where(x => x.OwnerId.Equals(_apartmentLocalCopy.OwnerId)).FirstOrDefault();
             _selectedOwnerMailAddress = _apartmentLocalCopy.CorrespondenceAddress != null ? _apartmentLocalCopy.CorrespondenceAddress : (_selectedOwnerName != null ? _selectedOwnerName.MailAddress : null);

@@ -149,8 +149,34 @@
             Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="4" SelectedDate="{Binding WaterMeterExp}" IsEnabled="{Binding EnableWaterMeterExp}"
             VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Legalizacja wodomierza" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />-->
-        <DataGrid Grid.Row="6" Grid.ColumnSpan="6" Margin="35,10,30,10" ItemsSource="{Binding MetersCollection}">
-            
+        <DataGrid Grid.Row="6" Grid.ColumnSpan="6" Margin="35,10,30,10" ItemsSource="{Binding MeterCollection}"
+                  Foreground="Black" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nazwa licznika" IsReadOnly="True" Binding="{Binding MeterTypeParent.Name}" Width="auto" FontSize="14"/>
+                <DataGridTemplateColumn Header="Data legalizacji" Width="auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding LegalizationDate, StringFormat={}{0:dd-MM-yyyy}}" FontSize="14"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding LegalizationDate}" FontSize="14"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Ostanie wskazanie" IsReadOnly="False" Binding="{Binding LastMeasure}" Width="auto" FontSize="14"/>
+            </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Foreground" Value="Black" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsClosed}" Value="True">
+                            <Setter Property="Foreground" Value="Gray" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
         </DataGrid>
 
         <DatePicker 

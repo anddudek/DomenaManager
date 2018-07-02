@@ -251,9 +251,7 @@ namespace DomenaManager.Pages
                         .Where(x => x.BuildingId == apar.BuildingId && !x.IsDeleted)
                         .Select(x => x.AdditionalArea + x.ApartmentArea)
                         .Sum()).ToString("0.00") + " %",
-                        HasWaterMeter = apar.HasWaterMeter ? "Tak" : "Nie",
                         BoughtDate = apar.BoughtDate,
-                        WaterMeterExp = apar.WaterMeterExp,
                         ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
 
                         ApartmentAreaSeries = new SeriesCollection
@@ -399,7 +397,26 @@ namespace DomenaManager.Pages
             Wizards.EditApartmentWizard eaw;
             using (var db = new DB.DomenaDBContext())
             {
-                var sa = db.Apartments.Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
+                var sa = db.Apartments.Include(x => x.MeterCollection).Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
+                var b = db.Buildings.Include(x => x.MeterCollection).FirstOrDefault(x => x.BuildingId.Equals(sa.BuildingId));
+                foreach (var m in b.MeterCollection)
+                {
+                    if (!sa.MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)))
+                    {
+                        sa.MeterCollection.Add(new ApartmentMeter() { MeterId = Guid.NewGuid(), MeterTypeParent = m, IsDeleted = false, LastMeasure = 0, LegalizationDate = DateTime.Today.AddDays(-1) });
+                    }
+                    else
+                    {
+                        sa.MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)).IsDeleted = false;
+                    }
+                }
+                foreach (var m in sa.MeterCollection)
+                {
+                    if (!b.MeterCollection.Any(x => x.MeterId.Equals(m.MeterTypeParent.MeterId)))
+                    {
+                        m.IsDeleted = true;
+                    }
+                }
                 eaw = new Wizards.EditApartmentWizard(sa);
             }
 
@@ -454,7 +471,7 @@ namespace DomenaManager.Pages
                     //Add new apartment
                     using (var db = new DB.DomenaDBContext())
                     {
-                        var newApartment = new LibDataModel.Apartment { BoughtDate = dc.BoughtDate.Date, ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), HasWaterMeter = dc.HasWaterMeter == 1, IsDeleted=false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber, WaterMeterExp= dc.WaterMeterExp.Date };
+                        var newApartment = new LibDataModel.Apartment { BoughtDate = dc.BoughtDate.Date, ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), IsDeleted=false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber, MeterCollection = new List<ApartmentMeter>() };
                         if (!dc.SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == dc._apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
                         {
                             newApartment.CorrespondenceAddress = dc.SelectedOwnerMailAddress;
@@ -463,13 +480,18 @@ namespace DomenaManager.Pages
                         {
                             newApartment.CorrespondenceAddress = null;
                         }
+                        var q = dc.MeterCollection.Where(x => !x.IsDeleted);
+                        foreach (var m in q)
+                        {
+                            newApartment.MeterCollection.Add(new ApartmentMeter() { IsDeleted = false, LastMeasure = m.LastMeasure, MeterTypeParent = m.MeterTypeParent, LegalizationDate = m.LegalizationDate, MeterId = m.MeterId });
+                        }
                         db.Apartments.Add(newApartment);
                         db.SaveChanges();
                     }
                 }
                 else
                 {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingAddress) || string.IsNullOrEmpty(dc.SelectedOwnerMailAddress) || dc.ApartmentNumber <= 0 || double.Parse(dc.AdditionalArea) <= 0 || double.Parse(dc.ApartmentArea) <= 0))
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingAddress) || string.IsNullOrEmpty(dc.SelectedOwnerMailAddress) || dc.ApartmentNumber <= 0 || double.Parse(dc.AdditionalArea) < 0 || double.Parse(dc.ApartmentArea) <= 0))
                     {
                         eventArgs.Cancel();
                         return;
@@ -477,15 +499,15 @@ namespace DomenaManager.Pages
                     //Edit Apartment
                     using (var db = new DB.DomenaDBContext())
                     {
-                        var q = db.Apartments.Where(x => x.ApartmentId.Equals(dc._apartmentLocalCopy.ApartmentId)).FirstOrDefault();
+                        var q = db.Apartments.Include(x => x.MeterCollection).Where(x => x.ApartmentId.Equals(dc._apartmentLocalCopy.ApartmentId)).FirstOrDefault();
                         q.BoughtDate = dc.BoughtDate.Date;
                         q.AdditionalArea = double.Parse(dc.AdditionalArea);
                         q.ApartmentArea = double.Parse(dc.ApartmentArea);
                         q.ApartmentNumber = dc.ApartmentNumber;
                         q.BuildingId = dc.SelectedBuildingName.BuildingId;
                         q.CreatedDate = DateTime.Now;
-                        q.HasWaterMeter = dc.HasWaterMeter == 0;
-                        q.WaterMeterExp = dc.WaterMeterExp.Date;
+                        //q.HasWaterMeter = dc.HasWaterMeter == 0;
+                        //q.WaterMeterExp = dc.WaterMeterExp.Date;
                         q.OwnerId = dc.SelectedOwnerName.OwnerId;
 
                         if (!dc.SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == dc._apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
@@ -497,6 +519,27 @@ namespace DomenaManager.Pages
                             q.CorrespondenceAddress = null;
                         }
 
+                        var meters = dc.MeterCollection.Where(x => !x.IsDeleted);
+                        foreach (var m in meters)
+                        {
+                            if (!q.MeterCollection.Any(x => x.MeterId.Equals(m.MeterId)))
+                            {
+                                q.MeterCollection.Add(m);
+                            }
+                            else
+                            {
+                                var s = q.MeterCollection.FirstOrDefault(x => x.MeterId.Equals(m.MeterId));
+                                s.LegalizationDate = m.LegalizationDate;
+                                s.LastMeasure = m.LastMeasure;
+                            }
+                        }
+                        foreach (var m in q.MeterCollection)
+                        {
+                            if (!meters.Any(x => x.MeterId.Equals(m.MeterId)))
+                            {
+                                m.IsDeleted = true;
+                            }
+                        }
                         db.SaveChanges();
                     }
                 }

@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApartmentMeter.cs" />
     <Compile Include="BindingParent.cs" />
     <Compile Include="Charge.cs" />
     <Compile Include="ChargeComponent.cs" />

@@ -18,11 +18,10 @@ namespace LibDataModel
         public double AdditionalArea { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime BoughtDate { get; set; }
-        public DateTime WaterMeterExp { get; set; }
-        public bool HasWaterMeter { get; set; }
         public bool IsDeleted { get; set; }
         public string CorrespondenceAddress { get; set; }
         public Guid BindingParent { get; set; }
+        public List<ApartmentMeter> MeterCollection { get; set; }
 
         public Apartment()
         {
@@ -30,6 +29,7 @@ namespace LibDataModel
             this.CreatedDate = DateTime.Now;
             this.IsDeleted = false;
             this.BindingParent = Guid.Empty;
+            this.MeterCollection = new List<ApartmentMeter>();
         }
 
         public Apartment(Apartment CopySource)
@@ -41,12 +41,11 @@ namespace LibDataModel
             this.ApartmentArea = CopySource.ApartmentArea;
             this.AdditionalArea = CopySource.AdditionalArea;
             this.CreatedDate = CopySource.CreatedDate;
-            this.HasWaterMeter = CopySource.HasWaterMeter;
             this.IsDeleted = CopySource.IsDeleted;
             this.BoughtDate = CopySource.BoughtDate;
-            this.WaterMeterExp = CopySource.WaterMeterExp;
             this.CorrespondenceAddress = CopySource.CorrespondenceAddress;
             this.BindingParent = CopySource.BindingParent;
+            this.MeterCollection = CopySource.MeterCollection;
         }
     }
 }
