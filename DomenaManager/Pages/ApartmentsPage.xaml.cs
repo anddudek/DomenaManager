@@ -397,7 +397,7 @@ namespace DomenaManager.Pages
             Wizards.EditApartmentWizard eaw;
             using (var db = new DB.DomenaDBContext())
             {
-                var sa = db.Apartments.Include(x => x.MeterCollection).Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
+                var sa = db.Apartments.Include(x => x.MeterCollection.Select(y => y.MeterTypeParent)).Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
                 var b = db.Buildings.Include(x => x.MeterCollection).FirstOrDefault(x => x.BuildingId.Equals(sa.BuildingId));
                 foreach (var m in b.MeterCollection)
                 {
@@ -525,6 +525,8 @@ namespace DomenaManager.Pages
                             if (!q.MeterCollection.Any(x => x.MeterId.Equals(m.MeterId)))
                             {
                                 q.MeterCollection.Add(m);
+                                //var a = db.Buildings.SelectMany(x => x.MeterCollection).FirstOrDefault(x => x.MeterId.Equals(m.MeterTypeParent.MeterId));
+                                db.Entry(m.MeterTypeParent).State = EntityState.Unchanged;
                             }
                             else
                             {
@@ -540,6 +542,7 @@ namespace DomenaManager.Pages
                                 m.IsDeleted = true;
                             }
                         }
+                        
                         db.SaveChanges();
                     }
                 }
