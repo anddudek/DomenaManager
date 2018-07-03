@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="DomenaManager.Pages.SettlementPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:Helpers="clr-namespace:DomenaManager.Helpers"      
+      xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d" MaxWidth="900"
+      d:DesignHeight="600" d:DesignWidth="600" 
+	>
+    <Grid Background="#FFFFFF">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+            
+            <ComboBox materialDesign:HintAssist.Hint="Budynek" Margin="15"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" DisplayMemberPath="Name"
+            SelectedItem="{Binding SelectedBuildingName}"  VerticalAlignment="Center" >
+                <ComboBox.Text>
+                    <Binding Path="SelectedBuildingValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Helpers:EmptyStringValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ComboBox.Text>
+                <ComboBox.ItemsSource>
+                    <Binding Path="BuildingsNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Helpers:EmptyStringValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+
+            <TextBox IsReadOnly="True" TextWrapping="WrapWithOverflow" Text="{Binding SelectedBuildingAddress}" HorizontalContentAlignment="Left" Margin="10"/>
+
+            <Label Content="Okres rozliczenia:" HorizontalAlignment="Left" Margin="15"/>
+
+            <StackPanel Orientation="Horizontal">                
+                <DatePicker 
+                    SelectedDate="{Binding SettlementFrom}"
+                    VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
+                    materialDesign:HintAssist.Hint="Początek" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+                <DatePicker 
+                    SelectedDate="{Binding SettlementTo}"
+                    VerticalAlignment="Center" Margin="30,0,15,0" Language="pl-PL" 
+                    materialDesign:HintAssist.Hint="Koniec" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+            </StackPanel>
+
+            <ComboBox materialDesign:HintAssist.Hint="Kategorie faktur:" Margin="15"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" DisplayMemberPath="Name"
+            SelectedItem="{Binding SelectedInvoiceCategoryName}"  VerticalAlignment="Center" >
+                <ComboBox.Text>
+                    <Binding Path="SelectedInvoiceValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Helpers:EmptyStringValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ComboBox.Text>
+                <ComboBox.ItemsSource>
+                    <Binding Path="InvoiceCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Helpers:EmptyStringValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+            
+            
+            
+        </StackPanel>
+    </Grid>
+</UserControl>

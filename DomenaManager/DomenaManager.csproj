@@ -155,6 +155,9 @@
     <Compile Include="Pages\BindingsPage.xaml.cs">
       <DependentUpon>BindingsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\SettlementPage.xaml.cs">
+      <DependentUpon>SettlementPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\SummaryPage.xaml.cs">
       <DependentUpon>SummaryPage.xaml</DependentUpon>
     </Compile>
@@ -202,6 +205,10 @@
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
     </Compile>
     <Page Include="Pages\BindingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\SettlementPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
