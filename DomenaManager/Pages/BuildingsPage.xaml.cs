@@ -229,13 +229,17 @@ namespace DomenaManager.Pages
                                 q.MeterCollection.Add(m);
                             }
                         }
-
                         //Remove necessary
                         for (int i = q.MeterCollection.Count - 1; i>=0; i--)
                         {
                             if (!dc.MetersCollection.Any(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)))
                             {
                                 q.MeterCollection.RemoveAt(i);
+                            }
+                            else
+                            {
+                                // Change names
+                                q.MeterCollection[i].Name = dc.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).Name;
                             }
                         }
 

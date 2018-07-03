@@ -169,10 +169,12 @@
             </DataGrid.Columns>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="Foreground" Value="Black" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsClosed}" Value="True">
-                            <Setter Property="Foreground" Value="Gray" />
+                        <DataTrigger Binding="{Binding Path=IsDeleted}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=IsDeleted}" Value="False">
+                            <Setter Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

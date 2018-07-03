@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using LibDataModel;
 using MaterialDesignThemes.Wpf;
 
@@ -268,10 +269,15 @@ namespace DomenaManager.Wizards
         {
             if (_apartmentLocalCopy != null && SelectedBuildingName != null && _apartmentLocalCopy.BuildingId.Equals(SelectedBuildingName.BuildingId))
             {
-                MeterCollection = new ObservableCollection<ApartmentMeter>(_apartmentLocalCopy.MeterCollection);
+                MeterCollection = new ObservableCollection<ApartmentMeter>();
+                foreach (var m in _apartmentLocalCopy.MeterCollection)
+                {
+                    MeterCollection.Add(new ApartmentMeter() { IsDeleted = m.IsDeleted, MeterTypeParent = m.MeterTypeParent, LastMeasure = m.LastMeasure, LegalizationDate = m.LegalizationDate, MeterId = m.MeterId });
+                }
             }
             else if (_apartmentLocalCopy != null && SelectedBuildingName != null)
             {
+                /*
                 foreach (var m in SelectedBuildingName.MeterCollection)
                 {
                     if (!MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)))
@@ -282,7 +288,7 @@ namespace DomenaManager.Wizards
                     {
                         MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)).IsDeleted = false;
                     }
-                }
+                }*/
                 for (int i = SelectedBuildingName.MeterCollection.Count - 1; i >= 0; i--)
                 {
                     if (!MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)))
@@ -291,12 +297,13 @@ namespace DomenaManager.Wizards
                     }
                     else
                     {
-                        MeterCollection.Remove(MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)));
+                        MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)).IsDeleted = false;
+                        //MeterCollection.Remove(MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)));
                     }
                 }
                 for (int i = MeterCollection.Count - 1; i >= 0; i--)
                 {
-                    if (!SelectedBuildingName.MeterCollection.Any(x => MeterCollection[i].MeterId.Equals(MeterCollection[i].MeterTypeParent.MeterId)))
+                    if (!SelectedBuildingName.MeterCollection.Any(x => x.MeterId.Equals(MeterCollection[i].MeterTypeParent.MeterId)))
                     {
                         MeterCollection.RemoveAt(i);
                     }
@@ -312,8 +319,8 @@ namespace DomenaManager.Wizards
         {
             using (var db = new DB.DomenaDBContext())
             {
-                BuildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
-                ApartmentsCollection = new ObservableCollection<Apartment>(db.Apartments.ToList());
+                BuildingsNames = new ObservableCollection<Building>(db.Buildings.Include(x => x.MeterCollection).Where(x => x.IsDeleted == false).ToList());
+                ApartmentsCollection = new ObservableCollection<Apartment>(db.Apartments.Include(x => x.MeterCollection).ToList());
             }
         }
 
