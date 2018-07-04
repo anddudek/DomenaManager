@@ -3,11 +3,12 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:Helpers="clr-namespace:DomenaManager.Helpers"      
+      xmlns:Helpers="clr-namespace:DomenaManager.Helpers"      
       xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:dd="urn:gong-wpf-dragdrop"
       mc:Ignorable="d" MaxWidth="900"
-      d:DesignHeight="600" d:DesignWidth="600" 
+      d:DesignHeight="1500" d:DesignWidth="600" 
 	>
     <Grid Background="#FFFFFF">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
@@ -66,6 +67,115 @@
                     </Binding>
                 </ComboBox.ItemsSource>
             </ComboBox>
+
+            <StackPanel Orientation="Horizontal">
+                <StackPanel>
+                    <Label Content="Rozliczane:" Margin="5,0,0,0"/>
+                    <DataGrid ItemsSource="{Binding SettledInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                  dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="10,0,15,5"
+                                  dd:DragDrop.IsDropTarget="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Data" Binding="{Binding Date}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Kwota" Binding="{Binding Amount}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Kategoria" Binding="{Binding Category}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Numer" Binding="{Binding InvoiceNo}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Kontrahent" Binding="{Binding Contractor}" Width="*" FontSize="14"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+
+
+                <StackPanel>
+                    <Label Content="Dostępne:" Margin="15,0,0,0"/>
+                    <DataGrid ItemsSource="{Binding AvailableInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                              dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="15,0,10,5"
+                              dd:DragDrop.IsDropTarget="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Data" Binding="{Binding Date}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Kwota" Binding="{Binding Amount}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Kategoria" Binding="{Binding Category}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Numer" Binding="{Binding InvoiceNo}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Kontrahent" Binding="{Binding Contractor}" Width="*" FontSize="14"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </StackPanel>
+            
+            <ComboBox materialDesign:HintAssist.Hint="Kategorie zaliczek:" Margin="15"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" DisplayMemberPath="Name"
+            SelectedItem="{Binding SelectedChargeCategoryName}"  VerticalAlignment="Center" >
+                <ComboBox.Text>
+                    <Binding Path="SelectedChargeCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Helpers:EmptyStringValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ComboBox.Text>
+                <ComboBox.ItemsSource>
+                    <Binding Path="ChargeCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Helpers:EmptyStringValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+
+            <StackPanel Orientation="Horizontal">
+                <StackPanel>
+                    <Label Content="Rozliczane:" Margin="5,0,0,0"/>
+                    <DataGrid ItemsSource="{Binding SettleChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                  dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="10,0,15,5"
+                                  dd:DragDrop.IsDropTarget="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="auto" FontSize="14"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+
+
+                <StackPanel>
+                    <Label Content="Dostępne:" Margin="15,0,0,0"/>
+                    <DataGrid ItemsSource="{Binding AvailableChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                              dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="15,0,10,5"
+                              dd:DragDrop.IsDropTarget="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="auto" FontSize="14"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </StackPanel>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60" />
+                </Grid.ColumnDefinitions>
+                <ComboBox materialDesign:HintAssist.Hint="Rozliczane jako:" Margin="15"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+                  IsEditable="True" DisplayMemberPath="Name"
+            SelectedItem="{Binding SettlementCategoryName}"  VerticalAlignment="Center" >
+                    <ComboBox.Text>
+                        <Binding Path="SettlementCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.Text>
+                    <ComboBox.ItemsSource>
+                        <Binding Path="SettlementCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
+                <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewBuilding}" HorizontalAlignment="Center" DockPanel.Dock="Right">
+                    <ContentControl>
+                        <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    </ContentControl>
+                </Button>
+            </Grid>
             
             
             
