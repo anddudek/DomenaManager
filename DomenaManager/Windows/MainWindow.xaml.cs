@@ -147,6 +147,10 @@ namespace DomenaManager.Windows
                     CurrentPage = new Pages.BindingsPage();
                     OnPropertyChanged("CurrentPage");
                     return;
+                case "Settlement":
+                    CurrentPage = new Pages.SettlementPage();
+                    OnPropertyChanged("CurrentPage");
+                    return;
             }
         }
 

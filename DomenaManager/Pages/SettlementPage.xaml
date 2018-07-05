@@ -8,9 +8,26 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:dd="urn:gong-wpf-dragdrop"
       mc:Ignorable="d" MaxWidth="900"
-      d:DesignHeight="1500" d:DesignWidth="600" 
-	>
-    <Grid Background="#FFFFFF">
+      d:DesignHeight="1500" d:DesignWidth="600">
+    <UserControl.Resources>
+        <Helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding ApartmentNumber, StringFormat= Mieszkanie nr.: {0} ;}" />
+                            <TextBlock Text="{Binding ApartmentOwnerName, StringFormat= Właściciel: {0}.}" />
+                            <ItemsPresenter/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" Background="White">
+        <Grid Background="#FFFFFF">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
             
             <ComboBox materialDesign:HintAssist.Hint="Budynek" Margin="15"
@@ -37,16 +54,16 @@
 
             <Label Content="Okres rozliczenia:" HorizontalAlignment="Left" Margin="15"/>
 
-            <StackPanel Orientation="Horizontal">                
-                <DatePicker 
+            <DockPanel LastChildFill="False">                
+                <DatePicker DockPanel.Dock="Left" Width="200"
                     SelectedDate="{Binding SettlementFrom}"
                     VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
                     materialDesign:HintAssist.Hint="Początek" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
-                <DatePicker 
+                <DatePicker DockPanel.Dock="Right" Width="200"
                     SelectedDate="{Binding SettlementTo}"
                     VerticalAlignment="Center" Margin="30,0,15,0" Language="pl-PL" 
                     materialDesign:HintAssist.Hint="Koniec" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
-            </StackPanel>
+            </DockPanel>
 
             <ComboBox materialDesign:HintAssist.Hint="Kategorie faktur:" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
@@ -72,7 +89,7 @@
                 <StackPanel>
                     <Label Content="Rozliczane:" Margin="5,0,0,0"/>
                     <DataGrid ItemsSource="{Binding SettledInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
-                                  dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="10,0,15,5"
+                                  dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="10,0,15,5" BorderThickness="1" BorderBrush="Gray"
                                   dd:DragDrop.IsDropTarget="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Data" Binding="{Binding Date}" Width="auto" FontSize="14"/>
@@ -88,7 +105,7 @@
                 <StackPanel>
                     <Label Content="Dostępne:" Margin="15,0,0,0"/>
                     <DataGrid ItemsSource="{Binding AvailableInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
-                              dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="15,0,10,5"
+                              dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="15,0,10,5" BorderThickness="1" BorderBrush="Gray"
                               dd:DragDrop.IsDropTarget="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Data" Binding="{Binding Date}" Width="auto" FontSize="14"/>
@@ -125,7 +142,7 @@
                 <StackPanel>
                     <Label Content="Rozliczane:" Margin="5,0,0,0"/>
                     <DataGrid ItemsSource="{Binding SettleChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
-                                  dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="10,0,15,5"
+                                  dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="10,0,15,5" BorderThickness="1" BorderBrush="Gray"
                                   dd:DragDrop.IsDropTarget="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="auto" FontSize="14"/>
@@ -137,7 +154,7 @@
                 <StackPanel>
                     <Label Content="Dostępne:" Margin="15,0,0,0"/>
                     <DataGrid ItemsSource="{Binding AvailableChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
-                              dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="15,0,10,5"
+                              dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="15,0,10,5" BorderThickness="1" BorderBrush="Gray"
                               dd:DragDrop.IsDropTarget="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="auto" FontSize="14"/>
@@ -176,9 +193,35 @@
                     </ContentControl>
                 </Button>
             </Grid>
-            
-            
-            
+
+            <Label Content="Sposób rozliczania:" HorizontalAlignment="Left" Margin="15,0,0,5"/>
+            <RadioButton IsChecked="{Binding Path=YourEnumProperty, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_AREA}}" Content="Według powierzchni" Margin="10,0,0,0"/>
+            <RadioButton IsChecked="{Binding Path=YourEnumProperty, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_APARTMENT}}" Content="Według lokali" Margin="10,5,0,0"/>
+            <RadioButton IsChecked="{Binding Path=YourEnumProperty, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_METERS}}" Content="Według liczników" Margin="10,5,0,5"/>
+
+                <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding MetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Name}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Ostatnie wskazanie" Binding="{Binding Name}" IsReadOnly="False"/>
+                    <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding Name}" IsReadOnly="False"/>
+                </DataGrid.Columns>
+                <DataGrid.GroupStyle>
+                    <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <DataGridRowsPresenter/>
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+            </DataGrid>
+
+            <DockPanel LastChildFill="False">
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Podsumowanie" Command="{Binding SettlementSummary}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{Binding SettlementSummary}"  Margin="10" DockPanel.Dock="Right" Width="200"/>
+            </DockPanel>
+
         </StackPanel>
     </Grid>
+    </ScrollViewer>
 </UserControl>
