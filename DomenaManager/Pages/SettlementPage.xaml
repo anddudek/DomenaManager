@@ -7,10 +7,11 @@
       xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:dd="urn:gong-wpf-dragdrop"
-      mc:Ignorable="d" MaxWidth="900"
+      mc:Ignorable="d"
       d:DesignHeight="1500" d:DesignWidth="600">
     <UserControl.Resources>
         <Helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <Helpers:GuidToInvoiceCategoryNameMultiConverter x:Key="GuidToCategoryConverter"/>
         <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -42,7 +43,7 @@
                     </Binding>
                 </ComboBox.Text>
                 <ComboBox.ItemsSource>
-                    <Binding Path="BuildingsNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                    <Binding Path="BuildingNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
                             <Helpers:EmptyStringValidationRule/>
                         </Binding.ValidationRules>
@@ -67,20 +68,20 @@
 
             <ComboBox materialDesign:HintAssist.Hint="Kategorie faktur:" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-                  IsEditable="True" DisplayMemberPath="Name"
+                  IsEditable="True" DisplayMemberPath="CategoryName"
             SelectedItem="{Binding SelectedInvoiceCategoryName}"  VerticalAlignment="Center" >
                 <ComboBox.Text>
-                    <Binding Path="SelectedInvoiceValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <Helpers:EmptyStringValidationRule/>
-                        </Binding.ValidationRules>
-                    </Binding>
+                    <Binding Path="SelectedInvoiceCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <!--<Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>-->
+                        </Binding>
                 </ComboBox.Text>
                 <ComboBox.ItemsSource>
                     <Binding Path="InvoiceCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
+                        <!--<Binding.ValidationRules>
                             <Helpers:EmptyStringValidationRule/>
-                        </Binding.ValidationRules>
+                        </Binding.ValidationRules>-->
                     </Binding>
                 </ComboBox.ItemsSource>
             </ComboBox>
@@ -90,13 +91,20 @@
                     <Label Content="Rozliczane:" Margin="5,0,0,0"/>
                     <DataGrid ItemsSource="{Binding SettledInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
                                   dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="10,0,15,5" BorderThickness="1" BorderBrush="Gray"
-                                  dd:DragDrop.IsDropTarget="True">
+                                  dd:DragDrop.IsDropTarget="True" x:Name="SettledInvoicesDG">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Data" Binding="{Binding Date}" Width="auto" FontSize="14"/>
-                            <DataGridTextColumn Header="Kwota" Binding="{Binding Amount}" Width="auto" FontSize="14"/>
-                            <DataGridTextColumn Header="Kategoria" Binding="{Binding Category}" Width="auto" FontSize="14"/>
-                            <DataGridTextColumn Header="Numer" Binding="{Binding InvoiceNo}" Width="auto" FontSize="14"/>
-                            <DataGridTextColumn Header="Kontrahent" Binding="{Binding Contractor}" Width="*" FontSize="14"/>
+                                <DataGridTextColumn Header="Data" Binding="{Binding InvoiceDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
+                                <DataGridTextColumn Header="Kwota" Binding="{Binding CostAmount, StringFormat={}{0} zł}" Width="auto" FontSize="14"/>
+                                <DataGridTextColumn Header="Kategoria" Width="auto" FontSize="14">
+                                    <DataGridTextColumn.Binding>
+                                        <MultiBinding Converter="{StaticResource GuidToCategoryConverter}" >
+                                            <Binding Path="InvoiceCategoryId"/>
+                                            <Binding Path="InvoiceCategories" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                        </MultiBinding>
+                                    </DataGridTextColumn.Binding>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Numer" Binding="{Binding InvoiceNumber}" Width="auto" FontSize="14"/>
+                                <DataGridTextColumn Header="Kontrahent" Binding="{Binding ContractorName}" Width="auto" FontSize="14"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
@@ -106,34 +114,41 @@
                     <Label Content="Dostępne:" Margin="15,0,0,0"/>
                     <DataGrid ItemsSource="{Binding AvailableInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
                               dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="15,0,10,5" BorderThickness="1" BorderBrush="Gray"
-                              dd:DragDrop.IsDropTarget="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Data" Binding="{Binding Date}" Width="auto" FontSize="14"/>
-                            <DataGridTextColumn Header="Kwota" Binding="{Binding Amount}" Width="auto" FontSize="14"/>
-                            <DataGridTextColumn Header="Kategoria" Binding="{Binding Category}" Width="auto" FontSize="14"/>
-                            <DataGridTextColumn Header="Numer" Binding="{Binding InvoiceNo}" Width="auto" FontSize="14"/>
-                            <DataGridTextColumn Header="Kontrahent" Binding="{Binding Contractor}" Width="*" FontSize="14"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                              dd:DragDrop.IsDropTarget="True" x:Name="AvailableInvoicesDG">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Data" Binding="{Binding InvoiceDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
+                                <DataGridTextColumn Header="Kwota" Binding="{Binding CostAmount, StringFormat={}{0} zł}" Width="auto" FontSize="14"/>
+                                <DataGridTextColumn Header="Kategoria" Width="auto" FontSize="14">
+                                    <DataGridTextColumn.Binding>
+                                        <MultiBinding Converter="{StaticResource GuidToCategoryConverter}" >
+                                            <Binding Path="InvoiceCategoryId"/>
+                                            <Binding Path="InvoiceCategories" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                        </MultiBinding>
+                                    </DataGridTextColumn.Binding>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Numer" Binding="{Binding InvoiceNumber}" Width="auto" FontSize="14"/>
+                                <DataGridTextColumn Header="Kontrahent" Binding="{Binding ContractorName}" Width="auto" FontSize="14"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                 </StackPanel>
             </StackPanel>
             
             <ComboBox materialDesign:HintAssist.Hint="Kategorie zaliczek:" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-                  IsEditable="True" DisplayMemberPath="Name"
+                  IsEditable="True" DisplayMemberPath="CategoryName"
             SelectedItem="{Binding SelectedChargeCategoryName}"  VerticalAlignment="Center" >
                 <ComboBox.Text>
                     <Binding Path="SelectedChargeCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <Helpers:EmptyStringValidationRule/>
-                        </Binding.ValidationRules>
-                    </Binding>
+                            <!--<Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>-->
+                        </Binding>
                 </ComboBox.Text>
                 <ComboBox.ItemsSource>
                     <Binding Path="ChargeCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
+                        <!--<Binding.ValidationRules>
                             <Helpers:EmptyStringValidationRule/>
-                        </Binding.ValidationRules>
+                        </Binding.ValidationRules>-->
                     </Binding>
                 </ComboBox.ItemsSource>
             </ComboBox>
@@ -143,9 +158,9 @@
                     <Label Content="Rozliczane:" Margin="5,0,0,0"/>
                     <DataGrid ItemsSource="{Binding SettleChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
                                   dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="10,0,15,5" BorderThickness="1" BorderBrush="Gray"
-                                  dd:DragDrop.IsDropTarget="True">
+                                  dd:DragDrop.IsDropTarget="True" Width="{Binding Path=ActualWidth, ElementName=SettledInvoicesDG}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Nazwa" Binding="{Binding CategoryName}" Width="auto" FontSize="14"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
@@ -155,9 +170,9 @@
                     <Label Content="Dostępne:" Margin="15,0,0,0"/>
                     <DataGrid ItemsSource="{Binding AvailableChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
                               dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="15,0,10,5" BorderThickness="1" BorderBrush="Gray"
-                              dd:DragDrop.IsDropTarget="True">
+                              dd:DragDrop.IsDropTarget="True" Width="{Binding Path=ActualWidth, ElementName=AvailableInvoicesDG}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="auto" FontSize="14"/>
+                            <DataGridTextColumn Header="Nazwa" Binding="{Binding CategoryName}" Width="auto" FontSize="14"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
@@ -170,20 +185,20 @@
                 </Grid.ColumnDefinitions>
                 <ComboBox materialDesign:HintAssist.Hint="Rozliczane jako:" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-                  IsEditable="True" DisplayMemberPath="Name"
+                  IsEditable="True" DisplayMemberPath="CategoryName"
             SelectedItem="{Binding SettlementCategoryName}"  VerticalAlignment="Center" >
                     <ComboBox.Text>
                         <Binding Path="SettlementCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
+                                <!--<Binding.ValidationRules>
                                 <Helpers:EmptyStringValidationRule/>
-                            </Binding.ValidationRules>
-                        </Binding>
+                            </Binding.ValidationRules>-->
+                            </Binding>
                     </ComboBox.Text>
                     <ComboBox.ItemsSource>
                         <Binding Path="SettlementCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
+                            <!--<Binding.ValidationRules>
                                 <Helpers:EmptyStringValidationRule/>
-                            </Binding.ValidationRules>
+                            </Binding.ValidationRules>-->
                         </Binding>
                     </ComboBox.ItemsSource>
                 </ComboBox>
@@ -195,12 +210,26 @@
             </Grid>
 
             <Label Content="Sposób rozliczania:" HorizontalAlignment="Left" Margin="15,0,0,5"/>
-            <RadioButton IsChecked="{Binding Path=YourEnumProperty, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_AREA}}" Content="Według powierzchni" Margin="10,0,0,0"/>
-            <RadioButton IsChecked="{Binding Path=YourEnumProperty, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_APARTMENT}}" Content="Według lokali" Margin="10,5,0,0"/>
-            <RadioButton IsChecked="{Binding Path=YourEnumProperty, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_METERS}}" Content="Według liczników" Margin="10,5,0,5"/>
+                <RadioButton IsChecked="{Binding Path=SettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_AREA}}" Content="Według powierzchni" Margin="10,0,0,0"/>
+                <RadioButton IsChecked="{Binding Path=SettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_APARTMENT}}" Content="Według lokali" Margin="10,5,0,0"/>
+                <RadioButton IsChecked="{Binding Path=SettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_METERS}}" Content="Według liczników" Margin="10,5,0,5"/>
 
-                <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding MetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray">
-                <DataGrid.Columns>
+                <ComboBox materialDesign:HintAssist.Hint="Nazwa licznika:" Margin="15,0,15,0"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+                  IsEditable="True" DisplayMemberPath="Name" Visibility="{Binding IsPerMetersSettlement}"
+            SelectedItem="{Binding SelectedMeterName}"  VerticalAlignment="Center" >
+                    <ComboBox.Text>
+                        <Binding Path="SelectedMeterValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        </Binding>
+                    </ComboBox.Text>
+                    <ComboBox.ItemsSource>
+                        <Binding Path="MetersCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                        </Binding>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
+
+                <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray">                    
+                    <DataGrid.Columns>
                     <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Name}" IsReadOnly="True"/>
                     <DataGridTextColumn Header="Ostatnie wskazanie" Binding="{Binding Name}" IsReadOnly="False"/>
                     <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding Name}" IsReadOnly="False"/>

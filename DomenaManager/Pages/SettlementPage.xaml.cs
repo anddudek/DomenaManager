@@ -16,6 +16,9 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using MaterialDesignThemes.Wpf;
+using LibDataModel;
+using System.Collections.Specialized;
+using DomenaManager.Helpers;
 
 namespace DomenaManager.Pages
 {
@@ -26,51 +29,283 @@ namespace DomenaManager.Pages
     {
         #region Bindings
 
-        private ObservableCollection<Helpers.BuildingDataGrid> _buildings;
-        public ObservableCollection<Helpers.BuildingDataGrid> Buildings
+        private ObservableCollection<Building> _buildingNames;
+        public ObservableCollection<Building> BuildingNames
         {
-            get { return _buildings; }
-            set
-            { 
-                _buildings = value;
-                OnPropertyChanged("Buildings");
-            }
-        }
-
-        private Helpers.BuildingDataGrid _selectedBuilding;
-        public Helpers.BuildingDataGrid SelectedBuilding
-        {
-            get { return _selectedBuilding; }
+            get { return _buildingNames; }
             set
             {
-                _selectedBuilding = value;
-                OnPropertyChanged("SelectedBuilding");
+                if (value != _buildingNames)
+                {
+                    _buildingNames = value;
+                    OnPropertyChanged("BuildingNames");
+                }
             }
         }
 
-        public ICommand AddBuildingCommand
+        private Building _selectedBuildingName;
+        public Building SelectedBuildingName
         {
-            get
+            get { return _selectedBuildingName; }
+            set
             {
-                return new Helpers.RelayCommand(AddBuilding, CanAddBuilding);
+                if (value != _selectedBuildingName)
+                {
+                    _selectedBuildingName = value;
+                    OnPropertyChanged("SelectedBuildingName");
+                    OnPropertyChanged("SelectedBuildingAddress");
+                    if (value != null)
+                    {
+                        InitializeSettlementInvoices();
+                        InitializeChargeCategories();
+                        PopulateChargeCategories();
+                        InitializeMetersCollection();
+                    }
+                }
             }
         }
 
-        public ICommand EditBuildingCommand
+        public string SelectedBuildingValue { get; set; }
+
+        public string SelectedBuildingAddress
         {
             get
             {
-                return new Helpers.RelayCommand(EditBuilding, CanEditBuilding);
+                return SelectedBuildingName == null ? string.Empty : SelectedBuildingName.GetAddress();
+            }
+            private set { return; }           
+        }
+
+        private DateTime _settlementFrom;
+        public DateTime SettlementFrom
+        {
+            get { return _settlementFrom; }
+            set
+            {
+                _settlementFrom = value;
+                OnPropertyChanged("SettlementFrom");
             }
         }
 
-        public ICommand DeleteBuildingCommand
+        private DateTime _settlementTo;
+        public DateTime SettlementTo
         {
-            get
+            get { return _settlementTo; }
+            set
             {
-                return new Helpers.RelayCommand(DeleteBuilding, CanDeleteBuilding);
+                _settlementTo = value;
+                OnPropertyChanged("SettlementTo");
             }
         }
+
+        private ObservableCollection<InvoiceCategory> _invoiceCategories;
+        public ObservableCollection<InvoiceCategory> InvoiceCategories
+        {
+            get { return _invoiceCategories; }
+            set
+            {
+                if (value != _invoiceCategories)
+                {
+                    _invoiceCategories = value;
+                    OnPropertyChanged("InvoiceCategories");
+                }
+            }
+        }
+
+        private InvoiceCategory _selectedInvoiceCategoryName;
+        public InvoiceCategory SelectedInvoiceCategoryName
+        {
+            get { return _selectedInvoiceCategoryName; }
+            set
+            {
+                if (value != _selectedInvoiceCategoryName)
+                {
+                    _selectedInvoiceCategoryName = value;
+                    OnPropertyChanged("SelectedInvoiceCategoryName");
+                    if (value != null)
+                    {
+                        InitializeSettlementInvoices();
+                    }
+                }
+            }
+        }
+
+        public string SelectedInvoiceCategoryValue { get; set; }
+
+        private ObservableCollection<Invoice> InvoicesList;
+
+        private ObservableCollection<Invoice> _settledInvoices;
+        public ObservableCollection<Invoice> SettledInvoices
+        {
+            get { return _settledInvoices; }
+            set
+            {
+                if (value != _settledInvoices)
+                {
+                    _settledInvoices = value;
+                    OnPropertyChanged("SettledInvoices");
+                }
+            }
+        }
+
+        private ObservableCollection<Invoice> _availableInvoices;
+        public ObservableCollection<Invoice> AvailableInvoices
+        {
+            get { return _availableInvoices; }
+            set
+            {
+                if (value != _availableInvoices)
+                {
+                    _availableInvoices = value;
+                    OnPropertyChanged("AvailableInvoices");
+                }
+            }
+        }
+
+        public ObservableCollection<BuildingChargeBasisCategory> AllCategories;
+
+        private ObservableCollection<BuildingChargeBasisCategory> _chargeCategories;
+        public ObservableCollection<BuildingChargeBasisCategory> ChargeCategories
+        {
+            get { return _chargeCategories; }
+            set
+            {
+                if (value != _chargeCategories)
+                {
+                    _chargeCategories = value;
+                    OnPropertyChanged("ChargeCategories");
+                }
+            }
+        }
+
+        private BuildingChargeBasisCategory _selectedChargeCategoryName;
+        public BuildingChargeBasisCategory SelectedChargeCategoryName
+        {
+            get { return _selectedChargeCategoryName; }
+            set
+            {
+                if (value != null)
+                {
+                    _selectedChargeCategoryName = value;
+                    OnPropertyChanged("SelectedChargeCategoryName");
+                    PopulateChargeCategories();
+                }
+            }
+        }
+
+        private ObservableCollection<BuildingChargeBasisCategory> _settleChargeCategories;
+        public ObservableCollection<BuildingChargeBasisCategory> SettleChargeCategories
+        {
+            get { return _settleChargeCategories; }
+            set
+            {
+                if (value != _settleChargeCategories)
+                {
+                    _settleChargeCategories = value;
+                    OnPropertyChanged("SettleChargeCategories");
+                }
+            }
+        }
+        
+        private ObservableCollection<BuildingChargeBasisCategory> _availableChargeCategories;
+        public ObservableCollection<BuildingChargeBasisCategory> AvailableChargeCategories
+        {
+            get { return _availableChargeCategories; }
+            set
+            {
+                if (value != _availableChargeCategories)
+                {
+                    _availableChargeCategories = value;
+                    OnPropertyChanged("AvailableChargeCategories");
+                }
+            }
+        }
+
+        public string SelectedChargeCategoryValue { get; set; }
+        
+        private ObservableCollection<BuildingChargeBasisCategory> _settlementCategories;
+        public ObservableCollection<BuildingChargeBasisCategory> SettlementCategories
+        {
+            get { return _settlementCategories; }
+            set
+            {
+                if (value != _settlementCategories)
+                {
+                    _settlementCategories = value;
+                    OnPropertyChanged("SettlementCategories");
+                }
+            }
+        }
+
+        private ObservableCollection<BuildingChargeBasisCategory> _settlementCategoryName;
+        public ObservableCollection<BuildingChargeBasisCategory> SettlementCategoryName
+        {
+            get { return _settlementCategoryName; }
+            set
+            {
+                if (value != _settlementCategoryName)
+                {
+                    _settlementCategoryName = value;
+                    OnPropertyChanged("SettlementCategoryName");
+                }
+            }
+        }
+
+        public string SettlementCategoryValue { get; set; }
+
+        private SettlementMethodsEnum _settlementMethod;
+        public SettlementMethodsEnum SettlementMethod
+        {
+            get { return _settlementMethod; }
+            set
+            {
+                if (value != _settlementMethod)
+                {
+                    _settlementMethod = value;
+                    OnPropertyChanged("SettlementMethod");
+                    OnPropertyChanged("IsPerMetersSettlement");
+                }
+            }
+        }
+
+        public Visibility IsPerMetersSettlement
+        {
+            get { return SettlementMethod == SettlementMethodsEnum.PER_METERS ? Visibility.Visible : System.Windows.Visibility.Collapsed; }
+            private set
+            {
+                return;
+            }
+        }
+
+        private ObservableCollection<MeterType> _metersCollection;
+        public ObservableCollection<MeterType> MetersCollection
+        {
+            get { return _metersCollection; }
+            set
+            {
+                if (value != _metersCollection)
+                {
+                    _metersCollection = value;
+                    OnPropertyChanged("MetersCollection");
+                }
+            }
+        }
+
+        private MeterType _selectedMeterName;
+        public MeterType SelectedMeterName
+        {
+            get { return _selectedMeterName; }
+            set
+            {
+                if (value != _selectedMeterName)
+                {
+                    _selectedMeterName = value;
+                    OnPropertyChanged("SelectedMeterName");
+                }
+            }
+        }
+
+        public string SelectedMeterValue { get; set; }
 
         #endregion
 
@@ -78,187 +313,79 @@ namespace DomenaManager.Pages
         {
             DataContext = this;
             InitializeComponent();
-            InitializeCollection();
-            
+            InitializeCollections();
+            SettlementFrom = new DateTime(DateTime.Now.Year, 1, 1);
+            SettlementTo = new DateTime(DateTime.Now.Year, 12, 31);
         }
 
-        public void InitializeCollection()
+        private void InitializeCollections()
         {
-            Buildings = new ObservableCollection<Helpers.BuildingDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                var q = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => x.IsDeleted == false);
-                foreach (var build in q)
-                {
-                    var b = new Helpers.BuildingDataGrid { Name = build.Name, ApartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(build.BuildingId)).Count() };
-                    b.BuildingId = build.BuildingId;
-                    b.Address = build.GetAddress();
-                    Buildings.Add(b);
-                }
-
-                foreach (var b in Buildings)
-                {
-                    b.CostsList = new List<Helpers.BuildingDescriptionListView>();
-                    //var costs = db.Costs.Where(x => x.BuildingId == b.BuildingId && (DbFunctions.TruncateTime(DbFunctions.AddMonths(DateTime.Now, -1))).Value.Month == DbFunctions.TruncateTime(x.PaymentTime).Value.Month && (DbFunctions.TruncateTime(DbFunctions.AddMonths(DateTime.Now, -1))).Value.Year == DbFunctions.TruncateTime(x.PaymentTime).Value.Year);
-
-                    //foreach (var c in costs)
-                    //{
-                    //b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = db.CostCategories.Where(x => x.CostCategoryId == c.CostCategoryId).FirstOrDefault().CategoryName, CostString = c.CostAmount + " zł", DateString = c.PaymentTime.ToString("yyyy-MM-dd") });
-                    //}
-
-                    var invoices = db.Invoices.Where(x => !x.IsDeleted && x.BuildingId.Equals(b.BuildingId)).OrderByDescending(x => x.InvoiceDate).Take(5);
-                    foreach (var inv in invoices)
-                    {
-                        b.CostsList.Add(new Helpers.BuildingDescriptionListView()
-                        {
-                            Category = db.InvoiceCategories.FirstOrDefault(x => x.CategoryId.Equals(inv.InvoiceCategoryId)).CategoryName,
-                            CostString = inv.CostAmount + " zł",
-                            DateString = inv.InvoiceDate.ToString("dd-MM-yyyy")
-                        });
-                    }
-                    if (b.CostsList.Count == 0)
-                    {
-                        b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = "Brak kosztów" });
-                    }
-                }
+                BuildingNames = new ObservableCollection<Building>(db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => !x.IsDeleted).ToList());
+                InvoiceCategories = new ObservableCollection<InvoiceCategory>(db.InvoiceCategories.Where(x => !x.IsDeleted).ToList());
+                InvoicesList = new ObservableCollection<Invoice>(db.Invoices.Where(x => !x.IsDeleted));
+                AllCategories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
+                SettlementCategories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
+                InitializeSettlementInvoices();
+                InitializeChargeCategories();
+                InitializeMetersCollection();
             }
         }
 
-        private bool CanAddBuilding()
+        private void InitializeSettlementInvoices()
         {
-            return true;
-        }
-
-        private async void AddBuilding(object obj)
-        {
-            Wizards.EditBuildingWizard ebw = new Wizards.EditBuildingWizard();
-
-            var result = await DialogHost.Show(ebw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-        }
-
-        private bool CanEditBuilding()
-        {
-            return (SelectedBuilding != null);
-        }
-
-        private async void EditBuilding(object obj)
-        {
-            Wizards.EditBuildingWizard ebw;
-            using (var db = new DB.DomenaDBContext())
+            if (SelectedBuildingName != null)
             {
-                var sb = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => x.Name.Equals(SelectedBuilding.Name)).FirstOrDefault();
-                ebw = new Wizards.EditBuildingWizard(sb);
-            }
-
-            var result = await DialogHost.Show(ebw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-        }
-
-        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
-        {
-            
-        }
-
-        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
-        {
-            
-            if ((bool)eventArgs.Parameter)
-            {
-                var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
-                //Accept
-                if (dc._buildingLocalCopy == null)
+                if (SelectedInvoiceCategoryName != null)
                 {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.BuildingName) || string.IsNullOrEmpty(dc.BuildingCity) || string.IsNullOrEmpty(dc.BuildingZipCode) || string.IsNullOrEmpty(dc.BuildingRoadName) || string.IsNullOrEmpty(dc.BuildingRoadNumber)))
-        
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Add new building
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var newBuilding = new LibDataModel.Building { BuildingId = Guid.NewGuid(), Name = dc.BuildingName, City = dc.BuildingCity, ZipCode = dc.BuildingZipCode, BuildingNumber = dc.BuildingRoadNumber, RoadName = dc.BuildingRoadName, IsDeleted = false };
-                        List<LibDataModel.BuildingChargeBasis> costs = new List<LibDataModel.BuildingChargeBasis>();
-                        foreach (var c in dc.CostCollection)
-                        {
-                            var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
-                            var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId=catId };
-                            costs.Add(cost);
-                        }
-                        newBuilding.CostCollection = costs;
-                        foreach (var m in dc.MetersCollection)
-                        {
-                            newBuilding.MeterCollection.Add(m);
-                        }
-                        db.Buildings.Add(newBuilding);
-                        db.SaveChanges();
-                    }
+                    SettledInvoices = new ObservableCollection<Invoice>(InvoicesList.Where(x => x.InvoiceCategoryId.Equals(SelectedInvoiceCategoryName.CategoryId) && x.BuildingId.Equals(SelectedBuildingName.BuildingId) && x.InvoiceDate >= SettlementFrom && x.InvoiceDate <= SettlementTo).ToList());
+                    AvailableInvoices = new ObservableCollection<Invoice>(InvoicesList.Where(x => !x.InvoiceCategoryId.Equals(SelectedInvoiceCategoryName.CategoryId) && x.BuildingId.Equals(SelectedBuildingName.BuildingId) && x.InvoiceDate >= SettlementFrom && x.InvoiceDate <= SettlementTo).ToList());
                 }
                 else
                 {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.BuildingName) || string.IsNullOrEmpty(dc.BuildingCity) || string.IsNullOrEmpty(dc.BuildingZipCode) || string.IsNullOrEmpty(dc.BuildingRoadName) || string.IsNullOrEmpty(dc.BuildingRoadNumber)))
-
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Edit building
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var q = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => x.BuildingId.Equals(dc._buildingLocalCopy.BuildingId)).FirstOrDefault();
-                        q.BuildingNumber = dc.BuildingRoadNumber;
-                        q.City = dc.BuildingCity;
-                        q.Name = dc.BuildingName;
-                        q.RoadName = dc.BuildingRoadName;
-                        q.ZipCode = dc.BuildingZipCode;
-                        //q.CostCollection.RemoveAll(x => true);
-                        
-                        List<LibDataModel.BuildingChargeBasis> costs = new List<LibDataModel.BuildingChargeBasis>();
-                        foreach (var c in dc.CostCollection)
-                        {
-                            var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
-                            var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId };
-                            costs.Add(cost);
-                        }
-                        q.CostCollection = costs;
-                     
-                        //Add new
-                        foreach (var m in dc.MetersCollection)
-                        {
-                            if (!q.MeterCollection.Any(x => x.MeterId.Equals(m.MeterId)))
-                            {
-                                q.MeterCollection.Add(m);
-                            }
-                        }
-                        //Remove necessary
-                        for (int i = q.MeterCollection.Count - 1; i>=0; i--)
-                        {
-                            if (!dc.MetersCollection.Any(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)))
-                            {
-                                q.MeterCollection.RemoveAt(i);
-                            }
-                            else
-                            {
-                                // Change names
-                                q.MeterCollection[i].Name = dc.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).Name;
-                            }
-                        }
-
-                        db.SaveChanges();
-                    }
+                    SettledInvoices = new ObservableCollection<Invoice>();
+                    AvailableInvoices = new ObservableCollection<Invoice>(InvoicesList.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId) && x.InvoiceDate >= SettlementFrom && x.InvoiceDate <= SettlementTo).ToList());
                 }
             }
-            else if (!(bool)eventArgs.Parameter)
+        }
+
+        private void InitializeChargeCategories()
+        {
+            if (SelectedBuildingName != null)
             {
-                
-                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
-                if (!ynResult)
+                ChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>();
+                var c = SelectedBuildingName.CostCollection.Select(x => x.BuildingChargeBasisCategoryId);
+                foreach (var cc in c)
                 {
-                    //eventArgs.Cancel();
-                    var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
-                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                    ChargeCategories.Add(AllCategories.FirstOrDefault(x => x.BuildingChargeBasisCategoryId.Equals(cc)));
                 }
             }
-            InitializeCollection();
+        }
+
+        private void PopulateChargeCategories()
+        {
+            if (SelectedBuildingName != null)
+            {
+                if (SelectedChargeCategoryName == null)
+                {
+                    SettleChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>();
+                    AvailableChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories);
+                }
+                else
+                {
+                    SettleChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => !x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
+                    AvailableChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
+                }
+            }
+        }
+
+        private void InitializeMetersCollection()
+        {
+            if (SelectedBuildingName != null)
+            {
+                MetersCollection = new ObservableCollection<MeterType>(SelectedBuildingName.MeterCollection.Where(x => !x.IsDeleted).ToList());
+            }
         }
 
         private bool IsValid(DependencyObject obj)
@@ -269,26 +396,6 @@ namespace DomenaManager.Pages
             LogicalTreeHelper.GetChildren(obj)
             .OfType<DependencyObject>()
             .All(IsValid);
-        }
-
-        private bool CanDeleteBuilding()
-        {
-            return (SelectedBuilding != null);
-        }
-
-        private async void DeleteBuilding(object obj)
-        {
-            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć budynek " + SelectedBuilding.Name + "?");
-            if (ynResult)
-            {
-                using (var db = new DB.DomenaDBContext())
-                {
-                    db.Buildings.Where(x => x.BuildingId.Equals(SelectedBuilding.BuildingId)).FirstOrDefault().IsDeleted = true;
-                    db.SaveChanges();
-                }
-            }
-            InitializeCollection();
-            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
