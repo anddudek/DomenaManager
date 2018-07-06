@@ -73,7 +73,7 @@ namespace DomenaManager.Pages
             {
                 return SelectedBuildingName == null ? string.Empty : SelectedBuildingName.GetAddress();
             }
-            private set { return; }           
+            set { return; }           
         }
 
         private DateTime _settlementFrom;
@@ -237,8 +237,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private ObservableCollection<BuildingChargeBasisCategory> _settlementCategoryName;
-        public ObservableCollection<BuildingChargeBasisCategory> SettlementCategoryName
+        private BuildingChargeBasisCategory _settlementCategoryName;
+        public BuildingChargeBasisCategory SettlementCategoryName
         {
             get { return _settlementCategoryName; }
             set
@@ -301,11 +301,30 @@ namespace DomenaManager.Pages
                 {
                     _selectedMeterName = value;
                     OnPropertyChanged("SelectedMeterName");
+                    InitializeApartmentMetersCollection();
                 }
             }
         }
 
         public string SelectedMeterValue { get; set; }
+
+        private ObservableCollection<ApartamentMeterDataGrid> _apartmentMetersCollection;
+        public ObservableCollection<ApartamentMeterDataGrid> ApartmentMetersCollection
+        {
+            get { return _apartmentMetersCollection; }
+            set
+            {
+                if (value != _apartmentMetersCollection)
+                {
+                    _apartmentMetersCollection = value;
+                    OnPropertyChanged("ApartmentMetersCollection");
+                }
+            }
+        }
+
+        public ObservableCollection<Apartment> ApartmentCollection;
+
+        public ObservableCollection<Owner> OwnerCollection;
 
         #endregion
 
@@ -327,9 +346,12 @@ namespace DomenaManager.Pages
                 InvoicesList = new ObservableCollection<Invoice>(db.Invoices.Where(x => !x.IsDeleted));
                 AllCategories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
                 SettlementCategories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
+                ApartmentCollection = new ObservableCollection<Apartment>(db.Apartments.Include(x => x.MeterCollection).Where(x => !x.IsDeleted).ToList());
+                OwnerCollection = new ObservableCollection<Owner>(db.Owners.Where(x => !x.IsDeleted).ToList());
                 InitializeSettlementInvoices();
                 InitializeChargeCategories();
-                InitializeMetersCollection();
+                InitializeMetersCollection();                
+                InitializeApartmentMetersCollection();
             }
         }
 
@@ -386,6 +408,42 @@ namespace DomenaManager.Pages
             {
                 MetersCollection = new ObservableCollection<MeterType>(SelectedBuildingName.MeterCollection.Where(x => !x.IsDeleted).ToList());
             }
+        }
+
+        private void InitializeApartmentMetersCollection()
+        {
+            if (ApartmentMetersCollection == null)
+            {
+                ApartmentMetersCollection = new ObservableCollection<ApartamentMeterDataGrid>();
+            }
+            else
+            {
+                ApartmentMetersCollection.Clear();
+            }
+            if (SelectedMeterName != null && SelectedBuildingName != null)
+            {
+                foreach (var ap in ApartmentCollection.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId)))
+                {
+                    var meter = ap.MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(SelectedMeterName.MeterId));
+                    if (meter != null)
+                    {
+                        ApartmentMetersCollection.Add(new ApartamentMeterDataGrid()
+                        {
+                            ApartmentO = ap,
+                            CurrentMeasure = meter.LastMeasure,
+                            LastMeasure = meter.LastMeasure,
+                            Meter = SelectedMeterName,
+                            IsMeterLegalized = meter.LegalizationDate > DateTime.Today ? true : false,
+                            OwnerO = OwnerCollection.FirstOrDefault(x => x.OwnerId.Equals(ap.OwnerId))
+                        });
+                    }
+                }
+            }
+
+            ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(ApartmentMetersCollection);
+            cv.GroupDescriptions.Clear();
+            cv.GroupDescriptions.Add(new PropertyGroupDescription(""));
+            
         }
 
         private bool IsValid(DependencyObject obj)

@@ -12,13 +12,14 @@
     <UserControl.Resources>
         <Helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
         <Helpers:GuidToInvoiceCategoryNameMultiConverter x:Key="GuidToCategoryConverter"/>
+        <Helpers:MetersGroupHeaderConverter x:Key="FooterConverter"/>
         <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type GroupItem}">
                         <StackPanel>
-                            <TextBlock Text="{Binding ApartmentNumber, StringFormat= Mieszkanie nr.: {0} ;}" />
-                            <TextBlock Text="{Binding ApartmentOwnerName, StringFormat= Właściciel: {0}.}" />
+                            <TextBlock Text="{Binding ApartmentO.ApartmentNumber, StringFormat= Mieszkanie nr.: {0} ;}" />
+                            <TextBlock Text="{Binding OwnerO.OwnerName, StringFormat= Właściciel: {0}.}" />
                             <ItemsPresenter/>
                         </StackPanel>
                     </ControlTemplate>
@@ -183,6 +184,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="60" />
                 </Grid.ColumnDefinitions>
+                
                 <ComboBox materialDesign:HintAssist.Hint="Rozliczane jako:" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
                   IsEditable="True" DisplayMemberPath="CategoryName"
@@ -228,22 +230,35 @@
                     </ComboBox.ItemsSource>
                 </ComboBox>
 
-                <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray">                    
+                <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
                     <DataGrid.Columns>
-                    <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Name}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Ostatnie wskazanie" Binding="{Binding Name}" IsReadOnly="False"/>
-                    <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding Name}" IsReadOnly="False"/>
-                </DataGrid.Columns>
-                <DataGrid.GroupStyle>
-                    <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
-                        <GroupStyle.Panel>
-                            <ItemsPanelTemplate>
-                                <DataGridRowsPresenter/>
-                            </ItemsPanelTemplate>
-                        </GroupStyle.Panel>
-                    </GroupStyle>
-                </DataGrid.GroupStyle>
-            </DataGrid>
+                        <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Meter.Name}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Ostatnie wskazanie" Binding="{Binding LastMeasure}" IsReadOnly="False"/>
+                        <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding CurrentMeasure}" IsReadOnly="False"/>
+                    </DataGrid.Columns>
+                    <DataGrid.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                <StackPanel Background="#87B04D" >
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Path=Items, Converter={StaticResource FooterConverter}, ConverterParameter=ApartmentNumber, StringFormat={}Mieszkanie nr {0}}" Margin="10,0,0,0" Height="25" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
+                                                        <TextBlock Text="{Binding Path=Items, Converter={StaticResource FooterConverter}, ConverterParameter=Owner, StringFormat={}\, właściciel: {0}}" Height="25" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
+                                                    </StackPanel>
+                                                    <ItemsPresenter />
+                                                </StackPanel>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </DataGrid.GroupStyle>
+                </DataGrid>
 
             <DockPanel LastChildFill="False">
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Podsumowanie" Command="{Binding SettlementSummary}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
