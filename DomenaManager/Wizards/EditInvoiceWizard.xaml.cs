@@ -141,6 +141,34 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private List<string> _settlementOptions;
+        public List<string> SettlementOptions
+        {
+            get
+            {
+                if (_settlementOptions == null)
+                    _settlementOptions =  new List<string>() { "Tak", "Nie" };
+                return _settlementOptions;
+            }
+            set { return; }
+        }
+
+        private string _isSettled;
+        public string IsSettled
+        {
+            get { return _isSettled; }
+            set
+            {
+                if (value != null)
+                {
+                    _isSettled = value;
+                    OnPropertyChanged("IsSettled");
+                }
+            }
+        }
+
+        public string SettlementOptionsValue { get; set; }
+
         private DateTime _invoiceDate;
         public DateTime InvoiceDate
         {
@@ -187,6 +215,7 @@ namespace DomenaManager.Wizards
                 InvoiceNumber = _lic.InvoiceNumber;
                 CostAmount = _lic.CostAmount.ToString();
                 SelectedContractorsName = ContractorsNames.Where(x => x.Name.Equals(_lic.ContractorName)).FirstOrDefault();
+                IsSettled = _lic.IsSettled ? SettlementOptions.Where(x => x == "Tak").FirstOrDefault() : SettlementOptions.Where(x => x == "Nie").FirstOrDefault();
             }
 
             InvoiceDate = DateTime.Today;

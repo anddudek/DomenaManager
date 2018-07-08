@@ -232,6 +232,20 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private double _lastMeasure;
+        public double LastMeasure
+        {
+            get { return _lastMeasure; }
+            set
+            {
+                if (value != _lastMeasure)
+                {
+                    _lastMeasure = value;
+                    OnPropertyChanged("LastMeasure");
+                }
+            }
+        }
+
         private ObservableCollection<MeterType> _metersCollection;
         public ObservableCollection<MeterType> MetersCollection
         {
@@ -256,6 +270,11 @@ namespace DomenaManager.Wizards
                 {
                     _selectedMeter = value;
                     OnPropertyChanged("SelectedMeter");
+                    if (value != null)
+                    {
+                        MeterName = value.Name;
+                        LastMeasure = value.LastMeasure;
+                    }
                 }
             }
         }
@@ -521,7 +540,7 @@ namespace DomenaManager.Wizards
 
         private void AddNewMeter(object param)
         {
-            MeterType mt = new MeterType() { Name = MeterName, IsDeleted = false, MeterId = Guid.NewGuid() };
+            MeterType mt = new MeterType() { Name = MeterName, IsDeleted = false, MeterId = Guid.NewGuid(), LastMeasure= LastMeasure};
             MetersCollection.Add(mt);
         }
 
@@ -533,6 +552,7 @@ namespace DomenaManager.Wizards
         private void ModifyMeter(object param)
         {
             SelectedMeter.Name = MeterName;
+            SelectedMeter.LastMeasure = LastMeasure;
         }
 
         private bool CanModifyMeter()

@@ -28,6 +28,7 @@ namespace DomenaManager.Helpers
             this.InvoiceId = invoice.InvoiceId;
             this.InvoiceNumber = invoice.InvoiceNumber;
             this.IsDeleted = invoice.IsDeleted;
+            this.IsSettled = invoice.IsSettled;
             
             using (var db = new DB.DomenaDBContext())
             {

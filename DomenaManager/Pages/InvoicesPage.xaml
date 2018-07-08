@@ -15,6 +15,7 @@
     <UserControl.Resources>
         <hlp:SumConverter x:Key="SumConverter"/>
         <hlp:GuidToCategoryNameMultiConverter x:Key="GuidToCategoryConverter"/>
+        <hlp:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </UserControl.Resources>
 
     <Grid Background="#FFFFFF">
@@ -77,6 +78,7 @@
                 <DataGridTextColumn Header="Kategoria" Binding="{Binding Category.CategoryName}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Numer faktury" Binding="{Binding InvoiceNumber}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Nazwa kontrahenta" Binding="{Binding ContractorName}" Width="auto" FontSize="14" />
+                <DataGridTextColumn Header="Faktura rozliczona" Binding="{hlp:SwitchBinding IsSettled, Tak, Nie}" Width="auto" FontSize="14" />
             </DataGrid.Columns>
             <DataGrid.GroupStyle>
                 <!-- Style for groups at top level. -->

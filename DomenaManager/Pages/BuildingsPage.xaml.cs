@@ -240,6 +240,7 @@ namespace DomenaManager.Pages
                             {
                                 // Change names
                                 q.MeterCollection[i].Name = dc.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).Name;
+                                q.MeterCollection[i].LastMeasure = dc.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure;
                             }
                         }
 

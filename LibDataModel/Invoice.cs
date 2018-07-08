@@ -79,6 +79,21 @@ namespace LibDataModel
                 }
             }
         }
+
+        private bool _isSettled;
+        public bool IsSettled
+        {
+            get { return _isSettled; }
+            set
+            {
+                if (value != _isSettled)
+                {
+                    _isSettled = value;
+                    OnPropertyChanged("IsSettled");
+                }
+            }
+        }
+        
         public bool IsDeleted { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;

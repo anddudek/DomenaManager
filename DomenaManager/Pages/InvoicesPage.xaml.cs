@@ -325,7 +325,7 @@ namespace DomenaManager.Pages
                         return;
                     }
                     //Add new invoice
-                    var newInvoice = new LibDataModel.Invoice { BuildingId = dc.SelectedBuildingName.BuildingId, ContractorName = dc.SelectedContractorsValue, CostAmount = double.Parse(dc.CostAmount), CreatedTime = DateTime.Now, InvoiceCategoryId = dc.SelectedCategoryName.CategoryId, InvoiceDate = dc.InvoiceDate.Date, InvoiceId = Guid.NewGuid(), InvoiceNumber = dc.InvoiceNumber, IsDeleted = false };
+                    var newInvoice = new LibDataModel.Invoice { BuildingId = dc.SelectedBuildingName.BuildingId, ContractorName = dc.SelectedContractorsValue, CostAmount = double.Parse(dc.CostAmount), CreatedTime = DateTime.Now, InvoiceCategoryId = dc.SelectedCategoryName.CategoryId, InvoiceDate = dc.InvoiceDate.Date, InvoiceId = Guid.NewGuid(), InvoiceNumber = dc.InvoiceNumber, IsDeleted = false, IsSettled = dc.IsSettled == "Tak" ? true : false };
                     using (var db = new DB.DomenaDBContext())
                     {
                         db.Invoices.Add(newInvoice);
@@ -357,6 +357,7 @@ namespace DomenaManager.Pages
                         q.InvoiceCategoryId = dc.SelectedCategoryName.CategoryId;
                         q.InvoiceDate = dc.InvoiceDate.Date;
                         q.InvoiceNumber = dc.InvoiceNumber;
+                        q.IsSettled = dc.IsSettled == "Tak" ? true : false;
 
                         if (!db.InvoiceContractors.Any(x => x.Name.Equals(dc.SelectedContractorsValue)))
                         {

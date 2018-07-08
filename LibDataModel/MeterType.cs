@@ -26,6 +26,20 @@ namespace LibDataModel
             }
         }                
         public bool IsDeleted { get; set; }
+
+        private double _lastMeasure;
+        public double LastMeasure
+        {
+            get { return _lastMeasure; }
+            set
+            {
+                if (value != _lastMeasure)
+                {
+                    _lastMeasure = value;
+                    OnPropertyChanged("LastMeasure");
+                }
+            }
+        }
         
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)

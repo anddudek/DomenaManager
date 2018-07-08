@@ -326,6 +326,59 @@ namespace DomenaManager.Pages
 
         public ObservableCollection<Owner> OwnerCollection;
 
+        private double _metersDiffSum;
+        public double MetersDiffSum
+        {
+            get { return _metersDiffSum; }
+            set
+            {
+                if (value != _metersDiffSum)
+                {
+                    _metersDiffSum = value;
+                    OnPropertyChanged("MetersDiffSum");
+                }
+            }
+        }
+
+        private double _constantPeriod = 0;
+        public double ConstantPeriod
+        {
+            get { return _constantPeriod; }
+            set
+            {
+                if (value != _constantPeriod)
+                {
+                    _constantPeriod = value;
+                    OnPropertyChanged("ConstantPeriod");
+                    OnPropertyChanged("VariablePeriod");
+                }
+            }
+        }
+        
+        public double VariablePeriod
+        {
+            get { return 100 - ConstantPeriod; }
+            set
+            {
+                return;
+            }
+        }
+
+        public ICommand RefreshMeterDiffSum
+        {
+            get { return new RelayCommand(RefreshMeters, CanRefreshMeters); }
+        }
+
+        public ICommand AddNewCategory
+        {
+            get { return new RelayCommand(AddCategory, CanAddCategory); }
+        }
+
+        public ICommand SettlementSummary
+        {
+            get { return new RelayCommand(Summary, CanSummary); }
+        }
+
         #endregion
 
         public SettlementPage()
@@ -444,6 +497,45 @@ namespace DomenaManager.Pages
             cv.GroupDescriptions.Clear();
             cv.GroupDescriptions.Add(new PropertyGroupDescription(""));
             
+        }
+
+        private void RefreshMeters(object param)
+        {
+            MetersDiffSum = 0;
+            if (ApartmentMetersCollection != null)
+            {
+                foreach (var a in ApartmentMetersCollection)
+                {
+                    MetersDiffSum += (a.CurrentMeasure - a.LastMeasure);
+                }
+
+            }
+        }
+            
+
+        private bool CanRefreshMeters()
+        {
+            return true;
+        }
+
+        private async void AddCategory(object param)
+        {
+
+        }
+
+        private bool CanAddCategory()
+        {
+            return true;
+        }
+
+        private void Summary(object param)
+        {
+
+        }
+
+        private bool CanSummary()
+        {
+            return true;
         }
 
         private bool IsValid(DependencyObject obj)
