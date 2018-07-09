@@ -31,8 +31,8 @@
     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" Background="White">
         <Grid Background="#FFFFFF">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-            
-            <ComboBox materialDesign:HintAssist.Hint="Budynek" Margin="15"
+                <TextBlock Text="Rozliczenie roczne" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14"/>
+                <ComboBox materialDesign:HintAssist.Hint="Budynek" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="Name"
             SelectedItem="{Binding SelectedBuildingName}"  VerticalAlignment="Center" >
@@ -230,7 +230,8 @@
                     </ComboBox.ItemsSource>
                 </ComboBox>
 
-                <Label Content="Licznik główny: " Margin="0,15,0,0"/>
+                <StackPanel Visibility="{Binding IsPerMetersSettlement}" >
+                <Label Content="Licznik główny: " Margin="0,15,0,0" />
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Ostatnie wskazanie:" Width="120"/>
                     <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
@@ -310,11 +311,12 @@
                     <Label Content="%"/>
                     <Label Content="{Binding VariablePeriod}" ContentStringFormat="Koszty zmienne: {0}%" Margin="10,0,0,0" />
                 </StackPanel>
-            
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Podsumowanie" Command="{Binding SettlementSummary}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
+                </StackPanel>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Podsumowanie" Command="{Binding SettlementSummary}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
                 
 
         </StackPanel>
+            
     </Grid>
     </ScrollViewer>
 </UserControl>

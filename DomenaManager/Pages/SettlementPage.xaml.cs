@@ -302,6 +302,7 @@ namespace DomenaManager.Pages
                     _selectedMeterName = value;
                     OnPropertyChanged("SelectedMeterName");
                     InitializeApartmentMetersCollection();
+                    InitializeMainMeter();
                 }
             }
         }
@@ -361,6 +362,28 @@ namespace DomenaManager.Pages
             set
             {
                 return;
+            }
+        }
+
+        private double _meterLastMeasure;
+        public double MeterLastMeasure
+        {
+            get { return _meterLastMeasure; }
+            set
+            {
+                _meterLastMeasure = value;
+                OnPropertyChanged("MeterLastMeasure");
+            }
+        }
+
+        private double _meterCurrentMeasure;
+        public double MeterCurrentMeasure
+        {
+            get { return _meterCurrentMeasure; }
+            set
+            {
+                _meterCurrentMeasure = value;
+                OnPropertyChanged("MeterCurrentMeasure");
             }
         }
 
@@ -509,6 +532,15 @@ namespace DomenaManager.Pages
                     MetersDiffSum += (a.CurrentMeasure - a.LastMeasure);
                 }
 
+            }
+        }
+
+        private void InitializeMainMeter()
+        {
+            if (SelectedBuildingName != null && SelectedMeterName != null)
+            {
+                MeterLastMeasure = SelectedMeterName.LastMeasure;
+                MeterCurrentMeasure = SelectedMeterName.LastMeasure;
             }
         }
             
