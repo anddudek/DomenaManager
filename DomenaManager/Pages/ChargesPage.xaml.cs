@@ -461,7 +461,7 @@ namespace DomenaManager.Pages
         {
             PdfDocument doc = PDFOperations.CreateTemplate();
             var page = doc.Pages[0];
-            PDFOperations.AddTitle(page, "Naliczenie z dnia: " + SelectedCharge.CreatedTime.ToString("dd-MM-yyyy"));
+            PDFOperations.AddTitle(page, "Naliczenie z dnia: " + SelectedCharge.ChargeDate.ToString("dd-MM-yyyy"));
             PDFOperations.AddChargeTable(page, SelectedCharge);
             doc.Save("test.pdf");
             
@@ -555,7 +555,8 @@ namespace DomenaManager.Pages
                         var newCharge = new LibDataModel.Charge();
                         newCharge.ChargeId = Guid.NewGuid();
                         newCharge.ApartmentId = db.Apartments.FirstOrDefault(x => x.BuildingId.Equals(dc.SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(dc.SelectedApartmentNumber)).ApartmentId;
-                        newCharge.CreatedTime = DateTime.Today;
+                        newCharge.CreatedDate = DateTime.Today;
+                        newCharge.ChargeDate = dc.ChargeDate;
                         newCharge.IsClosed = dc.ChargeStatus == "Otwarte" ? false : true;
                         newCharge.IsDeleted = false;
 
@@ -579,13 +580,35 @@ namespace DomenaManager.Pages
                     //Edit Apartment
                     using (var db = new DB.DomenaDBContext())
                     {
-                        var q = db.Charges.Where(x => x.ChargeId.Equals(dc._charge.ChargeId)).FirstOrDefault();
+                        var q = db.Charges.Include(x => x.Components).Where(x => x.ChargeId.Equals(dc._charge.ChargeId)).FirstOrDefault();
                         q.IsClosed = dc.ChargeStatus == "Otwarte" ? false : true;
-                        q.Components = new List<ChargeComponent>();
+                        q.ChargeDate = dc.ChargeDate;
+                        //q.Components = new List<ChargeComponent>();
                         foreach (var cc in dc.ChargeComponents)
                         {
-                            q.Components.Add(cc);
+                            //q.Components.Add(cc);
+                            if (q.Components.Any(x => x.ChargeComponentId.Equals(cc.ChargeComponentId)))
+                            {
+                                var comp = q.Components.FirstOrDefault(x => x.ChargeComponentId.Equals(cc.ChargeComponentId));
+                                comp.CostCategoryId = cc.CostCategoryId;
+                                comp.CostDistribution = cc.CostDistribution;
+                                comp.CostPerUnit = cc.CostPerUnit;
+                                comp.Sum = cc.Sum;
+                            }
+                            else
+                            {
+                                q.Components.Add(cc);
+                            }
                         }
+
+                        for (int i = q.Components.Count - 1; i >= 0; i--)
+                        {
+                            if (!dc.ChargeComponents.Any(x => x.ChargeComponentId.Equals(q.Components[i].ChargeComponentId)))
+                            {
+                                q.Components.RemoveAt(i);
+                            }
+                        }
+                            
                         db.SaveChanges();
                     }
                 }
@@ -601,6 +624,7 @@ namespace DomenaManager.Pages
                     var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
                 }
             }
+            InitializeCollection();
         }
 
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)

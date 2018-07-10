@@ -17,7 +17,7 @@ namespace DomenaManager.Helpers
                 var q = db.Buildings.Include(b => b.CostCollection);
                 foreach (var a in db.Apartments.Where(x => q.Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count > 0))
                 {
-                    var c = new Charge() { ApartmentId = a.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, CreatedTime = DateTime.Today };
+                    var c = new Charge() { ApartmentId = a.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, ChargeDate = DateTime.Today, CreatedDate=DateTime.Today };
                     c.Components = new List<ChargeComponent>();
                     foreach (var costCollection in db.Buildings.Include(b => b.CostCollection).Where(x => x.BuildingId.Equals(a.BuildingId)).FirstOrDefault().CostCollection)
                     {
@@ -60,7 +60,7 @@ namespace DomenaManager.Helpers
 
                 foreach (var costCollection in b.CostCollection)
                 {
-                    if (costCollection.EndingDate != nullDate && (costCollection.EndingDate < charge.CreatedTime || costCollection.BegginingDate > charge.CreatedTime))
+                    if (costCollection.EndingDate != nullDate && (costCollection.EndingDate < charge.ChargeDate || costCollection.BegginingDate > charge.ChargeDate))
                     {
                         continue;
                     }

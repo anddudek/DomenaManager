@@ -283,6 +283,20 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private DateTime _chargeDate;
+        public DateTime ChargeDate
+        {
+            get { return _chargeDate; }
+            set
+            {
+                if (value != _chargeDate)
+                {
+                    _chargeDate = value;
+                    OnPropertyChanged("ChargeDate");
+                }
+            }
+        }
+
         public ObservableCollection<BuildingChargeBasisCategory> Categories { get; set; }
 
         #endregion
@@ -320,7 +334,10 @@ namespace DomenaManager.Wizards
         {
             _charge = charge;
             if (_charge == null)
+            {
                 CanEditApartment = true;
+                ChargeDate = DateTime.Today;
+            }
             else
                 CanEditApartment = false;
             DataContext = this;
@@ -345,6 +362,7 @@ namespace DomenaManager.Wizards
         {
             if (charge != null)
             {
+                ChargeDate = charge.ChargeDate;
                 SelectedBuilding = BuildingsCollection.FirstOrDefault(x => x.BuildingId.Equals(charge.Building.BuildingId));
                 //ApartmentNumber = charge.Apartment.ApartmentNumber;
                 SelectedApartmentNumber = ApartmentsNumbersCollection.FirstOrDefault(x => x.Equals(charge.Apartment.ApartmentNumber));

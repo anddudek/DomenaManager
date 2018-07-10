@@ -15,7 +15,7 @@ namespace DomenaManager.Helpers
             using (var db = new DB.DomenaDBContext())
             {
                 double paym = db.Payments.Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.PaymentRegistrationDate.Year <= year && !x.IsDeleted).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
-                var charg = db.Charges.Include(x => x.Components).Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.CreatedTime.Year <= year && !x.IsDeleted);
+                var charg = db.Charges.Include(x => x.Components).Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.ChargeDate.Year <= year && !x.IsDeleted);
                 
                 foreach (var ch in charg)
                 {

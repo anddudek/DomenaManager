@@ -201,8 +201,8 @@ namespace DomenaManager.Pages
                 sdg.year = year;
                 sdg.rows = new SummaryDataGridRow[14];
 
-                var charges = db.Charges.Include(x => x.Components).Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.CreatedTime.Year.Equals(sdg.year));
-                var cat = db.Charges.Include(c => c.Components).Where(x=> x.ApartmentId.Equals(apartment.ApartmentId) && !x.IsDeleted && x.CreatedTime.Year == year).Select(x => x.Components);
+                var charges = db.Charges.Include(x => x.Components).Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.ChargeDate.Year.Equals(sdg.year));
+                var cat = db.Charges.Include(c => c.Components).Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && !x.IsDeleted && x.ChargeDate.Year == year).Select(x => x.Components);
                 List<ChargeComponent> allComponents = new List<ChargeComponent>();
                 foreach (var c in cat)
                 {
@@ -234,7 +234,7 @@ namespace DomenaManager.Pages
                     for (int j = 0; j < sdg.categories.Length; j++)//each categories
                     {
                         double sum = 0;
-                        foreach (var c in charges.Where(x => x.CreatedTime.Month.Equals(i)))
+                        foreach (var c in charges.Where(x => x.ChargeDate.Month.Equals(i)))
                         {
                             foreach (var cc in c.Components)
                             {

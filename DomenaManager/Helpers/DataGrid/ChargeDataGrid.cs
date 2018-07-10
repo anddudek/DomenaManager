@@ -19,7 +19,8 @@ namespace DomenaManager.Helpers
             this.ApartmentId = _charge.ApartmentId;
             this.ChargeId = _charge.ChargeId;
             this.Components = _charge.Components;
-            this.CreatedTime = _charge.CreatedTime;
+            this.ChargeDate = _charge.ChargeDate;
+            this.CreatedDate = _charge.CreatedDate;
             this.IsClosed = _charge.IsClosed;
 
             using (var db = new DB.DomenaDBContext())

@@ -26,7 +26,6 @@
                 <RowDefinition Height="50" />
                 <RowDefinition Height="90" />
                 <RowDefinition Height="*" />
-            <RowDefinition Height="90" />
         </Grid.RowDefinitions>
             
         <Label Grid.Row="0" Content="Zestawienie roczne" FontSize="28"/>
@@ -62,12 +61,6 @@
 
             </Grid>
             <Grid Grid.Row="3">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddApartmentCommand}" Margin="10,0,10,0"/>
-                    <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditApartmentCommand}" Margin="10,0,10,0"/>
-                    <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteApartmentCommand}" Margin="10,0,10,0"/>
-                    <MyControls:ActionButton MDTText="Szczegóły" MDTIcon="ClipboardText" Command="{Binding ExpandApartmentCommand}" Margin="10,0,10,0"/>
-                </StackPanel>
             </Grid>
             <StackPanel Orientation="Vertical" Grid.Row="2" >
                 <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
@@ -78,7 +71,9 @@
                     <Label Content="{Binding SelectedSummary.apartment.ApartmentNumber}" ContentStringFormat="{}Mieszkanie: {0}, " FontSize="20"/>
                     <Label Content="{Binding SelectedSummary.owner.OwnerName}" ContentStringFormat="{}Właściciel: {0}, " FontSize="20"/>
                 </StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <ContentControl Margin="50,0,50,0" Content="{Binding SummaryDG}" HorizontalContentAlignment="Center"/>
+                </ScrollViewer>
             </StackPanel>
         </Grid>
     </Grid>

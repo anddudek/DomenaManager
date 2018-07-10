@@ -9,7 +9,7 @@
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" MinHeight="600"
              d:DesignHeight="600" d:DesignWidth="450">
     <UserControl.Resources>
         <Helpers:IntToCostDistributionConverter x:Key="IntToCostDistributionConverter"/>
@@ -24,7 +24,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="3*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="1.5*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -180,6 +180,11 @@
             </ListView.View>
         </ListView>
 
+        <DatePicker 
+            Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="1" SelectedDate="{Binding ChargeDate}"
+            VerticalAlignment="Center" Margin="15,0,10,0" Language="pl-PL" 
+            materialDesign:HintAssist.Hint="Data naliczenia" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+        
         <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Usuń" Grid.Row="7" Grid.Column="1" Command="{Binding DeleteSelectedChargeCommand}" Margin="10,0,10,0" />
 
         <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">

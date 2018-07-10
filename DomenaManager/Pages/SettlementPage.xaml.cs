@@ -472,8 +472,8 @@ namespace DomenaManager.Pages
                 }
                 else
                 {
-                    SettleChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => !x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
-                    AvailableChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
+                    SettleChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
+                    AvailableChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => !x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
                 }
             }
         }
