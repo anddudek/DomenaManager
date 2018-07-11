@@ -163,8 +163,8 @@
     <Compile Include="Pages\SettlementPage.xaml.cs">
       <DependentUpon>SettlementPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SettlementSummary.xaml.cs">
-      <DependentUpon>SettlementSummary.xaml</DependentUpon>
+    <Compile Include="Pages\SettlementSummaryPage.xaml.cs">
+      <DependentUpon>SettlementSummaryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SummaryPage.xaml.cs">
       <DependentUpon>SummaryPage.xaml</DependentUpon>
@@ -220,7 +220,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\SettlementSummary.xaml">
+    <Page Include="Pages\SettlementSummaryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

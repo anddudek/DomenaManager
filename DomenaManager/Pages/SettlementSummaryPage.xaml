@@ -1,4 +1,4 @@
-﻿<Page x:Class="DomenaManager.Pages.SettlementSummary"
+﻿<UserControl x:Class="DomenaManager.Pages.SettlementSummaryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -90,4 +90,4 @@
         </Grid>
 
     </StackPanel>
-</Page>
+</UserControl>

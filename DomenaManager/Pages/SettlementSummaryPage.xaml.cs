@@ -18,10 +18,13 @@ namespace DomenaManager.Pages
     /// <summary>
     /// Interaction logic for SettlementSummary.xaml
     /// </summary>
-    public partial class SettlementSummary : Page
+    public partial class SettlementSummaryPage : UserControl
     {
-        public SettlementSummary()
+        private SettlementPage _settlementPage;
+
+        public SettlementSummaryPage(SettlementPage settlementPage)
         {
+            _settlementPage = settlementPage;
             InitializeComponent();
         }
     }

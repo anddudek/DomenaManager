@@ -448,6 +448,14 @@ namespace DomenaManager.Pages
             }
         }
 
+        private void InitializeCategoriesList()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                SettlementCategories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
+            }
+        }
+
         private void InitializeChargeCategories()
         {
             if (SelectedBuildingName != null)
@@ -552,7 +560,8 @@ namespace DomenaManager.Pages
 
         private async void AddCategory(object param)
         {
-
+            var ecc = new Wizards.EditCostCategories();
+            var result = await DialogHost.Show(ecc, "HelperDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
         private bool CanAddCategory()
@@ -562,12 +571,65 @@ namespace DomenaManager.Pages
 
         private void Summary(object param)
         {
+            var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
+
+            mw.CurrentPage = new SettlementSummaryPage(this);
 
         }
 
         private bool CanSummary()
         {
             return true;
+        }
+
+        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+        {
+
+        }
+
+        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditCostCategories);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    foreach (var cmd in dc.commandBuffer)
+                    {
+                        switch (cmd.category)
+                        {
+                            default:
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add:
+                                db.CostCategories.Add(cmd.costItem);
+                                db.SaveChanges();
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove:
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().IsDeleted = true;
+                                db.SaveChanges();
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update:
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                }
+                InitializeCategoriesList();
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    //eventArgs.Cancel();
+                    var dc = (eventArgs.Session.Content as Wizards.EditCostCategories);
+                    var result = await DialogHost.Show(dc, "HelperDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                }
+            }
+            InitializeCategoriesList();
         }
 
         private bool IsValid(DependencyObject obj)
