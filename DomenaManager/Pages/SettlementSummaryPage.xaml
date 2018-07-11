@@ -27,15 +27,15 @@
             </Grid.RowDefinitions>
             <TextBlock Text="Wybrana forma rozliczenia - od lokalu" Grid.ColumnSpan="2" Margin="0,10,0,10" FontWeight="DemiBold"/>
             <TextBlock Grid.Row="1" Text="Budynek: " Margin="0,10,0,10"/>
-            <TextBlock Grid.Row="1" Text="{Binding SelectedBuilding}" Margin="20,0,0,0" Grid.Column="1"/>
+            <TextBlock Grid.Row="1" Text="{Binding SelectedBuilding}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="2" Text="Łączna kwota z faktur:" Margin="0,10,0,10"/>
-            <TextBlock Grid.Row="2" Text="{Binding InvoiceSum, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1"/>
+            <TextBlock Grid.Row="2" Text="{Binding InvoiceSum, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="3" Text="Ilość lokali w budynku:" Margin="0,10,0,10"/>
-            <TextBlock Grid.Row="3" Text="{Binding ApartmentsAmount}" Margin="20,0,0,0" Grid.Column="1"/>
+            <TextBlock Grid.Row="3" Text="{Binding ApartmentsAmount}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="4" Text="Kwota na każdy lokal:" Margin="0,10,0,10"/>
-            <TextBlock Grid.Row="4" Text="{Binding SettlePerApartment}" Margin="20,0,0,0" Grid.Column="1"/>
+            <TextBlock Grid.Row="4" Text="{Binding SettlePerApartment, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="5" Text="Kwota rozliczana jako:" Margin="0,10,0,10"/>
-            <TextBlock Grid.Row="5" Text="{Binding SettlementCattegory}" Margin="20,0,0,0" Grid.Column="1"/>
+            <TextBlock Grid.Row="5" Text="{Binding SettlementCattegory}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
         </Grid>
         <Grid Visibility="{Binding IsSettlementPerArea}"  HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>

@@ -23,7 +23,77 @@ namespace DomenaManager.Pages
     /// </summary>
     public partial class SettlementSummaryPage : UserControl, INotifyPropertyChanged
     {
-        public Visibility IsSettlementPerApartment { get; set; } 
+        public Visibility IsSettlementPerApartment { get; set; }
+
+        private string _selectedBuilding;
+        public string SelectedBuilding
+        {
+            get { return _selectedBuilding; }
+            set
+            {
+                if (value != _selectedBuilding)
+                {
+                    _selectedBuilding = value;
+                    OnPropertyChanged("SelectedBuilding");
+                }
+            }
+        }
+
+        private double _invoiceSum;
+        public double InvoiceSum
+        {
+            get { return _invoiceSum; }
+            set
+            {
+                if (value != _invoiceSum)
+                {
+                    _invoiceSum = value;
+                    OnPropertyChanged("InvoiceSum");
+                }
+            }
+        }
+
+        private int _apartmentsAmount;
+        public int ApartmentsAmount
+        {
+            get { return _apartmentsAmount; }
+            set
+            {
+                if (value != _apartmentsAmount)
+                {
+                    _apartmentsAmount = value;
+                    OnPropertyChanged("ApartmentsAmount");
+                }
+            }
+        }
+
+        private string _settlementCattegory;
+        public string SettlementCattegory
+        {
+            get { return _settlementCattegory; }
+            set
+            {
+                if (value != _settlementCattegory)
+                {
+                    _settlementCattegory = value;
+                    OnPropertyChanged("SettlementCattegory");
+                }
+            }
+        }
+
+        private double _settlePerApartment;
+        public double SettlePerApartment
+        {
+            get { return _settlePerApartment; }
+            set
+            {
+                if (value != _settlePerApartment)
+                {
+                    _settlePerApartment = value;
+                    OnPropertyChanged("SettlePerApartment");
+                }
+            }
+        }
 
         public Visibility IsSettlementPerMeter { get; set; }
 
@@ -45,7 +115,7 @@ namespace DomenaManager.Pages
             _settlementPage = settlementPage;
             IsSettlementPerApartment = Visibility.Collapsed;
             IsSettlementPerMeter = Visibility.Collapsed;
-            IsSettlementPerArea = Visibility.Collapsed;
+            IsSettlementPerArea = Visibility.Collapsed;  
             switch (settlementPage.SettlementMethod)
             {
                 default:
@@ -67,7 +137,12 @@ namespace DomenaManager.Pages
 
         private void PopulateData()
         {
-
+            SelectedBuilding = _settlementPage.SelectedBuildingName.Name;
+            InvoiceSum = _settlementPage.SettledInvoices.Select(x => x.CostAmount).DefaultIfEmpty(0).Sum();
+            ApartmentsAmount = _settlementPage.ApartmentCollection.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Count();
+            SettlementCattegory = _settlementPage.SettlementCategoryName.CategoryName;
+            var notRounded = InvoiceSum / ApartmentsAmount;
+            SettlePerApartment = (Math.Ceiling(notRounded * 100)) / 100;
         }
 
         private void PerformSettlement(object param)
