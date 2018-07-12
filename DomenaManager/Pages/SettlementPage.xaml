@@ -264,15 +264,9 @@
                         <DataGridTextColumn Header="Ostatnie wskazanie" Binding="{Binding LastMeasure}" IsReadOnly="False"/>
                             <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding CurrentMeasure}" IsReadOnly="False"/>
                             <DataGridTextColumn Header="Róznica wskazań" Binding="{Binding MeterDifference}" IsReadOnly="True">
-                                <DataGridTextColumn.CellStyle>
-                                    <Style TargetType="DataGridCell">
-                                        <Setter Property="Background" Value="{Binding MeterDifference, Converter={StaticResource DiffToBrushConverter}}" />
-                                    </Style>
-                                </DataGridTextColumn.CellStyle>
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="{x:Type TextBlock}">
-                                        <!--<Setter Property="Background" Value="{Binding MeterDifference, Converter={StaticResource DiffToBrushConverter}}"/>-->
-                                        <!--<Setter Property="Background" Value="Red"/>-->
+                                        <Setter Property="Foreground" Value="{Binding MeterDifference, Converter={StaticResource DiffToBrushConverter}}"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>

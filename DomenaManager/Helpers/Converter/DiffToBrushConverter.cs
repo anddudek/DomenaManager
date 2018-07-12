@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows;
-using System.Drawing;
+using System.Windows.Media;
   
 namespace DomenaManager.Helpers
 {
@@ -16,7 +16,7 @@ namespace DomenaManager.Helpers
             double input = (double)value;
             if (input > 0)
             {
-                return Brushes.Black;
+                return Brushes.Transparent;
             }
             if (input == 0)
             {
