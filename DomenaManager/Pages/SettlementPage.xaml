@@ -10,6 +10,7 @@
       mc:Ignorable="d"
       d:DesignHeight="1500" d:DesignWidth="600">
     <UserControl.Resources>
+        <Helpers:DiffToBrushConverter x:Key="DiffToBrushConverter" />
         <Helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
         <Helpers:GuidToInvoiceCategoryNameMultiConverter x:Key="GuidToCategoryConverter"/>
         <Helpers:MetersGroupHeaderConverter x:Key="FooterConverter"/>
@@ -244,26 +245,38 @@
                         </TextBox.Text>
                     </TextBox>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Aktualne wskazanie:" Width="120"/>
-                    <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                        <TextBox.Text>
-                            <Binding Path="MeterCurrentMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <Helpers:StringToDoubleValidationRule/>
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-            </StackPanel>
-
-            <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Aktualne wskazanie:" Width="120"/>
+                        <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                            <TextBox.Text>
+                                <Binding Path="MeterCurrentMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </StackPanel>
+                    <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Meter.Name}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Ostatnie wskazanie" Binding="{Binding LastMeasure}" IsReadOnly="False"/>
-                        <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding CurrentMeasure}" IsReadOnly="False"/>
-                    </DataGrid.Columns>
+                            <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding CurrentMeasure}" IsReadOnly="False"/>
+                            <DataGridTextColumn Header="Róznica wskazań" Binding="{Binding MeterDifference}" IsReadOnly="True">
+                                <DataGridTextColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="Background" Value="{Binding MeterDifference, Converter={StaticResource DiffToBrushConverter}}" />
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <!--<Setter Property="Background" Value="{Binding MeterDifference, Converter={StaticResource DiffToBrushConverter}}"/>-->
+                                        <!--<Setter Property="Background" Value="Red"/>-->
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
                     <DataGrid.GroupStyle>
                         <GroupStyle>
                             <GroupStyle.ContainerStyle>

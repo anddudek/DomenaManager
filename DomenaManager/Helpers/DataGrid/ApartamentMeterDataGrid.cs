@@ -76,6 +76,7 @@ namespace DomenaManager.Helpers
                 {
                     _lastMeasure = value;
                     OnPropertyChanged("LastMeasure");
+                    OnPropertyChanged("MeterDifference");
                 }
             }
         }
@@ -90,6 +91,25 @@ namespace DomenaManager.Helpers
                 {
                     _currentMeasure = value;
                     OnPropertyChanged("CurrentMeasure");
+                    OnPropertyChanged("MeterDifference");
+                }
+            }
+        }
+
+        private double _meterDifference;
+        public double MeterDifference
+        {
+            get 
+            {
+                _meterDifference = CurrentMeasure - LastMeasure;
+                return _meterDifference; 
+            }
+            set
+            {
+                if (value != _meterDifference)
+                {
+                    _meterDifference = value;
+                    OnPropertyChanged("MeterDifference");
                 }
             }
         }
