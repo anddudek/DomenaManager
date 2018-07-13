@@ -40,18 +40,11 @@
             <TextBlock Grid.Row="4" Text="{Binding SettlePerApartment, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="5" Text="Kwota rozliczana jako:" Margin="0,10,0,10"/>
             <TextBlock Grid.Row="5" Text="{Binding SettlementCattegory}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
-            <DataGrid Grid.Row="6" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
+            <DataGrid Grid.Row="6" Grid.ColumnSpan="2" MinHeight="100" Margin="10" ItemsSource="{Binding PerApartmentCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Róznica wskazań" Binding="{Binding MeterDifference}" IsReadOnly="True">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="Foreground" Value="{Binding MeterDifference, Converter={StaticResource DiffToBrushConverter}}"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
                     <DataGridTextColumn Header="Zaliczki" Binding="{Binding Payment}" IsReadOnly="True"/>
                     <DataGridTextColumn Header="Naliczenie" Binding="{Binding Charge}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Saldo" Binding="{Binding Saldo}" IsReadOnly="True"/>
                 </DataGrid.Columns>
                 <DataGrid.GroupStyle>
                     <GroupStyle>

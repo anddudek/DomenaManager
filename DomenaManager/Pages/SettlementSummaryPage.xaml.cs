@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using DomenaManager.Helpers;
 using MaterialDesignThemes.Wpf;
+using System.Collections.ObjectModel;
 
 namespace DomenaManager.Pages
 {
@@ -95,6 +96,20 @@ namespace DomenaManager.Pages
             }
         }
 
+        private ObservableCollection<ApartamentMeterDataGrid> _perApartmentCollection;
+        public ObservableCollection<ApartamentMeterDataGrid> PerApartmentCollection
+        {
+            get { return _perApartmentCollection; }
+            set
+            {
+                if (value != _perApartmentCollection)
+                {
+                    _perApartmentCollection = value;
+                    OnPropertyChanged("PerApartmentCollection");
+                }
+            }
+        }
+
         public Visibility IsSettlementPerMeter { get; set; }
 
         public Visibility IsSettlementPerArea { get; set; }
@@ -143,6 +158,7 @@ namespace DomenaManager.Pages
             SettlementCattegory = _settlementPage.SettlementCategoryName.CategoryName;
             var notRounded = InvoiceSum / ApartmentsAmount;
             SettlePerApartment = (Math.Ceiling(notRounded * 100)) / 100;
+            //PerApartmentCollection = _settlementPage.ApartmentMetersCollection;
         }
 
         private void PerformSettlement(object param)

@@ -114,6 +114,57 @@ namespace DomenaManager.Helpers
             }
         }
 
+        private double _payment;
+        public double Payment
+        {
+            get
+            {
+                return _payment;
+            }
+            set
+            {
+                if (value != _payment)
+                {
+                    _payment = value;
+                    OnPropertyChanged("Payment");
+                }
+            }
+        }
+
+        private double _charge;
+        public double Charge
+        {
+            get
+            {
+                return _charge;
+            }
+            set
+            {
+                if (value != _charge)
+                {
+                    _charge = value;
+                    OnPropertyChanged("Charge");
+                }
+            }
+        }
+
+        private double _saldo;
+        public double Saldo
+        {
+            get
+            {
+                return _saldo;
+            }
+            set
+            {
+                if (value != _saldo)
+                {
+                    _saldo = value;
+                    OnPropertyChanged("Saldo");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
