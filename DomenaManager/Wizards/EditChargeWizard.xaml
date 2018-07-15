@@ -100,9 +100,6 @@
             </ComboBox.Text>
             <ComboBox.ItemsSource>
                 <Binding Path="CategoriesNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
-                    </Binding.ValidationRules>
                 </Binding>
             </ComboBox.ItemsSource>
         </ComboBox>
@@ -119,16 +116,10 @@
             Grid.Row="3" Grid.Column="1" SelectedItem="{Binding SelectedUnitName}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,5,15,0" >
             <ComboBox.Text>
                 <Binding Path="SelectedUnitValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                            <Helpers:EmptyStringValidationRule/>
-                        </Binding.ValidationRules>
                 </Binding>
             </ComboBox.Text>
             <ComboBox.ItemsSource>
                 <Binding Path="UnitsNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
-                    </Binding.ValidationRules>
                 </Binding>
             </ComboBox.ItemsSource>
         </ComboBox>
@@ -138,9 +129,6 @@
             Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="15,0,10,0" >
             <TextBox.Text>
                 <Binding Path="UnitCost" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                            <Helpers:StringToDoubleValidationRule/>
-                        </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
         </TextBox>
@@ -150,9 +138,6 @@
             Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,0,14,0" >
             <TextBox.Text>
                 <Binding Path="ChargeSum" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:StringToDoubleValidationRule/>
-                    </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
         </TextBox>

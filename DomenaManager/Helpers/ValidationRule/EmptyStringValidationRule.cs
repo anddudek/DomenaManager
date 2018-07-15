@@ -19,7 +19,7 @@ namespace DomenaManager.Helpers
 
             try
             {
-                if (value == null)
+                if (value == null || String.IsNullOrWhiteSpace(((string)value)))
                 {
                     return new ValidationResult(false, "Pole nie może być puste");
                 }

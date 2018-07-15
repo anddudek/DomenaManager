@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DomenaManager.Pages.SettlementPage"
+﻿<UserControl x:Class="DomenaManager.Pages.SettlementPage" x:Name="ucSettlement"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,7 +8,7 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:dd="urn:gong-wpf-dragdrop"
       mc:Ignorable="d"
-      d:DesignHeight="1500" d:DesignWidth="600">
+      d:DesignHeight="1700" d:DesignWidth="600">
     <UserControl.Resources>
         <Helpers:DiffToBrushConverter x:Key="DiffToBrushConverter" />
         <Helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
@@ -33,15 +33,16 @@
         <Grid Background="#FFFFFF">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
                 <TextBlock Text="Rozliczenie roczne" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14"/>
-                <ComboBox materialDesign:HintAssist.Hint="Budynek" Margin="15"
+                
+            <ComboBox materialDesign:HintAssist.Hint="Budynek" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="Name"
             SelectedItem="{Binding SelectedBuildingName}"  VerticalAlignment="Center" >
                 <ComboBox.Text>
-                    <Binding Path="SelectedBuildingValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                    <Binding Path="SelectedBuildingValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" ValidatesOnExceptions="True" ValidatesOnNotifyDataErrors="True">
                         <Binding.ValidationRules>
-                            <Helpers:EmptyStringValidationRule/>
-                        </Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule ValidatesOnTargetUpdated="True" />
+                            </Binding.ValidationRules>
                     </Binding>
                 </ComboBox.Text>
                 <ComboBox.ItemsSource>
@@ -192,16 +193,16 @@
             SelectedItem="{Binding SettlementCategoryName}"  VerticalAlignment="Center" >
                     <ComboBox.Text>
                         <Binding Path="SettlementCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                <!--<Binding.ValidationRules>
-                                <Helpers:EmptyStringValidationRule/>
-                            </Binding.ValidationRules>-->
+                                <Binding.ValidationRules>
+                                    <Helpers:EmptyStringValidationRule ValidatesOnTargetUpdated="True"/>
+                                </Binding.ValidationRules>
                             </Binding>
                     </ComboBox.Text>
                     <ComboBox.ItemsSource>
                         <Binding Path="SettlementCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                            <!--<Binding.ValidationRules>
+                            <Binding.ValidationRules>
                                 <Helpers:EmptyStringValidationRule/>
-                            </Binding.ValidationRules>-->
+                            </Binding.ValidationRules>
                         </Binding>
                     </ComboBox.ItemsSource>
                 </ComboBox>
@@ -257,13 +258,17 @@
                             </TextBox.Text>
                         </TextBox>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Różnica:" Width="120"/>
+                        <TextBlock Margin="5,0,0,0" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MainMeterDiff}"/>
+                    </StackPanel>
                     <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Meter.Name}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Ostatnie wskazanie" Binding="{Binding LastMeasure}" IsReadOnly="False"/>
                             <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding CurrentMeasure}" IsReadOnly="False"/>
-                            <DataGridTextColumn Header="Róznica wskazań" Binding="{Binding MeterDifference}" IsReadOnly="True">
+                            <DataGridTextColumn Header="Róznica wskazań" Binding="{Binding MeterDifference}" IsReadOnly="True" FontWeight="Bold">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Setter Property="Foreground" Value="{Binding MeterDifference, Converter={StaticResource DiffToBrushConverter}}"/>
@@ -318,6 +323,10 @@
                     <Label Content="%"/>
                     <Label Content="{Binding VariablePeriod}" ContentStringFormat="Koszty zmienne: {0}%" Margin="10,0,0,0" />
                 </StackPanel>
+                    <Label Content="Sposób rozliczania:" HorizontalAlignment="Left" Margin="15,0,0,5"/>
+                    <RadioButton IsChecked="{Binding Path=ConstantSettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_AREA}}" Content="Według powierzchni" Margin="10,0,0,0"/>
+                    <RadioButton IsChecked="{Binding Path=ConstantSettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_APARTMENT}}" Content="Według lokali" Margin="10,5,0,0"/>
+                    
                 </StackPanel>
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Podsumowanie" Command="{Binding SettlementSummary}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
                 

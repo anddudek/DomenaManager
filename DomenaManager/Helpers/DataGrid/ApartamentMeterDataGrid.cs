@@ -52,6 +52,20 @@ namespace DomenaManager.Helpers
             }
         }
 
+        private double _settleArea;
+        public double SettleArea
+        {
+            get { return _settleArea; }
+            set
+            {
+                if (value != _settleArea)
+                {
+                    _settleArea = value;
+                    OnPropertyChanged("SettleArea");
+                }
+            }
+        }
+
         private bool _isMeterLegalized;
         public bool IsMeterLegalized
         {
@@ -114,19 +128,47 @@ namespace DomenaManager.Helpers
             }
         }
 
-        private double _payment;
-        public double Payment
+        private double _variableCost;
+        public double VariableCost
+        {
+            get { return _variableCost; }
+            set
+            {
+                if (value != _variableCost)
+                {
+                    _variableCost = value;
+                    OnPropertyChanged("VariableCost");
+                }
+            }
+        }
+
+        private double _constantCost;
+        public double ConstantCost
+        {
+            get { return _constantCost; }
+            set
+            {
+                if (value != _constantCost)
+                {
+                    _constantCost = value;
+                    OnPropertyChanged("ConstantCost");
+                }
+            }
+        }
+
+        private double _costSettled;
+        public double CostSettled
         {
             get
             {
-                return _payment;
+                return _costSettled;
             }
             set
             {
-                if (value != _payment)
+                if (value != _costSettled)
                 {
-                    _payment = value;
-                    OnPropertyChanged("Payment");
+                    _costSettled = value;
+                    OnPropertyChanged("CostSettled");
                 }
             }
         }

@@ -26,5 +26,6 @@ namespace DomenaManager.DB
         public DbSet<ContractorsName> InvoiceContractors { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<BindingParent> Bindings { get; set; }        
+        public DbSet<Settlement> Settlements { get; set; }
     }
 }

@@ -553,6 +553,7 @@ namespace DomenaManager.Pages
                     using (var db = new DB.DomenaDBContext())
                     {
                         var newCharge = new LibDataModel.Charge();
+                        newCharge.SettlementId = Guid.Empty;
                         newCharge.ChargeId = Guid.NewGuid();
                         newCharge.ApartmentId = db.Apartments.FirstOrDefault(x => x.BuildingId.Equals(dc.SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(dc.SelectedApartmentNumber)).ApartmentId;
                         newCharge.CreatedDate = DateTime.Today;

@@ -268,6 +268,20 @@ namespace DomenaManager.Pages
             }
         }
 
+        private SettlementMethodsEnum _constantSettlementMethod;
+        public SettlementMethodsEnum ConstantSettlementMethod
+        {
+            get { return _constantSettlementMethod; }
+            set
+            {
+                if (value != _constantSettlementMethod)
+                {
+                    _constantSettlementMethod = value;
+                    OnPropertyChanged("ConstantSettlementMethod");
+                }
+            }
+        }
+
         public Visibility IsPerMetersSettlement
         {
             get { return SettlementMethod == SettlementMethodsEnum.PER_METERS ? Visibility.Visible : System.Windows.Visibility.Collapsed; }
@@ -373,6 +387,7 @@ namespace DomenaManager.Pages
             {
                 _meterLastMeasure = value;
                 OnPropertyChanged("MeterLastMeasure");
+                OnPropertyChanged("MainMeterDiff");
             }
         }
 
@@ -384,7 +399,17 @@ namespace DomenaManager.Pages
             {
                 _meterCurrentMeasure = value;
                 OnPropertyChanged("MeterCurrentMeasure");
+                OnPropertyChanged("MainMeterDiff");
             }
+        }
+
+        public double MainMeterDiff
+        {
+            get
+            {                
+                return  MeterCurrentMeasure - MeterLastMeasure;
+            }
+            set { return; }
         }
 
         public ICommand RefreshMeterDiffSum
@@ -571,9 +596,12 @@ namespace DomenaManager.Pages
 
         private void Summary(object param)
         {
-            var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
+            if (IsValid(ucSettlement as DependencyObject))
+            {
+                var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
 
-            mw.CurrentPage = new SettlementSummaryPage(this);
+                mw.CurrentPage = new SettlementSummaryPage(this);
+            }
 
         }
 

@@ -22,6 +22,7 @@ namespace DomenaManager.Helpers
             this.ChargeDate = _charge.ChargeDate;
             this.CreatedDate = _charge.CreatedDate;
             this.IsClosed = _charge.IsClosed;
+            this.SettlementId = _charge.SettlementId;
 
             using (var db = new DB.DomenaDBContext())
             {

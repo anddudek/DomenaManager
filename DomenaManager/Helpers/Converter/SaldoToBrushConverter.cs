@@ -9,16 +9,12 @@ using System.Windows.Media;
   
 namespace DomenaManager.Helpers
 {
-    public class DiffToBrushConverter : IValueConverter
+    public class SaldoToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             double input = (double)value;
             if (input > 0)
-            {
-                return Brushes.Green;
-            }
-            if (input == 0)
             {
                 return Brushes.Black;
             }
