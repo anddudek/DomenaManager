@@ -11,5 +11,6 @@ namespace DomenaManager.Helpers
         PER_AREA,
         PER_APARTMENT,
         PER_METERS,
+        GAS,
     }
 }
