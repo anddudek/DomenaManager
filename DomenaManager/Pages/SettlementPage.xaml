@@ -234,22 +234,33 @@
                 </ComboBox>
 
                 <StackPanel Visibility="{Binding IsPerMetersSettlement}" >
-                <Label Content="Licznik główny: " Margin="0,15,0,0" />
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Ostatnie wskazanie:" Width="120"/>
-                    <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                        <TextBox.Text>
-                            <Binding Path="MeterLastMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <Helpers:StringToDoubleValidationRule/>
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Aktualne wskazanie:" Width="120"/>
-                        <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width=".7*"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width=".7*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Licznik główny: " Margin="0,10,0,0" />
+                        <Label Content="Ostatnie wskazanie:" Width="120" Grid.Row="1"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1">
+                            <TextBox.Text>
+                                <Binding Path="MeterLastMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Aktualne wskazanie:" Width="120" Grid.Row="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="1">
                             <TextBox.Text>
                                 <Binding Path="MeterCurrentMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
@@ -258,11 +269,38 @@
                                 </Binding>
                             </TextBox.Text>
                         </TextBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Różnica:" Width="120"/>
-                        <TextBlock Margin="5,0,0,0" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MainMeterDiff}"/>
-                    </StackPanel>
+                        <Label Content="Różnica:" Width="120" Grid.Row="3"/>
+                        <TextBlock Margin="5,0,0,0" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MainMeterDiff}" Grid.Row="3" Grid.Column="1"/>
+
+
+                        <Label Content="Mieszkania bez licznika: " Margin="0,10,0,0" Grid.Column="2"/>
+                        <Label Content="Stała opłata:" Width="120" Grid.Row="1" Grid.Column="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="1">
+                            <TextBox.Text>
+                                <Binding Path="NoMeterConstantCharge" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" StringFormat="{}{0} zł">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Stałe naliczenie:" Width="120" Grid.Row="2" Grid.Column="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="3" >
+                            <TextBox.Text>
+                                <Binding Path="NoMeterConstantAdjustment" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" StringFormat="{}{0} zł">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Nalicz niedobór:" Width="120" Grid.Row="3" Grid.Column="2" />
+                        <ToggleButton Grid.Column="3" Grid.Row="3"
+                  Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
+                  ToolTip="MaterialDesignSwitchDarkToggleButton"
+                  IsChecked="{Binding ChargeDeficit}" />
+                    </Grid>
+                
                     <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Meter.Name}" IsReadOnly="True"/>
