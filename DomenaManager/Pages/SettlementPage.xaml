@@ -270,24 +270,24 @@
                             </TextBox.Text>
                         </TextBox>
                         <Label Content="Różnica:" Width="120" Grid.Row="3"/>
-                        <TextBlock Margin="5,0,0,0" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MainMeterDiff}" Grid.Row="3" Grid.Column="1"/>
+                        <TextBlock Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MainMeterDiff}" Grid.Row="3" Grid.Column="1"/>
 
 
                         <Label Content="Mieszkania bez licznika: " Margin="0,10,0,0" Grid.Column="2"/>
-                        <Label Content="Stała opłata:" Width="120" Grid.Row="1" Grid.Column="2"/>
+                        <Label Content="Stała opłata (zł):" Width="120" Grid.Row="1" Grid.Column="2"/>
                         <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="1">
                             <TextBox.Text>
-                                <Binding Path="NoMeterConstantCharge" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" StringFormat="{}{0} zł">
+                                <Binding Path="NoMeterConstantCharge" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
                                         <Helpers:StringToDoubleValidationRule/>
                                     </Binding.ValidationRules>
                                 </Binding>
                             </TextBox.Text>
                         </TextBox>
-                        <Label Content="Stałe naliczenie:" Width="120" Grid.Row="2" Grid.Column="2"/>
+                        <Label Content="Stałe naliczenie (j.):" Width="120" Grid.Row="2" Grid.Column="2"/>
                         <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="3" >
                             <TextBox.Text>
-                                <Binding Path="NoMeterConstantAdjustment" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" StringFormat="{}{0} zł">
+                                <Binding Path="NoMeterConstantAdjustment" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
                                         <Helpers:StringToDoubleValidationRule/>
                                     </Binding.ValidationRules>
@@ -339,7 +339,8 @@
                 </DataGrid>
 
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="{Binding MetersDiffSum, StringFormat={}Suma wskazań: {0}}" />
+
+                        <Label Content="{Binding MetersDiffSum}" ContentStringFormat="{}Suma wskazań w mieszkaniach ze zlegalizowanym licznikiem: {0}" Margin="15,0,0,0"/>
 
                     <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding RefreshMeterDiffSum}" HorizontalAlignment="Center" DockPanel.Dock="Right">
                         <ContentControl>

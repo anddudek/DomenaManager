@@ -212,6 +212,47 @@ namespace DomenaManager.Pages
             }
         }
 
+        private double _totalSum;
+        public double TotalSum
+        {
+            get { return _totalSum; }
+            set
+            {
+                if (value != _totalSum)
+                {
+                    _totalSum = value;
+                    OnPropertyChanged("TotalSum");
+                }
+            }
+        }
+        
+        public double ConstantCharge
+        {
+            get { return _settlementPage.NoMeterConstantCharge; }
+            set
+            {
+                return;
+            }
+        }
+        
+        public double ConstantAdjustment
+        {
+            get { return _settlementPage.NoMeterConstantAdjustment; }
+            set
+            {
+                return;
+            }
+        }
+
+        public bool IsDeficitShared
+        {
+            get { return _settlementPage.ChargeDeficit; }
+            set
+            {
+                return;
+            }
+        }
+
         private List<Apartment> Apartments;
 
         private List<Payment> Payments;
@@ -265,7 +306,7 @@ namespace DomenaManager.Pages
         {
             using (var db = new DB.DomenaDBContext())
             {
-                Apartments =(db.Apartments.Include(x => x.MeterCollection).Where(x => !x.IsDeleted).ToList());
+                Apartments =(db.Apartments.Include(x => x.MeterCollection.Select(y => y.MeterTypeParent)).Where(x => !x.IsDeleted).ToList());
                 Charges = (db.Charges.Include(x => x.Components).Where(x => !x.IsDeleted).ToList());
                 Owners = (db.Owners.Where(x => !x.IsDeleted).ToList());
             }
@@ -340,46 +381,91 @@ namespace DomenaManager.Pages
 
             if (_settlementPage.SettlementMethod == SettlementMethodsEnum.PER_METERS)
             {
+                var ap = Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId));
+                int notValidMetersCount = ap.Where(x => x.MeterCollection.FirstOrDefault(y => !y.IsDeleted && y.MeterTypeParent.MeterId.Equals(_settlementPage.SelectedMeterName.MeterId)).LegalizationDate <= DateTime.Now).Count();
+
                 MainMeterDiff = _settlementPage.MainMeterDiff;
-                ApartmentDiffSum = _settlementPage.ApartmentMetersCollection.Select(x => x.MeterDifference).DefaultIfEmpty(0).Sum();
+                ApartmentDiffSum = _settlementPage.ApartmentMetersCollection.Where(x => x.IsMeterLegalized).Select(x => x.MeterDifference).DefaultIfEmpty(0).Sum() + _settlementPage.NoMeterConstantAdjustment * notValidMetersCount;
                 ApartmentsAmount = _settlementPage.ApartmentCollection.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Count();
                 BuildingAreaSum = Math.Ceiling((Apartments.Where(x => x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Select(x => new { totalArea = x.AdditionalArea + x.ApartmentArea }).Sum(x => x.totalArea) * 100)) / 100;
-
-                if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_AREA)
+                
+                
+                var measureToDivide = MainMeterDiff;
+                double deficitPerApartment = 0;
+                if (!_settlementPage.ChargeDeficit)
                 {
-                    SettlePerSquareMeter = Math.Ceiling((((_settlementPage.ConstantPeriod / 100) * InvoiceSum) / BuildingAreaSum) * 100) / 100;
+                    if (MainMeterDiff > 0)
+                    {
+                        measureToDivide = Math.Min(MainMeterDiff, ApartmentDiffSum);
+                    }
+                    else
+                    {
+                        measureToDivide = ApartmentDiffSum;
+                    }
                 }
                 else
                 {
-                    SettlePerSquareMeter = Math.Ceiling((((_settlementPage.ConstantPeriod / 100) * InvoiceSum) / ApartmentsAmount) * 100) / 100;
+                    if (MainMeterDiff > ApartmentDiffSum)
+                    {
+                        deficitPerApartment = (MainMeterDiff - ApartmentDiffSum) / notValidMetersCount;
+                    }
                 }
-                SettlePerMeter = Math.Ceiling((((_settlementPage.VariablePeriod / 100) * InvoiceSum) / ApartmentDiffSum) * 100) / 100;
+
+                var adjustedInvoiceSum = InvoiceSum - (notValidMetersCount * _settlementPage.NoMeterConstantCharge);
+
+                if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_AREA)
+                {
+                    SettlePerSquareMeter = Math.Ceiling((((_settlementPage.ConstantPeriod / 100) * adjustedInvoiceSum) / BuildingAreaSum) * 100) / 100;
+                }
+                else
+                {
+                    SettlePerSquareMeter = Math.Ceiling((((_settlementPage.ConstantPeriod / 100) * adjustedInvoiceSum) / ApartmentsAmount) * 100) / 100;
+                }
+                SettlePerMeter = Math.Ceiling((((_settlementPage.VariablePeriod / 100) * adjustedInvoiceSum) / measureToDivide) * 100) / 100;
                 PerMetersCollection = new ObservableCollection<ApartamentMeterDataGrid>();
 
-                var xxx = Apartments.Where(x => x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).ToList();
-                foreach (var a in Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)))
+                foreach (var a in ap)
                 {
+                    var selectedAmdg = _settlementPage.ApartmentMetersCollection.FirstOrDefault(x => x.ApartmentO.ApartmentId.Equals(a.ApartmentId));
+                    
                     double chargeAmount = 0;
                     var c = Charges.Where(x => x.ApartmentId.Equals(a.ApartmentId) && x.ChargeDate >= _settlementPage.SettlementFrom && x.ChargeDate <= _settlementPage.SettlementTo);
                     foreach (var cc in c)
                     {
                         chargeAmount += cc.Components.Where(y => _settlementPage.SettleChargeCategories.Any(x => x.BuildingChargeBasisCategoryId.Equals(y.CostCategoryId))).Select(x => x.Sum).DefaultIfEmpty(0).Sum();
                     }
-                    var meterDiff = _settlementPage.ApartmentMetersCollection.FirstOrDefault(x => x.ApartmentO.ApartmentId.Equals(a.ApartmentId)).MeterDifference;
-                    var costSett = Math.Ceiling((meterDiff * SettlePerMeter) * 100) / 100;
+                    //var meterDiff = selectedAmdg.MeterDifference;
+                    //var costSett = Math.Ceiling((meterDiff * SettlePerMeter) * 100) / 100;
+
+                    /*if (!selectedAmdg.IsMeterLegalized)
+                    {
+                        selectedAmdg.LastMeasure = 0;
+                        selectedAmdg.CurrentMeasure = (_settlementPage.NoMeterConstantAdjustment + deficitPerApartment);
+                        costSett += _settlementPage.NoMeterConstantCharge;
+                    }*/
 
                     var amd = new ApartamentMeterDataGrid()
                     {
-                        LastMeasure = _settlementPage.ApartmentMetersCollection.FirstOrDefault(x => x.ApartmentO.ApartmentId.Equals(a.ApartmentId)).LastMeasure,
-                        CurrentMeasure = _settlementPage.ApartmentMetersCollection.FirstOrDefault(x => x.ApartmentO.ApartmentId.Equals(a.ApartmentId)).CurrentMeasure,
+                        LastMeasure = selectedAmdg.LastMeasure,
+                        CurrentMeasure = selectedAmdg.CurrentMeasure,
+                        IsMeterLegalized = selectedAmdg.IsMeterLegalized,
                         ApartmentO = a,
                         Charge = chargeAmount,
-                        OwnerO = Owners.FirstOrDefault(x => x.OwnerId.Equals(a.OwnerId)),
-                        VariableCost = costSett,
-                        Saldo = chargeAmount - costSett,
-                        SettleArea = a.ApartmentArea + a.AdditionalArea,              
-
+                        OwnerO = Owners.FirstOrDefault(x => x.OwnerId.Equals(a.OwnerId)),                        
+                        SettleArea = a.ApartmentArea + a.AdditionalArea,         
                     };
+
+                    var costSett = Math.Ceiling((amd.MeterDifference * SettlePerMeter) * 100) / 100;
+                    if (!amd.IsMeterLegalized)
+                    {
+                        amd.LastMeasure = 0;
+                        amd.CurrentMeasure = (_settlementPage.NoMeterConstantAdjustment + deficitPerApartment);
+                        costSett = Math.Ceiling((amd.MeterDifference * SettlePerMeter) * 100) / 100;
+                        costSett += _settlementPage.NoMeterConstantCharge;                        
+                    }
+                    amd.VariableCost = costSett;
+                    amd.Saldo = chargeAmount - costSett;
+
                     if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_AREA)
                     {
                         amd.ConstantCost = SettlePerSquareMeter * (amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea);
@@ -391,7 +477,7 @@ namespace DomenaManager.Pages
                     amd.CostSettled = amd.VariableCost + amd.ConstantCost;
                     PerMetersCollection.Add(amd);
                 }
-
+                TotalSum = PerMetersCollection.Select(x => x.CostSettled).DefaultIfEmpty(0).Sum();
                 ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(PerMetersCollection);
                 cv.GroupDescriptions.Clear();
                 cv.GroupDescriptions.Add(new PropertyGroupDescription(""));
