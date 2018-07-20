@@ -264,6 +264,7 @@ namespace DomenaManager.Pages
                     _settlementMethod = value;
                     OnPropertyChanged("SettlementMethod");
                     OnPropertyChanged("IsPerMetersSettlement");
+                    OnPropertyChanged("IsPerGasSettlement");
                 }
             }
         }
@@ -285,6 +286,15 @@ namespace DomenaManager.Pages
         public Visibility IsPerMetersSettlement
         {
             get { return SettlementMethod == SettlementMethodsEnum.PER_METERS ? Visibility.Visible : System.Windows.Visibility.Collapsed; }
+            private set
+            {
+                return;
+            }
+        }
+
+        public Visibility IsPerGasSettlement
+        {
+            get { return SettlementMethod == SettlementMethodsEnum.GAS ? Visibility.Visible : System.Windows.Visibility.Collapsed; }
             private set
             {
                 return;

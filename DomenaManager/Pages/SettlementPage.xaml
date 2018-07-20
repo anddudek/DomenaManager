@@ -31,71 +31,71 @@
 
     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" Background="White">
         <Grid Background="#FFFFFF">
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
                 <TextBlock Text="Rozliczenie roczne" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14"/>
-                
-            <ComboBox materialDesign:HintAssist.Hint="Budynek" Margin="15"
+
+                <ComboBox materialDesign:HintAssist.Hint="Budynek" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="Name"
             SelectedItem="{Binding SelectedBuildingName}"  VerticalAlignment="Center" >
-                <ComboBox.Text>
-                    <Binding Path="SelectedBuildingValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" ValidatesOnExceptions="True" ValidatesOnNotifyDataErrors="True">
-                        <Binding.ValidationRules>
+                    <ComboBox.Text>
+                        <Binding Path="SelectedBuildingValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" ValidatesOnExceptions="True" ValidatesOnNotifyDataErrors="True">
+                            <Binding.ValidationRules>
                                 <Helpers:EmptyStringValidationRule ValidatesOnTargetUpdated="True" />
                             </Binding.ValidationRules>
-                    </Binding>
-                </ComboBox.Text>
-                <ComboBox.ItemsSource>
-                    <Binding Path="BuildingNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <Helpers:EmptyStringValidationRule/>
-                        </Binding.ValidationRules>
-                    </Binding>
-                </ComboBox.ItemsSource>
-            </ComboBox>
+                        </Binding>
+                    </ComboBox.Text>
+                    <ComboBox.ItemsSource>
+                        <Binding Path="BuildingNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
 
-            <TextBox IsReadOnly="True" TextWrapping="WrapWithOverflow" Text="{Binding SelectedBuildingAddress}" HorizontalContentAlignment="Left" Margin="10"/>
+                <TextBox IsReadOnly="True" TextWrapping="WrapWithOverflow" Text="{Binding SelectedBuildingAddress}" HorizontalContentAlignment="Left" Margin="10"/>
 
-            <Label Content="Okres rozliczenia:" HorizontalAlignment="Left" Margin="15"/>
+                <Label Content="Okres rozliczenia:" HorizontalAlignment="Left" Margin="15"/>
 
-            <DockPanel LastChildFill="False">                
-                <DatePicker DockPanel.Dock="Left" Width="200"
+                <DockPanel LastChildFill="False">
+                    <DatePicker DockPanel.Dock="Left" Width="200"
                     SelectedDate="{Binding SettlementFrom}"
                     VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
                     materialDesign:HintAssist.Hint="Początek" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
-                <DatePicker DockPanel.Dock="Right" Width="200"
+                    <DatePicker DockPanel.Dock="Right" Width="200"
                     SelectedDate="{Binding SettlementTo}"
                     VerticalAlignment="Center" Margin="30,0,15,0" Language="pl-PL" 
                     materialDesign:HintAssist.Hint="Koniec" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
-            </DockPanel>
+                </DockPanel>
 
-            <ComboBox materialDesign:HintAssist.Hint="Kategorie faktur:" Margin="15"
+                <ComboBox materialDesign:HintAssist.Hint="Kategorie faktur:" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="CategoryName"
             SelectedItem="{Binding SelectedInvoiceCategoryName}"  VerticalAlignment="Center" >
-                <ComboBox.Text>
-                    <Binding Path="SelectedInvoiceCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                    <ComboBox.Text>
+                        <Binding Path="SelectedInvoiceCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                             <!--<Binding.ValidationRules>
                                 <Helpers:EmptyStringValidationRule/>
                             </Binding.ValidationRules>-->
                         </Binding>
-                </ComboBox.Text>
-                <ComboBox.ItemsSource>
-                    <Binding Path="InvoiceCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                        <!--<Binding.ValidationRules>
+                    </ComboBox.Text>
+                    <ComboBox.ItemsSource>
+                        <Binding Path="InvoiceCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                            <!--<Binding.ValidationRules>
                             <Helpers:EmptyStringValidationRule/>
                         </Binding.ValidationRules>-->
-                    </Binding>
-                </ComboBox.ItemsSource>
-            </ComboBox>
+                        </Binding>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
 
-            <StackPanel Orientation="Horizontal">
-                <StackPanel>
-                    <Label Content="Rozliczane:" Margin="5,0,0,0"/>
-                    <DataGrid ItemsSource="{Binding SettledInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <Label Content="Rozliczane:" Margin="5,0,0,0"/>
+                        <DataGrid ItemsSource="{Binding SettledInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
                                   dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="10,0,15,5" BorderThickness="1" BorderBrush="Gray"
                                   dd:DragDrop.IsDropTarget="True" x:Name="SettledInvoicesDG">
-                        <DataGrid.Columns>
+                            <DataGrid.Columns>
                                 <DataGridTextColumn Header="Data" Binding="{Binding InvoiceDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
                                 <DataGridTextColumn Header="Kwota" Binding="{Binding CostAmount, StringFormat={}{0} zł}" Width="auto" FontSize="14"/>
                                 <DataGridTextColumn Header="Kategoria" Width="auto" FontSize="14">
@@ -108,14 +108,14 @@
                                 </DataGridTextColumn>
                                 <DataGridTextColumn Header="Numer" Binding="{Binding InvoiceNumber}" Width="auto" FontSize="14"/>
                                 <DataGridTextColumn Header="Kontrahent" Binding="{Binding ContractorName}" Width="auto" FontSize="14"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
 
 
-                <StackPanel>
-                    <Label Content="Dostępne:" Margin="15,0,0,0"/>
-                    <DataGrid ItemsSource="{Binding AvailableInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                    <StackPanel>
+                        <Label Content="Dostępne:" Margin="15,0,0,0"/>
+                        <DataGrid ItemsSource="{Binding AvailableInvoices}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
                               dd:DragDrop.IsDragSource="True" MinHeight="300" MinWidth="250" Margin="15,0,10,5" BorderThickness="1" BorderBrush="Gray"
                               dd:DragDrop.IsDropTarget="True" x:Name="AvailableInvoicesDG">
                             <DataGrid.Columns>
@@ -133,87 +133,87 @@
                                 <DataGridTextColumn Header="Kontrahent" Binding="{Binding ContractorName}" Width="auto" FontSize="14"/>
                             </DataGrid.Columns>
                         </DataGrid>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-            
-            <ComboBox materialDesign:HintAssist.Hint="Kategorie zaliczek:" Margin="15"
+
+                <ComboBox materialDesign:HintAssist.Hint="Kategorie zaliczek:" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="CategoryName"
             SelectedItem="{Binding SelectedChargeCategoryName}"  VerticalAlignment="Center" >
-                <ComboBox.Text>
-                    <Binding Path="SelectedChargeCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                    <ComboBox.Text>
+                        <Binding Path="SelectedChargeCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                             <!--<Binding.ValidationRules>
                                 <Helpers:EmptyStringValidationRule/>
                             </Binding.ValidationRules>-->
                         </Binding>
-                </ComboBox.Text>
-                <ComboBox.ItemsSource>
-                    <Binding Path="ChargeCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                        <!--<Binding.ValidationRules>
+                    </ComboBox.Text>
+                    <ComboBox.ItemsSource>
+                        <Binding Path="ChargeCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                            <!--<Binding.ValidationRules>
                             <Helpers:EmptyStringValidationRule/>
                         </Binding.ValidationRules>-->
-                    </Binding>
-                </ComboBox.ItemsSource>
-            </ComboBox>
+                        </Binding>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
 
-            <StackPanel Orientation="Horizontal">
-                <StackPanel>
-                    <Label Content="Rozliczane:" Margin="5,0,0,0"/>
-                    <DataGrid ItemsSource="{Binding SettleChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <Label Content="Rozliczane:" Margin="5,0,0,0"/>
+                        <DataGrid ItemsSource="{Binding SettleChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
                                   dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="10,0,15,5" BorderThickness="1" BorderBrush="Gray"
                                   dd:DragDrop.IsDropTarget="True" Width="{Binding Path=ActualWidth, ElementName=SettledInvoicesDG}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Nazwa" Binding="{Binding CategoryName}" Width="auto" FontSize="14"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Nazwa" Binding="{Binding CategoryName}" Width="auto" FontSize="14"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
 
 
-                <StackPanel>
-                    <Label Content="Dostępne:" Margin="15,0,0,0"/>
-                    <DataGrid ItemsSource="{Binding AvailableChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                    <StackPanel>
+                        <Label Content="Dostępne:" Margin="15,0,0,0"/>
+                        <DataGrid ItemsSource="{Binding AvailableChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
                               dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="15,0,10,5" BorderThickness="1" BorderBrush="Gray"
                               dd:DragDrop.IsDropTarget="True" Width="{Binding Path=ActualWidth, ElementName=AvailableInvoicesDG}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Nazwa" Binding="{Binding CategoryName}" Width="auto" FontSize="14"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Nazwa" Binding="{Binding CategoryName}" Width="auto" FontSize="14"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="60" />
-                </Grid.ColumnDefinitions>
-                
-                <ComboBox materialDesign:HintAssist.Hint="Rozliczane jako:" Margin="15"
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60" />
+                    </Grid.ColumnDefinitions>
+
+                    <ComboBox materialDesign:HintAssist.Hint="Rozliczane jako:" Margin="15"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
                   IsEditable="True" DisplayMemberPath="CategoryName"
             SelectedItem="{Binding SettlementCategoryName}"  VerticalAlignment="Center" >
-                    <ComboBox.Text>
-                        <Binding Path="SettlementCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <ComboBox.Text>
+                            <Binding Path="SettlementCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <Helpers:EmptyStringValidationRule ValidatesOnTargetUpdated="True"/>
                                 </Binding.ValidationRules>
                             </Binding>
-                    </ComboBox.Text>
-                    <ComboBox.ItemsSource>
-                        <Binding Path="SettlementCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <Helpers:EmptyStringValidationRule/>
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </ComboBox.ItemsSource>
-                </ComboBox>
-                <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewCategory}" HorizontalAlignment="Center" DockPanel.Dock="Right">
-                    <ContentControl>
-                        <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                    </ContentControl>
-                </Button>
-            </Grid>
+                        </ComboBox.Text>
+                        <ComboBox.ItemsSource>
+                            <Binding Path="SettlementCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <Helpers:EmptyStringValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
+                    <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewCategory}" HorizontalAlignment="Center" DockPanel.Dock="Right">
+                        <ContentControl>
+                            <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </ContentControl>
+                    </Button>
+                </Grid>
 
-            <Label Content="Sposób rozliczania:" HorizontalAlignment="Left" Margin="15,0,0,5"/>
+                <Label Content="Sposób rozliczania:" HorizontalAlignment="Left" Margin="15,0,0,5"/>
                 <RadioButton IsChecked="{Binding Path=SettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_AREA}}" Content="Według powierzchni" Margin="10,0,0,0"/>
                 <RadioButton IsChecked="{Binding Path=SettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_APARTMENT}}" Content="Według lokali" Margin="10,5,0,0"/>
                 <RadioButton IsChecked="{Binding Path=SettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_METERS}}" Content="Według liczników" Margin="10,5,0,0"/>
@@ -300,211 +300,8 @@
                   ToolTip="MaterialDesignSwitchDarkToggleButton"
                   IsChecked="{Binding ChargeDeficit}" />
                     </Grid>
-                
+
                     <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Meter.Name}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Ostatnie wskazanie" Binding="{Binding LastMeasure}" IsReadOnly="False"/>
-                            <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding CurrentMeasure}" IsReadOnly="False"/>
-                            <DataGridTextColumn Header="Róznica wskazań" Binding="{Binding MeterDifference}" IsReadOnly="True" FontWeight="Bold">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Foreground" Value="{Binding MeterDifference, Converter={StaticResource DiffToBrushConverter}}"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                        </DataGrid.Columns>
-                    <DataGrid.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.ContainerStyle>
-                                <Style TargetType="{x:Type GroupItem}">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                <StackPanel Background="#87B04D" >
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="{Binding Path=Items, Converter={StaticResource FooterConverter}, ConverterParameter=ApartmentNumber, StringFormat={}Mieszkanie nr {0}}" Margin="10,0,0,0" Height="25" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
-                                                        <TextBlock Text="{Binding Path=Items, Converter={StaticResource FooterConverter}, ConverterParameter=Owner, StringFormat={}\, właściciel: {0}}" Height="25" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
-                                                    </StackPanel>
-                                                    <ItemsPresenter />
-                                                </StackPanel>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </GroupStyle.ContainerStyle>
-                        </GroupStyle>
-                    </DataGrid.GroupStyle>
-                </DataGrid>
-
-                <StackPanel Orientation="Horizontal">
-
-                        <Label Content="{Binding MetersDiffSum}" ContentStringFormat="{}Suma wskazań w mieszkaniach ze zlegalizowanym licznikiem: {0}" Margin="15,0,0,0"/>
-
-                    <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding RefreshMeterDiffSum}" HorizontalAlignment="Center" DockPanel.Dock="Right">
-                        <ContentControl>
-                            <materialDesign:PackIcon Kind="Refresh" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        </ContentControl>
-                    </Button>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Koszty stałe: "/>
-                    <TextBox Margin="10,0,0,0">
-                        <TextBox.Text>
-                            <Binding Path="ConstantPeriod" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                <Helpers:StringToDoubleValidationRule/>
-                            </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                    <Label Content="%"/>
-                    <Label Content="{Binding VariablePeriod}" ContentStringFormat="Koszty zmienne: {0}%" Margin="10,0,0,0" />
-                </StackPanel>
-                    <Label Content="Sposób rozliczania:" HorizontalAlignment="Left" Margin="15,0,0,5"/>
-                    <RadioButton IsChecked="{Binding Path=ConstantSettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_AREA}}" Content="Według powierzchni" Margin="10,0,0,0"/>
-                    <RadioButton IsChecked="{Binding Path=ConstantSettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_APARTMENT}}" Content="Według lokali" Margin="10,5,0,0"/>
-                    
-                </StackPanel>
-
-                <StackPanel Visibility="{Binding IsGasSettlement}">
-                    <ComboBox materialDesign:HintAssist.Hint="Licznik gazu:" Margin="15,0,15,0"
-	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-                  IsEditable="True" DisplayMemberPath="Name" 
-            SelectedItem="{Binding GasMeterName}"  VerticalAlignment="Center" >
-                        <ComboBox.Text>
-                            <Binding Path="GasMeterValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                            </Binding>
-                        </ComboBox.Text>
-                        <ComboBox.ItemsSource>
-                            <Binding Path="MetersCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                            </Binding>
-                        </ComboBox.ItemsSource>
-                    </ComboBox>
-
-                    <Label Content="Licznik gazu: " Margin="0,15,0,0" />
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Ostatnie wskazanie:" Width="120"/>
-                        <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                            <TextBox.Text>
-                                <Binding Path="GasMeterLastMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <Helpers:StringToDoubleValidationRule/>
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Aktualne wskazanie:" Width="120"/>
-                        <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                            <TextBox.Text>
-                                <Binding Path="GasMeterCurrentMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <Helpers:StringToDoubleValidationRule/>
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Różnica:" Width="120"/>
-                        <TextBlock Margin="5,0,0,0" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding GasMeterDiff}"/>
-                    </StackPanel>
-
-                    <ComboBox materialDesign:HintAssist.Hint="Licznik ciepłej wody użytkowej:" Margin="15,0,15,0"
-	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-                  IsEditable="True" DisplayMemberPath="Name" 
-            SelectedItem="{Binding WarmWaterMeterName}"  VerticalAlignment="Center" >
-                        <ComboBox.Text>
-                            <Binding Path="WarmWaterMeterValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                            </Binding>
-                        </ComboBox.Text>
-                        <ComboBox.ItemsSource>
-                            <Binding Path="MetersCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                            </Binding>
-                        </ComboBox.ItemsSource>
-                    </ComboBox>
-
-                    <Label Content="Licznik c.w.u.: " Margin="0,15,0,0" />
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Ostatnie wskazanie:" Width="120"/>
-                        <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                            <TextBox.Text>
-                                <Binding Path="WarmWaterMeterLastMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <Helpers:StringToDoubleValidationRule/>
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Aktualne wskazanie:" Width="120"/>
-                        <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                            <TextBox.Text>
-                                <Binding Path="WarmWaterMeterCurrentMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <Helpers:StringToDoubleValidationRule/>
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Różnica:" Width="120"/>
-                        <TextBlock Margin="5,0,0,0" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding WarmWaterMeterDiff}"/>
-                    </StackPanel>
-
-                    <StackPanel Visibility="{Binding IsGasSettlement}">
-                        <ComboBox materialDesign:HintAssist.Hint="Ciepłomierz:" Margin="15,0,15,0"
-	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-                  IsEditable="True" DisplayMemberPath="Name" 
-            SelectedItem="{Binding HeatMeterName}"  VerticalAlignment="Center" >
-                            <ComboBox.Text>
-                                <Binding Path="HeatMeterValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                </Binding>
-                            </ComboBox.Text>
-                            <ComboBox.ItemsSource>
-                                <Binding Path="MetersCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                                </Binding>
-                            </ComboBox.ItemsSource>
-                        </ComboBox>
-
-                        <Label Content="Ciepłomierz: " Margin="0,15,0,0" />
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Ostatnie wskazanie:" Width="120"/>
-                            <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                <TextBox.Text>
-                                    <Binding Path="HeatMeterLastMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                        <Binding.ValidationRules>
-                                            <Helpers:StringToDoubleValidationRule/>
-                                        </Binding.ValidationRules>
-                                    </Binding>
-                                </TextBox.Text>
-                            </TextBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Aktualne wskazanie:" Width="120"/>
-                            <TextBox Margin="5,0,0,0" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                <TextBox.Text>
-                                    <Binding Path="HeatMeterCurrentMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                        <Binding.ValidationRules>
-                                            <Helpers:StringToDoubleValidationRule/>
-                                        </Binding.ValidationRules>
-                                    </Binding>
-                                </TextBox.Text>
-                            </TextBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Różnica:" Width="120"/>
-                            <TextBlock Margin="5,0,0,0" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding HeatMeterDiff}"/>
-                        </StackPanel>
-                    </StackPanel>
-
-                    <DataGrid MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentGasMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Meter.Name}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
@@ -542,6 +339,17 @@
                     </DataGrid>
 
                     <StackPanel Orientation="Horizontal">
+
+                        <Label Content="{Binding MetersDiffSum}" ContentStringFormat="{}Suma wskazań w mieszkaniach ze zlegalizowanym licznikiem: {0}" Margin="15,0,0,0"/>
+
+                        <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding RefreshMeterDiffSum}" HorizontalAlignment="Center" DockPanel.Dock="Right">
+                            <ContentControl>
+                                <materialDesign:PackIcon Kind="Refresh" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            </ContentControl>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
                         <Label Content="Koszty stałe: "/>
                         <TextBox Margin="10,0,0,0">
                             <TextBox.Text>
@@ -559,15 +367,317 @@
                     <RadioButton IsChecked="{Binding Path=ConstantSettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_AREA}}" Content="Według powierzchni" Margin="10,0,0,0"/>
                     <RadioButton IsChecked="{Binding Path=ConstantSettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_APARTMENT}}" Content="Według lokali" Margin="10,5,0,0"/>
 
-                    
+                </StackPanel>
 
+                <StackPanel Visibility="{Binding IsPerGasSettlement}">
+                    <ComboBox materialDesign:HintAssist.Hint="Licznik gazu:" Margin="15,0,15,0"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+                  IsEditable="True" DisplayMemberPath="Name" 
+            SelectedItem="{Binding GasMeterName}"  VerticalAlignment="Center" >
+                        <ComboBox.Text>
+                            <Binding Path="GasMeterValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            </Binding>
+                        </ComboBox.Text>
+                        <ComboBox.ItemsSource>
+                            <Binding Path="MetersCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                            </Binding>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width=".7*"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width=".7*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Licznik gazu: " Margin="0,10,0,0" />
+                        <Label Content="Ostatnie wskazanie:" Width="120" Grid.Row="1"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1">
+                            <TextBox.Text>
+                                <Binding Path="GasMeterLastMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Aktualne wskazanie:" Width="120" Grid.Row="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="1">
+                            <TextBox.Text>
+                                <Binding Path="GasMeterCurrentMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Różnica:" Width="120" Grid.Row="3"/>
+                        <TextBlock Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding GasMeterDiff}" Grid.Row="3" Grid.Column="1"/>
+
+
+                        <Label Content="Mieszkania bez licznika: " Margin="0,10,0,0" Grid.Column="2"/>
+                        <Label Content="Stała opłata (zł):" Width="120" Grid.Row="1" Grid.Column="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="1">
+                            <TextBox.Text>
+                                <Binding Path="NoGasMeterConstantCharge" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Stałe naliczenie (j.):" Width="120" Grid.Row="2" Grid.Column="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="3" >
+                            <TextBox.Text>
+                                <Binding Path="NoGasMeterConstantAdjustment" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Nalicz niedobór:" Width="120" Grid.Row="3" Grid.Column="2" />
+                        <ToggleButton Grid.Column="3" Grid.Row="3"
+                  Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
+                  ToolTip="MaterialDesignSwitchDarkToggleButton"
+                  IsChecked="{Binding ChargeGasDeficit}" />
+                    </Grid>
+
+                    <ComboBox materialDesign:HintAssist.Hint="Licznik ciepłej wody użytkowej:" Margin="15,0,15,0"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+                  IsEditable="True" DisplayMemberPath="Name" 
+            SelectedItem="{Binding WarmWaterMeterName}"  VerticalAlignment="Center" >
+                        <ComboBox.Text>
+                            <Binding Path="WarmWaterMeterValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            </Binding>
+                        </ComboBox.Text>
+                        <ComboBox.ItemsSource>
+                            <Binding Path="MetersCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                            </Binding>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width=".7*"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width=".7*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Licznik c.w.u: " Margin="0,10,0,0" />
+                        <Label Content="Ostatnie wskazanie:" Width="120" Grid.Row="1"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1">
+                            <TextBox.Text>
+                                <Binding Path="HeatWaterMeterLastMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Aktualne wskazanie:" Width="120" Grid.Row="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="1">
+                            <TextBox.Text>
+                                <Binding Path="HeatWaterMeterCurrentMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Różnica:" Width="120" Grid.Row="3"/>
+                        <TextBlock Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding HeatWaterMeterDiff}" Grid.Row="3" Grid.Column="1"/>
+
+
+                        <Label Content="Mieszkania bez licznika: " Margin="0,10,0,0" Grid.Column="2"/>
+                        <Label Content="Stała opłata (zł):" Width="120" Grid.Row="1" Grid.Column="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="1">
+                            <TextBox.Text>
+                                <Binding Path="HeatMeterConstantCharge" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Stałe naliczenie (j.):" Width="120" Grid.Row="2" Grid.Column="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="3" >
+                            <TextBox.Text>
+                                <Binding Path="HeatMeterMeterConstantAdjustment" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Nalicz niedobór:" Width="120" Grid.Row="3" Grid.Column="2" />
+                        <ToggleButton Grid.Column="3" Grid.Row="3"
+                  Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
+                  ToolTip="MaterialDesignSwitchDarkToggleButton"
+                  IsChecked="{Binding ChargeHeatMeterDeficit}" />
+                    </Grid>
+
+                    <StackPanel Visibility="{Binding IsGasSettlement}">
+                        <ComboBox materialDesign:HintAssist.Hint="Ciepłomierz:" Margin="15,0,15,0"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+                  IsEditable="True" DisplayMemberPath="Name" 
+            SelectedItem="{Binding HeatMeterName}"  VerticalAlignment="Center" >
+                            <ComboBox.Text>
+                                <Binding Path="HeatMeterValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                </Binding>
+                            </ComboBox.Text>
+                            <ComboBox.ItemsSource>
+                                <Binding Path="MetersCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                                </Binding>
+                            </ComboBox.ItemsSource>
+                        </ComboBox>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width=".7*"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width=".7*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Label Content="Ciepłomierz: " Margin="0,10,0,0" />
+                            <Label Content="Ostatnie wskazanie:" Width="120" Grid.Row="1"/>
+                            <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1">
+                                <TextBox.Text>
+                                    <Binding Path="HeatMeterLastMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:StringToDoubleValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Label Content="Aktualne wskazanie:" Width="120" Grid.Row="2"/>
+                            <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="1">
+                                <TextBox.Text>
+                                    <Binding Path="HeatMeterCurrentMeasure" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:StringToDoubleValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Label Content="Różnica:" Width="120" Grid.Row="3"/>
+                            <TextBlock Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding HeatMeterDiff}" Grid.Row="3" Grid.Column="1"/>
+
+
+                            <Label Content="Mieszkania bez licznika: " Margin="0,10,0,0" Grid.Column="2"/>
+                            <Label Content="Stała opłata (zł):" Width="120" Grid.Row="1" Grid.Column="2"/>
+                            <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="1">
+                                <TextBox.Text>
+                                    <Binding Path="NoHeatMeterConstantCharge" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:StringToDoubleValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Label Content="Stałe naliczenie (j.):" Width="120" Grid.Row="2" Grid.Column="2"/>
+                            <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="3" >
+                                <TextBox.Text>
+                                    <Binding Path="NoHeatMeterConstantAdjustment" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:StringToDoubleValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Label Content="Nalicz niedobór:" Width="120" Grid.Row="3" Grid.Column="2" />
+                            <ToggleButton Grid.Column="3" Grid.Row="3"
+                  Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
+                  ToolTip="MaterialDesignSwitchDarkToggleButton"
+                  IsChecked="{Binding ChargeHeatDeficit}" />
+                        </Grid>
+
+                        <DataGrid MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentGasMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Meter.Name}" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Ostatnie wskazanie" Binding="{Binding LastMeasure}" IsReadOnly="False"/>
+                                <DataGridTextColumn Header="Aktualne wskazanie" Binding="{Binding CurrentMeasure}" IsReadOnly="False"/>
+                                <DataGridTextColumn Header="Róznica wskazań" Binding="{Binding MeterDifference}" IsReadOnly="True" FontWeight="Bold">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Foreground" Value="{Binding MeterDifference, Converter={StaticResource DiffToBrushConverter}}"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                            <DataGrid.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                        <StackPanel Background="#87B04D" >
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding Path=Items, Converter={StaticResource FooterConverter}, ConverterParameter=ApartmentNumber, StringFormat={}Mieszkanie nr {0}}" Margin="10,0,0,0" Height="25" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
+                                                                <TextBlock Text="{Binding Path=Items, Converter={StaticResource FooterConverter}, ConverterParameter=Owner, StringFormat={}\, właściciel: {0}}" Height="25" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
+                                                            </StackPanel>
+                                                            <ItemsPresenter />
+                                                        </StackPanel>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </DataGrid.GroupStyle>
+                        </DataGrid>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Koszty stałe: "/>
+                            <TextBox Margin="10,0,0,0">
+                                <TextBox.Text>
+                                    <Binding Path="ConstantPeriod" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:StringToDoubleValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Label Content="%"/>
+                            <Label Content="{Binding VariablePeriod}" ContentStringFormat="Koszty zmienne: {0}%" Margin="10,0,0,0" />
+                        </StackPanel>
+                        <Label Content="Sposób rozliczania:" HorizontalAlignment="Left" Margin="15,0,0,5"/>
+                        <RadioButton IsChecked="{Binding Path=ConstantSettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_AREA}}" Content="Według powierzchni" Margin="10,0,0,0"/>
+                        <RadioButton IsChecked="{Binding Path=ConstantSettlementMethod, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static Helpers:SettlementMethodsEnum.PER_APARTMENT}}" Content="Według lokali" Margin="10,5,0,0"/>
+
+
+
+                    </StackPanel>
+
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Podsumowanie" Command="{Binding SettlementSummary}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
+
+
+                </StackPanel>
             </StackPanel>
-            
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Podsumowanie" Command="{Binding SettlementSummary}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
-                
-
-        </StackPanel>
-            
-    </Grid>
+        </Grid>
     </ScrollViewer>
 </UserControl>
