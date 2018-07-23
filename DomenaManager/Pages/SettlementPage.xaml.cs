@@ -333,6 +333,60 @@ namespace DomenaManager.Pages
 
         public string SelectedMeterValue { get; set; }
 
+        private MeterType _gasMeterName;
+        public MeterType GasMeterName
+        {
+            get { return _gasMeterName; }
+            set
+            {
+                if (value != _gasMeterName)
+                {
+                    _gasMeterName = value;
+                    OnPropertyChanged("GasMeterName");
+                    InitializeGasApartmentMetersCollection();
+                    InitializeGasMeter();
+                }
+            }
+        }
+
+        public string GasMeterValue { get; set; }
+
+        private MeterType _warmWaterMeterName;
+        public MeterType WarmWaterMeterName
+        {
+            get { return _warmWaterMeterName; }
+            set
+            {
+                if (value != _warmWaterMeterName)
+                {
+                    _warmWaterMeterName = value;
+                    OnPropertyChanged("WarmWaterMeterName");
+                    InitializeGasApartmentMetersCollection();
+                    InitializeWarmWaterMeter();
+                }
+            }
+        }
+
+        public string WarmWaterMeterValue { get; set; }
+
+        private MeterType _heatMeterName;
+        public MeterType HeatMeterName
+        {
+            get { return _heatMeterName; }
+            set
+            {
+                if (value != _heatMeterName)
+                {
+                    _heatMeterName = value;
+                    OnPropertyChanged("HeatMeterName");
+                    InitializeGasApartmentMetersCollection();
+                    InitializeHeatMeter();
+                }
+            }
+        }
+
+        public string HeatMeterValue { get; set; }
+
         private ObservableCollection<ApartamentMeterDataGrid> _apartmentMetersCollection;
         public ObservableCollection<ApartamentMeterDataGrid> ApartmentMetersCollection
         {
@@ -345,7 +399,22 @@ namespace DomenaManager.Pages
                     OnPropertyChanged("ApartmentMetersCollection");
                 }
             }
+        }        
+
+        private ObservableCollection<ApartamentMeterDataGrid> _apartmentGasMetersCollection;
+        public ObservableCollection<ApartamentMeterDataGrid> ApartmentGasMetersCollection
+        {
+            get { return _apartmentGasMetersCollection; }
+            set
+            {
+                if (value != _apartmentGasMetersCollection)
+                {
+                    _apartmentGasMetersCollection = value;
+                    OnPropertyChanged("ApartmentGasMetersCollection");
+                }
+            }
         }
+        
 
         public ObservableCollection<Apartment> ApartmentCollection;
 
@@ -361,6 +430,34 @@ namespace DomenaManager.Pages
                 {
                     _metersDiffSum = value;
                     OnPropertyChanged("MetersDiffSum");
+                }
+            }
+        }
+
+        private double _gasMetersDiffSum;
+        public double WarmWaterDiffSum
+        {
+            get { return _gasMetersDiffSum; }
+            set
+            {
+                if (value != _gasMetersDiffSum)
+                {
+                    _gasMetersDiffSum = value;
+                    OnPropertyChanged("WarmWaterDiffSum");
+                }
+            }
+        }
+
+        private double _heatMetersDiffSum;
+        public double HeatMetersDiffSum
+        {
+            get { return _heatMetersDiffSum; }
+            set
+            {
+                if (value != _heatMetersDiffSum)
+                {
+                    _heatMetersDiffSum = value;
+                    OnPropertyChanged("HeatMetersDiffSum");
                 }
             }
         }
@@ -453,6 +550,213 @@ namespace DomenaManager.Pages
                 return  MeterCurrentMeasure - MeterLastMeasure;
             }
             set { return; }
+        }
+
+        private double _gasMeterLastMeasure;
+        public double GasMeterLastMeasure
+        {
+            get { return _gasMeterLastMeasure; }
+            set
+            {
+                _gasMeterLastMeasure = value;
+                OnPropertyChanged("GasMeterLastMeasure");
+                OnPropertyChanged("GasMeterDiff");
+            }
+        }
+
+        private double _gasMeterCurrentMeasure;
+        public double GasMeterCurrentMeasure
+        {
+            get { return _gasMeterCurrentMeasure; }
+            set
+            {
+                _gasMeterCurrentMeasure = value;
+                OnPropertyChanged("GasMeterCurrentMeasure");
+                OnPropertyChanged("GasMeterDiff");
+            }
+        }
+
+        private double _noGasMeterConstantCharge;
+        public double NoGasMeterConstantCharge
+        {
+            get { return _noGasMeterConstantCharge; }
+            set
+            {
+                _noGasMeterConstantCharge = value;
+                OnPropertyChanged("NoGasMeterConstantCharge");
+            }
+        }
+
+        private double _noGasMeterConstantAdjustment;
+        public double NoGasMeterConstantAdjustment
+        {
+            get { return _noGasMeterConstantAdjustment; }
+            set
+            {
+                _noGasMeterConstantAdjustment = value;
+                OnPropertyChanged("NoGasMeterConstantAdjustment");
+            }
+        }
+
+        public double GasMeterDiff
+        {
+            get { return GasMeterCurrentMeasure - GasMeterLastMeasure; }
+            set
+            {
+                return;
+            }
+        }
+
+        private double _heatWaterMeterLastMeasure;
+        public double HeatWaterMeterLastMeasure
+        {
+            get { return _heatWaterMeterLastMeasure; }
+            set
+            {
+                _heatWaterMeterLastMeasure = value;
+                OnPropertyChanged("HeatWaterMeterLastMeasure");
+                OnPropertyChanged("HeatWaterMeterDiff");
+            }
+        }
+
+        private double _heatWaterMeterCurrentMeasure;
+        public double HeatWaterMeterCurrentMeasure
+        {
+            get { return _heatWaterMeterCurrentMeasure; }
+            set
+            {
+                _heatWaterMeterCurrentMeasure = value;
+                OnPropertyChanged("HeatWaterMeterCurrentMeasure");
+                OnPropertyChanged("HeatWaterMeterDiff");
+            }
+        }
+                
+        public double HeatWaterMeterDiff
+        {
+            get { return HeatWaterMeterCurrentMeasure - HeatWaterMeterLastMeasure; }
+            set
+            {
+                return;
+            }
+        }
+
+        private double _heatMeterConstantCharge;
+        public double HeatMeterConstantCharge
+        {
+            get { return _heatMeterConstantCharge; }
+            set
+            {
+                _heatMeterConstantCharge = value;
+                OnPropertyChanged("HeatMeterConstantCharge");
+            }
+        }
+
+        private double _heatMeterMeterConstantAdjustment;
+        public double HeatMeterMeterConstantAdjustment
+        {
+            get { return _heatMeterMeterConstantAdjustment; }
+            set
+            {
+                _heatMeterMeterConstantAdjustment = value;
+                OnPropertyChanged("HeatMeterMeterConstantAdjustment");
+            }
+        }
+
+        private double _heatMeterLastMeasure;
+        public double HeatMeterLastMeasure
+        {
+            get { return _heatMeterLastMeasure; }
+            set
+            {
+                _heatMeterLastMeasure = value;
+                OnPropertyChanged("HeatMeterLastMeasure");
+                OnPropertyChanged("HeatMeterDiff");
+            }
+        }
+
+        private double _heatMeterCurrentMeasure;
+        public double HeatMeterCurrentMeasure
+        {
+            get { return _heatMeterCurrentMeasure; }
+            set
+            {
+                _heatMeterCurrentMeasure = value;
+                OnPropertyChanged("HeatMeterCurrentMeasure");
+                OnPropertyChanged("HeatMeterDiff");
+            }
+        }
+
+        public double HeatMeterDiff
+        {
+            get { return HeatMeterCurrentMeasure - HeatMeterLastMeasure; }
+            set
+            {
+                return;
+            }
+        }
+
+        private double _noHeatMeterConstantCharge;
+        public double NoHeatMeterConstantCharge
+        {
+            get { return _noHeatMeterConstantCharge; }
+            set
+            {
+                _noHeatMeterConstantCharge = value;
+                OnPropertyChanged("NoHeatMeterConstantCharge");
+            }
+        }
+
+        private double _noHeatMeterConstantAdjustment;
+        public double NoHeatMeterConstantAdjustment
+        {
+            get { return _noHeatMeterConstantAdjustment; }
+            set
+            {
+                _noHeatMeterConstantAdjustment = value;
+                OnPropertyChanged("NoHeatMeterConstantAdjustment");
+            }
+        }
+
+        private bool _chargeGasDeficit;
+        public bool ChargeGasDeficit
+        {
+            get { return _chargeGasDeficit; }
+            set
+            {
+                if (value != _chargeGasDeficit)
+                {
+                    _chargeGasDeficit = value;
+                    OnPropertyChanged("ChargeGasDeficit");
+                }
+            }
+        }
+
+        private bool _chargeHeatMeterDeficit;
+        public bool ChargeHeatMeterDeficit
+        {
+            get { return _chargeHeatMeterDeficit; }
+            set
+            {
+                if (value != _chargeHeatMeterDeficit)
+                {
+                    _chargeHeatMeterDeficit = value;
+                    OnPropertyChanged("ChargeHeatMeterDeficit");
+                }
+            }
+        }
+
+        private bool _chargeHeatDeficit;
+        public bool ChargeHeatDeficit
+        {
+            get { return _chargeHeatDeficit; }
+            set
+            {
+                if (value != _chargeHeatDeficit)
+                {
+                    _chargeHeatDeficit = value;
+                    OnPropertyChanged("ChargeHeatDeficit");
+                }
+            }
         }
 
         public ICommand RefreshMeterDiffSum
@@ -595,19 +899,109 @@ namespace DomenaManager.Pages
             ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(ApartmentMetersCollection);
             cv.GroupDescriptions.Clear();
             cv.GroupDescriptions.Add(new PropertyGroupDescription(""));
-            
+
+        }
+
+        private void InitializeGasApartmentMetersCollection()
+        {
+            if (ApartmentGasMetersCollection == null)
+            {
+                ApartmentGasMetersCollection = new ObservableCollection<ApartamentMeterDataGrid>();
+            }
+            else
+            {
+                ApartmentGasMetersCollection.Clear();
+            }
+            if (WarmWaterMeterName != null && HeatMeterName != null && GasMeterName != null && SelectedBuildingName != null)
+            {
+                foreach (var ap in ApartmentCollection.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId)))
+                {
+                    var meter = ap.MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(WarmWaterMeterName.MeterId));
+                    if (meter != null)
+                    {
+                        ApartmentGasMetersCollection.Add(new ApartamentMeterDataGrid()
+                        {
+                            ApartmentO = ap,
+                            CurrentMeasure = meter.LastMeasure,
+                            LastMeasure = meter.LastMeasure,
+                            Meter = WarmWaterMeterName,
+                            IsMeterLegalized = meter.LegalizationDate > DateTime.Today ? true : false,
+                            OwnerO = OwnerCollection.FirstOrDefault(x => x.OwnerId.Equals(ap.OwnerId))
+                        });
+                    }
+
+                    meter = ap.MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(HeatMeterName.MeterId));
+                    if (meter != null)
+                    {
+                        ApartmentGasMetersCollection.Add(new ApartamentMeterDataGrid()
+                        {
+                            ApartmentO = ap,
+                            CurrentMeasure = meter.LastMeasure,
+                            LastMeasure = meter.LastMeasure,
+                            Meter = HeatMeterName,
+                            IsMeterLegalized = meter.LegalizationDate > DateTime.Today ? true : false,
+                            OwnerO = OwnerCollection.FirstOrDefault(x => x.OwnerId.Equals(ap.OwnerId))
+                        });
+                    }
+
+                    /*meter = ap.MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(GasMeterName.MeterId));
+                    if (meter != null)
+                    {
+                        ApartmentGasMetersCollection.Add(new ApartamentMeterDataGrid()
+                        {
+                            ApartmentO = ap,
+                            CurrentMeasure = meter.LastMeasure,
+                            LastMeasure = meter.LastMeasure,
+                            Meter = GasMeterName,
+                            IsMeterLegalized = meter.LegalizationDate > DateTime.Today ? true : false,
+                            OwnerO = OwnerCollection.FirstOrDefault(x => x.OwnerId.Equals(ap.OwnerId))
+                        });
+                    }*/
+                }
+            }
+
+            ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(ApartmentGasMetersCollection);
+            cv.GroupDescriptions.Clear();
+            cv.GroupDescriptions.Add(new PropertyGroupDescription("ApartmentO.ApartmentId"));
+
         }
 
         private void RefreshMeters(object param)
         {
-            MetersDiffSum = 0;
-            if (ApartmentMetersCollection != null)
+            if (SettlementMethod == SettlementMethodsEnum.PER_METERS)
             {
-                foreach (var a in ApartmentMetersCollection)
+                MetersDiffSum = 0;
+                if (ApartmentMetersCollection != null)
                 {
-                    MetersDiffSum += (a.CurrentMeasure - a.LastMeasure);
-                }
+                    foreach (var a in ApartmentMetersCollection)
+                    {
+                        if (a.IsMeterLegalized)
+                            MetersDiffSum += (a.CurrentMeasure - a.LastMeasure);
+                    }
 
+                }
+            }
+            else if (SettlementMethod == SettlementMethodsEnum.GAS)
+            {
+                WarmWaterDiffSum = 0;
+                HeatMetersDiffSum = 0;
+                if (ApartmentGasMetersCollection != null && GasMeterName != null && HeatMeterName != null)
+                {
+                    foreach (var a in ApartmentGasMetersCollection)
+                    {
+                        if (a.IsMeterLegalized)
+                        {
+                            if (a.Meter.MeterId.Equals(WarmWaterMeterName.MeterId))
+                            {
+                                WarmWaterDiffSum += (a.CurrentMeasure - a.LastMeasure);
+                            }
+                            else if (a.Meter.MeterId.Equals(HeatMeterName.MeterId))
+                            {
+                                HeatMetersDiffSum += (a.CurrentMeasure - a.LastMeasure);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -619,7 +1013,34 @@ namespace DomenaManager.Pages
                 MeterCurrentMeasure = SelectedMeterName.LastMeasure;
             }
         }
-            
+
+        private void InitializeGasMeter()
+        {
+            if (SelectedBuildingName != null && GasMeterName != null)
+            {
+                GasMeterLastMeasure = GasMeterName.LastMeasure;
+                GasMeterCurrentMeasure = GasMeterName.LastMeasure;
+            }
+        }
+
+        private void InitializeWarmWaterMeter()
+        {
+            if (SelectedBuildingName != null && WarmWaterMeterName != null)
+            {
+                HeatWaterMeterLastMeasure = WarmWaterMeterName.LastMeasure;
+                HeatWaterMeterCurrentMeasure = WarmWaterMeterName.LastMeasure;
+            }
+        }
+
+        private void InitializeHeatMeter()
+        {
+            if (SelectedBuildingName != null && HeatMeterName != null)
+            {
+                HeatMeterLastMeasure = HeatMeterName.LastMeasure;
+                HeatMeterCurrentMeasure = HeatMeterName.LastMeasure;
+            }
+        }
+
 
         private bool CanRefreshMeters()
         {

@@ -239,7 +239,10 @@
                 </DataGrid.GroupStyle>
             </DataGrid>
         </Grid>
-        <TextBlock Text="{Binding TotalSum, StringFormat={}Suma opłat stałych oraz zmiennych: {0} }" Margin="15,0,0,0" HorizontalAlignment="Center"/>
+        <TextBlock Text="{Binding TotalSum, StringFormat={}Suma opłat stałych oraz zmiennych: {0} }" Visibility="{Binding IsSettlementPerMeter}" Margin="15,0,0,0" HorizontalAlignment="Center"/>
+        
+        
+        
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Wstecz" Command="{Binding SettlementBack}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
             <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Rozlicz" Command="{Binding SettlementProceed}"  Margin="10" DockPanel.Dock="Left" Width="200"/>

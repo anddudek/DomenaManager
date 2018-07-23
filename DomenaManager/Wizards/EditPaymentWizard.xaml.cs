@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using LibDataModel;
+using System.Data.Entity;
 using MaterialDesignThemes.Wpf;
 using DomenaManager.Helpers;
 
@@ -53,6 +54,8 @@ namespace DomenaManager.Wizards
 
         private ObservableCollection<Owner> _ownersOC { get; set; }
 
+        private ObservableCollection<Charge> _chargesOC { get; set; }
+
         private ObservableCollection<Apartment> _apartmentsNumbers;
         public ObservableCollection<Apartment> ApartmentsNumbers
         {
@@ -82,6 +85,8 @@ namespace DomenaManager.Wizards
                     {
                         OwnerMailAddress = _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().OwnerName + Environment.NewLine;
                         OwnerMailAddress += SelectedApartmentNumber.CorrespondenceAddress == null ? _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().MailAddress : SelectedApartmentNumber.CorrespondenceAddress;
+                        var charge = _chargesOC.Where(x => x.ApartmentId.Equals(SelectedApartmentNumber.ApartmentId)).OrderByDescending(x => x.ChargeDate).FirstOrDefault();
+                        LastChargeAmount = charge != null ? charge.Components.Sum(x => x.Sum).ToString() + " zł" : "brak";
                     }
                 }
             }
@@ -106,8 +111,7 @@ namespace DomenaManager.Wizards
 
         public string SelectedBuildingValue { get; set; }
 
-        private string _paymentAmount;
-        
+        private string _paymentAmount;        
         public string PaymentAmount
         {
             get { return _paymentAmount; }
@@ -117,6 +121,20 @@ namespace DomenaManager.Wizards
                 {
                     _paymentAmount = value;
                     OnPropertyChanged("PaymentAmount");
+                }
+            }
+        }
+
+        private string _lastChargeAmount;
+        public string LastChargeAmount
+        {
+            get { return _lastChargeAmount; }
+            set
+            {
+                if (value != _lastChargeAmount)
+                {
+                    _lastChargeAmount = value;
+                    OnPropertyChanged("LastChargeAmount");
                 }
             }
         }
@@ -196,6 +214,7 @@ namespace DomenaManager.Wizards
                 BuildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
                 _apartmentsOC = new ObservableCollection<Apartment>(db.Apartments.ToList());
                 _ownersOC = new ObservableCollection<Owner>(db.Owners.ToList());
+                _chargesOC = new ObservableCollection<Charge>(db.Charges.Include(x => x.Components).Where(x => !x.IsDeleted).ToList());
             }
         }
 

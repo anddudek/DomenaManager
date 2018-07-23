@@ -27,6 +27,17 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="HighlightRow" TargetType="{x:Type DataGridRow}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" Value="Nie">
+                    <Setter Property="Background" >
+                        <Setter.Value> 
+                            <SolidColorBrush Color="Red" Opacity="0.75" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" Background="White">
@@ -301,7 +312,7 @@
                   IsChecked="{Binding ChargeDeficit}" />
                     </Grid>
 
-                    <DataGrid Visibility="{Binding IsPerMetersSettlement}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
+                    <DataGrid Visibility="{Binding IsPerMetersSettlement}" RowStyle="{StaticResource HighlightRow}" MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Meter.Name}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
@@ -422,7 +433,7 @@
                         <Label Content="Różnica:" Width="120" Grid.Row="3"/>
                         <TextBlock Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding GasMeterDiff}" Grid.Row="3" Grid.Column="1"/>
 
-
+<!--
                         <Label Content="Mieszkania bez licznika: " Margin="0,10,0,0" Grid.Column="2"/>
                         <Label Content="Stała opłata (zł):" Width="120" Grid.Row="1" Grid.Column="2"/>
                         <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="1">
@@ -443,12 +454,32 @@
                                     </Binding.ValidationRules>
                                 </Binding>
                             </TextBox.Text>
-                        </TextBox>
-                        <Label Content="Nalicz niedobór:" Width="120" Grid.Row="3" Grid.Column="2" />
-                        <ToggleButton Grid.Column="3" Grid.Row="3"
+                        </TextBox>-->
+                        <Label Content="Wylicz automatycznie:" HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="2" />
+                        <ToggleButton Grid.Column="3" Grid.Row="0" VerticalAlignment="Bottom"
                   Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
                   ToolTip="MaterialDesignSwitchDarkToggleButton"
-                  IsChecked="{Binding ChargeGasDeficit}" />
+                  IsChecked="{Binding GasUnitCostAuto}" />
+                        <Label Content="Koszt 1m3 gazu (zł):" Width="120" Grid.Row="1" Grid.Column="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="1">
+                            <TextBox.Text>
+                                <Binding Path="GasUnitCost" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Content="Ilość m3 gazu do podgrzania 1m3 wody:" Grid.Row="2" Grid.Column="2"/>
+                        <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="2">
+                            <TextBox.Text>
+                                <Binding Path="GasNeededToHeatWater" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:StringToDoubleValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                     </Grid>
 
                     <ComboBox materialDesign:HintAssist.Hint="Licznik ciepłej wody użytkowej:" Margin="15,0,15,0"
@@ -614,7 +645,7 @@
                   IsChecked="{Binding ChargeHeatDeficit}" />
                         </Grid>
 
-                        <DataGrid MinHeight="100" Margin="10" ItemsSource="{Binding ApartmentGasMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
+                        <DataGrid MinHeight="100" Margin="10" RowStyle="{StaticResource HighlightRow}" ItemsSource="{Binding ApartmentGasMetersCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Nazwa licznika" Binding="{Binding Meter.Name}" IsReadOnly="True"/>
                                 <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
@@ -650,6 +681,18 @@
                                 </GroupStyle>
                             </DataGrid.GroupStyle>
                         </DataGrid>
+
+                        <StackPanel Orientation="Horizontal">
+
+                            <Label Content="{Binding HeatMetersDiffSum}" ContentStringFormat="{}Suma wskazań ciepłomierzy: {0}" Margin="15,0,0,0"/>
+                            <Label Content="{Binding WarmWaterDiffSum}" ContentStringFormat="{}Suma wskazań liczników c.w.u.: {0}" Margin="5,0,0,0"/>
+
+                            <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding RefreshMeterDiffSum}" HorizontalAlignment="Center" DockPanel.Dock="Right">
+                                <ContentControl>
+                                    <materialDesign:PackIcon Kind="Refresh" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                </ContentControl>
+                            </Button>
+                        </StackPanel>
 
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Koszty stałe: "/>
