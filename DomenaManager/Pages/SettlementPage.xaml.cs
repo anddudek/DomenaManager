@@ -640,25 +640,25 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _heatMeterConstantCharge;
-        public double HeatMeterConstantCharge
+        private double _heatWaterConstantCharge;
+        public double HeatWaterConstantCharge
         {
-            get { return _heatMeterConstantCharge; }
+            get { return _heatWaterConstantCharge; }
             set
             {
-                _heatMeterConstantCharge = value;
-                OnPropertyChanged("HeatMeterConstantCharge");
+                _heatWaterConstantCharge = value;
+                OnPropertyChanged("HeatWaterConstantCharge");
             }
         }
 
-        private double _heatMeterMeterConstantAdjustment;
-        public double HeatMeterMeterConstantAdjustment
+        private double _heatWaterConstantAdjustment;
+        public double HeatWaterConstantAdjustment
         {
-            get { return _heatMeterMeterConstantAdjustment; }
+            get { return _heatWaterConstantAdjustment; }
             set
             {
-                _heatMeterMeterConstantAdjustment = value;
-                OnPropertyChanged("HeatMeterMeterConstantAdjustment");
+                _heatWaterConstantAdjustment = value;
+                OnPropertyChanged("HeatWaterConstantAdjustment");
             }
         }
 
@@ -756,6 +756,42 @@ namespace DomenaManager.Pages
                     _chargeHeatDeficit = value;
                     OnPropertyChanged("ChargeHeatDeficit");
                 }
+            }
+        }
+
+        private bool _gasUnitCostAuto;
+        public bool GasUnitCostAuto
+        {
+            get { return _gasUnitCostAuto; }
+            set
+            {
+                if (value != _gasUnitCostAuto)
+                {
+                    _gasUnitCostAuto = value;
+                    OnPropertyChanged("GasUnitCostAuto");
+                }
+            }
+        }
+
+        private double _gasUnitCost;
+        public double GasUnitCost
+        {
+            get { return _gasUnitCost; }
+            set
+            {
+                _gasUnitCost = value;
+                OnPropertyChanged("GasUnitCost");
+            }
+        }
+
+        private double _gasNeededToHeatWater;
+        public double GasNeededToHeatWater
+        {
+            get { return _gasNeededToHeatWater; }
+            set
+            {
+                _gasNeededToHeatWater = value;
+                OnPropertyChanged("GasNeededToHeatWater");
             }
         }
 

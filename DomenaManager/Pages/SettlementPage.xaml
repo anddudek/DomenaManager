@@ -539,7 +539,7 @@
                         <Label Content="Stała opłata (zł):" Width="120" Grid.Row="1" Grid.Column="2"/>
                         <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="1">
                             <TextBox.Text>
-                                <Binding Path="HeatMeterConstantCharge" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="HeatWaterConstantCharge" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
                                         <Helpers:StringToDoubleValidationRule/>
                                     </Binding.ValidationRules>
@@ -549,7 +549,7 @@
                         <Label Content="Stałe naliczenie (j.):" Width="120" Grid.Row="2" Grid.Column="2"/>
                         <TextBox Margin="5,0,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="3" >
                             <TextBox.Text>
-                                <Binding Path="HeatMeterMeterConstantAdjustment" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="HeatWaterConstantAdjustment" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                     <Binding.ValidationRules>
                                         <Helpers:StringToDoubleValidationRule/>
                                     </Binding.ValidationRules>
@@ -560,10 +560,10 @@
                         <ToggleButton Grid.Column="3" Grid.Row="3"
                   Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
                   ToolTip="MaterialDesignSwitchDarkToggleButton"
-                  IsChecked="{Binding ChargeHeatMeterDeficit}" />
+                  IsChecked="{Binding ChargeHeatWaterDeficit}" />
                     </Grid>
 
-                    <StackPanel Visibility="{Binding IsGasSettlement}">
+                    <StackPanel Visibility="{Binding IsPerGasSettlement}">
                         <ComboBox materialDesign:HintAssist.Hint="Ciepłomierz:" Margin="15,0,15,0"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
                   IsEditable="True" DisplayMemberPath="Name" 

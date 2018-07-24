@@ -482,6 +482,32 @@ namespace DomenaManager.Pages
                 cv.GroupDescriptions.Clear();
                 cv.GroupDescriptions.Add(new PropertyGroupDescription(""));
             }
+
+            if (_settlementPage.SettlementMethod == SettlementMethodsEnum.GAS)
+            {
+                var GJsum = _settlementPage.ApartmentGasMetersCollection.Where(x => x.IsMeterLegalized && x.Meter.MeterId.Equals(_settlementPage.HeatMeterName.MeterId)).Select(x => x.MeterDifference).DefaultIfEmpty(0).Sum();
+                var warmWaterCubicMeterSum = _settlementPage.ApartmentGasMetersCollection.Where(x => x.IsMeterLegalized && x.Meter.MeterId.Equals(_settlementPage.WarmWaterMeterName.MeterId)).Select(x => x.MeterDifference).DefaultIfEmpty(0).Sum();
+
+                var notValidHeatMetersCount = _settlementPage.ApartmentGasMetersCollection.Where(x => !x.IsMeterLegalized && x.Meter.MeterId.Equals(_settlementPage.HeatMeterName.MeterId)).Count();
+                var notValidWarmWaterMetersCount = _settlementPage.ApartmentGasMetersCollection.Where(x => !x.IsMeterLegalized && x.Meter.MeterId.Equals(_settlementPage.WarmWaterMeterName.MeterId)).Count();
+
+                var adjustedInvoiceSum = InvoiceSum - (notValidHeatMetersCount * _settlementPage.NoHeatMeterConstantCharge + notValidWarmWaterMetersCount * _settlementPage.HeatWaterConstantCharge);
+                
+                double gasCubicMeterCost;
+                if (_settlementPage.GasUnitCostAuto && _settlementPage.GasMeterDiff != 0)
+                {
+                    gasCubicMeterCost = adjustedInvoiceSum / _settlementPage.GasMeterDiff;
+                }
+                else
+                {
+                    gasCubicMeterCost = _settlementPage.GasUnitCost;
+                }
+
+                var waterHeatCost = gasCubicMeterCost * _settlementPage.GasNeededToHeatWater;
+                var waterHeatTotalCost = waterHeatCost * warmWaterCubicMeterSum;
+                var heatTotalCost = adjustedInvoiceSum - waterHeatTotalCost;
+
+            }
         }
 
         private void PerformSettlement(object param)
