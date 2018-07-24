@@ -560,7 +560,7 @@
                         <ToggleButton Grid.Column="3" Grid.Row="3"
                   Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
                   ToolTip="MaterialDesignSwitchDarkToggleButton"
-                  IsChecked="{Binding ChargeHeatWaterDeficit}" />
+                  IsChecked="{Binding ChargeHeatMeterDeficit}" Height="26" VerticalAlignment="Bottom" />
                     </Grid>
 
                     <StackPanel Visibility="{Binding IsPerGasSettlement}">

@@ -8,7 +8,7 @@
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:dd="urn:gong-wpf-dragdrop"
       mc:Ignorable="d"
-      d:DesignHeight="1400" d:DesignWidth="600" Background="White">
+      d:DesignHeight="2200" d:DesignWidth="600" Background="White">
     <UserControl.Resources>
         <Helpers:DiffToBrushConverter x:Key="DiffToBrushConverter" />
         <Helpers:MetersGroupHeaderConverter x:Key="FooterConverter"/>
@@ -26,7 +26,9 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <StackPanel Margin="10">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="10">
         <TextBlock Text="Rozliczenie roczne" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14"/>
         <Grid Visibility="{Binding IsSettlementPerApartment}" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
@@ -240,12 +242,121 @@
             </DataGrid>
         </Grid>
         <TextBlock Text="{Binding TotalSum, StringFormat={}Suma opłat stałych oraz zmiennych: {0} }" Visibility="{Binding IsSettlementPerMeter}" Margin="15,0,0,0" HorizontalAlignment="Center"/>
-        
-        
-        
+
+        <Grid Visibility="{Binding IsSettlementPerGas}" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Wybrana forma rozliczenia - c.o. / ciepła woda" Grid.ColumnSpan="2" Margin="0,10,0,10" FontWeight="DemiBold"/>
+            <TextBlock Grid.Row="1" Text="Budynek: " Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="1" Text="{Binding SelectedBuilding}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="2" Text="Łączna kwota z faktur:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="2" Text="{Binding InvoiceSum, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="3" Text="Koszt 1m3 gazu:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="3" Text="{Binding GasUnitCost}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="4" Text="Ilość lokali w budynku:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="4" Text="{Binding ApartmentsAmount}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="5" Text="Całkowita powierzchnia:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="5" Text="{Binding BuildingAreaSum, StringFormat={}{0} m2}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="6" Text="Kwota na 1 m2 / lokal (koszty stałe - c.o.):" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="6" Text="{Binding GJSettlePerSquareMeter, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="7" Text="Kwota na 1 m2 / lokal (koszty stałe - woda ciepła):" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="7" Text="{Binding WarmWaterSettlePerSquareMeter, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="8" Text="Suma różnic wskazań liczników ciepła w mieszkaniach:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="8" Text="{Binding ApartmentGJMeterDiffSum}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="9" Text="Suma różnic wskazań liczników wody ciepłej w mieszkaniach:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="9" Text="{Binding ApartmentHeatWaterMeterDiffSum}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="10" Text="Kwota na 1 jednostkę licznika (koszty zmienne - c.o.):" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="10" Text="{Binding GJSettlePerMeter, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="11" Text="Kwota na 1 jednostkę licznika (koszty zmienne - woda ciepła):" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="11" Text="{Binding WarmWaterSettlePerMeter, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="12" Text="Kwota rozliczana jako:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="12" Text="{Binding SettlementCattegory}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="13" Text="Opłata stała dla mieszkań bez licznika ciepła:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="13" Text="{Binding GJConstantCharge, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="14" Text="Naliczenie stałe dla mieszkań bez licznika ciepła:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="14" Text="{Binding GJConstantAdjustment, StringFormat={}{0} jedn.}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="15" Text="Podział deficytu na mieszkania bez licznika ciepła:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="15" Text="{Helpers:SwitchBinding IsGJDeficitShared, Tak, Nie}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="16" Text="Opłata stała dla mieszkań bez licznika wody ciepłej:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="16" Text="{Binding WarmWaterConstantCharge, StringFormat={}{0} zł}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="17" Text="Naliczenie stałe dla mieszkań bez licznika wody ciepłej:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="17" Text="{Binding WarmWaterConstantAdjustment, StringFormat={}{0} jedn.}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="18" Text="Podział deficytu na mieszkania bez licznika wody ciepłej:" Margin="0,10,0,10"/>
+            <TextBlock Grid.Row="18" Text="{Helpers:SwitchBinding IsWarmWaterDeficitShared, Tak, Nie}" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <DataGrid Grid.Row="19" Grid.ColumnSpan="2" MinHeight="100" Margin="10" ItemsSource="{Binding PerGasCollection}" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Licznik zlegalizowany" Binding="{Helpers:SwitchBinding IsMeterLegalized, Tak, Nie}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Różnica wskazań" Binding="{Binding MeterDifference}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Opłaty zmienne" Binding="{Binding VariableCost, StringFormat={}{0} zł}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Powierzchnia" Binding="{Binding SettleArea, StringFormat={}{0} m2}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Opłaty stałe" Binding="{Binding ConstantCost, StringFormat={}{0} zł}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Naliczenie" Binding="{Binding CostSettled, StringFormat={}{0} zł}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Zaliczki" Binding="{Binding Charge, StringFormat={}{0} zł}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Saldo" Binding="{Binding Saldo, StringFormat={}{0} zł}" IsReadOnly="True" FontWeight="Bold">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding Saldo, Converter={StaticResource DiffToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+                <DataGrid.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                            <StackPanel Background="#87B04D" >
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Path=Items, Converter={StaticResource FooterConverter}, ConverterParameter=ApartmentNumber, StringFormat={}Mieszkanie nr {0}}" Margin="10,0,0,0" Height="25" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
+                                                    <TextBlock Text="{Binding Path=Items, Converter={StaticResource FooterConverter}, ConverterParameter=Owner, StringFormat={}\, właściciel: {0}}" Height="25" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
+                                                </StackPanel>
+                                                <ItemsPresenter />
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+            </DataGrid>
+        </Grid>
+        <TextBlock Text="{Binding TotalGJSum, StringFormat={}Suma opłat stałych oraz zmiennych - c.o.: {0} }" Visibility="{Binding IsSettlementPerGas}" Margin="15,0,0,0" HorizontalAlignment="Center"/>
+        <TextBlock Text="{Binding TotalWarmWaterCubicMeterSum, StringFormat={}Suma opłat stałych oraz zmiennych - woda ciepła: {0} }" Visibility="{Binding IsSettlementPerGas}" Margin="15,0,0,0" HorizontalAlignment="Center"/>
+        <TextBlock Text="{Binding TotalSum, StringFormat={}Suma opłat stałych oraz zmiennych - łącznie: {0} }" Visibility="{Binding IsSettlementPerGas}" Margin="15,0,0,0" HorizontalAlignment="Center"/>
+
+
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Wstecz" Command="{Binding SettlementBack}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
             <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Rozlicz" Command="{Binding SettlementProceed}"  Margin="10" DockPanel.Dock="Left" Width="200"/>
         </StackPanel>
     </StackPanel>
+    </ScrollViewer>
 </UserControl>
