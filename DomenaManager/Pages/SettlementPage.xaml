@@ -169,7 +169,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <StackPanel>
-                        <Label Content="Rozliczane:" Margin="5,0,0,0"/>
+                        <Label Content="Rozliczane (nie dotyczy rozliczania gazu):" Margin="5,0,0,0"/>
                         <DataGrid ItemsSource="{Binding SettleChargeCategories}" AutoGenerateColumns="False" IsReadOnly="True" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"
                                   dd:DragDrop.IsDragSource="True" MinHeight="200" MinWidth="250" Margin="10,0,15,5" BorderThickness="1" BorderBrush="Gray"
                                   dd:DragDrop.IsDropTarget="True" Width="{Binding Path=ActualWidth, ElementName=SettledInvoicesDG}">
@@ -496,6 +496,19 @@
                         </ComboBox.ItemsSource>
                     </ComboBox>
 
+                    <ComboBox materialDesign:HintAssist.Hint="Kategoria zaliczek za ciepłą wodę:" Margin="15,0,15,0"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" DisplayMemberPath="CategoryName" ItemsSource="{Binding AllChargeCategories}"
+            SelectedItem="{Binding WarmWaterChargeCategoryName}"  VerticalAlignment="Center" >
+                        <ComboBox.Text>
+                            <Binding Path="WarmWaterChargeCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <Helpers:EmptyStringValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </ComboBox.Text>
+                    </ComboBox>
+
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -576,6 +589,20 @@
                                 <Binding Path="MetersCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
                                 </Binding>
                             </ComboBox.ItemsSource>
+                        </ComboBox>
+
+
+                        <ComboBox materialDesign:HintAssist.Hint="Kategoria zaliczek za c.o.:" Margin="15,0,15,0"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" DisplayMemberPath="CategoryName" ItemsSource="{Binding AllChargeCategories}"
+            SelectedItem="{Binding HeatChargeCategoryName}"  VerticalAlignment="Center" >
+                            <ComboBox.Text>
+                                <Binding Path="HeatChargeCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <Helpers:EmptyStringValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </ComboBox.Text>
                         </ComboBox>
 
                         <Grid>

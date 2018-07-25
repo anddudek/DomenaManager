@@ -206,7 +206,9 @@ namespace DomenaManager.Pages
                 }
             }
         }
-        
+
+        public ObservableCollection<BuildingChargeBasisCategory> AllChargeCategories { get; set; }
+
         private ObservableCollection<BuildingChargeBasisCategory> _availableChargeCategories;
         public ObservableCollection<BuildingChargeBasisCategory> AvailableChargeCategories
         {
@@ -220,6 +222,38 @@ namespace DomenaManager.Pages
                 }
             }
         }
+
+        private BuildingChargeBasisCategory _warmWaterChargeCategoryName;
+        public BuildingChargeBasisCategory WarmWaterChargeCategoryName
+        {
+            get { return _warmWaterChargeCategoryName; }
+            set
+            {
+                if (value != _warmWaterChargeCategoryName)
+                {
+                    _warmWaterChargeCategoryName = value;
+                    OnPropertyChanged("WarmWaterChargeCategoryName");
+                }
+            }
+        }
+
+        public string WarmWaterChargeCategoryValue { get; set; }
+
+        private BuildingChargeBasisCategory _heatChargeCategoryName;
+        public BuildingChargeBasisCategory HeatChargeCategoryName
+        {
+            get { return _heatChargeCategoryName; }
+            set
+            {
+                if (value != _heatChargeCategoryName)
+                {
+                    _heatChargeCategoryName = value;
+                    OnPropertyChanged("HeatChargeCategoryName");
+                }
+            }
+        }
+
+        public string HeatChargeCategoryValue { get; set; }
 
         public string SelectedChargeCategoryValue { get; set; }
         
@@ -885,11 +919,13 @@ namespace DomenaManager.Pages
                 {
                     SettleChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>();
                     AvailableChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories);
+                    AllChargeCategories= new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories);
                 }
                 else
                 {
                     SettleChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
                     AvailableChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => !x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
+                    AllChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => !x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
                 }
             }
         }
