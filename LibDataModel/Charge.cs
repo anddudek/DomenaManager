@@ -18,5 +18,6 @@ namespace LibDataModel
         public bool IsClosed { get; set; }
         public List<ChargeComponent> Components { get; set; }
         public bool IsDeleted { get; set; }
+        public Guid AutoChargeId { get; set; }
     }
 }

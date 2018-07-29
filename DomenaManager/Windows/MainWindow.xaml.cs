@@ -96,17 +96,10 @@ namespace DomenaManager.Windows
             InitializeComponent();
 
             SwitchPage("Buildings");
-
-
-            using (var db = new DB.DomenaDBContext())
-            {
-                string name = @"C:/DomenaManager/Backup/DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
-                if (!System.IO.File.Exists(name))
-                {
-                    //string cmd = String.Format("BACKUP DATABASE {0} TO DISK = '{1}'", "DBDomena", name);
-                    //int backup = db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, cmd);
-                }
-            }
+            
+            BackupDb();
+                        
+            PerformCharge();
         }
 
         public void SwitchPage(object PageName)
@@ -163,6 +156,28 @@ namespace DomenaManager.Windows
         {
             return true;
         }
+
+        private void BackupDb()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                string name = @"C:/DomenaManager/Backup/DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
+                if (!System.IO.File.Exists(name))
+                {
+                    //string cmd = String.Format("BACKUP DATABASE {0} TO DISK = '{1}'", "DBDomena", name);
+                    //int backup = db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, cmd);
+                }
+            }
+        }
+
+        private async void PerformCharge()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                var doAutoCharge = await YNMsg.Show("Wykryto nowy miesiąc. Czy utworzyć naliczenia zgodnie z aktualnymi danymi?");
+            }
+        }
+
 
         private async void EditCostCategories(object obj)
         {

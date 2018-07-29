@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApartmentMeter.cs" />
+    <Compile Include="AutoCharge.cs" />
     <Compile Include="BindingParent.cs" />
     <Compile Include="Charge.cs" />
     <Compile Include="ChargeComponent.cs" />

@@ -449,7 +449,35 @@ namespace DomenaManager.Pages
                 }
             }
         }
-        
+
+        private double _warmWaterCost;
+        public double WarmWaterCost
+        {
+            get { return _warmWaterCost; }
+            set
+            {
+                if (value != _warmWaterCost)
+                {
+                    _warmWaterCost = value;
+                    OnPropertyChanged("WarmWaterCost");
+                }
+            }
+        }
+
+        private double _COCost;
+        public double COCost
+        {
+            get { return _COCost; }
+            set
+            {
+                if (value != _COCost)
+                {
+                    _COCost = value;
+                    OnPropertyChanged("COCost");
+                }
+            }
+        }
+
         public double ConstantCharge
         {
             get { return _settlementPage.NoMeterConstantCharge; }
@@ -748,24 +776,41 @@ namespace DomenaManager.Pages
                 var adjustedInvoiceSum = InvoiceSum - (notValidHeatMetersCount * _settlementPage.NoHeatMeterConstantCharge + notValidWarmWaterMetersCount * _settlementPage.HeatWaterConstantCharge);
                 var adjustedGJsum = GJsum + (notValidHeatMetersCount * _settlementPage.NoHeatMeterConstantAdjustment);
                 var adjustedWarmMeterCubicMeterSum = warmWaterCubicMeterSum + (notValidWarmWaterMetersCount * _settlementPage.HeatWaterConstantAdjustment);
-                
+                if (warmWaterCubicMeterSum == 0)
+                {
+                    warmWaterCubicMeterSum = adjustedWarmMeterCubicMeterSum;
+                }
                 
                 if (_settlementPage.GasUnitCostAuto && _settlementPage.GasMeterDiff != 0)
                 {
-                    GasUnitCost = _settlementPage.GasUnitCost;
+                    GasUnitCost = adjustedInvoiceSum / _settlementPage.GasMeterDiff;
                 }
                 else
                 {
-                    GasUnitCost = adjustedInvoiceSum / _settlementPage.GasMeterDiff;
+                    double gasUnitC;
+                    double.TryParse(_settlementPage.GasUnitCost, out gasUnitC);
+                    GasUnitCost = GasUnitCost;
                 }
 
+                var valueToDivideGJ = _settlementPage.HeatMeterDiff == 0 ? adjustedGJsum : Math.Min(_settlementPage.HeatMeterDiff, adjustedGJsum);
 
                 var waterHeatCost = GasUnitCost * _settlementPage.GasNeededToHeatWater;
-                var waterHeatTotalCost = waterHeatCost * warmWaterCubicMeterSum;
-                var heatTotalCost = adjustedInvoiceSum - waterHeatTotalCost;
+                var waterHeatTotalCost = waterHeatCost * _settlementPage.HeatWaterMeterDiff;
+                WarmWaterCost = waterHeatTotalCost;
+                var heatTotalCost = InvoiceSum - waterHeatTotalCost;
+                COCost = heatTotalCost;
 
-                double GJunitCost = Math.Ceiling(100 * ((_settlementPage.VariablePeriod / 100) * heatTotalCost) / Math.Min(GJsum, adjustedGJsum)) / 100;
-                double warmWaterCubicMeterUnitCost = Math.Ceiling(100 * ((_settlementPage.VariablePeriod / 100) * waterHeatTotalCost) / Math.Min(warmWaterCubicMeterSum, adjustedWarmMeterCubicMeterSum)) / 100;
+                // Do adjusted dodać deficity jezeli rozlicane i min z głownego i adjusted)
+                var valueToDivideWarmWater = _settlementPage.HeatWaterMeterDiff;
+                if (!IsWarmWaterDeficitShared)
+                {
+                    valueToDivideWarmWater = Math.Min(_settlementPage.HeatWaterMeterDiff, adjustedWarmMeterCubicMeterSum);
+                }
+
+                var heatTotalCostAdjusted = heatTotalCost - (notValidHeatMetersCount * _settlementPage.NoHeatMeterConstantCharge);
+                double GJunitCost = Math.Ceiling(100 * ((_settlementPage.VariablePeriod / 100) * heatTotalCostAdjusted) / valueToDivideGJ) / 100;
+                var waterHeatTotalCostAdjusted = waterHeatTotalCost - (notValidWarmWaterMetersCount * _settlementPage.HeatWaterConstantCharge);
+                double warmWaterCubicMeterUnitCost = Math.Ceiling(100 * ((_settlementPage.VariablePeriod / 100) * waterHeatTotalCostAdjusted) / valueToDivideWarmWater) / 100;
 
                 GJSettlePerMeter = GJunitCost;
                 WarmWaterSettlePerMeter = warmWaterCubicMeterUnitCost;
@@ -784,55 +829,125 @@ namespace DomenaManager.Pages
                 }
                 GJSettlePerSquareMeter = GJconstantCost;
                 WarmWaterSettlePerSquareMeter = warmWaterConstantCost;
+                                
+                double warmWaterDeficitPerApartment = 0;
+                if (_settlementPage.ChargeHeatMeterDeficit)
+                {
+                    if (_settlementPage.HeatWaterMeterDiff > ApartmentHeatWaterMeterDiffSum)
+                    {
+                        warmWaterDeficitPerApartment = (_settlementPage.HeatWaterMeterDiff - adjustedWarmMeterCubicMeterSum) / notValidWarmWaterMetersCount;
+                    }
+                }
+
+                double GJDeficitPerApartment = 0;
+                if (_settlementPage.ChargeHeatDeficit)
+                {
+                    if (_settlementPage.HeatMeterDiff > ApartmentGJMeterDiffSum)
+                    {
+                        GJDeficitPerApartment = (_settlementPage.HeatMeterDiff - adjustedGJsum) / notValidHeatMetersCount;
+                    }
+                }
 
                 PerGasCollection = new ObservableCollection<ApartamentMeterDataGrid>();
 
                 foreach (var a in ap)
                 {
-                    var selectedAmdg = _settlementPage.ApartmentMetersCollection.FirstOrDefault(x => x.ApartmentO.ApartmentId.Equals(a.ApartmentId));
+                    var selectedAmdgs = _settlementPage.ApartmentGasMetersCollection.Where(x => x.ApartmentO.ApartmentId.Equals(a.ApartmentId));
 
+                    //Warm water
+
+                    var amdg = selectedAmdgs.FirstOrDefault(x => x.Meter.MeterId.Equals(_settlementPage.WarmWaterMeterName.MeterId));
+                    
                     double chargeAmount = 0;
                     var c = Charges.Where(x => x.ApartmentId.Equals(a.ApartmentId) && x.ChargeDate >= _settlementPage.SettlementFrom && x.ChargeDate <= _settlementPage.SettlementTo);
                     foreach (var cc in c)
                     {
-                        chargeAmount += cc.Components.Where(y => _settlementPage.SettleChargeCategories.Any(x => x.BuildingChargeBasisCategoryId.Equals(y.CostCategoryId))).Select(x => x.Sum).DefaultIfEmpty(0).Sum();
+                        chargeAmount += cc.Components.Where(y => _settlementPage.WarmWaterChargeCategoryName.Equals(y.CostCategoryId)).Select(x => x.Sum).DefaultIfEmpty(0).Sum();
                     }
 
-                    // Zaliczki na ciepłą wode i zaliczki na CO osobno trzeba !! + naliczenia + dodać footer z podsumowaniem
-                    /*
                     var amd = new ApartamentMeterDataGrid()
                     {
-                        LastMeasure = selectedAmdg.LastMeasure,
-                        CurrentMeasure = selectedAmdg.CurrentMeasure,
-                        IsMeterLegalized = selectedAmdg.IsMeterLegalized,
+                        Meter = amdg.Meter,
+                        LastMeasure = amdg.LastMeasure,
+                        CurrentMeasure = amdg.CurrentMeasure,
+                        IsMeterLegalized = amdg.IsMeterLegalized,
                         ApartmentO = a,
                         Charge = chargeAmount,
                         OwnerO = Owners.FirstOrDefault(x => x.OwnerId.Equals(a.OwnerId)),
                         SettleArea = a.ApartmentArea + a.AdditionalArea,
                     };
 
-                    var costSett = Math.Ceiling((amd.MeterDifference * SettlePerMeter) * 100) / 100;
+                    var costSett = Math.Ceiling((amd.MeterDifference * WarmWaterSettlePerMeter) * 100) / 100;
                     if (!amd.IsMeterLegalized)
                     {
                         amd.LastMeasure = 0;
-                        amd.CurrentMeasure = (_settlementPage.NoMeterConstantAdjustment + deficitPerApartment);
-                        costSett = Math.Ceiling((amd.MeterDifference * SettlePerMeter) * 100) / 100;
-                        costSett += _settlementPage.NoMeterConstantCharge;
+                        amd.CurrentMeasure = (WarmWaterConstantAdjustment + warmWaterDeficitPerApartment);
+                        costSett = Math.Ceiling((amd.MeterDifference * WarmWaterSettlePerMeter) * 100) / 100;
+                        costSett += WarmWaterConstantCharge;
                     }
                     amd.VariableCost = costSett;
                     amd.Saldo = chargeAmount - costSett;
 
                     if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_AREA)
                     {
-                        amd.ConstantCost = SettlePerSquareMeter * (amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea);
+                        amd.ConstantCost = WarmWaterSettlePerSquareMeter * (amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea);
                     }
                     else
                     {
-                        amd.ConstantCost = SettlePerSquareMeter;
+                        amd.ConstantCost = WarmWaterSettlePerSquareMeter;
                     }
                     amd.CostSettled = amd.VariableCost + amd.ConstantCost;
-                    PerMetersCollection.Add(amd); */
+                    TotalWarmWaterCubicMeterSum += amd.CostSettled;
+                    PerGasCollection.Add(amd);
+
+                    // GJ
+                    amdg = selectedAmdgs.FirstOrDefault(x => x.Meter.MeterId.Equals(_settlementPage.HeatMeterName.MeterId));
+
+                    chargeAmount = 0;
+                    c = Charges.Where(x => x.ApartmentId.Equals(a.ApartmentId) && x.ChargeDate >= _settlementPage.SettlementFrom && x.ChargeDate <= _settlementPage.SettlementTo);
+                    foreach (var cc in c)
+                    {
+                        chargeAmount += cc.Components.Where(y => _settlementPage.HeatChargeCategoryName.Equals(y.CostCategoryId)).Select(x => x.Sum).DefaultIfEmpty(0).Sum();
+                    }
+
+                    amd = new ApartamentMeterDataGrid()
+                    {
+                        Meter = amdg.Meter,
+                        LastMeasure = amdg.LastMeasure,
+                        CurrentMeasure = amdg.CurrentMeasure,
+                        IsMeterLegalized = amdg.IsMeterLegalized,
+                        ApartmentO = a,
+                        Charge = chargeAmount,
+                        OwnerO = Owners.FirstOrDefault(x => x.OwnerId.Equals(a.OwnerId)),
+                        SettleArea = a.ApartmentArea + a.AdditionalArea,
+                    };
+
+                    costSett = Math.Ceiling((amd.MeterDifference * GJSettlePerMeter) * 100) / 100;
+                    if (!amd.IsMeterLegalized)
+                    {
+                        amd.LastMeasure = 0;
+                        amd.CurrentMeasure = (GJConstantAdjustment + GJDeficitPerApartment);
+                        costSett = Math.Ceiling((amd.MeterDifference * GJSettlePerMeter) * 100) / 100;
+                        costSett += GJConstantCharge;
+                    }
+                    amd.VariableCost = costSett;
+                    amd.Saldo = chargeAmount - costSett;
+
+                    if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_AREA)
+                    {
+                        amd.ConstantCost = GJSettlePerSquareMeter * (amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea);
+                    }
+                    else
+                    {
+                        amd.ConstantCost = GJSettlePerSquareMeter;
+                    }
+                    amd.CostSettled = amd.VariableCost + amd.ConstantCost;
+                    TotalGJSum += amd.CostSettled;
+                    PerGasCollection.Add(amd);
+                    //  dodać footer z podsumowaniem  
+
                 }
+                TotalSum = TotalGJSum + TotalWarmWaterCubicMeterSum;
 
                 ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(PerGasCollection);
                 cv.GroupDescriptions.Clear();

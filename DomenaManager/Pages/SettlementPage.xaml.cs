@@ -207,7 +207,19 @@ namespace DomenaManager.Pages
             }
         }
 
-        public ObservableCollection<BuildingChargeBasisCategory> AllChargeCategories { get; set; }
+        private ObservableCollection<BuildingChargeBasisCategory> _allChargeCategories;
+        public ObservableCollection<BuildingChargeBasisCategory> AllChargeCategories
+        {
+            get { return _allChargeCategories; }
+            set
+            {
+                if (value != _allChargeCategories)
+                {
+                    _allChargeCategories = value;
+                    OnPropertyChanged("AllChargeCategories");
+                }
+            }
+        }
 
         private ObservableCollection<BuildingChargeBasisCategory> _availableChargeCategories;
         public ObservableCollection<BuildingChargeBasisCategory> AvailableChargeCategories
@@ -807,8 +819,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _gasUnitCost;
-        public double GasUnitCost
+        private string _gasUnitCost;
+        public string GasUnitCost
         {
             get { return _gasUnitCost; }
             set
@@ -818,7 +830,7 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _gasNeededToHeatWater;
+        private double _gasNeededToHeatWater = 10;
         public double GasNeededToHeatWater
         {
             get { return _gasNeededToHeatWater; }
@@ -908,6 +920,8 @@ namespace DomenaManager.Pages
                 {
                     ChargeCategories.Add(AllCategories.FirstOrDefault(x => x.BuildingChargeBasisCategoryId.Equals(cc)));
                 }
+
+                AllChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories);
             }
         }
 
@@ -919,13 +933,11 @@ namespace DomenaManager.Pages
                 {
                     SettleChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>();
                     AvailableChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories);
-                    AllChargeCategories= new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories);
                 }
                 else
                 {
                     SettleChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
                     AvailableChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => !x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
-                    AllChargeCategories = new ObservableCollection<BuildingChargeBasisCategory>(ChargeCategories.Where(x => !x.BuildingChargeBasisCategoryId.Equals(SelectedChargeCategoryName.BuildingChargeBasisCategoryId)));
                 }
             }
         }
@@ -984,7 +996,7 @@ namespace DomenaManager.Pages
             {
                 ApartmentGasMetersCollection.Clear();
             }
-            if (WarmWaterMeterName != null && HeatMeterName != null && GasMeterName != null && SelectedBuildingName != null)
+            if (WarmWaterMeterName != null && HeatMeterName != null && SelectedBuildingName != null)
             {
                 foreach (var ap in ApartmentCollection.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId)))
                 {

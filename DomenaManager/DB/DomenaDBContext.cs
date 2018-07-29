@@ -27,5 +27,6 @@ namespace DomenaManager.DB
         public DbSet<Payment> Payments { get; set; }
         public DbSet<BindingParent> Bindings { get; set; }        
         public DbSet<Settlement> Settlements { get; set; }
+        public DbSet<AutoCharge> AutoCharges { get; set; }
     }
 }
