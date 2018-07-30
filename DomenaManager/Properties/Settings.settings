@@ -9,5 +9,11 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source=.\SQLEXPRESS;InitialCatalog=DomenaDB;Integrated Security=True</Value>
     </Setting>
+    <Setting Name="LastDBBackupCreation" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">2018-07-09</Value>
+    </Setting>
+    <Setting Name="DBCreationDaySpan" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">7</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

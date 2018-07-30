@@ -96,10 +96,14 @@ namespace DomenaManager.Windows
             InitializeComponent();
 
             SwitchPage("Buildings");
-            
-            BackupDb();
-                        
-            PerformCharge();
+
+            var LastBackupDate = Properties.Settings.Default.LastDBBackupCreation;
+            if (LastBackupDate.AddDays(Properties.Settings.Default.DBCreationDaySpan) < DateTime.Today)
+            {
+                BackupDb();
+            }
+
+            CanPerformCharge();
         }
 
         public void SwitchPage(object PageName)
@@ -164,20 +168,51 @@ namespace DomenaManager.Windows
                 string name = @"C:/DomenaManager/Backup/DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
                 if (!System.IO.File.Exists(name))
                 {
-                    //string cmd = String.Format("BACKUP DATABASE {0} TO DISK = '{1}'", "DBDomena", name);
-                    //int backup = db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, cmd);
+                    string cmd = String.Format("BACKUP DATABASE {0} TO DISK = '{1}'", "DBDomena", name);
+                    int backup = db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, cmd);
+                    Properties.Settings.Default.LastDBBackupCreation = DateTime.Now;
+                    Properties.Settings.Default.Save();
                 }
             }
         }
 
-        private async void PerformCharge()
+        private async void CanPerformCharge()
         {
             using (var db = new DB.DomenaDBContext())
             {
-                var doAutoCharge = await YNMsg.Show("Wykryto nowy miesiąc. Czy utworzyć naliczenia zgodnie z aktualnymi danymi?");
+                var lastChargeDate = db.AutoCharges.OrderByDescending(x => x.AutoChargeDate).FirstOrDefault();
+                if (lastChargeDate != null)
+                {
+                    var currIterDate = new DateTime(lastChargeDate.AutoChargeDate.Year, lastChargeDate.AutoChargeDate.Month, 1).AddMonths(1);
+                    while (currIterDate <= new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1))
+                    {
+                        //if (await YNMsg.Show("Wykryto nowy miesiąc. Czy utworzyć naliczenia zgodnie z aktualnymi danymi?"))
+                        //{
+                            PerformCharge(currIterDate);
+                        currIterDate = currIterDate.AddMonths(1);
+                        //}
+                    }
+                }
+                else
+                {
+                    //if (await YNMsg.Show("Wykryto nowy miesiąc. Czy utworzyć naliczenia zgodnie z aktualnymi danymi?"))
+                    //{
+                        PerformCharge(new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1));
+                    //}
+                }
             }
         }
 
+        private void PerformCharge(DateTime chargeDate)
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                var autoCharge = new LibDataModel.AutoCharge() { AutChargeId = Guid.NewGuid(), AutoChargeDate = chargeDate };
+                ChargesOperations.GenerateCharges(chargeDate, autoCharge.AutChargeId);
+                db.AutoCharges.Add(autoCharge);
+                db.SaveChanges();
+            }
+        }
 
         private async void EditCostCategories(object obj)
         {

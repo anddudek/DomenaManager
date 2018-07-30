@@ -10,18 +10,18 @@ namespace DomenaManager.Helpers
 {
     public static class ChargesOperations
     {
-        public static void GenerateCharges(object param)
+        public static void GenerateCharges(DateTime chargeDate, Guid autoChargeId)
         {
             using (var db = new DB.DomenaDBContext())
             {
                 var q = db.Buildings.Include(b => b.CostCollection);
-                foreach (var a in db.Apartments.Where(x => q.Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count > 0))
+                foreach (var a in db.Apartments.Where(x => !x.IsDeleted && q.Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count > 0))
                 {
-                    var c = new Charge() { ApartmentId = a.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, ChargeDate = DateTime.Today, CreatedDate=DateTime.Today, SettlementId=Guid.Empty };
+                    var c = new Charge() { ApartmentId = a.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, ChargeDate = chargeDate, CreatedDate=DateTime.Today, SettlementId=Guid.Empty, AutoChargeId=autoChargeId };
                     c.Components = new List<ChargeComponent>();
                     foreach (var costCollection in db.Buildings.Include(b => b.CostCollection).Where(x => x.BuildingId.Equals(a.BuildingId)).FirstOrDefault().CostCollection)
                     {
-                        if (costCollection.BegginingDate < DateTime.Today || costCollection.EndingDate > DateTime.Today)
+                        if (costCollection.BegginingDate > chargeDate || (costCollection.EndingDate.Year > 1901 && costCollection.EndingDate < chargeDate))
                         {
                             continue;
                         }

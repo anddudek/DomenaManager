@@ -32,5 +32,29 @@ namespace DomenaManager.Properties {
                 return ((string)(this["LocalDB"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2018-07-09")]
+        public global::System.DateTime LastDBBackupCreation {
+            get {
+                return ((global::System.DateTime)(this["LastDBBackupCreation"]));
+            }
+            set {
+                this["LastDBBackupCreation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7")]
+        public int DBCreationDaySpan {
+            get {
+                return ((int)(this["DBCreationDaySpan"]));
+            }
+            set {
+                this["DBCreationDaySpan"] = value;
+            }
+        }
     }
 }

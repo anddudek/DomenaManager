@@ -78,6 +78,29 @@ namespace DomenaManager.Pages
             }
         }
 
+        private bool _groupByBinding;
+        public bool GroupByBinding
+        {
+            get { return _groupByBinding; }
+            set
+            {
+                if (value != _groupByBinding)
+                {
+                    ICollectionView cvApartments = (CollectionView)CollectionViewSource.GetDefaultView(Apartments);
+                    if (value)
+                    {
+                        cvApartments.GroupDescriptions.Add(new PropertyGroupDescription("ApartmentBinding"));
+                    }
+                    else
+                    {
+                        cvApartments.GroupDescriptions.Remove(cvApartments.GroupDescriptions.Cast<PropertyGroupDescription>().Where(x => x.PropertyName == "ApartmentBinding").FirstOrDefault());
+                    }
+                    _groupByBinding = value;
+                    OnPropertyChanged("GroupByBinding");
+                }
+            }
+        }
+
         private bool _groupByOwner;
         public bool GroupByOwner
         {
@@ -237,6 +260,7 @@ namespace DomenaManager.Pages
                 {
                     var a = new ApartmentDataGrid
                     {
+                        ApartmentBinding = apar.BindingParent,
                         BuildingName = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().Name,
                         BulidingAddress = db.Buildings.Where(x => x.BuildingId == apar.BuildingId).FirstOrDefault().GetAddress(),
                         ApartmentId = apar.ApartmentId,

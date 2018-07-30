@@ -250,7 +250,7 @@ namespace DomenaManager.Pages
         private void AddBinding(object obj)
         {
             IsEditMode = true;
-            ApartmentBinding newBind = new ApartmentBinding() { BindingId = Guid.NewGuid(), Name = "Nowa grupa" };
+            ApartmentBinding newBind = new ApartmentBinding() { BindingId = Guid.NewGuid(), Name = "Nowa grupa", BoundApartments = new ObservableCollection<BindingDataGrid>() };
             BindingsList.Add(newBind);
             SelectedBinding = newBind;
         }
