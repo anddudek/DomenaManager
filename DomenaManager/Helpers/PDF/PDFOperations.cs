@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
+using MigraDoc.Rendering;
 
 namespace DomenaManager.Helpers
 {
@@ -98,6 +99,13 @@ namespace DomenaManager.Helpers
 
             docRenderer.RenderObject(gfx, XUnit.FromCentimeter(1.5), XUnit.FromCentimeter(8.5), "12cm", paragraph);
             gfx.Dispose();
-        }        
+
+            PdfDocumentRenderer renderer = new PdfDocumentRenderer(true, PdfSharp.Pdf.PdfFontEmbedding.Always);
+            renderer.Document = doc;
+            renderer.RenderDocument();
+            // Save the document...
+            string filename = "HelloMigraDoc.pdf";
+            renderer.PdfDocument.Save(filename);
+            }        
     }
 }

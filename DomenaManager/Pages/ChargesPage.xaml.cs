@@ -463,6 +463,7 @@ namespace DomenaManager.Pages
             var page = doc.Pages[0];
             PDFOperations.AddTitle(page, "Naliczenie z dnia: " + SelectedCharge.ChargeDate.ToString("dd-MM-yyyy"));
             PDFOperations.AddChargeTable(page, SelectedCharge);
+
             doc.Save("test.pdf");
             
         }
