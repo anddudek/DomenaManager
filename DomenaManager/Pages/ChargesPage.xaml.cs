@@ -27,6 +27,9 @@ using PdfSharp;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Shapes;
+using MigraDoc.Rendering;
 
 namespace DomenaManager.Pages
 {
@@ -459,13 +462,23 @@ namespace DomenaManager.Pages
 
         private void PreparePdf(object param)
         {
-            PdfDocument doc = PDFOperations.CreateTemplate();
-            var page = doc.Pages[0];
-            PDFOperations.AddTitle(page, "Naliczenie z dnia: " + SelectedCharge.ChargeDate.ToString("dd-MM-yyyy"));
-            PDFOperations.AddChargeTable(page, SelectedCharge);
+            /*Document doc = PDFOperations.CreateTemplate();
+            PDFOperations.AddTitle(doc, "Naliczenie z dnia: " + SelectedCharge.ChargeDate.ToString("dd-MM-yyyy"));
+            PDFOperations.AddChargeTable(doc, SelectedCharge);*/
 
-            doc.Save("test.pdf");
-            
+            //PDFOperations.PrepareSingleChargeReport(SelectedCharge);
+            if (SelectedChargesList.Count > 1)
+            {
+                foreach (var sc in SelectedChargesList)
+                {
+                    PDFOperations.PrepareSingleChargeReport((ChargeDataGrid)sc, true);
+                }
+            }
+            else if (SelectedCharge != null)
+            {
+                PDFOperations.PrepareSingleChargeReport(SelectedCharge, false);
+            }
+            //doc.Save("test.pdf");
         }
 
         private void ClearFilter(object param)

@@ -115,12 +115,15 @@ namespace DomenaManager.Pages
                     _selectedApartmentNumber = value;                    
                     OnPropertyChanged("SelectedApartmentNumber");
                     if (_selectedApartmentNumber != null)
-                    {
-                        SelectedOwner = OwnersList.FirstOrDefault(x => x.OwnerId.Equals(_selectedApartmentNumber.OwnerId)).OwnerName;
+                    {                        
+                        owner = OwnersList.FirstOrDefault(x => x.OwnerId.Equals(_selectedApartmentNumber.OwnerId));
+                        SelectedOwner = owner.OwnerName;
                     }
                 }
             }
         }
+
+        private Owner owner { get; set; }
 
         private string _selectedOwner;
         public string SelectedOwner
@@ -166,6 +169,11 @@ namespace DomenaManager.Pages
         public ICommand NextYearCommand
         {
             get { return new RelayCommand(SwitchNextYear, CanSwitchYear); }
+        }
+
+        public ICommand SaveToPdfCommand
+        {
+            get { return new RelayCommand(ExportPDF, CanExportPDF); }
         }
 
         public SummaryPage()
@@ -309,6 +317,18 @@ namespace DomenaManager.Pages
             int y;
             bool tp = int.TryParse(SelectedYear, out y);
             return SelectedBuildingName != null && SelectedApartmentNumber != null && tp && y > 2000 && y <= DateTime.Now.Year;
+        }
+
+        private void ExportPDF(object param)
+        {
+            int y;
+            if (int.TryParse(SelectedYear, out y))
+                PDFOperations.PrepareSingleYearSummary(SummaryDG, y, SelectedApartmentNumber, owner, SelectedBuildingName, true);
+        }
+
+        private bool CanExportPDF()
+        {
+            return SummaryDG != null;
         }
 
         private void SwitchPreviousYear(object param)
