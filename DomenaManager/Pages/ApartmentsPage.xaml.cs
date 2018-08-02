@@ -67,6 +67,7 @@ namespace DomenaManager.Pages
                     if (value)
                     {
                         cvApartments.GroupDescriptions.Add(new PropertyGroupDescription("BuildingName"));
+                        GroupByBinding = false;
                     }
                     else
                     {
@@ -90,6 +91,7 @@ namespace DomenaManager.Pages
                     if (value)
                     {
                         cvApartments.GroupDescriptions.Add(new PropertyGroupDescription("ApartmentBinding"));
+                        GroupByBuilding = false;
                     }
                     else
                     {
@@ -170,6 +172,8 @@ namespace DomenaManager.Pages
             }
         }
 
+        public List<BindingParent> BindingsList { get; set; }
+
         public ICommand FilterCommand
         {
             get
@@ -247,6 +251,7 @@ namespace DomenaManager.Pages
             Apartments = new ObservableCollection<ApartmentDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
+                BindingsList = db.Bindings.ToList();
                 var q = db.Apartments.Where(x => x.IsDeleted == false);
                 InitializeApartments(q);
             }

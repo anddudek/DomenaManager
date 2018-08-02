@@ -117,7 +117,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\Converter\GuidToBindingNameConverter.cs" />
     <Compile Include="Helpers\Converter\GasSettlementFooterConverter.cs" />
+    <Compile Include="Helpers\Converter\GuidToBindingNameMultiConverter.cs" />
     <Compile Include="Helpers\Converter\SaldoToBrushConverter.cs" />
     <Compile Include="Helpers\Converter\DiffToBrushConverter.cs" />
     <Compile Include="Helpers\Converter\MetersGroupHeaderConverter.cs" />

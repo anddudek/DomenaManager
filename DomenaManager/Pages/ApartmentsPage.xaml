@@ -15,6 +15,8 @@
     <UserControl.Resources>
         <hlp:SumConverter x:Key="SumConverter"/>
         <hlp:BuildingsFooterConverter x:Key="footerConverter" />
+        <hlp:GuidToBindingNameConverter x:Key="guidConverter" />
+        <CollectionViewSource Source="{Binding BindingsList}" x:Key="bindingsListCVS" />
     </UserControl.Resources>
     
     <materialDesign:DrawerHost x:Name="DH"
@@ -208,7 +210,7 @@
                                                 <Expander IsExpanded="True" Background="#87B04D" Foreground="#FFEEEEEE" DockPanel.Dock="Top">
                                                     <Expander.Header>
                                                         <DockPanel>
-                                                            <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="100"/>
+                                                            <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Path=Name, Converter={StaticResource guidConverter}, ConverterParameter={StaticResource bindingsListCVS}}" Margin="5,0,0,0" Width="100"/>
                                                         </DockPanel>
                                                     </Expander.Header>
                                                     <Expander.Content>
@@ -237,7 +239,7 @@
                         <GroupStyle.HeaderTemplate>
                             <DataTemplate>
                                 <DockPanel >
-                                    <TextBlock Text="{Binding Path=Name}" FontWeight="Bold" Foreground="Black" Margin="15,0,0,0"/>
+                                    <TextBlock Text="{Binding Path=Name, Converter={StaticResource guidConverter}, ConverterParameter={StaticResource bindingsListCVS}}" FontWeight="Bold" Foreground="Black" Margin="15,0,0,0"/>
                                 </DockPanel>
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>

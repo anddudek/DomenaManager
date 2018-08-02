@@ -330,6 +330,13 @@ namespace DomenaManager.Pages
                     if (bind != null) // delete
                     {
                         bind.IsDeleted = true;
+
+                        var ap = db.Apartments.Where(x => x.BindingParent.Equals(SelectedBinding.BindingId));
+                        foreach (var a in ap)
+                        {
+                            a.BindingParent = Guid.Empty;
+                        }
+
                         BindingsList.Remove(SelectedBinding);                        
                     }
                     db.SaveChanges();
