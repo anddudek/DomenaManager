@@ -389,7 +389,7 @@ namespace DomenaManager.Pages
 
                 ecw = new Wizards.EditChargeWizard(SelectedCharge);
 
-                var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                SwitchPage.SwitchMainPage(ecw, this);
             }
         }
 
@@ -451,7 +451,7 @@ namespace DomenaManager.Pages
 
                 ecw = new Wizards.EditChargeWizard(SelectedCharge);
 
-                var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+                SwitchPage.SwitchMainPage(ecw, this);
             }
         }
 
@@ -527,8 +527,8 @@ namespace DomenaManager.Pages
             Wizards.EditChargeWizard ecw;
 
             ecw = new Wizards.EditChargeWizard(null);
-
-            var result = await DialogHost.Show(ecw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            
+            SwitchPage.SwitchMainPage(ecw, this);
         }
 
         private bool CanRecalculateCharge()
@@ -549,104 +549,7 @@ namespace DomenaManager.Pages
             }
             InitializeCollection();
         }
-
-        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
-        {
-            if ((bool)eventArgs.Parameter)
-            {
-                var dc = (eventArgs.Session.Content as Wizards.EditChargeWizard);
-                //Accept
-                if (dc._charge == null)
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingValue) || string.IsNullOrEmpty(dc.SelectedApartmentNumberValue)))
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Add new apartment
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var newCharge = new LibDataModel.Charge();
-                        newCharge.SettlementId = Guid.Empty;
-                        newCharge.ChargeId = Guid.NewGuid();
-                        newCharge.ApartmentId = db.Apartments.FirstOrDefault(x => x.BuildingId.Equals(dc.SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(dc.SelectedApartmentNumber)).ApartmentId;
-                        newCharge.CreatedDate = DateTime.Today;
-                        newCharge.ChargeDate = dc.ChargeDate;
-                        newCharge.IsClosed = dc.ChargeStatus == "Otwarte" ? false : true;
-                        newCharge.IsDeleted = false;
-
-                        newCharge.Components = new List<ChargeComponent>();
-                        foreach (var cc in dc.ChargeComponents)
-                        {
-                            newCharge.Components.Add(cc);
-                        }
-
-                        db.Charges.Add(newCharge);
-                        db.SaveChanges();
-                    }
-                }
-                else
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingValue) || string.IsNullOrEmpty(dc.SelectedApartmentNumberValue)))
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Edit Apartment
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var q = db.Charges.Include(x => x.Components).Where(x => x.ChargeId.Equals(dc._charge.ChargeId)).FirstOrDefault();
-                        q.IsClosed = dc.ChargeStatus == "Otwarte" ? false : true;
-                        q.ChargeDate = dc.ChargeDate;
-                        //q.Components = new List<ChargeComponent>();
-                        foreach (var cc in dc.ChargeComponents)
-                        {
-                            //q.Components.Add(cc);
-                            if (q.Components.Any(x => x.ChargeComponentId.Equals(cc.ChargeComponentId)))
-                            {
-                                var comp = q.Components.FirstOrDefault(x => x.ChargeComponentId.Equals(cc.ChargeComponentId));
-                                comp.CostCategoryId = cc.CostCategoryId;
-                                comp.CostDistribution = cc.CostDistribution;
-                                comp.CostPerUnit = cc.CostPerUnit;
-                                comp.Sum = cc.Sum;
-                            }
-                            else
-                            {
-                                q.Components.Add(cc);
-                            }
-                        }
-
-                        for (int i = q.Components.Count - 1; i >= 0; i--)
-                        {
-                            if (!dc.ChargeComponents.Any(x => x.ChargeComponentId.Equals(q.Components[i].ChargeComponentId)))
-                            {
-                                q.Components.RemoveAt(i);
-                            }
-                        }
-                            
-                        db.SaveChanges();
-                    }
-                }
-            }
-            else if (!(bool)eventArgs.Parameter)
-            {
-
-                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
-                if (!ynResult)
-                {
-                    //eventArgs.Cancel();
-                    var dc = (eventArgs.Session.Content as Wizards.EditChargeWizard);
-                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-                }
-            }
-            InitializeCollection();
-        }
-
-        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
-        {
-
-        }
-
+        
         private bool IsValid(DependencyObject obj)
         {
             // The dependency object is valid if it has no errors and all

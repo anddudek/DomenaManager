@@ -53,12 +53,12 @@ namespace DomenaManager.Windows
 
         private void Login(object pb)
         {
-            //if (LoginText == "ja" && ((PasswordBox)pb).Password == "ja")
-            //{
+            if (LoginText.ToUpper() == "DOMENA" && ((PasswordBox)pb).Password == "domena")
+            {
                 MainWindow mw = new MainWindow();
                 mw.Show();
                 this.Close();
-           // }
+            }
         }
         private bool CanLogin()
         {

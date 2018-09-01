@@ -65,13 +65,21 @@ namespace DomenaManager.Windows
             }
         }
 
+        public ICommand MakeDbBackup
+        {
+            get
+            {
+                return new RelayCommand(DbBackup, CanDbBackup);
+            }
+        }
+
         public MainWindow()
         {
-            System.IO.Directory.CreateDirectory(@"C:/DomenaManager/Logs");
-            System.IO.Directory.CreateDirectory(@"C:/DomenaManager/Backup");
+            System.IO.Directory.CreateDirectory(@"Logs");
+            System.IO.Directory.CreateDirectory(@"Backup");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.RollingFile(@"C:/DomenaManager/Logs/DomenaManager-{Date}.log")
+                .WriteTo.RollingFile(@"Logs/DomenaManager-{Date}.log")
                 .CreateLogger();
 
             // this is the line you really want 
@@ -148,6 +156,10 @@ namespace DomenaManager.Windows
                     CurrentPage = new Pages.SettlementPage();
                     OnPropertyChanged("CurrentPage");
                     return;
+                case "Letters":
+                    CurrentPage = new Pages.LettersPage();
+                    OnPropertyChanged("CurrentPage");
+                    return;
             }
         }
 
@@ -161,17 +173,47 @@ namespace DomenaManager.Windows
             return true;
         }
 
-        private void BackupDb()
+        private void BackupDb(bool useDefaultFolder = true)
         {
             using (var db = new DB.DomenaDBContext())
             {
-                string name = @"C:/DomenaManager/Backup/DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
-                if (!System.IO.File.Exists(name))
+                string name;
+                if (useDefaultFolder)
+                {
+                    name = @"Backup/DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
+                }
+                else
+                {
+                    System.Windows.Forms.SaveFileDialog opf = new System.Windows.Forms.SaveFileDialog();
+                    opf.ShowDialog();
+                    if (opf.FileName == null)
+                    {
+                        return;
+                    }
+                    name = opf.FileName;
+                }
+                if (System.IO.File.Exists(name))
+                {
+                    try
+                    {
+                        System.IO.File.Delete(name);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e, "Error during db backup");
+                    }
+                }
+                try
                 {
                     string cmd = String.Format("BACKUP DATABASE {0} TO DISK = '{1}'", "DBDomena", name);
                     int backup = db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, cmd);
                     Properties.Settings.Default.LastDBBackupCreation = DateTime.Now;
                     Properties.Settings.Default.Save();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Błąd zapisu bazy danych");
+                    Log.Error(e, "Error in dbBackup");
                 }
             }
         }
@@ -279,6 +321,16 @@ namespace DomenaManager.Windows
             Wizards.EditInvoiceCategories eic;
             eic = new Wizards.EditInvoiceCategories();
             var result = await DialogHost.Show(eic, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
+        }
+
+        private void DbBackup(object param)
+        {
+            BackupDb(false);
+        }
+
+        private bool CanDbBackup()
+        {
+            return true;
         }
 
         private async void ExtendedClosingInvoiceCategoriesEventHandler(object sender, DialogClosingEventArgs eventArgs)

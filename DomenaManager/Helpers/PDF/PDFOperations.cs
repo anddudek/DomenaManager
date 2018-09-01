@@ -243,7 +243,7 @@ namespace DomenaManager.Helpers
             }
             else
             {
-                System.IO.FileInfo file = new System.IO.FileInfo("C:\\DomenaManager\\Reports\\");
+                System.IO.FileInfo file = new System.IO.FileInfo("Reports\\");
                 file.Directory.Create();
                 string filename = selectedCharge.ChargeDate.ToString("MMMM_yyyy") + "_" + selectedCharge.Building.Name + "_" + selectedCharge.Apartment.ApartmentNumber + ".pdf";
                 renderer.PdfDocument.Save(Path.Combine(file.FullName, filename.Replace(' ', '_')));                
@@ -376,7 +376,7 @@ namespace DomenaManager.Helpers
             }
             else
             {
-                System.IO.FileInfo file = new System.IO.FileInfo("C:\\DomenaManager\\Reports\\");
+                System.IO.FileInfo file = new System.IO.FileInfo("Reports\\");
                 file.Directory.Create();
                 string filename = year.ToString() + "_" + building.Name + "_" + apartment.ApartmentNumber + ".pdf";
                 renderer.PdfDocument.Save(Path.Combine(file.FullName, filename.Replace(' ', '_')));

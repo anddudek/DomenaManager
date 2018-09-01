@@ -73,6 +73,16 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand SaveCommand
+        {
+            get { return new RelayCommand(SaveDialog, CanSaveDialog); }
+        }
+
+        public ICommand CancelCommand
+        {
+            get { return new RelayCommand(CancelDialog, CanCancelDialog); }
+        }
+
         public Owner _ownerLocalCopy;
 
         public EditOwnerWizard(Owner SelectedOwner = null)
@@ -99,6 +109,56 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private void SaveDialog(object param)
+        {
+            //Accept
+            if (this._ownerLocalCopy == null)
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.OwnerName) || string.IsNullOrEmpty(this.MailAddress)))
+                {
+                    return;
+                }
+                //Add new owner
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var newOwner = new LibDataModel.Owner { OwnerId = Guid.NewGuid(), MailAddress = this.MailAddress, OwnerName = this.OwnerName, IsDeleted = false };
+                    db.Owners.Add(newOwner);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.OwnerName) || string.IsNullOrEmpty(this.MailAddress)))
+                {
+                    return;
+                }
+                //Edit Owner
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var q = db.Owners.Where(x => x.OwnerId.Equals(this._ownerLocalCopy.OwnerId)).FirstOrDefault();
+                    q.OwnerName = this.OwnerName;
+                    q.MailAddress = this.MailAddress;
+                    db.SaveChanges();
+                }
+            }
+            SwitchPage.SwitchMainPage(new Pages.OwnersPage(), this);
+        }
+
+        private bool CanSaveDialog()
+        {
+            return true;
+        }
+
+        private void CancelDialog(object param)
+        {
+            SwitchPage.SwitchMainPage(new Pages.OwnersPage(), this);
+        }
+
+        private bool CanCancelDialog()
+        {
+            return true;
+        }
+
         private void UpdateAllFields(object param)
         {
             Helpers.Validator.IsValid(this);
@@ -107,6 +167,16 @@ namespace DomenaManager.Wizards
         private bool CanUpdateAllFields()
         {
             return true;
+        }
+
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

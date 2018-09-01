@@ -282,6 +282,7 @@ namespace DomenaManager.Pages
                         .Sum()).ToString("0.00") + " %",
                         BoughtDate = apar.BoughtDate,
                         ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
+                        LocatorsAmount = apar.Locators,
 
                         ApartmentAreaSeries = new SeriesCollection
                         {
@@ -334,11 +335,12 @@ namespace DomenaManager.Pages
             DrawerHost.OpenDrawerCommand.Execute(Dock.Bottom, this.DH);
         }
 
-        private async void AddApartment(object param)
+        private void AddApartment(object param)
         {
             Wizards.EditApartmentWizard eaw = new Wizards.EditApartmentWizard();
 
-            var result = await DialogHost.Show(eaw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            //var result = await DialogHost.Show(eaw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            SwitchPage.SwitchMainPage(eaw, this);
         }
 
         private bool CanAddApartment()
@@ -358,10 +360,11 @@ namespace DomenaManager.Pages
 
         private void ShowCharges(object param)
         {
-            var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
+            //var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
             using (var db = new DB.DomenaDBContext())
             {
-                mw.CurrentPage = new ChargesPage(db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)));
+                var CurrentPage = new ChargesPage(db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)));
+                SwitchPage.SwitchMainPage(CurrentPage, this);
             }
         }
 
@@ -372,10 +375,11 @@ namespace DomenaManager.Pages
 
         private void ShowPayments(object param)
         {
-            var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
+            //var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
             using (var db = new DB.DomenaDBContext())
             {
-                mw.CurrentPage = new PaymentsPage(db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)));
+                var CurrentPage = new PaymentsPage(db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)));
+                SwitchPage.SwitchMainPage(CurrentPage, this);
             }
         }
 
@@ -449,7 +453,8 @@ namespace DomenaManager.Pages
                 eaw = new Wizards.EditApartmentWizard(sa);
             }
 
-            var result = await DialogHost.Show(eaw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            //var result = await DialogHost.Show(eaw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            SwitchPage.SwitchMainPage(eaw, this);
         }
 
         private bool CanEditApartment()
@@ -478,6 +483,7 @@ namespace DomenaManager.Pages
             return SelectedApartment != null;
         }
 
+        #region Legacy
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
         {
 
@@ -500,7 +506,7 @@ namespace DomenaManager.Pages
                     //Add new apartment
                     using (var db = new DB.DomenaDBContext())
                     {
-                        var newApartment = new LibDataModel.Apartment { BoughtDate = dc.BoughtDate.Date, ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), IsDeleted=false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber, MeterCollection = new List<ApartmentMeter>() };
+                        var newApartment = new LibDataModel.Apartment { BoughtDate = dc.BoughtDate.Date, ApartmentId = Guid.NewGuid(), BuildingId = dc.SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(dc.AdditionalArea), ApartmentArea = double.Parse(dc.ApartmentArea), IsDeleted = false, OwnerId = dc.SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = dc.ApartmentNumber, MeterCollection = new List<ApartmentMeter>(), Locators = dc.LocatorsAmount };
                         if (!dc.SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == dc._apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
                         {
                             newApartment.CorrespondenceAddress = dc.SelectedOwnerMailAddress;
@@ -538,6 +544,7 @@ namespace DomenaManager.Pages
                         //q.HasWaterMeter = dc.HasWaterMeter == 0;
                         //q.WaterMeterExp = dc.WaterMeterExp.Date;
                         q.OwnerId = dc.SelectedOwnerName.OwnerId;
+                        q.Locators = dc.LocatorsAmount;
 
                         if (!dc.SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == dc._apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
                         {
@@ -590,6 +597,8 @@ namespace DomenaManager.Pages
             InitializeCollection();
             DrawerHost.CloseDrawerCommand.Execute(Dock.Bottom, this.DH);            
         }
+        #endregion
+
 
         private bool IsValid(DependencyObject obj)
         {

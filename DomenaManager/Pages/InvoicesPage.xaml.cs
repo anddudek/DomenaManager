@@ -241,12 +241,12 @@ namespace DomenaManager.Pages
             return SelectedInvoice != null;
         }
 
-        private async void Edit(object param)
+        private void Edit(object param)
         {
             if (SelectedInvoice != null)
             {
                 var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
-                var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
+                SwitchPage.SwitchMainPage(eiw, this);
             }
         }
 
@@ -255,10 +255,10 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private async void Add(object param)
+        private void Add(object param)
         {
             var eiw = new Wizards.EditInvoiceWizard();
-            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
+            SwitchPage.SwitchMainPage(eiw, this);
         }
 
 
@@ -267,10 +267,10 @@ namespace DomenaManager.Pages
             return SelectedInvoice != null;
         }
 
-        private async void ShowDetails(object param)
+        private void ShowDetails(object param)
         {
             var eiw = new Wizards.EditInvoiceWizard(SelectedInvoice);
-            var result = await DialogHost.Show(eiw, "RootDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
+            SwitchPage.SwitchMainPage(eiw, this);
         }
 
         private void ClearFilter(object param)
@@ -304,85 +304,7 @@ namespace DomenaManager.Pages
         {
 
         }
-
-        private void ExtendedEIWOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
-        {
-
-        }
-
-        private async void ExtendedEIWClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
-        {
-            
-            if ((bool)eventArgs.Parameter)
-            {
-                var dc = (eventArgs.Session.Content as Wizards.EditInvoiceWizard);
-                //Accept
-                if (dc._lic == null)
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingName.Name) || string.IsNullOrEmpty(dc.SelectedCategoryName.CategoryName)))
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Add new invoice
-                    var newInvoice = new LibDataModel.Invoice { BuildingId = dc.SelectedBuildingName.BuildingId, ContractorName = dc.SelectedContractorsValue, CostAmount = double.Parse(dc.CostAmount), CreatedTime = DateTime.Now, InvoiceCategoryId = dc.SelectedCategoryName.CategoryId, InvoiceDate = dc.InvoiceDate.Date, InvoiceId = Guid.NewGuid(), InvoiceNumber = dc.InvoiceNumber, IsDeleted = false, IsSettled = dc.IsSettled == "Tak" ? true : false };
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        db.Invoices.Add(newInvoice);
-
-                        if (!db.InvoiceContractors.Any(x => x.Name.Equals(dc.SelectedContractorsValue)))
-                        {
-                            db.InvoiceContractors.Add(new ContractorsName() { Name = dc.SelectedContractorsValue });
-                        }
-
-                        db.SaveChanges();
-                    }
-                    InitializeCollection();
-                }
-                else
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingName.Name) || string.IsNullOrEmpty(dc.SelectedCategoryName.CategoryName)))
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Edit Invoice
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var q = db.Invoices.Where(x => x.InvoiceId.Equals(dc._lic.InvoiceId)).FirstOrDefault();
-                        q.BuildingId = dc.SelectedBuildingName.BuildingId;
-                        q.ContractorName = dc.SelectedContractorsValue;
-                        q.CostAmount = double.Parse(dc.CostAmount);
-                        q.CreatedTime = DateTime.Now;
-                        q.InvoiceCategoryId = dc.SelectedCategoryName.CategoryId;
-                        q.InvoiceDate = dc.InvoiceDate.Date;
-                        q.InvoiceNumber = dc.InvoiceNumber;
-                        q.IsSettled = dc.IsSettled == "Tak" ? true : false;
-
-                        if (!db.InvoiceContractors.Any(x => x.Name.Equals(dc.SelectedContractorsValue)))
-                        {
-                            db.InvoiceContractors.Add(new ContractorsName() { Name = dc.SelectedContractorsValue });
-                        }
-                        
-                        db.SaveChanges();
-                    }
-                    InitializeCollection();
-                }
-            }
-            else if (!(bool)eventArgs.Parameter)
-            {
-
-                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
-                if (!ynResult)
-                {
-                    //eventArgs.Cancel();
-                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceWizard);
-                    var result = await DialogHost.Show(dc, "HelperDialog", ExtendedEIWOpenedEventHandler, ExtendedEIWClosingEventHandler);
-                }
-            }
-             
-        }
-
+        
         private bool IsValid(DependencyObject obj)
         {
             // The dependency object is valid if it has no errors and all

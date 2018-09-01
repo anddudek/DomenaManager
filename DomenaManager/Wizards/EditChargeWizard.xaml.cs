@@ -328,6 +328,16 @@ namespace DomenaManager.Wizards
             get { return new RelayCommand(DeleteSelectedCharge, CanDeleteSelectedCharge); }
         }
 
+        public ICommand SaveCommand
+        {
+            get { return new RelayCommand(SaveDialog, CanSaveDialog); }
+        }
+
+        public ICommand CancelCommand
+        {
+            get { return new RelayCommand(CancelDialog, CanCancelDialog); }
+        }
+
         #endregion
 
         public EditChargeWizard(ChargeDataGrid charge)
@@ -499,6 +509,95 @@ namespace DomenaManager.Wizards
             return SelectedChargeComponent != null;
         }
 
+        private void SaveDialog(object param)
+        {
+            if (_charge == null)
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(SelectedBuildingValue) || string.IsNullOrEmpty(SelectedApartmentNumberValue)))
+                {
+                    return;
+                }
+                //Add new apartment
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var newCharge = new LibDataModel.Charge();
+                    newCharge.SettlementId = Guid.Empty;
+                    newCharge.ChargeId = Guid.NewGuid();
+                    newCharge.ApartmentId = db.Apartments.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber)).ApartmentId;
+                    newCharge.CreatedDate = DateTime.Today;
+                    newCharge.ChargeDate = ChargeDate;
+                    newCharge.IsClosed = ChargeStatus == "Otwarte" ? false : true;
+                    newCharge.IsDeleted = false;
+
+                    newCharge.Components = new List<ChargeComponent>();
+                    foreach (var cc in ChargeComponents)
+                    {
+                        newCharge.Components.Add(cc);
+                    }
+
+                    db.Charges.Add(newCharge);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(SelectedBuildingValue) || string.IsNullOrEmpty(SelectedApartmentNumberValue)))
+                {
+                    return;
+                }
+                //Edit Apartment
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var q = db.Charges.Include(x => x.Components).Where(x => x.ChargeId.Equals(_charge.ChargeId)).FirstOrDefault();
+                    q.IsClosed = ChargeStatus == "Otwarte" ? false : true;
+                    q.ChargeDate = ChargeDate;
+                    //q.Components = new List<ChargeComponent>();
+                    foreach (var cc in ChargeComponents)
+                    {
+                        //q.Components.Add(cc);
+                        if (q.Components.Any(x => x.ChargeComponentId.Equals(cc.ChargeComponentId)))
+                        {
+                            var comp = q.Components.FirstOrDefault(x => x.ChargeComponentId.Equals(cc.ChargeComponentId));
+                            comp.CostCategoryId = cc.CostCategoryId;
+                            comp.CostDistribution = cc.CostDistribution;
+                            comp.CostPerUnit = cc.CostPerUnit;
+                            comp.Sum = cc.Sum;
+                        }
+                        else
+                        {
+                            q.Components.Add(cc);
+                        }
+                    }
+
+                    for (int i = q.Components.Count - 1; i >= 0; i--)
+                    {
+                        if (!ChargeComponents.Any(x => x.ChargeComponentId.Equals(q.Components[i].ChargeComponentId)))
+                        {
+                            q.Components.RemoveAt(i);
+                        }
+                    }
+
+                    db.SaveChanges();
+                }
+            }
+            SwitchPage.SwitchMainPage(new Pages.ChargesPage(), this);
+        }
+
+        private bool CanSaveDialog()
+        {
+            return true;
+        }
+
+        private void CancelDialog(object param)
+        {
+            SwitchPage.SwitchMainPage(new Pages.ChargesPage(), this);
+        }
+
+        private bool CanCancelDialog()
+        {
+            return true;
+        }
+
         private void UpdateApartmentsNumbers()
         {
             if (SelectedBuilding != null)
@@ -527,6 +626,10 @@ namespace DomenaManager.Wizards
                 case EnumCostDistribution.CostDistribution.PerMeasurement:
                     var a = ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber));
                     units = a.AdditionalArea + a.ApartmentArea;
+                    break;
+                case EnumCostDistribution.CostDistribution.PerLocators:
+                    var ap = ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber));
+                    units = ap.Locators;
                     break;
                 default:
                     units = 0;
@@ -586,6 +689,16 @@ namespace DomenaManager.Wizards
         }
 
         #endregion
+        
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)

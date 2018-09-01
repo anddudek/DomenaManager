@@ -43,6 +43,7 @@
     <Compile Include="ApartmentMeter.cs" />
     <Compile Include="AutoCharge.cs" />
     <Compile Include="BindingParent.cs" />
+    <Compile Include="BuildingChargeBasisGroup.cs" />
     <Compile Include="Charge.cs" />
     <Compile Include="ChargeComponent.cs" />
     <Compile Include="ContractorsName.cs" />

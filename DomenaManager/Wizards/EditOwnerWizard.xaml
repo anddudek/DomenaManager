@@ -9,8 +9,9 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
         mc:Ignorable="d"
-        Height="400" Width="450">
-    <Grid>
+        Height="auto" Width="450">
+    <ScrollViewer>
+    <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
@@ -68,7 +69,7 @@
         </ListView>
 
 
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.Row="7" Margin="5,0,5,2">
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="7" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>True</system:Boolean>
             </Button.CommandParameter>
@@ -78,10 +79,11 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="1" Grid.Row="7" Margin="5,0,5,2">
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{Binding CancelCommand}"  Grid.Column="1" Grid.Row="7" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>False</system:Boolean>
             </Button.CommandParameter>
         </Button>
     </Grid>
+    </ScrollViewer>
 </UserControl>

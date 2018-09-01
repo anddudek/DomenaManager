@@ -196,6 +196,16 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand SaveCommand
+        {
+            get { return new RelayCommand(SaveDialog, CanSaveDialog); }
+        }
+
+        public ICommand CancelCommand
+        {
+            get { return new RelayCommand(CancelDialog, CanCancelDialog); }
+        }
+
         public Invoice _lic;
 
         public EditInvoiceWizard(Invoice invoice = null)
@@ -263,6 +273,84 @@ namespace DomenaManager.Wizards
         }
 
         private bool CanAddCategory()
+        {
+            return true;
+        }
+
+        private void SaveDialog(object param)
+        {
+            //Accept
+            if (_lic == null)
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(SelectedBuildingName.Name) || string.IsNullOrEmpty(SelectedCategoryName.CategoryName)))
+                {
+                    return;
+                }
+                //Add new invoice
+                var newInvoice = new LibDataModel.Invoice { BuildingId = SelectedBuildingName.BuildingId, ContractorName = SelectedContractorsValue, CostAmount = double.Parse(CostAmount), CreatedTime = DateTime.Now, InvoiceCategoryId = SelectedCategoryName.CategoryId, InvoiceDate = InvoiceDate.Date, InvoiceId = Guid.NewGuid(), InvoiceNumber = InvoiceNumber, IsDeleted = false, IsSettled = IsSettled == "Tak" ? true : false };
+                using (var db = new DB.DomenaDBContext())
+                {
+                    db.Invoices.Add(newInvoice);
+
+                    if (!db.InvoiceContractors.Any(x => x.Name.Equals(SelectedContractorsValue)))
+                    {
+                        db.InvoiceContractors.Add(new ContractorsName() { Name = SelectedContractorsValue });
+                    }
+
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(SelectedBuildingName.Name) || string.IsNullOrEmpty(SelectedCategoryName.CategoryName)))
+                {
+                    return;
+                }
+                //Edit Invoice
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var q = db.Invoices.Where(x => x.InvoiceId.Equals(_lic.InvoiceId)).FirstOrDefault();
+                    q.BuildingId = SelectedBuildingName.BuildingId;
+                    q.ContractorName = SelectedContractorsValue;
+                    q.CostAmount = double.Parse(CostAmount);
+                    q.CreatedTime = DateTime.Now;
+                    q.InvoiceCategoryId = SelectedCategoryName.CategoryId;
+                    q.InvoiceDate = InvoiceDate.Date;
+                    q.InvoiceNumber = InvoiceNumber;
+                    q.IsSettled = IsSettled == "Tak" ? true : false;
+
+                    if (!db.InvoiceContractors.Any(x => x.Name.Equals(SelectedContractorsValue)))
+                    {
+                        db.InvoiceContractors.Add(new ContractorsName() { Name = SelectedContractorsValue });
+                    }
+
+                    db.SaveChanges();
+                }
+            }
+            SwitchPage.SwitchMainPage(new Pages.InvoicesPage(), this);
+        }
+
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
+        }
+
+        private bool CanSaveDialog()
+        {
+            return true;
+        }
+
+        private void CancelDialog(object param)
+        {
+            SwitchPage.SwitchMainPage(new Pages.InvoicesPage(), this);
+        }
+
+        private bool CanCancelDialog()
         {
             return true;
         }

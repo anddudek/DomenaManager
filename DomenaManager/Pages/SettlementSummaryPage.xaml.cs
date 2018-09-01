@@ -976,7 +976,7 @@ namespace DomenaManager.Pages
                                 ApartmentId = a.ApartmentO.ApartmentId,
                                 ChargeDate = DateTime.Today,
                                 ChargeId = Guid.NewGuid(),
-                                Components = new List<ChargeComponent>() { new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = _settlementPage.SelectedChargeCategoryName.BuildingChargeBasisCategoryId, CostDistribution = (int)EnumCostDistribution.CostDistribution.PerApartment, CostPerUnit = -a.Saldo, Sum = -a.Saldo } },
+                                Components = new List<ChargeComponent>() { new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = _settlementPage.SettlementCategoryName.BuildingChargeBasisCategoryId, CostDistribution = (int)EnumCostDistribution.CostDistribution.PerApartment, CostPerUnit = -a.Saldo, Sum = -a.Saldo } },
                                 CreatedDate = DateTime.Today,
                                 IsClosed = false,
                                 IsDeleted = false,
@@ -994,7 +994,7 @@ namespace DomenaManager.Pages
                                 ApartmentId = a.ApartmentO.ApartmentId,
                                 ChargeDate = DateTime.Today,
                                 ChargeId = Guid.NewGuid(),
-                                Components = new List<ChargeComponent>() { new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = _settlementPage.SelectedChargeCategoryName.BuildingChargeBasisCategoryId, CostDistribution = (int)EnumCostDistribution.CostDistribution.PerApartment, CostPerUnit = -a.Saldo, Sum = -a.Saldo } },
+                                Components = new List<ChargeComponent>() { new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = _settlementPage.SettlementCategoryName.BuildingChargeBasisCategoryId, CostDistribution = (int)EnumCostDistribution.CostDistribution.PerApartment, CostPerUnit = -a.Saldo, Sum = -a.Saldo } },
                                 CreatedDate = DateTime.Today,
                                 IsClosed = false,
                                 IsDeleted = false,
@@ -1012,7 +1012,25 @@ namespace DomenaManager.Pages
                                 ApartmentId = a.ApartmentO.ApartmentId,
                                 ChargeDate = DateTime.Today,
                                 ChargeId = Guid.NewGuid(),
-                                Components = new List<ChargeComponent>() { new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = _settlementPage.SelectedChargeCategoryName.BuildingChargeBasisCategoryId, CostDistribution = (int)EnumCostDistribution.CostDistribution.PerApartment, CostPerUnit = -a.Saldo, Sum = -a.Saldo } },
+                                Components = new List<ChargeComponent>() { new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = _settlementPage.SettlementCategoryName.BuildingChargeBasisCategoryId, CostDistribution = (int)EnumCostDistribution.CostDistribution.PerApartment, CostPerUnit = -a.Saldo, Sum = -a.Saldo } },
+                                CreatedDate = DateTime.Today,
+                                IsClosed = false,
+                                IsDeleted = false,
+                                SettlementId = s.SettlementId
+                            };
+                            db.Charges.Add(c);
+                        }
+                        break;
+                                                
+                    case SettlementMethodsEnum.GAS:
+                        foreach (var a in PerGasCollection)
+                        {
+                            var c = new Charge()
+                            {
+                                ApartmentId = a.ApartmentO.ApartmentId,
+                                ChargeDate = DateTime.Today,
+                                ChargeId = Guid.NewGuid(),
+                                Components = new List<ChargeComponent>() { new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = _settlementPage.SettlementCategoryName.BuildingChargeBasisCategoryId, CostDistribution = (int)EnumCostDistribution.CostDistribution.PerApartment, CostPerUnit = -a.Saldo, Sum = -a.Saldo } },
                                 CreatedDate = DateTime.Today,
                                 IsClosed = false,
                                 IsDeleted = false,
@@ -1029,9 +1047,10 @@ namespace DomenaManager.Pages
 
         private void CancelSettlement(object param)
         {
-            var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
+            //var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
 
-            mw.CurrentPage = _settlementPage;
+            var CurrentPage = _settlementPage;
+            SwitchPage.SwitchMainPage(CurrentPage, this);
         }
 
         private bool CanPerformSettlement()

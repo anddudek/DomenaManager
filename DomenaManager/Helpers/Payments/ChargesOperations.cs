@@ -35,6 +35,9 @@ namespace DomenaManager.Helpers
                             case EnumCostDistribution.CostDistribution.PerMeasurement:
                                 units = a.AdditionalArea + a.ApartmentArea;
                                 break;
+                            case EnumCostDistribution.CostDistribution.PerLocators:
+                                units = a.Locators;
+                                break;
                             default:
                                 units = 0;
                                 break;
@@ -73,6 +76,9 @@ namespace DomenaManager.Helpers
                             break;
                         case EnumCostDistribution.CostDistribution.PerMeasurement:
                             units = a.AdditionalArea + a.ApartmentArea;
+                            break;
+                        case EnumCostDistribution.CostDistribution.PerLocators:
+                            units = a.Locators;
                             break;
                         default:
                             units = 0;

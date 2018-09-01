@@ -12,6 +12,7 @@ namespace LibDataModel
         {
             PerApartment = 0,
             PerMeasurement = 1,
+            PerLocators = 2,
         }
 
         public static string CostDistributionToString(CostDistribution costDist)
@@ -24,6 +25,8 @@ namespace LibDataModel
                     return "Od lokalu";
                 case CostDistribution.PerMeasurement:
                     return "Od powierzchni";
+                case CostDistribution.PerLocators:
+                    return "Od mieszkanów";
             }
         }
     }

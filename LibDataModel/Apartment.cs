@@ -21,6 +21,7 @@ namespace LibDataModel
         public bool IsDeleted { get; set; }
         public string CorrespondenceAddress { get; set; }
         public Guid BindingParent { get; set; }
+        public int Locators { get; set; }
         public List<ApartmentMeter> MeterCollection { get; set; }
 
         public Apartment()
@@ -46,6 +47,7 @@ namespace LibDataModel
             this.CorrespondenceAddress = CopySource.CorrespondenceAddress;
             this.BindingParent = CopySource.BindingParent;
             this.MeterCollection = CopySource.MeterCollection;
+            this.Locators = CopySource.Locators;
         }
     }
 }

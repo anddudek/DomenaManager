@@ -310,11 +310,11 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private async void Edit(object param)
+        private void Edit(object param)
         {
             Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard(SelectedPayment);
 
-            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            SwitchPage.SwitchMainPage(eow, this);
         }
 
         private bool CanAdd()
@@ -322,11 +322,11 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private async void Add(object param)
+        private void Add(object param)
         {
             Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard();
 
-            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            SwitchPage.SwitchMainPage(eow, this);
         }
 
         private bool CanShowDetails()
@@ -334,11 +334,11 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private async void ShowDetails(object param)
+        private void ShowDetails(object param)
         {
             Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard(SelectedPayment);
 
-            var result = await DialogHost.Show(eow, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            SwitchPage.SwitchMainPage(eow, this);
         }
 
         private void ClearFilter(object param)
@@ -391,67 +391,7 @@ namespace DomenaManager.Pages
         {
             return SelectedPayment != null;
         }
-
-        private async void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
-        {
-            if ((bool)eventArgs.Parameter)
-            {
-                var dc = (eventArgs.Session.Content as Wizards.EditPaymentWizard);
-                double amount;
-                bool isAmountValid = double.TryParse(dc.PaymentAmount, out amount);
-                //Accept
-                if (dc._lpc == null)
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingValue) || string.IsNullOrEmpty(dc.SelectedApartmentNumberValue) || !isAmountValid))
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Add new payment
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var newPayment = new Payment() { IsDeleted=false, ApartmentId = dc.SelectedApartmentNumber.ApartmentId, PaymentAddDate = DateTime.Today, PaymentAmount = amount, PaymentId = Guid.NewGuid(), PaymentRegistrationDate = dc.PaymentRegistrationDate };
-                        db.Payments.Add(newPayment);
-                        db.SaveChanges();
-                    }
-                }
-                else
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.SelectedBuildingValue) || string.IsNullOrEmpty(dc.SelectedApartmentNumberValue) || !isAmountValid))
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Edit payment
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var q = db.Payments.Where(x => x.PaymentId.Equals(dc._lpc.PaymentId)).FirstOrDefault();
-                        q.PaymentAddDate = DateTime.Today;
-                        q.PaymentRegistrationDate = dc.PaymentRegistrationDate;
-                        q.PaymentAmount = amount;
-                        db.SaveChanges();
-                    }
-                }
-            }
-            else if (!(bool)eventArgs.Parameter)
-            {
-
-                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
-                if (!ynResult)
-                {
-                    //eventArgs.Cancel();
-                    var dc = (eventArgs.Session.Content as Wizards.EditOwnerWizard);
-                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
-                }
-            }
-            InitializeCollection();
-        }
-
-        private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
-        {
-
-        }
-
+        
         private bool IsValid(DependencyObject obj)
         {
             // The dependency object is valid if it has no errors and all

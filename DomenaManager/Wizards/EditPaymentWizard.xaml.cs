@@ -170,6 +170,16 @@ namespace DomenaManager.Wizards
 
         public Payment _lpc;
 
+        public ICommand SaveCommand
+        {
+            get { return new RelayCommand(SaveDialog, CanSaveDialog); }
+        }
+
+        public ICommand CancelCommand
+        {
+            get { return new RelayCommand(CancelDialog, CanCancelDialog); }
+        }
+
         public EditPaymentWizard(Payment _payment = null)
         {
             DataContext = this;
@@ -216,6 +226,59 @@ namespace DomenaManager.Wizards
                 _ownersOC = new ObservableCollection<Owner>(db.Owners.ToList());
                 _chargesOC = new ObservableCollection<Charge>(db.Charges.Include(x => x.Components).Where(x => !x.IsDeleted).ToList());
             }
+        }
+
+        private void SaveDialog(object param)
+        {
+            double amount;
+            bool isAmountValid = double.TryParse(this.PaymentAmount, out amount);
+            //Accept
+            if (this._lpc == null)
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.SelectedBuildingValue) || string.IsNullOrEmpty(this.SelectedApartmentNumberValue) || !isAmountValid))
+                {
+                    return;
+                }
+                //Add new payment
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var newPayment = new Payment() { IsDeleted = false, ApartmentId = this.SelectedApartmentNumber.ApartmentId, PaymentAddDate = DateTime.Today, PaymentAmount = amount, PaymentId = Guid.NewGuid(), PaymentRegistrationDate = this.PaymentRegistrationDate };
+                    db.Payments.Add(newPayment);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.SelectedBuildingValue) || string.IsNullOrEmpty(this.SelectedApartmentNumberValue) || !isAmountValid))
+                {
+                    return;
+                }
+                //Edit payment
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var q = db.Payments.Where(x => x.PaymentId.Equals(this._lpc.PaymentId)).FirstOrDefault();
+                    q.PaymentAddDate = DateTime.Today;
+                    q.PaymentRegistrationDate = this.PaymentRegistrationDate;
+                    q.PaymentAmount = amount;
+                    db.SaveChanges();
+                }
+            }
+            SwitchPage.SwitchMainPage(new Pages.PaymentsPage(), this);
+        }
+
+        private bool CanSaveDialog()
+        {
+            return true;
+        }
+
+        private void CancelDialog(object param)
+        {
+            SwitchPage.SwitchMainPage(new Pages.PaymentsPage(), this);
+        }
+
+        private bool CanCancelDialog()
+        {
+            return true;
         }
 
         private bool IsValid(DependencyObject obj)

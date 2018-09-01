@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using LibDataModel;
 using MaterialDesignThemes.Wpf;
 
@@ -345,6 +346,22 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand SaveCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(SaveDialog, CanSaveDialog);
+            }
+        }
+
+        public ICommand CancelCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(CancelDialog, CanCancelDialog);
+            }
+        }
+
         public EditBuildingWizard(Building SelectedBuilding = null)
         {
             DataContext = this;
@@ -455,43 +472,7 @@ namespace DomenaManager.Wizards
             }
             LabelError = null;
             var endingDate = new DateTime(1900, 01, 01);
-
-            /*
-            // Add to the end 
-            var last = CostCollection.Where(x => Helpers.DateTimeOperations.IsDateNull(x.EndingDate)).FirstOrDefault();
-
-            if (last != null && last.BegginingDate.Date < CostBeggining.Date)
-            {
-                last.EndingDate = CostBeggining.AddDays(-1);
-            }
-            else
-            {
-                var before = CostCollection.Where(x => x.BegginingDate.Date < CostBeggining.Date && x.EndingDate.Date >= CostBeggining.Date).FirstOrDefault();
-                // Add in the middle of collection
-                if (before != null)
-                {
-                    endingDate = before.EndingDate.Date;
-                    before.EndingDate = CostBeggining.Date.AddDays(-1);
-                }
-                else
-                {
-                    // Add at the beggining of collection
-                    var first = CostCollection.OrderBy(x => x.BegginingDate).FirstOrDefault();
-                    if (first != null && first.BegginingDate.Date > CostBeggining.Date)
-                    {
-                        endingDate = first.BegginingDate.Date.AddDays(-1);
-                    }
-                    else
-                    {
-                        if (CostCollection.Where(x => x.CategoryName == SelectedCategoryValue).Count() > 0)
-                        {
-                            LabelError = "Błąd dodawania kosztu";
-                            return;
-                        }
-                    }
-                }
-            }*/
-
+            
             var c = new Helpers.CostListView() { BegginingDate = CostBeggining, CategoryName = SelectedCategoryValue, Cost = uc, CostUnit = SelectedUnitName, EndingDate = endingDate };
 
             CostCollection.Add(c);
@@ -570,6 +551,104 @@ namespace DomenaManager.Wizards
             return SelectedMeter != null;
         }
 
+        private void SaveDialog(object param)
+        {
+            if (_buildingLocalCopy == null)
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(BuildingName) || string.IsNullOrEmpty(BuildingCity) || string.IsNullOrEmpty(BuildingZipCode) || string.IsNullOrEmpty(BuildingRoadName) || string.IsNullOrEmpty(BuildingRoadNumber)))
+                {
+                    return;
+                }
+                //Add new building
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var newBuilding = new LibDataModel.Building { BuildingId = Guid.NewGuid(), Name = BuildingName, City = BuildingCity, ZipCode = BuildingZipCode, BuildingNumber = BuildingRoadNumber, RoadName = BuildingRoadName, IsDeleted = false };
+                    List<LibDataModel.BuildingChargeBasis> costs = new List<LibDataModel.BuildingChargeBasis>();
+                    foreach (var c in CostCollection)
+                    {
+                        var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
+                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId };
+                        costs.Add(cost);
+                    }
+                    newBuilding.CostCollection = costs;
+                    foreach (var m in MetersCollection)
+                    {
+                        newBuilding.MeterCollection.Add(m);
+                    }
+                    db.Buildings.Add(newBuilding);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(BuildingName) || string.IsNullOrEmpty(BuildingCity) || string.IsNullOrEmpty(BuildingZipCode) || string.IsNullOrEmpty(BuildingRoadName) || string.IsNullOrEmpty(BuildingRoadNumber)))
+
+                {
+                    return;
+                }
+                //Edit building
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var q = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => x.BuildingId.Equals(_buildingLocalCopy.BuildingId)).FirstOrDefault();
+                    q.BuildingNumber = BuildingRoadNumber;
+                    q.City = BuildingCity;
+                    q.Name = BuildingName;
+                    q.RoadName = BuildingRoadName;
+                    q.ZipCode = BuildingZipCode;
+                    //q.CostCollection.RemoveAll(x => true);
+
+                    List<LibDataModel.BuildingChargeBasis> costs = new List<LibDataModel.BuildingChargeBasis>();
+                    foreach (var c in CostCollection)
+                    {
+                        var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
+                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId };
+                        costs.Add(cost);
+                    }
+                    q.CostCollection = costs;
+
+                    //Add new
+                    foreach (var m in MetersCollection)
+                    {
+                        if (!q.MeterCollection.Any(x => x.MeterId.Equals(m.MeterId)))
+                        {
+                            q.MeterCollection.Add(m);
+                        }
+                    }
+                    //Remove necessary
+                    for (int i = q.MeterCollection.Count - 1; i >= 0; i--)
+                    {
+                        if (!MetersCollection.Any(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)))
+                        {
+                            q.MeterCollection.RemoveAt(i);
+                        }
+                        else
+                        {
+                            // Change names
+                            q.MeterCollection[i].Name = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).Name;
+                            q.MeterCollection[i].LastMeasure = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure;
+                        }
+                    }
+
+                    db.SaveChanges();
+                }
+            }
+            Helpers.SwitchPage.SwitchMainPage(new Pages.BuildingsPage(), this);
+        }
+
+        private bool CanSaveDialog()
+        {
+            return true;
+        }
+        
+        private void CancelDialog(object param)
+        {
+            Helpers.SwitchPage.SwitchMainPage(new Pages.BuildingsPage(), this);
+        }
+
+        private bool CanCancelDialog()
+        {
+            return true;
+        }
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
         {
 
@@ -617,6 +696,16 @@ namespace DomenaManager.Wizards
                 }
             }
             InitializeCategoriesList();
+        }
+
+        private bool IsValid(DependencyObject obj)
+        {
+            // The dependency object is valid if it has no errors and all
+            // of its children (that are dependency objects) are error-free.
+            return !Validation.GetHasError(obj) &&
+            LogicalTreeHelper.GetChildren(obj)
+            .OfType<DependencyObject>()
+            .All(IsValid);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

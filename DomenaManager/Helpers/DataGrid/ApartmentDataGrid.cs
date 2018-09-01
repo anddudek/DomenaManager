@@ -29,5 +29,6 @@ namespace DomenaManager.Helpers
         public ObservableCollection<string> PaymentHistory { get; set; }
         public SeriesCollection ApartmentAreaSeries { get; set; }
         public SeriesCollection BuildingAreaSeries { get; set; }
+        public int LocatorsAmount { get; set; }
     }
 }

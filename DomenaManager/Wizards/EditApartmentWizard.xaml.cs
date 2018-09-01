@@ -54,6 +54,20 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private int _locatorsAmount;
+        public int LocatorsAmount
+        {
+            get { return _locatorsAmount; }
+            set
+            {
+                if (value != _locatorsAmount)
+                {
+                    _locatorsAmount = value;
+                    OnPropertyChanged("LocatorsAmount");
+                }
+            }
+        }
+
         private int _apartmentNumber;
         public int ApartmentNumber
         {
@@ -249,6 +263,22 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand SaveCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(SaveDialog, CanSaveDialog);
+            }
+        }
+
+        public ICommand CancelCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(CancelDialog, CanCancelDialog);
+            }
+        }
+
         public Apartment _apartmentLocalCopy;
 
         public EditApartmentWizard(Apartment SelectedApartment = null)
@@ -277,18 +307,6 @@ namespace DomenaManager.Wizards
             }
             else if (_apartmentLocalCopy != null && SelectedBuildingName != null)
             {
-                /*
-                foreach (var m in SelectedBuildingName.MeterCollection)
-                {
-                    if (!MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)))
-                    {
-                        MeterCollection.Add(new ApartmentMeter() { MeterId = Guid.NewGuid(), MeterTypeParent = m, IsDeleted = false, LastMeasure = 0, LegalizationDate = DateTime.Today.AddDays(-1) });
-                    }
-                    else
-                    {
-                        MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)).IsDeleted = false;
-                    }
-                }*/
                 for (int i = SelectedBuildingName.MeterCollection.Count - 1; i >= 0; i--)
                 {
                     if (!MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)))
@@ -298,7 +316,6 @@ namespace DomenaManager.Wizards
                     else
                     {
                         MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)).IsDeleted = false;
-                        //MeterCollection.Remove(MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)));
                     }
                 }
                 for (int i = MeterCollection.Count - 1; i >= 0; i--)
@@ -378,6 +395,110 @@ namespace DomenaManager.Wizards
         }
 
         private bool CanAddBuilding()
+        {
+            return true;
+        }
+
+        private void SaveDialog(object param)
+        {
+            if (_apartmentLocalCopy == null)
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(SelectedBuildingAddress) || string.IsNullOrEmpty(SelectedOwnerMailAddress) || ApartmentNumber <= 0 || double.Parse(AdditionalArea) < 0 || double.Parse(ApartmentArea) <= 0))
+                {
+                    return;
+                }
+                //Add new apartment
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var newApartment = new LibDataModel.Apartment { BoughtDate = BoughtDate.Date, ApartmentId = Guid.NewGuid(), BuildingId = SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(AdditionalArea), ApartmentArea = double.Parse(ApartmentArea), IsDeleted = false, OwnerId = SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = ApartmentNumber, MeterCollection = new List<ApartmentMeter>(), Locators = LocatorsAmount };
+                    if (!SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == _apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
+                    {
+                        newApartment.CorrespondenceAddress = SelectedOwnerMailAddress;
+                    }
+                    else
+                    {
+                        newApartment.CorrespondenceAddress = null;
+                    }
+                    var q = MeterCollection.Where(x => !x.IsDeleted);
+                    foreach (var m in q)
+                    {
+                        newApartment.MeterCollection.Add(new ApartmentMeter() { IsDeleted = false, LastMeasure = m.LastMeasure, MeterTypeParent = m.MeterTypeParent, LegalizationDate = m.LegalizationDate, MeterId = m.MeterId });
+                    }
+                    db.Apartments.Add(newApartment);
+                    db.SaveChanges();
+                }
+            }
+            else
+            {
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(SelectedBuildingAddress) || string.IsNullOrEmpty(SelectedOwnerMailAddress) || ApartmentNumber <= 0 || double.Parse(AdditionalArea) < 0 || double.Parse(ApartmentArea) <= 0))
+                {
+                    return;
+                }
+                //Edit Apartment
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var q = db.Apartments.Include(x => x.MeterCollection).Where(x => x.ApartmentId.Equals(_apartmentLocalCopy.ApartmentId)).FirstOrDefault();
+                    q.BoughtDate = BoughtDate.Date;
+                    q.AdditionalArea = double.Parse(AdditionalArea);
+                    q.ApartmentArea = double.Parse(ApartmentArea);
+                    q.ApartmentNumber = ApartmentNumber;
+                    q.BuildingId = SelectedBuildingName.BuildingId;
+                    q.CreatedDate = DateTime.Now;
+                    //q.HasWaterMeter = dc.HasWaterMeter == 0;
+                    //q.WaterMeterExp = dc.WaterMeterExp.Date;
+                    q.OwnerId = SelectedOwnerName.OwnerId;
+                    q.Locators = LocatorsAmount;
+
+                    if (!SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == _apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
+                    {
+                        q.CorrespondenceAddress = SelectedOwnerMailAddress;
+                    }
+                    else
+                    {
+                        q.CorrespondenceAddress = null;
+                    }
+
+                    var meters = MeterCollection.Where(x => !x.IsDeleted);
+                    foreach (var m in meters)
+                    {
+                        if (!q.MeterCollection.Any(x => x.MeterId.Equals(m.MeterId)))
+                        {
+                            q.MeterCollection.Add(m);
+                            //var a = db.Buildings.SelectMany(x => x.MeterCollection).FirstOrDefault(x => x.MeterId.Equals(m.MeterTypeParent.MeterId));
+                            db.Entry(m.MeterTypeParent).State = EntityState.Unchanged;
+                        }
+                        else
+                        {
+                            var s = q.MeterCollection.FirstOrDefault(x => x.MeterId.Equals(m.MeterId));
+                            s.LegalizationDate = m.LegalizationDate;
+                            s.LastMeasure = m.LastMeasure;
+                        }
+                    }
+                    foreach (var m in q.MeterCollection)
+                    {
+                        if (!meters.Any(x => x.MeterId.Equals(m.MeterId)))
+                        {
+                            m.IsDeleted = true;
+                        }
+                    }
+
+                    db.SaveChanges();
+                }
+            }
+            Helpers.SwitchPage.SwitchMainPage(new Pages.ApartmentsPage(), this);
+        }
+
+        private bool CanSaveDialog()
+        {
+            return true;
+        }
+
+        private void CancelDialog(object param)
+        {
+            Helpers.SwitchPage.SwitchMainPage(new Pages.ApartmentsPage(), this);
+        }
+
+        private bool CanCancelDialog()
         {
             return true;
         }

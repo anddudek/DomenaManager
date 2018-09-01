@@ -10,11 +10,12 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
              mc:Ignorable="d" MinHeight="600"
-             d:DesignHeight="600" d:DesignWidth="450">
+             Height="auto" Width="500">
     <UserControl.Resources>
         <Helpers:IntToCostDistributionConverter x:Key="IntToCostDistributionConverter"/>
         <Helpers:GuidToCategoryNameMultiConverter x:Key="GuidToCategoryNameMultiConverter" />
     </UserControl.Resources>
+    <ScrollViewer>
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -56,7 +57,7 @@
             Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center" Margin="5,0,150,0" Width="70">
         </TextBox>-->
 
-        <ComboBox materialDesign:HintAssist.Hint="Numer lokalu" IsEnabled="{Binding CanEditApartment}"
+        <ComboBox materialDesign:HintAssist.Hint="Nr lokalu" IsEnabled="{Binding CanEditApartment}"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" ItemsSource="{Binding ApartmentsNumbersCollection, Mode=TwoWay}"
             Grid.Row="1" Grid.Column="1" SelectedItem="{Binding SelectedApartmentNumber}" Width="80"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="5,0,140,0" >
@@ -172,7 +173,7 @@
         
         <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Usuń" Grid.Row="7" Grid.Column="1" Command="{Binding DeleteSelectedChargeCommand}" Margin="10,0,10,0" />
 
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>True</system:Boolean>
             </Button.CommandParameter>
@@ -182,10 +183,11 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="1" Grid.Row="8" Margin="5,0,5,2">
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{Binding CancelCommand}"  Grid.Column="1" Grid.Row="8" Margin="5,0,5,2">
             <Button.CommandParameter>
                 <system:Boolean>False</system:Boolean>
             </Button.CommandParameter>
         </Button>
     </Grid>
+    </ScrollViewer>
 </UserControl>

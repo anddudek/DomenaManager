@@ -99,12 +99,6 @@ namespace DomenaManager.Pages
                 foreach (var b in Buildings)
                 {
                     b.CostsList = new List<Helpers.BuildingDescriptionListView>();
-                    //var costs = db.Costs.Where(x => x.BuildingId == b.BuildingId && (DbFunctions.TruncateTime(DbFunctions.AddMonths(DateTime.Now, -1))).Value.Month == DbFunctions.TruncateTime(x.PaymentTime).Value.Month && (DbFunctions.TruncateTime(DbFunctions.AddMonths(DateTime.Now, -1))).Value.Year == DbFunctions.TruncateTime(x.PaymentTime).Value.Year);
-
-                    //foreach (var c in costs)
-                    //{
-                    //b.CostsList.Add(new Helpers.BuildingDescriptionListView { Category = db.CostCategories.Where(x => x.CostCategoryId == c.CostCategoryId).FirstOrDefault().CategoryName, CostString = c.CostAmount + " zł", DateString = c.PaymentTime.ToString("yyyy-MM-dd") });
-                    //}
 
                     var invoices = db.Invoices.Where(x => !x.IsDeleted && x.BuildingId.Equals(b.BuildingId)).OrderByDescending(x => x.InvoiceDate).Take(5);
                     foreach (var inv in invoices)
@@ -129,11 +123,9 @@ namespace DomenaManager.Pages
             return true;
         }
 
-        private async void AddBuilding(object obj)
+        private void AddBuilding(object obj)
         {
-            Wizards.EditBuildingWizard ebw = new Wizards.EditBuildingWizard();
-
-            var result = await DialogHost.Show(ebw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            Helpers.SwitchPage.SwitchMainPage(new Wizards.EditBuildingWizard(), this);
         }
 
         private bool CanEditBuilding()
@@ -141,7 +133,7 @@ namespace DomenaManager.Pages
             return (SelectedBuilding != null);
         }
 
-        private async void EditBuilding(object obj)
+        private void EditBuilding(object obj)
         {
             Wizards.EditBuildingWizard ebw;
             using (var db = new DB.DomenaDBContext())
@@ -149,10 +141,10 @@ namespace DomenaManager.Pages
                 var sb = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => x.Name.Equals(SelectedBuilding.Name)).FirstOrDefault();
                 ebw = new Wizards.EditBuildingWizard(sb);
             }
-
-            var result = await DialogHost.Show(ebw, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+            Helpers.SwitchPage.SwitchMainPage(ebw, this);
         }
 
+        #region legacy code
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
         {
             
@@ -261,6 +253,7 @@ namespace DomenaManager.Pages
             }
             InitializeCollection();
         }
+        #endregion
 
         private bool IsValid(DependencyObject obj)
         {

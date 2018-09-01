@@ -9,25 +9,26 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
         mc:Ignorable="d"
-        Height="750" Width="750" Background="White">
+        Height="auto" Width="750" Background="White">
     <UserControl.Resources>
         <Helpers:NullToDateConverter x:Key="NullToDateConverter" />
         <Helpers:DatesToCurrentDateMultiConverter x:Key="DateToCurrentDateConverter" />
     </UserControl.Resources>
+    <ScrollViewer>
+    <StackPanel Orientation="Vertical">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.75*" />
-            <ColumnDefinition Width="0.75*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="120" />
+            <RowDefinition Height="80" />
             <RowDefinition Height="20" />
-            <RowDefinition Height="60" />
-            <RowDefinition Height="60" />
-            <RowDefinition Height="60" />
-            <RowDefinition Height="60" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="60" />
         </Grid.RowDefinitions>
@@ -44,7 +45,7 @@
         </TextBox>
 
         <TextBlock Grid.Column="0" Grid.Row="1" Text="(Nazwa służy do identyfikacji budynku w programie)" FontSize="10" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="5,-5,5,5" TextAlignment="Center"/>
-        
+
         <TextBox materialDesign:HintAssist.Hint="Miasto"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
             Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
@@ -92,15 +93,16 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
+    </Grid>
 
-        <Grid Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="6">
+    <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="1" Grid.Row="6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="1.3*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="4*"/>
                 <RowDefinition Height="*"/>
@@ -135,7 +137,7 @@
             <ComboBox materialDesign:HintAssist.Hint="Jednostka"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="Name"
-            Grid.Row="0" Grid.Column="1" SelectedItem="{Binding SelectedUnitName}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,5,10,0" >
+            Grid.Row="0" Grid.Column="1" SelectedItem="{Binding SelectedUnitName}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,10,10,10" >
                 <ComboBox.Text>
                     <Binding Path="SelectedUnitValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                         <!--<Binding.ValidationRules>
@@ -154,7 +156,7 @@
 
             <TextBox materialDesign:HintAssist.Hint="Koszt jednostkowy (zł)"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,0,10,0" >
+            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,20,10,20" >
                 <TextBox.Text>
                     <Binding Path="UnitCost" UpdateSourceTrigger="PropertyChanged">
                         <!--<Binding.ValidationRules>
@@ -166,10 +168,10 @@
 
             <DatePicker 
             Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1" SelectedDate="{Binding CostBeggining}" 
-            VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
+            VerticalAlignment="Center" Margin="15,20,30,20" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Obowiązuje od" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
 
-            <TextBlock Foreground="Red" Text="{Binding LabelError}" Grid.Row="2" Margin="10,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" IsEnabled="False"/>
+            <TextBlock Foreground="Red" Text="{Binding LabelError}" Grid.Row="2" Margin="10,10,10,10" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" IsEnabled="False"/>
 
             <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Dodaj" Grid.Row="2" Grid.Column="1" Command="{Binding AddCost}" Margin="10,0,10,0" />
 
@@ -232,7 +234,7 @@
 
         </Grid>
 
-        <Grid Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2">
+    <Grid Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
                 <RowDefinition />
@@ -245,7 +247,7 @@
 
             <TextBox materialDesign:HintAssist.Hint="Nazwa licznika"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="10,0,60,0" >
+            Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="10,0,120,0" >
                 <TextBox.Text>
                     <Binding Path="MeterName" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
@@ -257,7 +259,7 @@
             
             <TextBox materialDesign:HintAssist.Hint="Ostatnie wskazanie"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="170,0,-80,0" >
+            Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="280,0,-140,0" >
                 <TextBox.Text>
                     <Binding Path="LastMeasure" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
@@ -289,20 +291,26 @@
 
         </Grid>
 
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="1" Grid.Row="7" Margin="5,0,5,2">
-            <Button.CommandParameter>
-                <system:Boolean>True</system:Boolean>
-            </Button.CommandParameter>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <i:InvokeCommandAction Command="{Binding UpdateAllFieldsCommand}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </Button>
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="2" Grid.Row="7" Margin="5,0,5,2">
-            <Button.CommandParameter>
-                <system:Boolean>False</system:Boolean>
-            </Button.CommandParameter>
-        </Button>
-    </Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
+                <Button.CommandParameter>
+                    <system:Boolean>True</system:Boolean>
+                </Button.CommandParameter>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding UpdateAllFieldsCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{Binding CancelCommand}"  Grid.Column="1" Grid.Row="8" Margin="5,0,5,2">
+                <Button.CommandParameter>
+                    <system:Boolean>False</system:Boolean>
+                </Button.CommandParameter>
+            </Button>
+        </StackPanel>
+        
+    </StackPanel>
+    </ScrollViewer>
+
 </UserControl>

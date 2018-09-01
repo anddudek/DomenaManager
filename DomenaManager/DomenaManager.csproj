@@ -151,6 +151,7 @@
     <Compile Include="Helpers\Payments\Payments.cs" />
     <Compile Include="Helpers\PDF\PDFOperations.cs" />
     <Compile Include="Helpers\SettlementMethodsEnum.cs" />
+    <Compile Include="Helpers\SwitchPage.cs" />
     <Compile Include="Helpers\ValidationRule\StringToDoubleValidationRule.cs" />
     <Compile Include="Helpers\ValidationRule\StringToIntValidationRule.cs" />
     <Compile Include="Helpers\ListView\OwnerDescriptionListView.cs" />
@@ -163,6 +164,9 @@
     <Compile Include="Helpers\Converter\SumConverter.cs" />
     <Compile Include="Helpers\ValidationRule\Validator.cs" />
     <Compile Include="Dialogs\YNMsg.cs" />
+    <Compile Include="Pages\LettersPage.xaml.cs">
+      <DependentUpon>LettersPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\BindingsPage.xaml.cs">
       <DependentUpon>BindingsPage.xaml</DependentUpon>
     </Compile>
@@ -218,6 +222,10 @@
     <Compile Include="Wizards\YNMsgBox.xaml.cs">
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="Pages\LettersPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\BindingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

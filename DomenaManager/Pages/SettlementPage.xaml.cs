@@ -1146,9 +1146,10 @@ namespace DomenaManager.Pages
         {
             if (IsValid(ucSettlement as DependencyObject))
             {
-                var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
+                //var mw = (((((this.Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
 
-                mw.CurrentPage = new SettlementSummaryPage(this);
+                var CurrentPage = new SettlementSummaryPage(this);
+                SwitchPage.SwitchMainPage(CurrentPage, this);
             }
 
         }
