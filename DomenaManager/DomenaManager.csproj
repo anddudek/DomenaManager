@@ -204,6 +204,9 @@
     <Compile Include="Wizards\EditChargeWizard.xaml.cs">
       <DependentUpon>EditChargeWizard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Wizards\EditGroupNames.xaml.cs">
+      <DependentUpon>EditGroupNames.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\EditInvoiceCategories.xaml.cs">
       <DependentUpon>EditInvoiceCategories.xaml</DependentUpon>
     </Compile>
@@ -301,6 +304,10 @@
     <Page Include="Wizards\EditChargeWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizards\EditGroupNames.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Wizards\EditInvoiceCategories.xaml">
       <Generator>MSBuild:Compile</Generator>

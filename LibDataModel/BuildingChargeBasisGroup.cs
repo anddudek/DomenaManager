@@ -39,6 +39,20 @@ namespace LibDataModel
             }
         }
 
+        private string _buildingChargeBasicBankAccount;
+        public string BuildingChargeBasicBankAccount
+        {
+            get { return _buildingChargeBasicBankAccount; }
+            set
+            {
+                if (value != _buildingChargeBasicBankAccount)
+                {
+                    _buildingChargeBasicBankAccount = value;
+                    OnPropertyChanged("BuildingChargeBasicBankAccount");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
