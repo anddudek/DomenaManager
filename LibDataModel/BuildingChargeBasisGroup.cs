@@ -53,6 +53,20 @@ namespace LibDataModel
             }
         }
 
+        private bool _isDeleted;
+        public bool IsDeleted
+        {
+            get { return _isDeleted; }
+            set
+            {
+                if (value != _isDeleted)
+                {
+                    _isDeleted = value;
+                    OnPropertyChanged("IsDeleted");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {

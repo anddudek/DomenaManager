@@ -129,6 +129,7 @@
     <Compile Include="Helpers\DataGrid\ApartamentMeterDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentBinding.cs" />
     <Compile Include="Helpers\DataGrid\BindingDataGrid.cs" />
+    <Compile Include="Helpers\GroupNameCommand.cs" />
     <Compile Include="Helpers\Payments\ChargesOperations.cs" />
     <Compile Include="Helpers\Converter\BuildingsFooterConverter.cs" />
     <Compile Include="Helpers\Converter\GuidToCategoryNameMultiConverter.cs" />

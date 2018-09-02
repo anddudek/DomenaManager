@@ -65,6 +65,14 @@ namespace DomenaManager.Windows
             }
         }
 
+        public ICommand EditCostGroupsCommand
+        {
+            get
+            {
+                return new RelayCommand(EditGroupNames, CanEditGroupNames);
+            }
+        }
+
         public ICommand MakeDbBackup
         {
             get
@@ -323,6 +331,18 @@ namespace DomenaManager.Windows
             var result = await DialogHost.Show(eic, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
         }
 
+        private bool CanEditGroupNames()
+        {
+            return true;
+        }
+
+        private async void EditGroupNames(object obj)
+        {
+            Wizards.EditGroupNames egn;
+            egn = new Wizards.EditGroupNames();
+            var result = await DialogHost.Show(egn, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingCostGroupEventHandler);
+        }
+
         private void DbBackup(object param)
         {
             BackupDb(false);
@@ -358,6 +378,49 @@ namespace DomenaManager.Windows
                                 break;
                             case CostCategoryEnum.CostCategoryCommandEnum.Update:
                                 db.InvoiceCategories.Where(x => x.CategoryId.Equals(cmd.Item.CategoryId)).FirstOrDefault().CategoryName = cmd.Item.CategoryName;
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
+                }
+            }
+        }
+
+        private async void ExtendedClosingCostGroupEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditGroupNames);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    foreach (var cmd in dc.commandBuffer)
+                    {
+                        switch (cmd.category)
+                        {
+                            default:
+                                break;
+                            case CostCategoryEnum.CostCategoryCommandEnum.Add:
+                                db.CostGroup.Add(cmd.Item);
+                                db.SaveChanges();
+                                break;
+                            case CostCategoryEnum.CostCategoryCommandEnum.Remove:
+                                db.CostGroup.Where(x => x.BuildingChargeBasisGroupId.Equals(cmd.Item.BuildingChargeBasisGroupId)).FirstOrDefault().IsDeleted = true;
+                                db.SaveChanges();
+                                break;
+                            case CostCategoryEnum.CostCategoryCommandEnum.Update:
+                                db.CostGroup.Where(x => x.BuildingChargeBasisGroupId.Equals(cmd.Item.BuildingChargeBasisGroupId)).FirstOrDefault().BuildingChargeBasicGroupName = cmd.Item.BuildingChargeBasicGroupName;
                                 db.SaveChanges();
                                 break;
                         }

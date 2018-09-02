@@ -53,8 +53,8 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private ObservableCollection<InvoiceCategory> _categoryCollection;
-        public ObservableCollection<InvoiceCategory> CategoryCollection
+        private ObservableCollection<BuildingChargeBasisGroup> _categoryCollection;
+        public ObservableCollection<BuildingChargeBasisGroup> CategoryCollection
         {
             get { return _categoryCollection; }
             set
@@ -67,8 +67,8 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private InvoiceCategory _selectedInvoiceCategory;
-        public InvoiceCategory SelectedInvoiceCategory
+        private BuildingChargeBasisGroup _selectedInvoiceCategory;
+        public BuildingChargeBasisGroup SelectedInvoiceCategory
         {
             get { return _selectedInvoiceCategory; }
             set
@@ -76,7 +76,7 @@ namespace DomenaManager.Wizards
                 if (value != _selectedInvoiceCategory)
                 {
                     _selectedInvoiceCategory = value;                    
-                    CategoryName = value != null ? value.CategoryName : string.Empty;
+                    CategoryName = value != null ? value.BuildingChargeBasicGroupName : string.Empty;
                     OnPropertyChanged("SelectedInvoiceCategory");
                 }
             }
@@ -97,16 +97,16 @@ namespace DomenaManager.Wizards
             get { return new Helpers.RelayCommand(ModifyCategory, CanModifyCategory); }
         }
 
-        public List<Helpers.InvoiceCategoryCommand> commandBuffer;
+        public List<Helpers.GroupNameCommand> commandBuffer;
 
         public EditGroupNames()
         {
             DataContext = this;
             InitializeComponent();
-            commandBuffer = new List<Helpers.InvoiceCategoryCommand>();
+            commandBuffer = new List<Helpers.GroupNameCommand>();
             using (var db = new DB.DomenaDBContext())
             {
-                CategoryCollection = new ObservableCollection<InvoiceCategory>(db.InvoiceCategories.Where(x => !x.IsDeleted).ToList());
+                CategoryCollection = new ObservableCollection<BuildingChargeBasisGroup>(db.CostGroup.Where(x => !x.IsDeleted).ToList());
             }
         }
 
@@ -117,10 +117,10 @@ namespace DomenaManager.Wizards
                 LabelError = "Błędna nazwa";
                 return;
             }
-            var ic = new InvoiceCategory { CategoryName = CategoryName, CategoryId = Guid.NewGuid(), IsDeleted = false };
+            var ic = new BuildingChargeBasisGroup { BuildingChargeBasicGroupName = CategoryName, BuildingChargeBasisGroupId = Guid.NewGuid(), IsDeleted = false };
             CategoryCollection.Add(ic);
 
-            commandBuffer.Add(new Helpers.InvoiceCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add, Item = ic });
+            commandBuffer.Add(new Helpers.GroupNameCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add, Item = ic });
         }
 
         private bool CanAddCategory()
@@ -135,9 +135,9 @@ namespace DomenaManager.Wizards
                 LabelError = "Błędna nazwa";
                 return;
             }
-            SelectedInvoiceCategory.CategoryName = CategoryName;
+            SelectedInvoiceCategory.BuildingChargeBasicGroupName = CategoryName;
 
-            commandBuffer.Add(new Helpers.InvoiceCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update, Item = SelectedInvoiceCategory });
+            commandBuffer.Add(new Helpers.GroupNameCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update, Item = SelectedInvoiceCategory });
         }
 
         private bool CanModifyCategory()
@@ -147,7 +147,7 @@ namespace DomenaManager.Wizards
 
         private void DeleteCategory(object param)
         {
-            commandBuffer.Add(new Helpers.InvoiceCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove, Item = SelectedInvoiceCategory });
+            commandBuffer.Add(new Helpers.GroupNameCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove, Item = SelectedInvoiceCategory });
 
             CategoryCollection.Remove(SelectedInvoiceCategory);            
         }
