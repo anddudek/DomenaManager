@@ -71,6 +71,11 @@ namespace DomenaManager.Pages
             }
         }
 
+        public ICommand ShowRecordDetails
+        {
+            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
+        }
+
         public OwnersPage()
         {
             DataContext = this;
@@ -167,6 +172,16 @@ namespace DomenaManager.Pages
         private bool CanDeleteOwner()
         {
             return SelectedOwner != null;
+        }
+        
+        private bool CanShowDetails()
+        {
+            return CanEditOwner();
+        }
+
+        private void ShowDetails(object param)
+        {
+            EditOwner(null);
         }
               
         private bool IsValid(DependencyObject obj)

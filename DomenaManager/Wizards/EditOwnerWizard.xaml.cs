@@ -83,6 +83,14 @@ namespace DomenaManager.Wizards
             get { return new RelayCommand(CancelDialog, CanCancelDialog); }
         }
 
+        public ICommand AcceptCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AcceptDialog, CanAcceptDialog);
+            }
+        }
+
         public Owner _ownerLocalCopy;
 
         public EditOwnerWizard(Owner SelectedOwner = null)
@@ -157,6 +165,17 @@ namespace DomenaManager.Wizards
         private bool CanCancelDialog()
         {
             return true;
+        }
+
+        private bool CanAcceptDialog()
+        {
+            return true;
+        }
+
+        private void AcceptDialog(object param)
+        {
+            SaveDialog(null);
+            Helpers.SwitchPage.SwitchMainPage(new Pages.OwnersPage(), this);
         }
 
         private void UpdateAllFields(object param)

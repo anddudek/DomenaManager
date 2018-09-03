@@ -8,6 +8,7 @@
         xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:hlp="clr-namespace:DomenaManager.Helpers"
         
         mc:Ignorable="d" 
@@ -187,6 +188,11 @@
                 SelectedItem="{Binding SelectedApartment}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                 ItemsSource="{Binding Apartments}" Foreground="Black" Padding="5" Margin="5"
                 CanUserAddRows="False" IsReadOnly="True">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding ShowRecordDetails}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <DataGrid.Columns>
                     <DataGridTextColumn x:Name="BuildingHeader" Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn x:Name="AppNumberHeader" Header="Numer lokalu" Binding="{Binding ApartmentNumber}" Width="auto" FontSize="14"/>

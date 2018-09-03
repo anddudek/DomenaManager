@@ -205,6 +205,14 @@ namespace DomenaManager.Wizards
         {
             get { return new RelayCommand(CancelDialog, CanCancelDialog); }
         }
+        
+        public ICommand AcceptCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AcceptDialog, CanAcceptDialog);
+            }
+        }
 
         public Invoice _lic;
 
@@ -328,6 +336,17 @@ namespace DomenaManager.Wizards
                 }
             }
             SwitchPage.SwitchMainPage(new Pages.InvoicesPage(), this);
+        }
+
+        private bool CanAcceptDialog()
+        {
+            return true;
+        }
+
+        private void AcceptDialog(object param)
+        {
+            SaveDialog(null);
+            Helpers.SwitchPage.SwitchMainPage(new Pages.InvoicesPage(), this);
         }
 
         private bool IsValid(DependencyObject obj)

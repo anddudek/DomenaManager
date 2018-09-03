@@ -72,6 +72,11 @@ namespace DomenaManager.Pages
             }
         }
 
+        public ICommand ShowRecordDetails
+        {
+            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
+        }
+
         #endregion
 
         public BuildingsPage()
@@ -282,7 +287,17 @@ namespace DomenaManager.Pages
                 }
             }
             InitializeCollection();
-            
+
+        }
+
+        private bool CanShowDetails()
+        {
+            return CanEditBuilding();
+        }
+
+        private void ShowDetails(object param)
+        {
+            EditBuilding(null);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

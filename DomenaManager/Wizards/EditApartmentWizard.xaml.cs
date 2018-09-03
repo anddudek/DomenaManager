@@ -279,6 +279,14 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand AcceptCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AcceptDialog, CanAcceptDialog);
+            }
+        }
+
         public Apartment _apartmentLocalCopy;
 
         public EditApartmentWizard(Apartment SelectedApartment = null)
@@ -365,6 +373,7 @@ namespace DomenaManager.Wizards
             _selectedBuildingName = _buildingsNames.Where(x => x.BuildingId.Equals(_apartmentLocalCopy.BuildingId)).FirstOrDefault();
             _selectedOwnerName = _ownersNames.Where(x => x.OwnerId.Equals(_apartmentLocalCopy.OwnerId)).FirstOrDefault();
             _selectedOwnerMailAddress = _apartmentLocalCopy.CorrespondenceAddress != null ? _apartmentLocalCopy.CorrespondenceAddress : (_selectedOwnerName != null ? _selectedOwnerName.MailAddress : null);
+            _locatorsAmount = _apartmentLocalCopy.Locators;
         }
 
         private async void AddOwner(object param)
@@ -485,7 +494,6 @@ namespace DomenaManager.Wizards
                     db.SaveChanges();
                 }
             }
-            Helpers.SwitchPage.SwitchMainPage(new Pages.ApartmentsPage(), this);
         }
 
         private bool CanSaveDialog()
@@ -501,6 +509,17 @@ namespace DomenaManager.Wizards
         private bool CanCancelDialog()
         {
             return true;
+        }
+
+        private bool CanAcceptDialog()
+        {
+            return true;
+        }
+
+        private void AcceptDialog(object param)
+        {
+            SaveDialog(null);
+            Helpers.SwitchPage.SwitchMainPage(new Pages.ApartmentsPage(), this);
         }
 
         private void ExtendedEBWOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)

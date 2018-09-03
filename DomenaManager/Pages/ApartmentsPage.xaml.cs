@@ -238,6 +238,11 @@ namespace DomenaManager.Pages
             }
         }
 
+        public ICommand ShowRecordDetails
+        {
+            get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
+        }
+
         public ApartmentsPage()
         {
             DataContext = this;
@@ -481,6 +486,16 @@ namespace DomenaManager.Pages
         private bool CanDeleteApartment()
         {
             return SelectedApartment != null;
+        }
+
+        private bool CanShowDetails()
+        {
+            return CanEditApartment();
+        }
+
+        private void ShowDetails(object param)
+        {
+            EditApartment(null);
         }
 
         #region Legacy

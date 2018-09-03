@@ -338,6 +338,14 @@ namespace DomenaManager.Wizards
             get { return new RelayCommand(CancelDialog, CanCancelDialog); }
         }
 
+        public ICommand AcceptCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AcceptDialog, CanAcceptDialog);
+            }
+        }
+
         #endregion
 
         public EditChargeWizard(ChargeDataGrid charge)
@@ -596,6 +604,17 @@ namespace DomenaManager.Wizards
         private bool CanCancelDialog()
         {
             return true;
+        }
+
+        private bool CanAcceptDialog()
+        {
+            return true;
+        }
+
+        private void AcceptDialog(object param)
+        {
+            SaveDialog(null);
+            Helpers.SwitchPage.SwitchMainPage(new Pages.ChargesPage(), this);
         }
 
         private void UpdateApartmentsNumbers()

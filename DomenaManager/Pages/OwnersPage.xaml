@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
       
       xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -25,6 +26,12 @@
             </StackPanel>
         </Grid>
         <DataGrid ItemsSource="{Binding Owners}" AutoGenerateColumns="False" IsReadOnly="True" Grid.Row="1" Margin="20" SelectedItem="{Binding SelectedOwner}">
+
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding ShowRecordDetails}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="auto" FontSize="14"/>
                 <DataGridTextColumn Header="Adres do korespondencji" Binding="{Binding Address}" Width="*" FontSize="14"/>
