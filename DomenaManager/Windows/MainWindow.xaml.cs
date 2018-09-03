@@ -433,8 +433,8 @@ namespace DomenaManager.Windows
                 bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
                 if (!ynResult)
                 {
-                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
-                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
+                    var dc = (eventArgs.Session.Content as Wizards.EditGroupNames);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingCostGroupEventHandler);
                 }
             }
         }

@@ -39,5 +39,6 @@ namespace LibDataModel
         public double CostPerUnit { get; set; }
         public DateTime BegginingDate { get; set; }
         public DateTime EndingDate { get; set; }
+        public Guid BuildingChargeBasicGroupId { get; set; }
     }
 }

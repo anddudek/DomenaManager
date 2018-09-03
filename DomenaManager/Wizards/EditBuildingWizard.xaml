@@ -157,10 +157,10 @@
 
                 <ComboBox materialDesign:HintAssist.Hint="Grupa wpłat"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-                  IsEditable="True" DisplayMemberPath="Name"
+                  IsEditable="True" DisplayMemberPath="BuildingChargeBasicGroupName"
             Grid.Row="2" Grid.Column="0" SelectedItem="{Binding SelectedGroupName}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,10,50,10" >
                     <ComboBox.Text>
-                        <Binding Path="SelectedGroupName" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding Path="SelectedGroupValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                             <!--<Binding.ValidationRules>
                             <Helpers:EmptyStringValidationRule/>
                         </Binding.ValidationRules>-->
@@ -230,6 +230,7 @@
                         <GridViewColumn Header="Koszt" Width="auto" DisplayMemberBinding="{Binding Cost}" />
                         <GridViewColumn Header="Obow. od" Width="auto" DisplayMemberBinding="{Binding Path=BegginingDate, StringFormat=d, ConverterCulture=pl-PL}" />
                         <GridViewColumn Header="Obow. do" Width="auto" DisplayMemberBinding="{Binding Path=EndingDate, StringFormat=d, Converter={StaticResource NullToDateConverter}, ConverterCulture=pl-PL}" />
+                            <GridViewColumn Header="Grupa" Width="auto" DisplayMemberBinding="{Binding Path=CostGroup.BuildingChargeBasicGroupName}" />
                     </GridView>
                 </ListView.View>
                 <ListView.GroupStyle>
@@ -277,9 +278,9 @@
             Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="10,0,120,0" >
                 <TextBox.Text>
                     <Binding Path="MeterName" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
+                            <!--<Binding.ValidationRules>
                             <Helpers:EmptyStringValidationRule/>
-                        </Binding.ValidationRules>
+                        </Binding.ValidationRules>-->
                     </Binding>
                 </TextBox.Text>
             </TextBox>
@@ -319,8 +320,17 @@
         </Grid>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-
-            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zastosuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
+                    <Button.CommandParameter>
+                        <system:Boolean>True</system:Boolean>
+                    </Button.CommandParameter>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:InvokeCommandAction Command="{Binding UpdateAllFieldsCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zapisz i zamknij" Command="{Binding AcceptCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
                 <Button.CommandParameter>
                     <system:Boolean>True</system:Boolean>
                 </Button.CommandParameter>

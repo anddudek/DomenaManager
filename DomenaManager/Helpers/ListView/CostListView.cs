@@ -79,6 +79,20 @@ namespace DomenaManager.Helpers
             }
         }
 
+        private LibDataModel.BuildingChargeBasisGroup _costGroup;
+        public LibDataModel.BuildingChargeBasisGroup CostGroup
+        {
+            get { return _costGroup; }
+            set
+            {
+                if (value != _costGroup)
+                {
+                    _costGroup = value;
+                    OnPropertyChanged("CostGroup");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {

@@ -184,6 +184,36 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private ObservableCollection<BuildingChargeBasisGroup> _groupNames;
+        public ObservableCollection<BuildingChargeBasisGroup> GroupNames
+        {
+            get { return _groupNames; }
+            set
+            {
+                if (value != _groupNames)
+                {
+                    _groupNames = value;
+                    OnPropertyChanged("GroupNames");
+                }
+            }
+        }
+
+        private BuildingChargeBasisGroup _selectedGroupName;
+        public BuildingChargeBasisGroup SelectedGroupName
+        {
+            get { return _selectedGroupName; }
+            set
+            {
+                if (value != _selectedGroupName)
+                {
+                    _selectedGroupName = value;
+                    OnPropertyChanged("SelectedGroupName");
+                }
+            }
+        }
+
+        public string SelectedGroupValue { get; set; }
+
         private ObservableCollection<Helpers.CostListView> _costCollection;
         public ObservableCollection<Helpers.CostListView> CostCollection
         {
@@ -322,6 +352,14 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand AddNewGroup
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddNewGrp, CanAddNewGroup);
+            }
+        }
+
         public ICommand AddMeter
         {
             get
@@ -362,6 +400,14 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand AcceptCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AcceptDialog, CanAcceptDialog);
+            }
+        }
+
         public EditBuildingWizard(Building SelectedBuilding = null)
         {
             DataContext = this;
@@ -384,7 +430,7 @@ namespace DomenaManager.Wizards
 
                 foreach (var c in SelectedBuilding.CostCollection)
                 {
-                    var clv = new Helpers.CostListView { BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, Cost = c.CostPerUnit, CostUnit =  UnitsNames.Where(x => x.EnumValue == c.BuildingChargeBasisDistribution).FirstOrDefault(), CategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(c.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName };
+                    var clv = new Helpers.CostListView { BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, Cost = c.CostPerUnit, CostUnit =  UnitsNames.Where(x => x.EnumValue == c.BuildingChargeBasisDistribution).FirstOrDefault(), CategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(c.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName, CostGroup = GroupNames.Where(x => x.BuildingChargeBasisGroupId == c.BuildingChargeBasicGroupId).FirstOrDefault() };
                     CostCollection.Add(clv);
                 }
                 MetersCollection = new ObservableCollection<MeterType>(SelectedBuilding.MeterCollection);
@@ -395,8 +441,8 @@ namespace DomenaManager.Wizards
         {
             using (var db = new DB.DomenaDBContext())
             {
-                CategoriesNames = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());               
-               
+                CategoriesNames = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
+                GroupNames = new ObservableCollection<BuildingChargeBasisGroup>(db.CostGroup.Where(x => !x.IsDeleted).ToList());
             }
         }
 
@@ -464,7 +510,12 @@ namespace DomenaManager.Wizards
                 LabelError = "Podaj poprawną datę początku obowiązywania";
                 return;
             }
-            var q = CostCollection.Where(x => x.BegginingDate.Date.CompareTo(CostBeggining.Date) == 0 && x.CategoryName == SelectedCategoryValue).Count();
+            if (SelectedGroupName == null)
+            {
+                LabelError = "Wybierz grupę";
+                return;
+            }
+            var q = CostCollection.Where(x => x.BegginingDate.Date.CompareTo(CostBeggining.Date) == 0 && x.CategoryName == SelectedCategoryValue && x.CostGroup == SelectedGroupName).Count();
             if (q > 0)
             {
                 LabelError = "Istnieje już rekord z taką samą kategorią i datą";
@@ -473,7 +524,7 @@ namespace DomenaManager.Wizards
             LabelError = null;
             var endingDate = new DateTime(1900, 01, 01);
             
-            var c = new Helpers.CostListView() { BegginingDate = CostBeggining, CategoryName = SelectedCategoryValue, Cost = uc, CostUnit = SelectedUnitName, EndingDate = endingDate };
+            var c = new Helpers.CostListView() { BegginingDate = CostBeggining, CategoryName = SelectedCategoryValue, Cost = uc, CostUnit = SelectedUnitName, EndingDate = endingDate, CostGroup = SelectedGroupName };
 
             CostCollection.Add(c);
             CalculateCostsDates();
@@ -514,6 +565,17 @@ namespace DomenaManager.Wizards
             var result = await DialogHost.Show(ecc, "HelperDialog", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
         }
 
+        private bool CanAddNewGroup()
+        {
+            return true;
+        }
+
+        private async void AddNewGrp(object param)
+        {
+            var ecn = new Wizards.EditGroupNames();
+            var result = await DialogHost.Show(ecn, "HelperDialog", ExtendedOpenedEventHandler, ExtendedClosingEcnEventHandler);
+        }
+
         private bool CanAddNewCat()
         {
             return true;
@@ -527,7 +589,7 @@ namespace DomenaManager.Wizards
 
         private bool CanAddNewMeter()
         {
-            return true;
+            return !String.IsNullOrWhiteSpace(MeterName);
         }
 
         private void ModifyMeter(object param)
@@ -567,7 +629,7 @@ namespace DomenaManager.Wizards
                     foreach (var c in CostCollection)
                     {
                         var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
-                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId };
+                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId, BuildingChargeBasicGroupId = c.CostGroup.BuildingChargeBasisGroupId };
                         costs.Add(cost);
                     }
                     newBuilding.CostCollection = costs;
@@ -601,7 +663,7 @@ namespace DomenaManager.Wizards
                     foreach (var c in CostCollection)
                     {
                         var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
-                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId };
+                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId, BuildingChargeBasicGroupId = c.CostGroup.BuildingChargeBasisGroupId };
                         costs.Add(cost);
                     }
                     q.CostCollection = costs;
@@ -632,7 +694,6 @@ namespace DomenaManager.Wizards
                     db.SaveChanges();
                 }
             }
-            Helpers.SwitchPage.SwitchMainPage(new Pages.BuildingsPage(), this);
         }
 
         private bool CanSaveDialog()
@@ -642,6 +703,17 @@ namespace DomenaManager.Wizards
         
         private void CancelDialog(object param)
         {
+            Helpers.SwitchPage.SwitchMainPage(new Pages.BuildingsPage(), this);
+        }
+
+        private bool CanAcceptDialog()
+        {
+            return true;
+        }
+
+        private void AcceptDialog(object param)
+        {
+            SaveDialog(null);
             Helpers.SwitchPage.SwitchMainPage(new Pages.BuildingsPage(), this);
         }
 
@@ -696,6 +768,49 @@ namespace DomenaManager.Wizards
                 }
             }
             InitializeCategoriesList();
+        }
+
+
+        private async void ExtendedClosingEcnEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditGroupNames);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    foreach (var cmd in dc.commandBuffer)
+                    {
+                        switch (cmd.category)
+                        {
+                            default:
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add:
+                                db.CostGroup.Add(cmd.Item);
+                                db.SaveChanges();
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove:
+                                db.CostGroup.Where(x => x.BuildingChargeBasisGroupId.Equals(cmd.Item.BuildingChargeBasisGroupId)).FirstOrDefault().IsDeleted = true;
+                                db.SaveChanges();
+                                break;
+                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update:
+                                db.CostGroup.Where(x => x.BuildingChargeBasisGroupId.Equals(cmd.Item.BuildingChargeBasisGroupId)).FirstOrDefault().BuildingChargeBasicGroupName = cmd.Item.BuildingChargeBasicGroupName;
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    var dc = (eventArgs.Session.Content as Wizards.EditGroupNames);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEcnEventHandler);
+                }
+            }
         }
 
         private bool IsValid(DependencyObject obj)
