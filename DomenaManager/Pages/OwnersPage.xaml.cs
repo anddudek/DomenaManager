@@ -92,7 +92,7 @@ namespace DomenaManager.Pages
                 foreach (var own in q)
                 {
                     int apartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.OwnerId.Equals(own.OwnerId)).Count(x => true);
-                    var o = new OwnerDataGrid {Name = own.OwnerName, Address= own.MailAddress, ApartmentsCount= apartmentsCount };
+                    var o = new OwnerDataGrid {FirstName = own.OwnerFirstName, SurName = own.OwnerSurname, Address= own.MailAddress, ApartmentsCount= apartmentsCount };
                     o.OwnerId = own.OwnerId;                    
                     Owners.Add(o);
                 }
@@ -156,7 +156,7 @@ namespace DomenaManager.Pages
 
         public async void DeleteOwner(object param)
         {
-            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć właściciela " + SelectedOwner.Name + "?");
+            bool ynResult = await Helpers.YNMsg.Show("Czy chcesz usunąć właściciela " + SelectedOwner.OwnerName() + "?");
             if (ynResult)
             {
                 using (var db = new DB.DomenaDBContext())

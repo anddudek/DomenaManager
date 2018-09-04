@@ -25,14 +25,25 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class EditOwnerWizard : UserControl, INotifyPropertyChanged
     {
-        private string _ownerName;
-        public string OwnerName
+        private string _ownerFirstName;
+        public string OwnerFirstName
         {
-            get { return _ownerName; }
+            get { return _ownerFirstName; }
             set 
-            { 
-                _ownerName = value;
-                OnPropertyChanged("OwnerName");
+            {
+                _ownerFirstName = value;
+                OnPropertyChanged("OwnerFirstName");
+            }
+        }
+
+        private string _ownerSurame;
+        public string OwnerSurname
+        {
+            get { return _ownerSurame; }
+            set
+            {
+                _ownerSurame = value;
+                OnPropertyChanged("OwnerSurname");
             }
         }
 
@@ -101,7 +112,8 @@ namespace DomenaManager.Wizards
             {
                 _ownerLocalCopy = new Owner(SelectedOwner);
 
-                OwnerName = SelectedOwner.OwnerName;
+                OwnerFirstName = SelectedOwner.OwnerFirstName;
+                OwnerSurname = SelectedOwner.OwnerSurname;
                 MailAddress = SelectedOwner.MailAddress;
                 using (var db = new DB.DomenaDBContext())
                 {
@@ -122,21 +134,21 @@ namespace DomenaManager.Wizards
             //Accept
             if (this._ownerLocalCopy == null)
             {
-                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.OwnerName) || string.IsNullOrEmpty(this.MailAddress)))
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.OwnerFirstName) || string.IsNullOrEmpty(this.OwnerSurname) || string.IsNullOrEmpty(this.MailAddress)))
                 {
                     return;
                 }
                 //Add new owner
                 using (var db = new DB.DomenaDBContext())
                 {
-                    var newOwner = new LibDataModel.Owner { OwnerId = Guid.NewGuid(), MailAddress = this.MailAddress, OwnerName = this.OwnerName, IsDeleted = false };
+                    var newOwner = new LibDataModel.Owner { OwnerId = Guid.NewGuid(), MailAddress = this.MailAddress, OwnerFirstName = this.OwnerFirstName, OwnerSurname=this.OwnerSurname, IsDeleted = false };
                     db.Owners.Add(newOwner);
                     db.SaveChanges();
                 }
             }
             else
             {
-                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.OwnerName) || string.IsNullOrEmpty(this.MailAddress)))
+                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.OwnerFirstName) || string.IsNullOrEmpty(this.OwnerSurname) || string.IsNullOrEmpty(this.MailAddress)))
                 {
                     return;
                 }
@@ -144,7 +156,8 @@ namespace DomenaManager.Wizards
                 using (var db = new DB.DomenaDBContext())
                 {
                     var q = db.Owners.Where(x => x.OwnerId.Equals(this._ownerLocalCopy.OwnerId)).FirstOrDefault();
-                    q.OwnerName = this.OwnerName;
+                    q.OwnerFirstName = this.OwnerFirstName;
+                    q.OwnerSurname = this.OwnerSurname;
                     q.MailAddress = this.MailAddress;
                     db.SaveChanges();
                 }
@@ -174,8 +187,8 @@ namespace DomenaManager.Wizards
 
         private void AcceptDialog(object param)
         {
-            SaveDialog(null);
-            Helpers.SwitchPage.SwitchMainPage(new Pages.OwnersPage(), this);
+           SaveDialog(null);
+           SwitchPage.SwitchMainPage(new Pages.OwnersPage(), this);
         }
 
         private void UpdateAllFields(object param)

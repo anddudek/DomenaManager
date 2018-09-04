@@ -39,6 +39,19 @@ namespace LibDataModel
                 }
             }
         }
+        private DateTime _invoiceCreatedDate;
+        public DateTime InvoiceCreatedDate
+        {
+            get { return _invoiceCreatedDate; }
+            set
+            {
+                if (value != _invoiceCreatedDate)
+                {
+                    _invoiceCreatedDate = value;
+                    OnPropertyChanged("InvoiceCreatedDate");
+                }
+            }
+        }
         private string _invoiceNumber;
         public string InvoiceNumber
         {

@@ -278,7 +278,7 @@ namespace DomenaManager.Pages
                         ApartmentArea = apar.ApartmentArea,
                         ApartmentAdditionalArea = apar.AdditionalArea,
                         ApartmentTotalArea = apar.ApartmentArea + apar.AdditionalArea,
-                        ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName,
+                        ApartmentOwner = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().OwnerName(),
                         ApartmentPercentageDistribution =
                         (100 * (apar.ApartmentArea + apar.AdditionalArea) /
                         db.Apartments

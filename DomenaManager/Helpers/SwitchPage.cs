@@ -12,8 +12,11 @@ namespace DomenaManager.Helpers
     {
         public static void SwitchMainPage(UserControl page, UserControl sender)
         {
-            var mw = ((((((sender).Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
-            mw.CurrentPage = page;            
+            if (!(sender.Parent == null))
+            {
+                var mw = ((((((sender).Parent as MahApps.Metro.Controls.TransitioningContentControl).Parent as Grid).Parent as DialogHost).Parent as DialogHost).Parent as DialogHost).Parent as Windows.MainWindow;
+                mw.CurrentPage = page;
+            }
         }
     }
 }

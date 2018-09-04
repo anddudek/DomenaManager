@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="25" />
@@ -26,11 +26,11 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBox materialDesign:HintAssist.Hint="Nazwa"
+        <TextBox materialDesign:HintAssist.Hint="Imię"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
             Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
             <TextBox.Text>
-                <Binding Path="OwnerName" UpdateSourceTrigger="PropertyChanged">
+                <Binding Path="OwnerFirstName" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
                         <Helpers:EmptyStringValidationRule/>
                     </Binding.ValidationRules>
@@ -38,9 +38,19 @@
             </TextBox.Text>
         </TextBox>
 
-        <TextBlock Grid.Column="0" Grid.Row="1" Text="(Nazwa służy do identyfikacji właściciela w programie)" FontSize="10" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="5,-5,5,5" TextAlignment="Center"/>
-
-        <TextBox materialDesign:HintAssist.Hint="Adres do korespondencji" Grid.RowSpan="2" Height="123"
+            <TextBox materialDesign:HintAssist.Hint="Nazwisko"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,10" >
+                <TextBox.Text>
+                    <Binding Path="OwnerSurname" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Helpers:EmptyStringValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+        
+            <TextBox materialDesign:HintAssist.Hint="Adres do korespondencji" Grid.RowSpan="2" Height="123"
                  TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" SpellCheck.IsEnabled="True" ScrollViewer.CanContentScroll="True"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
             Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >

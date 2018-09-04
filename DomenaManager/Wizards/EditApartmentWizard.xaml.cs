@@ -604,13 +604,13 @@ namespace DomenaManager.Wizards
                 //Accept
                 if (dc._ownerLocalCopy == null)
                 {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.OwnerName) || string.IsNullOrEmpty(dc.MailAddress)))
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.OwnerFirstName) || string.IsNullOrEmpty(dc.OwnerSurname) || string.IsNullOrEmpty(dc.MailAddress)))
                     {
                         eventArgs.Cancel();
                         return;
                     }
                     //Add new owner
-                    var newOwner = new LibDataModel.Owner { OwnerId = Guid.NewGuid(), MailAddress = dc.MailAddress, OwnerName = dc.OwnerName, IsDeleted = false };
+                    var newOwner = new LibDataModel.Owner { OwnerId = Guid.NewGuid(), MailAddress = dc.MailAddress, OwnerFirstName = dc.OwnerFirstName, OwnerSurname=dc.OwnerSurname, IsDeleted = false };
                     using (var db = new DB.DomenaDBContext())
                     {
                         db.Owners.Add(newOwner);
@@ -621,7 +621,7 @@ namespace DomenaManager.Wizards
                 }
                 else
                 {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.OwnerName) || string.IsNullOrEmpty(dc.MailAddress)))
+                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.OwnerFirstName) || string.IsNullOrEmpty(dc.OwnerSurname) || string.IsNullOrEmpty(dc.MailAddress)))
                     {
                         eventArgs.Cancel();
                         return;
@@ -630,7 +630,8 @@ namespace DomenaManager.Wizards
                     using (var db = new DB.DomenaDBContext())
                     {
                         var q = db.Owners.Where(x => x.OwnerId.Equals(dc._ownerLocalCopy.OwnerId)).FirstOrDefault();
-                        q.OwnerName = dc.OwnerName;
+                        q.OwnerFirstName = dc.OwnerFirstName;
+                        q.OwnerSurname = dc.OwnerSurname;
                         q.MailAddress = dc.MailAddress;
                         db.SaveChanges();
                     }

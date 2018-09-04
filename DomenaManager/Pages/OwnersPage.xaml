@@ -33,7 +33,8 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}" Width="auto" FontSize="14"/>
+                <DataGridTextColumn Header="Imię" Binding="{Binding FirstName}" Width="auto" FontSize="14"/>
+                <DataGridTextColumn Header="Nazwisko" Binding="{Binding SurName}" Width="auto" FontSize="14"/>
                 <DataGridTextColumn Header="Adres do korespondencji" Binding="{Binding Address}" Width="*" FontSize="14"/>
                 <DataGridTextColumn Header="Ilość lokali" Binding="{Binding ApartmentsCount}" Width="auto" FontSize="14"/>
             </DataGrid.Columns>

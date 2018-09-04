@@ -11,14 +11,16 @@ namespace LibDataModel
     {
         [Key]
         public Guid OwnerId { get; set; }
-        public string OwnerName { get; set; }
+        public string OwnerFirstName { get; set; }
+        public string OwnerSurname {get; set;}
         public string MailAddress { get; set; }
         public bool IsDeleted { get; set; }
 
         public Owner()
         {
             this.OwnerId = Guid.NewGuid();
-            this.OwnerName = null;
+            this.OwnerFirstName = null;
+            this.OwnerSurname = null;
             this.MailAddress = null;
             this.IsDeleted = false;
         }
@@ -26,9 +28,15 @@ namespace LibDataModel
         public Owner(Owner CopySource)
         {
             this.OwnerId = CopySource.OwnerId;
-            this.OwnerName = CopySource.OwnerName;
+            this.OwnerFirstName = CopySource.OwnerFirstName;
+            this.OwnerSurname = CopySource.OwnerSurname;
             this.MailAddress = CopySource.MailAddress;
             this.IsDeleted = CopySource.IsDeleted;
+        }
+
+        public string OwnerName()
+        {
+            return this.OwnerFirstName + " " + this.OwnerSurname;
         }
     }
 }

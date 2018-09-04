@@ -180,6 +180,17 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private DateTime _invoiceCreatedDate;
+        public DateTime InvoiceCreatedDate
+        {
+            get { return _invoiceCreatedDate; }
+            set
+            {
+                _invoiceCreatedDate = value;
+                OnPropertyChanged("InvoiceCreatedDate");
+            }
+        }
+
         public ICommand UpdateAllFieldsCommand
         {
             get
@@ -230,13 +241,16 @@ namespace DomenaManager.Wizards
                 SelectedBuildingName = BuildingsNames.Where(x => x.BuildingId.Equals(_lic.BuildingId)).FirstOrDefault();
                 SelectedCategoryName = CategoriesNames.Where(x => x.CategoryId.Equals(_lic.InvoiceCategoryId)).FirstOrDefault();
                 InvoiceDate = _lic.InvoiceDate.Date;
+                InvoiceCreatedDate = _lic.InvoiceCreatedDate.Date;
                 InvoiceNumber = _lic.InvoiceNumber;
                 CostAmount = _lic.CostAmount.ToString();
                 SelectedContractorsName = ContractorsNames.Where(x => x.Name.Equals(_lic.ContractorName)).FirstOrDefault();
                 IsSettled = _lic.IsSettled ? SettlementOptions.Where(x => x == "Tak").FirstOrDefault() : SettlementOptions.Where(x => x == "Nie").FirstOrDefault();
+                return;
             }
 
             InvoiceDate = DateTime.Today;
+            InvoiceCreatedDate = DateTime.Today;
         }
 
         private void InitializeBuildingsList()
@@ -295,7 +309,7 @@ namespace DomenaManager.Wizards
                     return;
                 }
                 //Add new invoice
-                var newInvoice = new LibDataModel.Invoice { BuildingId = SelectedBuildingName.BuildingId, ContractorName = SelectedContractorsValue, CostAmount = double.Parse(CostAmount), CreatedTime = DateTime.Now, InvoiceCategoryId = SelectedCategoryName.CategoryId, InvoiceDate = InvoiceDate.Date, InvoiceId = Guid.NewGuid(), InvoiceNumber = InvoiceNumber, IsDeleted = false, IsSettled = IsSettled == "Tak" ? true : false };
+                var newInvoice = new LibDataModel.Invoice { BuildingId = SelectedBuildingName.BuildingId, ContractorName = SelectedContractorsValue, CostAmount = double.Parse(CostAmount), CreatedTime = DateTime.Now, InvoiceCategoryId = SelectedCategoryName.CategoryId, InvoiceDate = InvoiceDate.Date, InvoiceId = Guid.NewGuid(), InvoiceNumber = InvoiceNumber, IsDeleted = false, IsSettled = IsSettled == "Tak" ? true : false, InvoiceCreatedDate = InvoiceCreatedDate };
                 using (var db = new DB.DomenaDBContext())
                 {
                     db.Invoices.Add(newInvoice);
@@ -324,6 +338,7 @@ namespace DomenaManager.Wizards
                     q.CreatedTime = DateTime.Now;
                     q.InvoiceCategoryId = SelectedCategoryName.CategoryId;
                     q.InvoiceDate = InvoiceDate.Date;
+                    q.InvoiceCreatedDate = InvoiceCreatedDate.Date;
                     q.InvoiceNumber = InvoiceNumber;
                     q.IsSettled = IsSettled == "Tak" ? true : false;
 

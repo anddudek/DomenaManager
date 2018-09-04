@@ -83,7 +83,7 @@ namespace DomenaManager.Wizards
 
                     if (SelectedApartmentNumber != null)
                     {
-                        OwnerMailAddress = _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().OwnerName + Environment.NewLine;
+                        OwnerMailAddress = _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().OwnerName() + Environment.NewLine;
                         OwnerMailAddress += SelectedApartmentNumber.CorrespondenceAddress == null ? _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().MailAddress : SelectedApartmentNumber.CorrespondenceAddress;
                         var charge = _chargesOC.Where(x => x.ApartmentId.Equals(SelectedApartmentNumber.ApartmentId)).OrderByDescending(x => x.ChargeDate).FirstOrDefault();
                         LastChargeAmount = charge != null ? charge.Components.Sum(x => x.Sum).ToString() + " zł" : "brak";

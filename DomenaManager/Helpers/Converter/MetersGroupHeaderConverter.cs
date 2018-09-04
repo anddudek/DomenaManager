@@ -24,7 +24,7 @@ namespace DomenaManager.Helpers
                     break;
                 case "Owner":
                     var a = ((System.Collections.ObjectModel.ReadOnlyObservableCollection<Object>)items).FirstOrDefault();
-                    return ((ApartamentMeterDataGrid)a).OwnerO.OwnerName;                    
+                    return ((ApartamentMeterDataGrid)a).OwnerO.OwnerName();                    
                 case "ApartmentNumber":
                     var b = ((System.Collections.ObjectModel.ReadOnlyObservableCollection<Object>)items).FirstOrDefault();
                     return ((ApartamentMeterDataGrid)b).ApartmentO.ApartmentNumber;

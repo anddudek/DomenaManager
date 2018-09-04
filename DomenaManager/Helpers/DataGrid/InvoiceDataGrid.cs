@@ -25,6 +25,7 @@ namespace DomenaManager.Helpers
             this.CreatedTime = invoice.CreatedTime;
             this.InvoiceCategoryId = invoice.InvoiceCategoryId;
             this.InvoiceDate = invoice.InvoiceDate;
+            this.InvoiceCreatedDate = invoice.InvoiceCreatedDate;
             this.InvoiceId = invoice.InvoiceId;
             this.InvoiceNumber = invoice.InvoiceNumber;
             this.IsDeleted = invoice.IsDeleted;

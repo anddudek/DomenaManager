@@ -76,7 +76,7 @@ namespace DomenaManager.Wizards
                     _selectedApartmentNumber = value;
                     OnPropertyChanged("SelectedApartmentNumber");
                     var ow = OwnersCollection.FirstOrDefault(o => o.OwnerId.Equals(ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber)).OwnerId));
-                    OwnerName = ow.OwnerName + Environment.NewLine + ow.MailAddress;
+                    OwnerName = ow.OwnerName() +Environment.NewLine + ow.MailAddress;
                 }
             }
         }
@@ -384,7 +384,7 @@ namespace DomenaManager.Wizards
                 SelectedBuilding = BuildingsCollection.FirstOrDefault(x => x.BuildingId.Equals(charge.Building.BuildingId));
                 //ApartmentNumber = charge.Apartment.ApartmentNumber;
                 SelectedApartmentNumber = ApartmentsNumbersCollection.FirstOrDefault(x => x.Equals(charge.Apartment.ApartmentNumber));
-                OwnerName = charge.Owner.OwnerName + Environment.NewLine + charge.Owner.MailAddress;
+                OwnerName = charge.Owner.OwnerName() + Environment.NewLine + charge.Owner.MailAddress;
                 ChargeStatus = charge.IsClosed ? ChargeStatusCollection[1] : ChargeStatusCollection[0];
             }
         }

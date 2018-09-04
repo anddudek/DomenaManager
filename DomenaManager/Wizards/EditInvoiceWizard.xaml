@@ -18,7 +18,9 @@
             <RowDefinition Height="1.5*" />
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -92,11 +94,16 @@
             Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" SelectedDate="{Binding InvoiceDate}"
             VerticalAlignment="Center" Margin="10,5,10,5" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Data księgowania" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+        
+            <DatePicker 
+            Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" SelectedDate="{Binding InvoiceCreatedDate}"
+            VerticalAlignment="Center" Margin="10,5,10,5" Language="pl-PL" 
+            materialDesign:HintAssist.Hint="Data wystawienia" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
 
-        <ComboBox materialDesign:HintAssist.Hint="Kontrahent"
+            <ComboBox materialDesign:HintAssist.Hint="Kontrahent"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="Name"
-            Grid.Row="5" Grid.Column="0" SelectedItem="{Binding SelectedContractorsName}"  Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
+            Grid.Row="6" Grid.Column="0" SelectedItem="{Binding SelectedContractorsName}"  Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
             <ComboBox.Text>
                 <Binding Path="SelectedContractorsValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
@@ -115,7 +122,7 @@
 
         <TextBox materialDesign:HintAssist.Hint="Kwota (zł)"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
+            Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
             <TextBox.Text>
                 <Binding Path="CostAmount" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
@@ -127,7 +134,7 @@
 
         <TextBox materialDesign:HintAssist.Hint="Numer faktury"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
+            Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
             <TextBox.Text>
                 <Binding Path="InvoiceNumber" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
@@ -140,7 +147,7 @@
         <ComboBox materialDesign:HintAssist.Hint="Faktura rozliczona"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" 
-            Grid.Row="8" Grid.Column="0" SelectedItem="{Binding IsSettled}"  Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
+            Grid.Row="9" Grid.Column="0" SelectedItem="{Binding IsSettled}"  Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
             <ComboBox.Text>
                 <Binding Path="SettlementOptionsValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
@@ -157,7 +164,7 @@
             </ComboBox.ItemsSource>
         </ComboBox>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="9">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="10">
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zastosuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
                     <Button.CommandParameter>
                         <system:Boolean>True</system:Boolean>
