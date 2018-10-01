@@ -65,29 +65,13 @@ namespace DomenaManager.Windows
             }
         }
 
-        public ICommand EditCostGroupsCommand
-        {
-            get
-            {
-                return new RelayCommand(EditGroupNames, CanEditGroupNames);
-            }
-        }
-
-        public ICommand MakeDbBackup
-        {
-            get
-            {
-                return new RelayCommand(DbBackup, CanDbBackup);
-            }
-        }
-
         public MainWindow()
         {
-            System.IO.Directory.CreateDirectory(@"Logs");
-            System.IO.Directory.CreateDirectory(@"Backup");
+            System.IO.Directory.CreateDirectory(@"C:/DomenaManager/Logs");
+            System.IO.Directory.CreateDirectory(@"C:/DomenaManager/Backup");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.RollingFile(@"Logs/DomenaManager-{Date}.log")
+                .WriteTo.RollingFile(@"C:/DomenaManager/Logs/DomenaManager-{Date}.log")
                 .CreateLogger();
 
             // this is the line you really want 
@@ -113,13 +97,16 @@ namespace DomenaManager.Windows
 
             SwitchPage("Buildings");
 
-            var LastBackupDate = Properties.Settings.Default.LastDBBackupCreation;
-            if (LastBackupDate.AddDays(Properties.Settings.Default.DBCreationDaySpan) < DateTime.Today)
-            {
-                BackupDb();
-            }
 
-            CanPerformCharge();
+            using (var db = new DB.DomenaDBContext())
+            {
+                string name = @"C:/DomenaManager/Backup/DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
+                if (!System.IO.File.Exists(name))
+                {
+                    //string cmd = String.Format("BACKUP DATABASE {0} TO DISK = '{1}'", "DBDomena", name);
+                    //int backup = db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, cmd);
+                }
+            }
         }
 
         public void SwitchPage(object PageName)
@@ -164,10 +151,6 @@ namespace DomenaManager.Windows
                     CurrentPage = new Pages.SettlementPage();
                     OnPropertyChanged("CurrentPage");
                     return;
-                case "Letters":
-                    CurrentPage = new Pages.LettersPage();
-                    OnPropertyChanged("CurrentPage");
-                    return;
             }
         }
 
@@ -179,89 +162,6 @@ namespace DomenaManager.Windows
         private bool CanEditCostCategories()
         {
             return true;
-        }
-
-        private void BackupDb(bool useDefaultFolder = true)
-        {
-            using (var db = new DB.DomenaDBContext())
-            {
-                string name;
-                if (useDefaultFolder)
-                {
-                    name = @"Backup/DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
-                }
-                else
-                {
-                    System.Windows.Forms.SaveFileDialog opf = new System.Windows.Forms.SaveFileDialog();
-                    opf.ShowDialog();
-                    if (opf.FileName == null)
-                    {
-                        return;
-                    }
-                    name = opf.FileName;
-                }
-                if (System.IO.File.Exists(name))
-                {
-                    try
-                    {
-                        System.IO.File.Delete(name);
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(e, "Error during db backup");
-                    }
-                }
-                try
-                {
-                    string cmd = String.Format("BACKUP DATABASE {0} TO DISK = '{1}'", "DBDomena", name);
-                    int backup = db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, cmd);
-                    Properties.Settings.Default.LastDBBackupCreation = DateTime.Now;
-                    Properties.Settings.Default.Save();
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Błąd zapisu bazy danych");
-                    Log.Error(e, "Error in dbBackup");
-                }
-            }
-        }
-
-        private async void CanPerformCharge()
-        {
-            using (var db = new DB.DomenaDBContext())
-            {
-                var lastChargeDate = db.AutoCharges.OrderByDescending(x => x.AutoChargeDate).FirstOrDefault();
-                if (lastChargeDate != null)
-                {
-                    var currIterDate = new DateTime(lastChargeDate.AutoChargeDate.Year, lastChargeDate.AutoChargeDate.Month, 1).AddMonths(1);
-                    while (currIterDate <= new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1))
-                    {
-                        //if (await YNMsg.Show("Wykryto nowy miesiąc. Czy utworzyć naliczenia zgodnie z aktualnymi danymi?"))
-                        //{
-                            PerformCharge(currIterDate);
-                        currIterDate = currIterDate.AddMonths(1);
-                        //}
-                    }
-                }
-                else
-                {
-                    //if (await YNMsg.Show("Wykryto nowy miesiąc. Czy utworzyć naliczenia zgodnie z aktualnymi danymi?"))
-                    //{
-                        PerformCharge(new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1));
-                    //}
-                }
-            }
-        }
-
-        private void PerformCharge(DateTime chargeDate)
-        {
-            using (var db = new DB.DomenaDBContext())
-            {
-                var autoCharge = new LibDataModel.AutoCharge() { AutChargeId = Guid.NewGuid(), AutoChargeDate = chargeDate };
-                ChargesOperations.GenerateCharges(chargeDate, autoCharge.AutChargeId);
-                db.AutoCharges.Add(autoCharge);
-                db.SaveChanges();
-            }
         }
 
         private async void EditCostCategories(object obj)
@@ -331,28 +231,6 @@ namespace DomenaManager.Windows
             var result = await DialogHost.Show(eic, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
         }
 
-        private bool CanEditGroupNames()
-        {
-            return true;
-        }
-
-        private async void EditGroupNames(object obj)
-        {
-            Wizards.EditGroupNames egn;
-            egn = new Wizards.EditGroupNames();
-            var result = await DialogHost.Show(egn, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingCostGroupEventHandler);
-        }
-
-        private void DbBackup(object param)
-        {
-            BackupDb(false);
-        }
-
-        private bool CanDbBackup()
-        {
-            return true;
-        }
-
         private async void ExtendedClosingInvoiceCategoriesEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
 
@@ -392,49 +270,6 @@ namespace DomenaManager.Windows
                 {
                     var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
                     var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
-                }
-            }
-        }
-
-        private async void ExtendedClosingCostGroupEventHandler(object sender, DialogClosingEventArgs eventArgs)
-        {
-
-            if ((bool)eventArgs.Parameter)
-            {
-                var dc = (eventArgs.Session.Content as Wizards.EditGroupNames);
-                //Accept
-                using (var db = new DB.DomenaDBContext())
-                {
-                    foreach (var cmd in dc.commandBuffer)
-                    {
-                        switch (cmd.category)
-                        {
-                            default:
-                                break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Add:
-                                db.CostGroup.Add(cmd.Item);
-                                db.SaveChanges();
-                                break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Remove:
-                                db.CostGroup.Where(x => x.BuildingChargeBasisGroupId.Equals(cmd.Item.BuildingChargeBasisGroupId)).FirstOrDefault().IsDeleted = true;
-                                db.SaveChanges();
-                                break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Update:
-                                db.CostGroup.Where(x => x.BuildingChargeBasisGroupId.Equals(cmd.Item.BuildingChargeBasisGroupId)).FirstOrDefault().BuildingChargeBasicGroupName = cmd.Item.BuildingChargeBasicGroupName;
-                                db.SaveChanges();
-                                break;
-                        }
-                    }
-                }
-            }
-            else if (!(bool)eventArgs.Parameter)
-            {
-
-                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
-                if (!ynResult)
-                {
-                    var dc = (eventArgs.Session.Content as Wizards.EditGroupNames);
-                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingCostGroupEventHandler);
                 }
             }
         }
