@@ -65,6 +65,14 @@ namespace DomenaManager.Windows
             }
         }
 
+        public ICommand EditCostGroupsCommand
+        {
+            get
+            {
+                return new RelayCommand(EditCostGroups, CanEditCostGroups);
+            }
+        }
+
         public MainWindow()
         {
             System.IO.Directory.CreateDirectory(@"C:/DomenaManager/Logs");
@@ -187,20 +195,20 @@ namespace DomenaManager.Windows
                 {
                     foreach (var cmd in dc.commandBuffer)
                     {
-                        switch (cmd.category)
+                        switch (cmd.CommandType)
                         {
                             default:
                                 break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Add:
-                                db.CostCategories.Add(cmd.costItem);
+                            case CommandEnum.Add:
+                                db.CostCategories.Add(cmd.Item);
                                 db.SaveChanges();
                                 break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Remove:
-                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().IsDeleted = true;
+                            case CommandEnum.Remove:
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.Item.BuildingChargeBasisCategoryId)).FirstOrDefault().IsDeleted = true;
                                 db.SaveChanges();
                                 break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Update:
-                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
+                            case CommandEnum.Update:
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.Item.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName = cmd.Item.CategoryName;
                                 db.SaveChanges();
                                 break;
                         }
@@ -242,20 +250,75 @@ namespace DomenaManager.Windows
                 {
                     foreach (var cmd in dc.commandBuffer)
                     {
-                        switch (cmd.category)
+                        switch (cmd.CommandType)
                         {
                             default:
                                 break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Add:
+                            case CommandEnum.Add:
                                 db.InvoiceCategories.Add(cmd.Item);
                                 db.SaveChanges();
                                 break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Remove:
+                            case CommandEnum.Remove:
                                 db.InvoiceCategories.Where(x => x.CategoryId.Equals(cmd.Item.CategoryId)).FirstOrDefault().IsDeleted = true;
                                 db.SaveChanges();
                                 break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Update:
+                            case CommandEnum.Update:
                                 db.InvoiceCategories.Where(x => x.CategoryId.Equals(cmd.Item.CategoryId)).FirstOrDefault().CategoryName = cmd.Item.CategoryName;
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
+                }
+            }
+        }
+
+        private bool CanEditCostGroups()
+        {
+            return true;
+        }
+
+        private async void EditCostGroups(object obj)
+        {
+            Wizards.EditGroupNames egn;
+            egn = new Wizards.EditGroupNames();
+            var result = await DialogHost.Show(egn, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingCostGroupsEventHandler);
+        }
+
+        private async void ExtendedClosingCostGroupsEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditGroupNames);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    foreach (var cmd in dc.commandBuffer)
+                    {
+                        switch (cmd.CommandType)
+                        {
+                            default:
+                                break;
+                            case CommandEnum.Add:
+                                db.GroupName.Add(cmd.Item);
+                                db.SaveChanges();
+                                break;
+                            case CommandEnum.Remove:
+                                db.GroupName.Where(x => x.BuildingChargeGroupNameId.Equals(cmd.Item.BuildingChargeGroupNameId)).FirstOrDefault().IsDeleted = true;
+                                db.SaveChanges();
+                                break;
+                            case CommandEnum.Update:
+                                db.GroupName.Where(x => x.BuildingChargeGroupNameId.Equals(cmd.Item.BuildingChargeGroupNameId)).FirstOrDefault().GroupName = cmd.Item.GroupName;
                                 db.SaveChanges();
                                 break;
                         }

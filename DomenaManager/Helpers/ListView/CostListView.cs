@@ -79,8 +79,8 @@ namespace DomenaManager.Helpers
             }
         }
 
-        private LibDataModel.BuildingChargeBasisGroup _costGroup;
-        public LibDataModel.BuildingChargeBasisGroup CostGroup
+        private LibDataModel.BuildingChargeGroupName _costGroup;
+        public LibDataModel.BuildingChargeGroupName CostGroup
         {
             get { return _costGroup; }
             set

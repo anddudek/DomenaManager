@@ -97,13 +97,13 @@ namespace DomenaManager.Wizards
             get { return new Helpers.RelayCommand(ModifyCategory, CanModifyCategory); }
         }
 
-        public List<Helpers.InvoiceCategoryCommand> commandBuffer;
+        public List<Helpers.CategoryCommand<InvoiceCategory>> commandBuffer;
 
         public EditInvoiceCategories()
         {
             DataContext = this;
             InitializeComponent();
-            commandBuffer = new List<Helpers.InvoiceCategoryCommand>();
+            commandBuffer = new List<Helpers.CategoryCommand<InvoiceCategory>>();
             using (var db = new DB.DomenaDBContext())
             {
                 CategoryCollection = new ObservableCollection<InvoiceCategory>(db.InvoiceCategories.Where(x => !x.IsDeleted).ToList());
@@ -120,7 +120,7 @@ namespace DomenaManager.Wizards
             var ic = new InvoiceCategory { CategoryName = CategoryName, CategoryId = Guid.NewGuid(), IsDeleted = false };
             CategoryCollection.Add(ic);
 
-            commandBuffer.Add(new Helpers.InvoiceCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add, Item = ic });
+            commandBuffer.Add(new Helpers.CategoryCommand<InvoiceCategory> { CommandType = Helpers.CommandEnum.Add, Item = ic });
         }
 
         private bool CanAddCategory()
@@ -137,7 +137,7 @@ namespace DomenaManager.Wizards
             }
             SelectedInvoiceCategory.CategoryName = CategoryName;
 
-            commandBuffer.Add(new Helpers.InvoiceCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update, Item = SelectedInvoiceCategory });
+            commandBuffer.Add(new Helpers.CategoryCommand<InvoiceCategory> { CommandType = Helpers.CommandEnum.Update, Item = SelectedInvoiceCategory });
         }
 
         private bool CanModifyCategory()
@@ -147,7 +147,7 @@ namespace DomenaManager.Wizards
 
         private void DeleteCategory(object param)
         {
-            commandBuffer.Add(new Helpers.InvoiceCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove, Item = SelectedInvoiceCategory });
+            commandBuffer.Add(new Helpers.CategoryCommand<InvoiceCategory> { CommandType = Helpers.CommandEnum.Remove, Item = SelectedInvoiceCategory });
 
             CategoryCollection.Remove(SelectedInvoiceCategory);            
         }

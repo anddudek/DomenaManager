@@ -97,13 +97,13 @@ namespace DomenaManager.Wizards
             get { return new Helpers.RelayCommand(ModifyCategory, CanModifyCategory); }
         }
 
-        public List<Helpers.CostCategoryCommand> commandBuffer;
+        public List<Helpers.CategoryCommand<BuildingChargeBasisCategory>> commandBuffer;
 
         public EditCostCategories()
         {
             DataContext = this;
             InitializeComponent();
-            commandBuffer = new List<Helpers.CostCategoryCommand>();
+            commandBuffer = new List<Helpers.CategoryCommand<BuildingChargeBasisCategory>>();
             using (var db = new DB.DomenaDBContext())
             {
                 CategoryCollection = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
@@ -120,7 +120,7 @@ namespace DomenaManager.Wizards
             var cc = new BuildingChargeBasisCategory { CategoryName = CategoryName, BuildingChargeBasisCategoryId = Guid.NewGuid(), IsDeleted = false };
             CategoryCollection.Add(cc);
 
-            commandBuffer.Add(new Helpers.CostCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add, costItem = cc });
+            commandBuffer.Add(new Helpers.CategoryCommand<BuildingChargeBasisCategory> { CommandType = Helpers.CommandEnum.Add, Item = cc });
         }
 
         private bool CanAddCategory()
@@ -137,7 +137,7 @@ namespace DomenaManager.Wizards
             }
             SelectedCostCategory.CategoryName = CategoryName;
 
-            commandBuffer.Add(new Helpers.CostCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update, costItem = SelectedCostCategory });
+            commandBuffer.Add(new Helpers.CategoryCommand<BuildingChargeBasisCategory> { CommandType = Helpers.CommandEnum.Update, Item = SelectedCostCategory });
         }
 
         private bool CanModifyCategory()
@@ -147,7 +147,7 @@ namespace DomenaManager.Wizards
 
         private void DeleteCategory(object param)
         {
-            commandBuffer.Add(new Helpers.CostCategoryCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove, costItem = SelectedCostCategory });
+            commandBuffer.Add(new Helpers.CategoryCommand<BuildingChargeBasisCategory> { CommandType = Helpers.CommandEnum.Remove, Item = SelectedCostCategory });
 
             CategoryCollection.Remove(SelectedCostCategory);            
         }

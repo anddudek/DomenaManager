@@ -24,17 +24,17 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class EditGroupNames : UserControl, INotifyPropertyChanged
     {
-        private string _categoryName;
-        public string CategoryName
+        private string _groupName;
+        public string GroupName
         {
-            get { return _categoryName; }
+            get { return _groupName; }
             set
             {
-                if (value != _categoryName)
+                if (value != _groupName)
                 {
-                    _categoryName = value;
+                    _groupName = value;
                     LabelError = "";
-                    OnPropertyChanged("CategoryName");
+                    OnPropertyChanged("GroupName");
                 }
             }
         }
@@ -53,108 +53,108 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private ObservableCollection<BuildingChargeBasisGroup> _categoryCollection;
-        public ObservableCollection<BuildingChargeBasisGroup> CategoryCollection
+        private ObservableCollection<BuildingChargeGroupName> _groupCollection;
+        public ObservableCollection<BuildingChargeGroupName> GroupCollection
         {
-            get { return _categoryCollection; }
+            get { return _groupCollection; }
             set
             {
-                if (value != _categoryCollection)
+                if (value != _groupCollection)
                 {
-                    _categoryCollection = value;
-                    OnPropertyChanged("CategoryCollection");
+                    _groupCollection = value;
+                    OnPropertyChanged("GroupCollection");
                 }
             }
         }
 
-        private BuildingChargeBasisGroup _selectedInvoiceCategory;
-        public BuildingChargeBasisGroup SelectedInvoiceCategory
+        private BuildingChargeGroupName _selectedGroupName;
+        public BuildingChargeGroupName SelectedGroupName
         {
-            get { return _selectedInvoiceCategory; }
+            get { return _selectedGroupName; }
             set
             {
-                if (value != _selectedInvoiceCategory)
+                if (value != _selectedGroupName)
                 {
-                    _selectedInvoiceCategory = value;                    
-                    CategoryName = value != null ? value.BuildingChargeBasicGroupName : string.Empty;
-                    OnPropertyChanged("SelectedInvoiceCategory");
+                    _selectedGroupName = value;                    
+                    GroupName = value != null ? value.GroupName : string.Empty;
+                    OnPropertyChanged("SelectedGroupName");
                 }
             }
         }
 
-        public ICommand AddCategoryCommand
+        public ICommand AddGroupCommand
         {
-            get { return new Helpers.RelayCommand(AddCategory, CanAddCategory); }
+            get { return new Helpers.RelayCommand(AddGroup, CanAddGroup); }
         }
 
-        public ICommand DeleteCategoryCommand
+        public ICommand DeleteGroupCommand
         {
-            get { return new Helpers.RelayCommand(DeleteCategory, CanDeleteCategory); }
+            get { return new Helpers.RelayCommand(DeleteGroup, CanDeleteGroup); }
         }
 
-        public ICommand ModifyCategoryCommand
+        public ICommand ModifyGroupCommand
         {
-            get { return new Helpers.RelayCommand(ModifyCategory, CanModifyCategory); }
+            get { return new Helpers.RelayCommand(ModifyGroup, CanModifyGroup); }
         }
 
-        public List<Helpers.GroupNameCommand> commandBuffer;
+        public List<Helpers.CategoryCommand<BuildingChargeGroupName>> commandBuffer;
 
         public EditGroupNames()
         {
             DataContext = this;
             InitializeComponent();
-            commandBuffer = new List<Helpers.GroupNameCommand>();
+            commandBuffer = new List<Helpers.CategoryCommand<BuildingChargeGroupName>>();
             using (var db = new DB.DomenaDBContext())
             {
-                CategoryCollection = new ObservableCollection<BuildingChargeBasisGroup>(db.CostGroup.Where(x => !x.IsDeleted).ToList());
+                GroupCollection = new ObservableCollection<BuildingChargeGroupName>(db.GroupName.Where(x => !x.IsDeleted).ToList());
             }
         }
 
-        private void AddCategory(object param)
+        private void AddGroup(object param)
         {
-            if (string.IsNullOrWhiteSpace(CategoryName))
+            if (string.IsNullOrWhiteSpace(GroupName))
             {
                 LabelError = "Błędna nazwa";
                 return;
             }
-            var ic = new BuildingChargeBasisGroup { BuildingChargeBasicGroupName = CategoryName, BuildingChargeBasisGroupId = Guid.NewGuid(), IsDeleted = false };
-            CategoryCollection.Add(ic);
+            var ic = new BuildingChargeGroupName { GroupName = this.GroupName, BuildingChargeGroupNameId = Guid.NewGuid(), IsDeleted = false };
+            GroupCollection.Add(ic);
 
-            commandBuffer.Add(new Helpers.GroupNameCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add, Item = ic });
+            commandBuffer.Add(new Helpers.CategoryCommand<BuildingChargeGroupName> { CommandType = Helpers.CommandEnum.Add, Item = ic });
         }
 
-        private bool CanAddCategory()
+        private bool CanAddGroup()
         {
             return true;
         }
 
-        private void ModifyCategory(object param)
+        private void ModifyGroup(object param)
         {
-            if (string.IsNullOrWhiteSpace(CategoryName))
+            if (string.IsNullOrWhiteSpace(GroupName))
             {
                 LabelError = "Błędna nazwa";
                 return;
             }
-            SelectedInvoiceCategory.BuildingChargeBasicGroupName = CategoryName;
+            SelectedGroupName.GroupName = this.GroupName;
 
-            commandBuffer.Add(new Helpers.GroupNameCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update, Item = SelectedInvoiceCategory });
+            commandBuffer.Add(new Helpers.CategoryCommand<BuildingChargeGroupName> { CommandType = Helpers.CommandEnum.Update, Item = SelectedGroupName });
         }
 
-        private bool CanModifyCategory()
+        private bool CanModifyGroup()
         {
-            return SelectedInvoiceCategory != null;
+            return SelectedGroupName != null;
         }
 
-        private void DeleteCategory(object param)
+        private void DeleteGroup(object param)
         {
-            commandBuffer.Add(new Helpers.GroupNameCommand { category = Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove, Item = SelectedInvoiceCategory });
+            commandBuffer.Add(new Helpers.CategoryCommand<BuildingChargeGroupName> { CommandType = Helpers.CommandEnum.Remove, Item = SelectedGroupName });
 
-            CategoryCollection.Remove(SelectedInvoiceCategory);            
+            GroupCollection.Remove(SelectedGroupName);            
         }
 
-        private bool CanDeleteCategory()
+        private bool CanDeleteGroup()
         {
-            return SelectedInvoiceCategory != null;
+            return SelectedGroupName != null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

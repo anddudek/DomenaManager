@@ -405,19 +405,19 @@ namespace DomenaManager.Wizards
                 {
                     foreach (var cmd in dc.commandBuffer)
                     {
-                        switch (cmd.category)
+                        switch (cmd.CommandType)
                         {
                             default:
                                 break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Add:
+                            case CommandEnum.Add:
                                 db.InvoiceCategories.Add(cmd.Item);
                                 db.SaveChanges();
                                 break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Remove:
+                            case CommandEnum.Remove:
                                 db.InvoiceCategories.Where(x => x.CategoryId.Equals(cmd.Item.CategoryId)).FirstOrDefault().IsDeleted = true;
                                 db.SaveChanges();
                                 break;
-                            case CostCategoryEnum.CostCategoryCommandEnum.Update:
+                            case CommandEnum.Update:
                                 db.InvoiceCategories.Where(x => x.CategoryId.Equals(cmd.Item.CategoryId)).FirstOrDefault().CategoryName = cmd.Item.CategoryName;
                                 db.SaveChanges();
                                 break;

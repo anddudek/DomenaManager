@@ -22,15 +22,15 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBox Grid.ColumnSpan="2" Margin="10,5,10,5" Text="{Binding CategoryName}" materialDesign:HintAssist.Hint="Nazwa" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+        <TextBox Grid.ColumnSpan="2" Margin="10,5,10,5" Text="{Binding GroupName}" materialDesign:HintAssist.Hint="Nazwa" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
         <TextBlock Grid.Row="1" Text="{Binding LabelError}" Foreground="Red" TextWrapping="Wrap" IsEnabled="False" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <Button Content="Dodaj" Grid.Row="1" Grid.Column="1" Margin="10" Command="{Binding AddCategoryCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
-        <Button Content="Usuń zaznaczony" Grid.Row="3" Grid.Column="1" Margin="0" Command="{Binding DeleteCategoryCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
-        <Button Content="Zmień zaznaczony" Grid.Row="3" Grid.Column="0" Margin="0" Command="{Binding ModifyCategoryCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
-        <ListView Grid.Row="2" Grid.ColumnSpan="2" Margin="10,0,10,0" SelectedItem="{Binding SelectedInvoiceCategory}" ItemsSource="{Binding CategoryCollection}" >
+        <Button Content="Dodaj" Grid.Row="1" Grid.Column="1" Margin="10" Command="{Binding AddGroupCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
+        <Button Content="Usuń zaznaczony" Grid.Row="3" Grid.Column="1" Margin="0" Command="{Binding DeleteGroupCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
+        <Button Content="Zmień zaznaczony" Grid.Row="3" Grid.Column="0" Margin="0" Command="{Binding ModifyGroupCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
+        <ListView Grid.Row="2" Grid.ColumnSpan="2" Margin="10,0,10,0" SelectedItem="{Binding SelectedGroupName}" ItemsSource="{Binding GroupCollection}" >
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Nazwa" Width="auto" DisplayMemberBinding="{Binding BuildingChargeBasicGroupName}"/>
+                    <GridViewColumn Header="Nazwa" Width="auto" DisplayMemberBinding="{Binding GroupName}"/>
                 </GridView>
             </ListView.View>
         </ListView>

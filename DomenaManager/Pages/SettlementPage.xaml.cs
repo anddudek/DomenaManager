@@ -1174,20 +1174,20 @@ namespace DomenaManager.Pages
                 {
                     foreach (var cmd in dc.commandBuffer)
                     {
-                        switch (cmd.category)
+                        switch (cmd.CommandType)
                         {
                             default:
                                 break;
-                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add:
-                                db.CostCategories.Add(cmd.costItem);
+                            case Helpers.CommandEnum.Add:
+                                db.CostCategories.Add(cmd.Item);
                                 db.SaveChanges();
                                 break;
-                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove:
-                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().IsDeleted = true;
+                            case Helpers.CommandEnum.Remove:
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.Item.BuildingChargeBasisCategoryId)).FirstOrDefault().IsDeleted = true;
                                 db.SaveChanges();
                                 break;
-                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update:
-                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
+                            case Helpers.CommandEnum.Update:
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.Item.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName = cmd.Item.CategoryName;
                                 db.SaveChanges();
                                 break;
                         }

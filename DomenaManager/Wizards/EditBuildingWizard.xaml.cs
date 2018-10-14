@@ -184,8 +184,8 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private ObservableCollection<BuildingChargeBasisGroup> _groupNames;
-        public ObservableCollection<BuildingChargeBasisGroup> GroupNames
+        private ObservableCollection<BuildingChargeGroupName> _groupNames;
+        public ObservableCollection<BuildingChargeGroupName> GroupNames
         {
             get { return _groupNames; }
             set
@@ -198,8 +198,8 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private BuildingChargeBasisGroup _selectedGroupName;
-        public BuildingChargeBasisGroup SelectedGroupName
+        private BuildingChargeGroupName _selectedGroupName;
+        public BuildingChargeGroupName SelectedGroupName
         {
             get { return _selectedGroupName; }
             set
@@ -430,7 +430,7 @@ namespace DomenaManager.Wizards
 
                 foreach (var c in SelectedBuilding.CostCollection)
                 {
-                    var clv = new Helpers.CostListView { BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, Cost = c.CostPerUnit, CostUnit =  UnitsNames.Where(x => x.EnumValue == c.BuildingChargeBasisDistribution).FirstOrDefault(), CategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(c.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName, CostGroup = GroupNames.Where(x => x.BuildingChargeBasisGroupId == c.BuildingChargeBasicGroupId).FirstOrDefault() };
+                    var clv = new Helpers.CostListView { BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, Cost = c.CostPerUnit, CostUnit =  UnitsNames.Where(x => x.EnumValue == c.BuildingChargeBasisDistribution).FirstOrDefault(), CategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(c.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName, CostGroup = GroupNames.Where(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId).FirstOrDefault() };
                     CostCollection.Add(clv);
                 }
                 MetersCollection = new ObservableCollection<MeterType>(SelectedBuilding.MeterCollection);
@@ -442,7 +442,7 @@ namespace DomenaManager.Wizards
             using (var db = new DB.DomenaDBContext())
             {
                 CategoriesNames = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
-                GroupNames = new ObservableCollection<BuildingChargeBasisGroup>(db.CostGroup.Where(x => !x.IsDeleted).ToList());
+                GroupNames = new ObservableCollection<BuildingChargeGroupName>(db.GroupName.Where(x => !x.IsDeleted).ToList());
             }
         }
 
@@ -629,7 +629,7 @@ namespace DomenaManager.Wizards
                     foreach (var c in CostCollection)
                     {
                         var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
-                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId, BuildingChargeBasicGroupId = c.CostGroup.BuildingChargeBasisGroupId };
+                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId, BuildingChargeGroupNameId = c.CostGroup.BuildingChargeGroupNameId };
                         costs.Add(cost);
                     }
                     newBuilding.CostCollection = costs;
@@ -663,7 +663,7 @@ namespace DomenaManager.Wizards
                     foreach (var c in CostCollection)
                     {
                         var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
-                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId, BuildingChargeBasicGroupId = c.CostGroup.BuildingChargeBasisGroupId };
+                        var cost = new LibDataModel.BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId, BuildingChargeGroupNameId = c.CostGroup.BuildingChargeGroupNameId };
                         costs.Add(cost);
                     }
                     q.CostCollection = costs;
@@ -736,20 +736,20 @@ namespace DomenaManager.Wizards
                 {
                     foreach (var cmd in dc.commandBuffer)
                     {
-                        switch (cmd.category)
+                        switch (cmd.CommandType)
                         {
                             default:
                                 break;
-                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add:
-                                db.CostCategories.Add(cmd.costItem);
+                            case Helpers.CommandEnum.Add:
+                                db.CostCategories.Add(cmd.Item);
                                 db.SaveChanges();
                                 break;
-                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove:
-                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().IsDeleted = true;
+                            case Helpers.CommandEnum.Remove:
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.Item.BuildingChargeBasisCategoryId)).FirstOrDefault().IsDeleted = true;
                                 db.SaveChanges();
                                 break;
-                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update:
-                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.costItem.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName = cmd.costItem.CategoryName;
+                            case Helpers.CommandEnum.Update:
+                                db.CostCategories.Where(x => x.BuildingChargeBasisCategoryId.Equals(cmd.Item.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName = cmd.Item.CategoryName;
                                 db.SaveChanges();
                                 break;
                         }
@@ -781,20 +781,20 @@ namespace DomenaManager.Wizards
                 {
                     foreach (var cmd in dc.commandBuffer)
                     {
-                        switch (cmd.category)
+                        switch (cmd.CommandType)
                         {
                             default:
                                 break;
-                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Add:
-                                db.CostGroup.Add(cmd.Item);
+                            case Helpers.CommandEnum.Add:
+                                db.GroupName.Add(cmd.Item);
                                 db.SaveChanges();
                                 break;
-                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Remove:
-                                db.CostGroup.Where(x => x.BuildingChargeBasisGroupId.Equals(cmd.Item.BuildingChargeBasisGroupId)).FirstOrDefault().IsDeleted = true;
+                            case Helpers.CommandEnum.Remove:
+                                db.GroupName.Where(x => x.BuildingChargeGroupNameId.Equals(cmd.Item.BuildingChargeGroupNameId)).FirstOrDefault().IsDeleted = true;
                                 db.SaveChanges();
                                 break;
-                            case Helpers.CostCategoryEnum.CostCategoryCommandEnum.Update:
-                                db.CostGroup.Where(x => x.BuildingChargeBasisGroupId.Equals(cmd.Item.BuildingChargeBasisGroupId)).FirstOrDefault().BuildingChargeBasicGroupName = cmd.Item.BuildingChargeBasicGroupName;
+                            case Helpers.CommandEnum.Update:
+                                db.GroupName.Where(x => x.BuildingChargeGroupNameId.Equals(cmd.Item.BuildingChargeGroupNameId)).FirstOrDefault().GroupName = cmd.Item.GroupName;
                                 db.SaveChanges();
                                 break;
                         }

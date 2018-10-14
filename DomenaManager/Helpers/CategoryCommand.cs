@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace DomenaManager.Helpers
 {
-    public enum CommandEnum
+    public class CategoryCommand<T>
     {
-        Remove = 0,
-        Add = 1,
-        Update = 2
-    }    
+        public CommandEnum CommandType { get; set; }
+        public T Item { get; set; }
+    }
 }

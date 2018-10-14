@@ -129,7 +129,6 @@
     <Compile Include="Helpers\DataGrid\ApartamentMeterDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentBinding.cs" />
     <Compile Include="Helpers\DataGrid\BindingDataGrid.cs" />
-    <Compile Include="Helpers\GroupNameCommand.cs" />
     <Compile Include="Helpers\Payments\ChargesOperations.cs" />
     <Compile Include="Helpers\Converter\BuildingsFooterConverter.cs" />
     <Compile Include="Helpers\Converter\GuidToCategoryNameMultiConverter.cs" />
@@ -139,8 +138,7 @@
     <Compile Include="Helpers\Converter\IntToCostDistributionConverter.cs" />
     <Compile Include="Helpers\DataGrid\PaymentDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\SummaryDataGrid.cs" />
-    <Compile Include="Helpers\InvoiceCategoryCommand.cs" />
-    <Compile Include="Helpers\CostCategoryCommand.cs" />
+    <Compile Include="Helpers\CategoryCommand.cs" />
     <Compile Include="Helpers\CostCategoryEnum.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ChargeDataGrid.cs" />

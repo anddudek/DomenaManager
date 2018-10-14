@@ -17,6 +17,7 @@ namespace LibDataModel
             BuildingChargeBasisId = c.BuildingChargeBasisId;
             BuildingChargeBasisCategoryId = c.BuildingChargeBasisCategoryId;
             BuildingChargeBasisDistribution = c.BuildingChargeBasisDistribution;
+            BuildingChargeGroupNameId = c.BuildingChargeGroupNameId;
             CostPerUnit = c.CostPerUnit;
             BegginingDate = c.BegginingDate;
             EndingDate = c.EndingDate;
@@ -39,6 +40,6 @@ namespace LibDataModel
         public double CostPerUnit { get; set; }
         public DateTime BegginingDate { get; set; }
         public DateTime EndingDate { get; set; }
-        public Guid BuildingChargeBasicGroupId { get; set; }
+        public Guid BuildingChargeGroupNameId { get; set; }
     }
 }
