@@ -40,7 +40,35 @@ namespace LibDataModel
                 }
             }
         }
-        
+
+        private bool _isBuilding;
+        public bool IsBuilding
+        {
+            get { return _isBuilding; }
+            set
+            {
+                if (value != _isBuilding)
+                {
+                    _isBuilding = value;
+                    OnPropertyChanged("IsBuilding");
+                }
+            }
+        }
+
+        private bool _isApartment;
+        public bool IsApartment
+        {
+            get { return _isApartment; }
+            set
+            {
+                if (value != _isApartment)
+                {
+                    _isApartment = value;
+                    OnPropertyChanged("IsApartment");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {

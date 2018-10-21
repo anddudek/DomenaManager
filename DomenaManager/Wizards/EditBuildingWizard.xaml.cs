@@ -277,6 +277,34 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private bool _isBuilding;
+        public bool IsBuilding
+        {
+            get { return _isBuilding; }
+            set
+            {
+                if (value != _isBuilding)
+                {
+                    _isBuilding = value;
+                    OnPropertyChanged("IsBuilding");
+                }
+            }
+        }
+
+        private bool _isApartment;
+        public bool IsApartment
+        {
+            get { return _isApartment; }
+            set
+            {
+                if (value != _isApartment)
+                {
+                    _isApartment = value;
+                    OnPropertyChanged("IsApartment");
+                }
+            }
+        }
+
         private ObservableCollection<MeterType> _metersCollection;
         public ObservableCollection<MeterType> MetersCollection
         {
@@ -410,8 +438,8 @@ namespace DomenaManager.Wizards
 
         public EditBuildingWizard(Building SelectedBuilding = null)
         {
-            DataContext = this;
             InitializeComponent();
+            DataContext = this;
 
             MetersCollection = new ObservableCollection<MeterType>();
             InitializeCategoriesList();
@@ -583,7 +611,7 @@ namespace DomenaManager.Wizards
 
         private void AddNewMeter(object param)
         {
-            MeterType mt = new MeterType() { Name = MeterName, IsDeleted = false, MeterId = Guid.NewGuid(), LastMeasure= LastMeasure};
+            MeterType mt = new MeterType() { Name = MeterName, IsDeleted = false, MeterId = Guid.NewGuid(), LastMeasure= LastMeasure, IsApartment = IsApartment, IsBuilding = IsBuilding};
             MetersCollection.Add(mt);
         }
 
@@ -596,6 +624,8 @@ namespace DomenaManager.Wizards
         {
             SelectedMeter.Name = MeterName;
             SelectedMeter.LastMeasure = LastMeasure;
+            SelectedMeter.IsApartment = IsApartment;
+            SelectedMeter.IsBuilding = IsBuilding;
         }
 
         private bool CanModifyMeter()
@@ -688,6 +718,8 @@ namespace DomenaManager.Wizards
                             // Change names
                             q.MeterCollection[i].Name = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).Name;
                             q.MeterCollection[i].LastMeasure = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure;
+                            q.MeterCollection[i].IsBuilding = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).IsBuilding;
+                            q.MeterCollection[i].IsApartment = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).IsApartment;
                         }
                     }
 
