@@ -28,7 +28,6 @@ namespace DomenaManager.DB
         public DbSet<BindingParent> Bindings { get; set; }        
         public DbSet<Settlement> Settlements { get; set; }
         public DbSet<AutoCharge> AutoCharges { get; set; }
-        public DbSet<BuildingChargeBasisGroup> CostGroup { get; set; }
         public DbSet<BuildingChargeGroupName> GroupName { get; set; }        
     }
 }

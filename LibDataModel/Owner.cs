@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibDataModel
 {
@@ -15,6 +16,14 @@ namespace LibDataModel
         public string OwnerSurname {get; set;}
         public string MailAddress { get; set; }
         public bool IsDeleted { get; set; }
+        [NotMapped]
+        public string OwnerName
+        {
+            get
+            {
+                return this.OwnerFirstName + " " + this.OwnerSurname;
+            }
+        }
 
         public Owner()
         {
@@ -32,11 +41,6 @@ namespace LibDataModel
             this.OwnerSurname = CopySource.OwnerSurname;
             this.MailAddress = CopySource.MailAddress;
             this.IsDeleted = CopySource.IsDeleted;
-        }
-
-        public string OwnerName()
-        {
-            return this.OwnerFirstName + " " + this.OwnerSurname;
         }
     }
 }

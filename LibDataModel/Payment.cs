@@ -16,5 +16,6 @@ namespace LibDataModel
         public DateTime PaymentRegistrationDate { get; set; }
         public DateTime PaymentAddDate { get; set; }
         public bool IsDeleted { get; set; }
+        public BuildingChargeGroupName ChargeGroup { get; set; }
     }
 }

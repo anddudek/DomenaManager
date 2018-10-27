@@ -21,6 +21,7 @@ namespace DomenaManager.Helpers
             this.PaymentId = _payment.PaymentId;
             this.PaymentRegistrationDate = _payment.PaymentRegistrationDate;
             this.IsDeleted = _payment.IsDeleted;
+            this.ChargeGroup = _payment.ChargeGroup;
 
             using (var db = new DB.DomenaDBContext())
             {

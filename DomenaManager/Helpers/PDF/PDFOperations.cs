@@ -129,7 +129,7 @@ namespace DomenaManager.Helpers
             col.Format.Alignment = ParagraphAlignment.Left;
             address.Borders.Width = 0;
             Row addressRow = address.AddRow();
-            addressRow.Cells[0].AddParagraph(selectedCharge.Owner.OwnerName() + Environment.NewLine + selectedCharge.Owner.MailAddress);
+            addressRow.Cells[0].AddParagraph(selectedCharge.Owner.OwnerName + Environment.NewLine + selectedCharge.Owner.MailAddress);
             string apartmentsFrame = "Dotyczy mieszkań nr: " + selectedCharge.Apartment.ApartmentNumber + Environment.NewLine + "Budynek: " + selectedCharge.Building.GetAddress();
             addressRow.Cells[1].AddParagraph(apartmentsFrame);
 
@@ -268,7 +268,7 @@ namespace DomenaManager.Helpers
             col.Format.Alignment = ParagraphAlignment.Left;
             address.Borders.Width = 0;
             Row addressRow = address.AddRow();
-            addressRow.Cells[0].AddParagraph(owner.OwnerName() + Environment.NewLine + owner.MailAddress);
+            addressRow.Cells[0].AddParagraph(owner.OwnerName + Environment.NewLine + owner.MailAddress);
             string apartmentsFrame = "Dotyczy mieszkań nr: " + apartment.ApartmentNumber + Environment.NewLine + "Budynek: " + building.GetAddress();
             addressRow.Cells[1].AddParagraph(apartmentsFrame);
 

@@ -25,8 +25,9 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
         <Label Grid.ColumnSpan="2" Content="Wpłata indywidualna" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Medium" FontSize="19"/>
 
         <ComboBox materialDesign:HintAssist.Hint="Budynek" IsEnabled="{Binding CanEdit}"
@@ -93,12 +94,32 @@
             </TextBox.Text>
         </TextBox>
 
-        <DatePicker 
-            Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" SelectedDate="{Binding PaymentRegistrationDate}"
+            <ComboBox materialDesign:HintAssist.Hint="Grupa naliczeń" 
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" DisplayMemberPath="GroupName"
+            Grid.Row="6" Grid.Column="0" SelectedItem="{Binding SelectedGroupName}"  Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="10,5,10,5" >
+                <ComboBox.Text>
+                    <Binding Path="SelectedGroupNameValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Helpers:EmptyStringValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ComboBox.Text>
+                <ComboBox.ItemsSource>
+                    <Binding Path="GroupNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Helpers:EmptyStringValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ComboBox.ItemsSource>
+            </ComboBox>
+
+            <DatePicker 
+            Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" SelectedDate="{Binding PaymentRegistrationDate}"
             VerticalAlignment="Center" Margin="10,5,10,5" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Data księgowania" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="7">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="8">
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zastosuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
                     <Button.CommandParameter>
                         <system:Boolean>True</system:Boolean>

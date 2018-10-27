@@ -47,6 +47,7 @@ namespace DomenaManager.Wizards
                 OnPropertyChanged("SelectedBuildingName");
                 OnPropertyChanged("SelectedBuildingAddress");
                 InitializeApartmentsNumbers();
+                InitializeGroupNames();
             }
         }
 
@@ -70,6 +71,36 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private ObservableCollection<BuildingChargeGroupName> _groupNames;
+        public ObservableCollection<BuildingChargeGroupName> GroupNames
+        {
+            get { return _groupNames; }
+            set
+            {
+                if (value != _groupNames)
+                {
+                    _groupNames = value;
+                    OnPropertyChanged("GroupNames");
+                }
+            }
+        }
+
+        private BuildingChargeGroupName _selectedGroupName;
+        public BuildingChargeGroupName SelectedGroupName
+        {
+            get { return _selectedGroupName; }
+            set
+            {
+                if (value != _selectedGroupName)
+                {
+                    _selectedGroupName = value;
+                    OnPropertyChanged("SelectedGroupName");
+                }
+            }
+        }
+
+        public string SelectedGroupNameValue { get; set; }
+
         private Apartment _selectedApartmentNumber;
         public Apartment SelectedApartmentNumber
         {
@@ -83,7 +114,7 @@ namespace DomenaManager.Wizards
 
                     if (SelectedApartmentNumber != null)
                     {
-                        OwnerMailAddress = _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().OwnerName() + Environment.NewLine;
+                        OwnerMailAddress = _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().OwnerName + Environment.NewLine;
                         OwnerMailAddress += SelectedApartmentNumber.CorrespondenceAddress == null ? _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().MailAddress : SelectedApartmentNumber.CorrespondenceAddress;
                         var charge = _chargesOC.Where(x => x.ApartmentId.Equals(SelectedApartmentNumber.ApartmentId)).OrderByDescending(x => x.ChargeDate).FirstOrDefault();
                         LastChargeAmount = charge != null ? charge.Components.Sum(x => x.Sum).ToString() + " zł" : "brak";
@@ -170,6 +201,8 @@ namespace DomenaManager.Wizards
 
         public Payment _lpc;
 
+        private List<BuildingChargeGroupName> _groupNamesDB;
+
         public ICommand SaveCommand
         {
             get { return new RelayCommand(SaveDialog, CanSaveDialog); }
@@ -203,10 +236,23 @@ namespace DomenaManager.Wizards
                 SelectedBuildingName = BuildingsNames.FirstOrDefault(x => x.BuildingId.Equals( _apartmentsOC.FirstOrDefault(a => a.ApartmentId.Equals(_payment.ApartmentId)).BuildingId ));
                 SelectedApartmentNumber = ApartmentsNumbers.FirstOrDefault(x => x.ApartmentId.Equals(_payment.ApartmentId));
                 OwnerMailAddress = _ownersOC.FirstOrDefault(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).MailAddress;
+                SelectedGroupName = _groupNamesDB.FirstOrDefault(x => x.BuildingChargeGroupNameId == _payment.ChargeGroup.BuildingChargeGroupNameId);
                 return;
             }
             CanEdit = true;
             PaymentRegistrationDate = DateTime.Today;
+        }
+
+        private void InitializeGroupNames()
+        {
+            GroupNames = new ObservableCollection<BuildingChargeGroupName>();
+            if (SelectedBuildingName != null && SelectedBuildingName.CostCollection != null)
+            {
+                foreach (var c in SelectedBuildingName.CostCollection)
+                {
+                    GroupNames.Add(_groupNamesDB.FirstOrDefault(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId));
+                }                
+            }
         }
 
         private void InitializeApartmentsNumbers()
@@ -229,10 +275,11 @@ namespace DomenaManager.Wizards
         {
             using (var db = new DB.DomenaDBContext())
             {
-                BuildingsNames = new ObservableCollection<Building>(db.Buildings.Where(x => x.IsDeleted == false).ToList());
-                _apartmentsOC = new ObservableCollection<Apartment>(db.Apartments.ToList());
+                BuildingsNames = new ObservableCollection<Building>(db.Buildings.Include(x => x.CostCollection).Where(x => x.IsDeleted == false).ToList());
+                _apartmentsOC = new ObservableCollection<Apartment>(db.Apartments.Where(x => !x.IsDeleted).ToList());
                 _ownersOC = new ObservableCollection<Owner>(db.Owners.ToList());
                 _chargesOC = new ObservableCollection<Charge>(db.Charges.Include(x => x.Components).Where(x => !x.IsDeleted).ToList());
+                _groupNamesDB = new List<BuildingChargeGroupName>(db.GroupName.ToList());
             }
         }
 
@@ -250,8 +297,9 @@ namespace DomenaManager.Wizards
                 //Add new payment
                 using (var db = new DB.DomenaDBContext())
                 {
-                    var newPayment = new Payment() { IsDeleted = false, ApartmentId = this.SelectedApartmentNumber.ApartmentId, PaymentAddDate = DateTime.Today, PaymentAmount = amount, PaymentId = Guid.NewGuid(), PaymentRegistrationDate = this.PaymentRegistrationDate };
+                    var newPayment = new Payment() { IsDeleted = false, ApartmentId = this.SelectedApartmentNumber.ApartmentId, PaymentAddDate = DateTime.Today, PaymentAmount = amount, PaymentId = Guid.NewGuid(), PaymentRegistrationDate = this.PaymentRegistrationDate, ChargeGroup = SelectedGroupName };
                     db.Payments.Add(newPayment);
+                    db.Entry(newPayment.ChargeGroup).State = EntityState.Unchanged;
                     db.SaveChanges();
                 }
             }
@@ -265,9 +313,11 @@ namespace DomenaManager.Wizards
                 using (var db = new DB.DomenaDBContext())
                 {
                     var q = db.Payments.Where(x => x.PaymentId.Equals(this._lpc.PaymentId)).FirstOrDefault();
+                    q.ChargeGroup = SelectedGroupName;
                     q.PaymentAddDate = DateTime.Today;
                     q.PaymentRegistrationDate = this.PaymentRegistrationDate;
                     q.PaymentAmount = amount;
+                    db.Entry(q.ChargeGroup).State = EntityState.Unchanged;
                     db.SaveChanges();
                 }
             }

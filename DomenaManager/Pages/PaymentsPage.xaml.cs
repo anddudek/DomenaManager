@@ -267,7 +267,7 @@ namespace DomenaManager.Pages
             Payments = new ObservableCollection<PaymentDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                foreach (var p in db.Payments.Where(x => !x.IsDeleted))
+                foreach (var p in db.Payments.Include(x => x.ChargeGroup).Where(x => !x.IsDeleted))
                 {
                     var pdg = new PaymentDataGrid(p);
                     Payments.Add(pdg); 

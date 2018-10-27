@@ -980,7 +980,8 @@ namespace DomenaManager.Pages
                                 CreatedDate = DateTime.Today,
                                 IsClosed = false,
                                 IsDeleted = false,
-                                SettlementId = s.SettlementId
+                                SettlementId = s.SettlementId,
+                                OwnerId = a.ApartmentO.OwnerId,
                             };
                             db.Charges.Add(c);
                         }
@@ -998,7 +999,8 @@ namespace DomenaManager.Pages
                                 CreatedDate = DateTime.Today,
                                 IsClosed = false,
                                 IsDeleted = false,
-                                SettlementId = s.SettlementId
+                                SettlementId = s.SettlementId,
+                                OwnerId = a.ApartmentO.OwnerId,
                             };
                             db.Charges.Add(c);
                         }   
@@ -1016,7 +1018,8 @@ namespace DomenaManager.Pages
                                 CreatedDate = DateTime.Today,
                                 IsClosed = false,
                                 IsDeleted = false,
-                                SettlementId = s.SettlementId
+                                SettlementId = s.SettlementId,
+                                OwnerId = a.ApartmentO.OwnerId,
                             };
                             db.Charges.Add(c);
                         }
@@ -1034,7 +1037,8 @@ namespace DomenaManager.Pages
                                 CreatedDate = DateTime.Today,
                                 IsClosed = false,
                                 IsDeleted = false,
-                                SettlementId = s.SettlementId
+                                SettlementId = s.SettlementId,
+                                OwnerId = a.ApartmentO.OwnerId,
                             };
                             db.Charges.Add(c);
                         }

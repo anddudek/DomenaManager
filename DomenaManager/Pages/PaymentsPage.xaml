@@ -86,7 +86,8 @@
                 <DataGridTextColumn Header="Numer lokalu" Binding="{Binding Apartment.ApartmentNumber}" Width="auto" FontSize="14"/>                
                 <DataGridTextColumn Header="Właściciel" Binding="{Binding Owner.OwnerName}" Width="auto" FontSize="14"/>
                 <DataGridTextColumn Header="Data wpłaty" Binding="{Binding PaymentRegistrationDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
-                <DataGridTextColumn Header="Kwota" Binding="{Binding PaymentAmount, StringFormat={}{0} zł}" Width="auto" FontSize="14" />                
+                <DataGridTextColumn Header="Kwota" Binding="{Binding PaymentAmount, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
+                <DataGridTextColumn Header="Grupa" Binding="{Binding ChargeGroup.GroupName}" Width="auto" FontSize="14"/>
             </DataGrid.Columns>
             <DataGrid.GroupStyle>
                 <!-- Style for groups at top level. -->

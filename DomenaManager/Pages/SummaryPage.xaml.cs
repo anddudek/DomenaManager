@@ -117,7 +117,7 @@ namespace DomenaManager.Pages
                     if (_selectedApartmentNumber != null)
                     {                        
                         owner = OwnersList.FirstOrDefault(x => x.OwnerId.Equals(_selectedApartmentNumber.OwnerId));
-                        SelectedOwner = owner.OwnerName();
+                        SelectedOwner = owner.OwnerName;
                     }
                 }
             }

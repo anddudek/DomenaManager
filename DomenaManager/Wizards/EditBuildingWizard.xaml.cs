@@ -333,6 +333,8 @@ namespace DomenaManager.Wizards
                     {
                         MeterName = value.Name;
                         LastMeasure = value.LastMeasure;
+                        IsApartment = value.IsApartment;
+                        IsBuilding = value.IsBuilding;
                     }
                 }
             }
