@@ -101,6 +101,24 @@ namespace LibDataModel
             }
         }
 
+        private BuildingChargeGroupName _groupName;
+        public BuildingChargeGroupName GroupName
+        {
+            get
+            {
+                return _groupName;
+            }
+            set
+            {
+                if (value != _groupName)
+                {
+                    _groupName = value;
+                    OnPropertyChanged("GroupName");
+                }
+
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {

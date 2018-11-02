@@ -10,7 +10,7 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
              mc:Ignorable="d" MinHeight="600"
-             Height="auto" Width="500">
+             Height="auto" Width="700">
     <UserControl.Resources>
         <Helpers:IntToCostDistributionConverter x:Key="IntToCostDistributionConverter"/>
         <Helpers:GuidToCategoryNameMultiConverter x:Key="GuidToCategoryNameMultiConverter" />
@@ -60,7 +60,7 @@
         <ComboBox materialDesign:HintAssist.Hint="Nr lokalu" IsEnabled="{Binding CanEditApartment}"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" ItemsSource="{Binding ApartmentsNumbersCollection, Mode=TwoWay}"
-            Grid.Row="1" Grid.Column="1" SelectedItem="{Binding SelectedApartmentNumber}" Width="80"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="5,0,140,0" >
+            Grid.Row="1" Grid.Column="1" SelectedItem="{Binding SelectedApartmentNumber}" Width="80"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="5,0,240,0" >
             <ComboBox.Text>
                 <Binding Path="SelectedApartmentNumberValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
@@ -105,13 +105,13 @@
             </ComboBox.ItemsSource>
         </ComboBox>
 
-        <Button Grid.Column="0" Grid.Row="3" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewCategory}" Width="50" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-            <ContentControl>
-                <materialDesign:PackIcon Kind="Pencil" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-            </ContentControl>
-        </Button>
+            <Button Grid.Column="0" Grid.Row="3" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewCategory}" Width="50" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <ContentControl>
+                    <materialDesign:PackIcon Kind="Pencil" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                </ContentControl>
+            </Button>
 
-        <ComboBox materialDesign:HintAssist.Hint="Jednostka"
+            <ComboBox materialDesign:HintAssist.Hint="Jednostka"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="Name"
             Grid.Row="3" Grid.Column="1" SelectedItem="{Binding SelectedUnitName}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,5,15,0" >
@@ -127,7 +127,7 @@
 
         <TextBox materialDesign:HintAssist.Hint="Koszt jednostkowy (zł)"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="15,0,10,0" >
+            Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="15,0,100,0" >
             <TextBox.Text>
                 <Binding Path="UnitCost" UpdateSourceTrigger="PropertyChanged">
                 </Binding>
@@ -136,14 +136,23 @@
 
         <TextBox materialDesign:HintAssist.Hint="Suma (zł)"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,0,14,0" >
+            Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="-80,0,290,0" >
             <TextBox.Text>
                 <Binding Path="ChargeSum" UpdateSourceTrigger="PropertyChanged">
                 </Binding>
             </TextBox.Text>
         </TextBox>
 
-        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zmień zaznaczony" Grid.Row="5" Grid.Column="0" Command="{Binding ModifySelectedChargeCommand}" Margin="10,0,10,0" />
+            <TextBox materialDesign:HintAssist.Hint="Grupa" IsReadOnly="True"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
+            Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="65,0,15,0" >
+                <TextBox.Text>
+                    <Binding Path="SelectedGroupName" UpdateSourceTrigger="PropertyChanged" Mode="OneWay">
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+
+            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zmień zaznaczony" Grid.Row="5" Grid.Column="0" Command="{Binding ModifySelectedChargeCommand}" Margin="10,0,10,0" />
 
         <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Dodaj" Grid.Row="5" Grid.Column="1" Command="{Binding AddNewChargeCommand}" Margin="10,0,10,0" />
 
@@ -162,8 +171,9 @@
                     <GridViewColumn Header="Jednostka" Width="120" DisplayMemberBinding="{Binding CostDistribution, Converter={StaticResource IntToCostDistributionConverter}}" />
                     <GridViewColumn Header="Koszt jedn." Width="auto" DisplayMemberBinding="{Binding CostPerUnit}" />
                     <GridViewColumn Header="Suma" Width="auto" DisplayMemberBinding="{Binding Sum}" />
-                </GridView>
-            </ListView.View>
+                        <GridViewColumn Header="Grupa" Width="auto" DisplayMemberBinding="{Binding GroupName.GroupName}" />
+                    </GridView>
+                </ListView.View>
         </ListView>
 
         <DatePicker 

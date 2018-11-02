@@ -247,6 +247,16 @@ namespace DomenaManager.Wizards
                 }
             }
         }
+               
+        public string SelectedGroupName
+        {
+            get
+            {
+                if (SelectedChargeComponent != null && SelectedChargeComponent.GroupName != null)
+                    return SelectedChargeComponent.GroupName.GroupName;
+                return null;
+            }
+        }
 
         private ObservableCollection<ChargeComponent> _chargeComponents;
         public ObservableCollection<ChargeComponent> ChargeComponents
@@ -415,7 +425,7 @@ namespace DomenaManager.Wizards
             {
                 using (var db = new DB.DomenaDBContext())
                 {
-                    ChargeComponents = new ObservableCollection<ChargeComponent>(db.Charges.Include(c => c.Components).Where(x => x.ChargeId.Equals(charge.ChargeId)).FirstOrDefault().Components.ToList());
+                    ChargeComponents = new ObservableCollection<ChargeComponent>(db.Charges.Include(c => c.Components).Include(c => c.Components.Select(d => d.GroupName)).Where(x => x.ChargeId.Equals(charge.ChargeId)).FirstOrDefault().Components.ToList());
                 }
             }
             else ChargeComponents = new ObservableCollection<ChargeComponent>();
@@ -495,6 +505,7 @@ namespace DomenaManager.Wizards
                 double cs;
                 if (!double.TryParse(ChargeSum, out cs))
                     return;
+                
                 ChargeComponents.Add(new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = SelectedCategoryName.BuildingChargeBasisCategoryId, CostDistribution = SelectedUnitName.EnumValue, CostPerUnit = uc, Sum = cs });
             }
         }

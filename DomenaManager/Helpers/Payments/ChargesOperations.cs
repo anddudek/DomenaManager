@@ -25,7 +25,8 @@ namespace DomenaManager.Helpers
                         {
                             continue;
                         }
-                        var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit };
+                        var group = db.GroupName.FirstOrDefault(x => x.BuildingChargeGroupNameId == costCollection.BuildingChargeGroupNameId);
+                        var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit, GroupName=group};
                         double units;
                         switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
                         {
@@ -44,6 +45,7 @@ namespace DomenaManager.Helpers
                         }
                         cc.Sum = units * cc.CostPerUnit;
                         c.Components.Add(cc);
+                        db.Entry(cc.GroupName).State = EntityState.Unchanged; 
                     }
                     db.Charges.Add(c);
                 }
@@ -67,7 +69,8 @@ namespace DomenaManager.Helpers
                     {
                         continue;
                     }
-                    var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit };
+                    var group = db.GroupName.FirstOrDefault(x => x.BuildingChargeGroupNameId == costCollection.BuildingChargeGroupNameId);
+                    var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit, GroupName = group };
                     double units;
                     switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
                     {
@@ -86,6 +89,7 @@ namespace DomenaManager.Helpers
                     }
                     cc.Sum = units * cc.CostPerUnit;
                     charge.Components.Add(cc);
+                    db.Entry(cc.GroupName).State = EntityState.Unchanged;
                 }
                 db.SaveChanges();
             }

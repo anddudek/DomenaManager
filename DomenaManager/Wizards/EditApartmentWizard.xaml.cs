@@ -449,7 +449,8 @@ namespace DomenaManager.Wizards
                         {
                             continue;
                         }
-                        var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit };
+                        var group = db.GroupName.FirstOrDefault(x => x.BuildingChargeGroupNameId == costCollection.BuildingChargeGroupNameId);
+                        var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit, GroupName = group };
                         double units;
                         switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
                         {
@@ -468,6 +469,7 @@ namespace DomenaManager.Wizards
                         }
                         cc.Sum = Math.Round(((units * cc.CostPerUnit) * percentage), 2);
                         c.Components.Add(cc);
+                        db.Entry(cc.GroupName).State = EntityState.Unchanged;
                     }
                     if (c.Components != null && c.Components.Count > 0)
                     {
