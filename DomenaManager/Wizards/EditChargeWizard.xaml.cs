@@ -247,14 +247,35 @@ namespace DomenaManager.Wizards
                 }
             }
         }
-               
-        public string SelectedGroupName
+
+        public BuildingChargeGroupName _selectedGroupName;
+        public BuildingChargeGroupName SelectedGroupName
         {
             get
             {
-                if (SelectedChargeComponent != null && SelectedChargeComponent.GroupName != null)
-                    return SelectedChargeComponent.GroupName.GroupName;
-                return null;
+                return _selectedGroupName;
+            }
+            set
+            {
+                if (value != _selectedGroupName)
+                {
+                    _selectedGroupName = value;
+                    OnPropertyChanged("SelectedGroupName");
+                }
+            }
+        }
+
+        private ObservableCollection<BuildingChargeGroupName> _groupNames;
+        public ObservableCollection<BuildingChargeGroupName> GroupNames
+        {
+            get { return _groupNames; }
+            set
+            {
+                if (value != _groupNames)
+                {
+                    _groupNames = value;
+                    OnPropertyChanged("GroupNames");
+                }
             }
         }
 
@@ -307,7 +328,10 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public string SelectedGroupNameValue { get; set; }
+
         public ObservableCollection<BuildingChargeBasisCategory> Categories { get; set; }
+        public ObservableCollection<BuildingChargeGroupName> Groups { get; set; }
 
         #endregion
 
@@ -404,7 +428,8 @@ namespace DomenaManager.Wizards
             using (var db = new DB.DomenaDBContext())
             {
                 CategoriesNames = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
-
+                Groups = new ObservableCollection<BuildingChargeGroupName>(db.GroupName.Where(x => !x.IsDeleted).ToList());
+                GroupNames = Groups;
             }
         }
 
@@ -512,7 +537,7 @@ namespace DomenaManager.Wizards
 
         private bool CanAddNewCharge()
         {
-            return (UnitCost != null && ChargeSum != null);
+            return (UnitCost != null && ChargeSum != null && SelectedCategoryName != null && SelectedGroupName != null);
         }
 
         private void DeleteSelectedCharge(object param)

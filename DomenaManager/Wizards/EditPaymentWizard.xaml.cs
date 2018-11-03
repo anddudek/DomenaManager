@@ -285,6 +285,10 @@ namespace DomenaManager.Wizards
 
         private void SaveDialog(object param)
         {
+            if (!IsValid(this as DependencyObject))
+            {
+                return;
+            }
             double amount;
             bool isAmountValid = double.TryParse(this.PaymentAmount, out amount);
             //Accept
@@ -326,7 +330,7 @@ namespace DomenaManager.Wizards
 
         private bool CanSaveDialog()
         {
-            return true;
+            return (SelectedApartmentNumber != null && SelectedBuildingName != null && SelectedGroupName != null && !String.IsNullOrWhiteSpace(PaymentAmount));
         }
 
         private void CancelDialog(object param)
@@ -341,7 +345,7 @@ namespace DomenaManager.Wizards
 
         private bool CanAcceptDialog()
         {
-            return true;
+            return (SelectedApartmentNumber != null && SelectedBuildingName != null && SelectedGroupName != null && !String.IsNullOrWhiteSpace(PaymentAmount));
         }
 
         private void AcceptDialog(object param)

@@ -234,7 +234,7 @@ namespace DomenaManager.Pages
                 sdg.year = year;
                 sdg.rows = new SummaryDataGridRow[14];
 
-                var charges = db.Charges.Include(x => x.Components).Include(x => x.Components.Select(y => y.GroupName)).Where(x => x.ApartmentId.Equals(apartment.ApartmentId) && x.ChargeDate.Year.Equals(sdg.year));
+                var charges = db.Charges.Include(x => x.Components).Include(x => x.Components.Select(y => y.GroupName)).Where(x => !x.IsDeleted && x.ApartmentId.Equals(apartment.ApartmentId) && x.ChargeDate.Year.Equals(sdg.year));
                 var componentsList = new List<ChargeComponent>();
                 foreach (var charge in charges)
                 {
@@ -242,7 +242,7 @@ namespace DomenaManager.Pages
                 }
                 var groups = componentsList.Select(x => x.GroupName);
 
-                var payments = db.Payments.Include(x => x.ChargeGroup).Where(x => x.ApartmentId == apartment.ApartmentId && x.PaymentRegistrationDate.Year == sdg.year);
+                var payments = db.Payments.Include(x => x.ChargeGroup).Where(x => !x.IsDeleted && x.ApartmentId == apartment.ApartmentId && x.PaymentRegistrationDate.Year == sdg.year);
                 var paymentGroups = payments.Select(x => x.ChargeGroup);
 
                 var allGroups = new List<BuildingChargeGroupName>();
@@ -251,7 +251,7 @@ namespace DomenaManager.Pages
                 var distinctGroups = allGroups.Distinct();
 
                 var uniqueCategories = componentsList.GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
-                sdg.categories = db.CostCategories.Where(p => uniqueCategories.Any(g => g.Equals(p.BuildingChargeBasisCategoryId))).ToArray();
+                sdg.categories = db.CostCategories.Where(p => !p.IsDeleted && uniqueCategories.Any(g => g.Equals(p.BuildingChargeBasisCategoryId))).ToArray();
                 var rowArrayLength = sdg.categories.Length + distinctGroups.Count() * 2;
                 var columnsCount = rowArrayLength + 2;
 
@@ -282,50 +282,53 @@ namespace DomenaManager.Pages
 
                     foreach (var g in distinctGroups)
                     {
-                        // iterujemy po kazdej grupie a w srodku po kazdej kategorii + Wplty w grupie + suma
-                        var categoriesInGroup = componentsList.Where(x => x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
-                        double groupSum = 0;
-                        foreach (var cat in categoriesInGroup)
+                        if (g != null)
                         {
-                            var currentComponets = thisMonthComponents.Where(x => x.CostCategoryId == cat && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId);
-                            groupSum += currentComponets.Sum(x => x.Sum);
-                            sdg.rows[i].charges[iterator] = groupSum.ToString() + " zł";
+                            // iterujemy po kazdej grupie a w srodku po kazdej kategorii + Wplty w grupie + suma
+                            var categoriesInGroup = componentsList.Where(x => x.GroupName!=null && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
+                            double groupSum = 0;
+                            foreach (var cat in categoriesInGroup)
+                            {
+                                var currentComponets = thisMonthComponents.Where(x => x.CostCategoryId == cat && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId);
+                                groupSum += currentComponets.Sum(x => x.Sum);
+                                sdg.rows[i].charges[iterator] = groupSum.ToString() + " zł";
+
+                                if (a.Columns.Count < columnsCount - 1)
+                                {
+                                    var catCol = new DataGridTextColumn();
+                                    catCol.Header = db.CostCategories.FirstOrDefault(x => x.BuildingChargeBasisCategoryId == cat).CategoryName;
+                                    catCol.Binding = new Binding("charges[" + iterator + "]");
+                                    a.Columns.Add(catCol);
+                                }
+                                iterator++;
+                            }
+                            //Wplaty
+                            var groupPayments = payments.Where(x => x.PaymentRegistrationDate.Month == i && x.ChargeGroup.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
+                            sdg.rows[i].charges[iterator] = groupPayments.ToString() + " zł";
 
                             if (a.Columns.Count < columnsCount - 1)
                             {
-                                var catCol = new DataGridTextColumn();
-                                catCol.Header = db.CostCategories.FirstOrDefault(x => x.BuildingChargeBasisCategoryId == cat).CategoryName;
-                                catCol.Binding = new Binding("charges[" + iterator + "]");
-                                a.Columns.Add(catCol);
+                                var paymCol = new DataGridTextColumn();
+                                paymCol.Header = "Wpłaty";
+                                paymCol.Binding = new Binding("charges[" + iterator + "]");
+                                a.Columns.Add(paymCol);
+                            }
+                            iterator++;
+
+                            //Suma
+                            sdg.rows[i].charges[iterator] = (groupPayments - groupSum).ToString() + " zł";
+                            currentMonthSum += (groupPayments - groupSum);
+                            var groupSumCol = new DataGridTextColumn();
+
+                            if (a.Columns.Count < columnsCount - 1)
+                            {
+                                groupSumCol.CellStyle = cellStyle;
+                                groupSumCol.Header = "Razem - " + g.GroupName;
+                                groupSumCol.Binding = new Binding("charges[" + iterator + "]");
+                                a.Columns.Add(groupSumCol);
                             }
                             iterator++;
                         }
-                        //Wplaty
-                        var groupPayments = payments.Where(x => x.PaymentRegistrationDate.Month == i && x.ChargeGroup.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
-                        sdg.rows[i].charges[iterator] = groupPayments.ToString() + " zł";
-
-                        if (a.Columns.Count < columnsCount - 1)
-                        {
-                            var paymCol = new DataGridTextColumn();
-                            paymCol.Header = "Wpłaty";
-                            paymCol.Binding = new Binding("charges[" + iterator + "]");
-                            a.Columns.Add(paymCol);
-                        }
-                        iterator++;
-
-                        //Suma
-                        sdg.rows[i].charges[iterator] = (groupPayments - groupSum).ToString() + " zł";
-                        currentMonthSum += (groupPayments - groupSum);
-                        var groupSumCol = new DataGridTextColumn();
-
-                        if (a.Columns.Count < columnsCount - 1)
-                        {
-                            groupSumCol.CellStyle = cellStyle;
-                            groupSumCol.Header = "Razem - " + g.GroupName;
-                            groupSumCol.Binding = new Binding("charges[" + iterator + "]");
-                            a.Columns.Add(groupSumCol);
-                        }
-                        iterator++;
                     }
                     sdg.rows[i].chargesSum = currentMonthSum.ToString() + " zł";
                 }
