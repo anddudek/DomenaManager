@@ -27,13 +27,11 @@
         <Button Content="Dodaj" Grid.Row="1" Grid.Column="1" Margin="10" Command="{Binding AddGroupCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
         <Button Content="Usuń zaznaczony" Grid.Row="3" Grid.Column="1" Margin="0" Command="{Binding DeleteGroupCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
         <Button Content="Zmień zaznaczony" Grid.Row="3" Grid.Column="0" Margin="0" Command="{Binding ModifyGroupCommand}" Style="{StaticResource MaterialDesignFlatButton}"/>
-        <ListView Grid.Row="2" Grid.ColumnSpan="2" Margin="10,0,10,0" SelectedItem="{Binding SelectedGroupName}" ItemsSource="{Binding GroupCollection}" >
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Nazwa" Width="auto" DisplayMemberBinding="{Binding GroupName}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <DataGrid Grid.Row="2" Grid.ColumnSpan="2" Margin="10,0,10,0" SelectedItem="{Binding SelectedGroupName}" ItemsSource="{Binding GroupCollection}" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nazwa" Width="*" Binding="{Binding GroupName}"/>
+            </DataGrid.Columns>
+        </DataGrid>
         
         <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.ColumnSpan="1" Grid.Row="4" Margin="5,0,5,2">
             <Button.CommandParameter>
