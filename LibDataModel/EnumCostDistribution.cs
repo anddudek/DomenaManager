@@ -11,8 +11,10 @@ namespace LibDataModel
         public enum CostDistribution
         {
             PerApartment = 0,
-            PerMeasurement = 1,
+            PerApartmentArea = 1,
             PerLocators = 2,
+            PerApartmentTotalArea = 3,
+            PerAdditionalArea = 4,
         }
 
         public static string CostDistributionToString(CostDistribution costDist)
@@ -23,10 +25,14 @@ namespace LibDataModel
                     return "";
                 case CostDistribution.PerApartment:
                     return "Od lokalu";
-                case CostDistribution.PerMeasurement:
-                    return "Od powierzchni";
+                case CostDistribution.PerApartmentTotalArea:
+                    return "Od powierzchni całkowitej";
                 case CostDistribution.PerLocators:
                     return "Od mieszkanów";
+                case CostDistribution.PerAdditionalArea:
+                    return "Od powierzchni przynależnej";
+                case CostDistribution.PerApartmentArea:
+                    return "Od powierzchni mieszkania";
             }
         }
     }

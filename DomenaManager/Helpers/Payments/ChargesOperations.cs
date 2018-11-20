@@ -33,8 +33,14 @@ namespace DomenaManager.Helpers
                             case EnumCostDistribution.CostDistribution.PerApartment:
                                 units = 1;
                                 break;
-                            case EnumCostDistribution.CostDistribution.PerMeasurement:
+                            case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:
                                 units = a.AdditionalArea + a.ApartmentArea;
+                                break;
+                            case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                                units = a.ApartmentArea;
+                                break;
+                            case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                                units = a.AdditionalArea;
                                 break;
                             case EnumCostDistribution.CostDistribution.PerLocators:
                                 units = a.Locators;
@@ -77,8 +83,14 @@ namespace DomenaManager.Helpers
                         case EnumCostDistribution.CostDistribution.PerApartment:
                             units = 1;
                             break;
-                        case EnumCostDistribution.CostDistribution.PerMeasurement:
+                        case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:
                             units = a.AdditionalArea + a.ApartmentArea;
+                            break;
+                        case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                            units = a.ApartmentArea;
+                            break;
+                        case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                            units = a.AdditionalArea;
                             break;
                         case EnumCostDistribution.CostDistribution.PerLocators:
                             units = a.Locators;

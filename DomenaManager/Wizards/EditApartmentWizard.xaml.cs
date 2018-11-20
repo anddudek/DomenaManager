@@ -457,8 +457,14 @@ namespace DomenaManager.Wizards
                             case EnumCostDistribution.CostDistribution.PerApartment:
                                 units = 1;
                                 break;
-                            case EnumCostDistribution.CostDistribution.PerMeasurement:
+                            case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:
                                 units = newApartment.AdditionalArea + newApartment.ApartmentArea;
+                                break;
+                            case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                                units = newApartment.ApartmentArea;
+                                break;
+                            case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                                units = newApartment.AdditionalArea;
                                 break;
                             case EnumCostDistribution.CostDistribution.PerLocators:
                                 units = newApartment.Locators;

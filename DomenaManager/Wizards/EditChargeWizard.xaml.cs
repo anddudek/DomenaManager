@@ -674,14 +674,20 @@ namespace DomenaManager.Wizards
             if (!double.TryParse(UnitCost, out uc) || SelectedCategoryName == null || SelectedUnitName == null || SelectedApartmentNumberValue == null || SelectedBuilding == null)
                 return;
             double units;
+            var a = ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber));
             switch ((EnumCostDistribution.CostDistribution)SelectedUnitName.EnumValue)
             {
                 case EnumCostDistribution.CostDistribution.PerApartment:
                     units = 1;
                     break;
-                case EnumCostDistribution.CostDistribution.PerMeasurement:
-                    var a = ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber));
+                case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:                    
                     units = a.AdditionalArea + a.ApartmentArea;
+                    break;
+                case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                    units = a.ApartmentArea;
+                    break;
+                case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                    units = a.AdditionalArea;
                     break;
                 case EnumCostDistribution.CostDistribution.PerLocators:
                     var ap = ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber));
