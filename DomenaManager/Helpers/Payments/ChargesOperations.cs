@@ -49,7 +49,7 @@ namespace DomenaManager.Helpers
                                 units = 0;
                                 break;
                         }
-                        cc.Sum = units * cc.CostPerUnit;
+                        cc.Sum = Math.Round((units * cc.CostPerUnit), 2);
                         c.Components.Add(cc);
                         db.Entry(cc.GroupName).State = EntityState.Unchanged; 
                     }
@@ -99,7 +99,7 @@ namespace DomenaManager.Helpers
                             units = 0;
                             break;
                     }
-                    cc.Sum = units * cc.CostPerUnit;
+                    cc.Sum = Math.Round((units * cc.CostPerUnit), 2);
                     charge.Components.Add(cc);
                     db.Entry(cc.GroupName).State = EntityState.Unchanged;
                 }

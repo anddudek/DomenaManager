@@ -160,7 +160,7 @@
                   IsEditable="True" DisplayMemberPath="GroupName"
             Grid.Row="2" Grid.Column="0" SelectedItem="{Binding SelectedGroupName}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,10,50,10" >
                     <ComboBox.Text>
-                        <Binding Path="SelectedGroupName" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding Path="SelectedGroupValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                             <!--<Binding.ValidationRules>
                             <Helpers:EmptyStringValidationRule/>
                         </Binding.ValidationRules>-->

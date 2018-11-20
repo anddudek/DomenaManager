@@ -309,6 +309,7 @@ namespace DomenaManager.Wizards
                         SelectedUnitName = UnitsNames.Where(x => x.EnumValue.Equals(_selectedChargeComponent.CostDistribution)).FirstOrDefault();
                         UnitCost = _selectedChargeComponent.CostPerUnit.ToString();
                         ChargeSum = _selectedChargeComponent.Sum.ToString();
+                        SelectedGroupName = GroupNames.Where(x => x.BuildingChargeGroupNameId.Equals(_selectedChargeComponent.GroupName.BuildingChargeGroupNameId)).FirstOrDefault();
                     }
                 }
             }
@@ -697,7 +698,7 @@ namespace DomenaManager.Wizards
                     units = 0;
                     break;
             }
-            ChargeSum = (units * uc).ToString();
+            ChargeSum = (Math.Round((units * uc), 2)).ToString();
         }
 
         private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)

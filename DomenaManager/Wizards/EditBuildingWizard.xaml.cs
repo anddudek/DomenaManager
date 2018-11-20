@@ -243,6 +243,7 @@ namespace DomenaManager.Wizards
                         SelectedUnitName = UnitsNames.Where(x => x == value.CostUnit).FirstOrDefault();
                         UnitCost = value.Cost.ToString();
                         CostBeggining = value.BegginingDate.Date;
+                        SelectedGroupName = GroupNames.Where(x => x == value.CostGroup).FirstOrDefault();
                     }
                     OnPropertyChanged("SelectedCost");
                 }
