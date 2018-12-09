@@ -276,7 +276,7 @@ namespace DomenaManager.Wizards
             using (var db = new DB.DomenaDBContext())
             {
                 BuildingsNames = new ObservableCollection<Building>(db.Buildings.Include(x => x.CostCollection).Where(x => x.IsDeleted == false).ToList());
-                _apartmentsOC = new ObservableCollection<Apartment>(db.Apartments.Where(x => !x.IsDeleted).ToList());
+                _apartmentsOC = new ObservableCollection<Apartment>(db.Apartments.Where(x => !x.IsDeleted && x.SoldDate == null).ToList());
                 _ownersOC = new ObservableCollection<Owner>(db.Owners.ToList());
                 _chargesOC = new ObservableCollection<Charge>(db.Charges.Include(x => x.Components).Where(x => !x.IsDeleted).ToList());
                 _groupNamesDB = new List<BuildingChargeGroupName>(db.GroupName.ToList());

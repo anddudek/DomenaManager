@@ -243,6 +243,11 @@ namespace DomenaManager.Pages
             get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
         }
 
+        public ICommand SellApartmentCommand
+        {
+            get { return new Helpers.RelayCommand(SellApartment, CanSellApartment); }
+        }
+
         public ApartmentsPage()
         {
             DataContext = this;
@@ -257,7 +262,7 @@ namespace DomenaManager.Pages
             using (var db = new DB.DomenaDBContext())
             {
                 BindingsList = db.Bindings.ToList();
-                var q = db.Apartments.Where(x => x.IsDeleted == false);
+                var q = db.Apartments.Where(x => x.IsDeleted == false && x.SoldDate == null);
                 InitializeApartments(q);
             }
         }
@@ -282,12 +287,13 @@ namespace DomenaManager.Pages
                         ApartmentPercentageDistribution =
                         (100 * (apar.ApartmentArea + apar.AdditionalArea) /
                         db.Apartments
-                        .Where(x => x.BuildingId == apar.BuildingId && !x.IsDeleted)
+                        .Where(x => x.BuildingId == apar.BuildingId && !x.IsDeleted && x.SoldDate == null)
                         .Select(x => x.AdditionalArea + x.ApartmentArea)
                         .Sum()).ToString("0.00") + " %",
                         BoughtDate = apar.BoughtDate,
                         ApartmentOwnerAddress = db.Owners.Where(x => x.OwnerId == apar.OwnerId).FirstOrDefault().MailAddress,
                         LocatorsAmount = apar.Locators,
+                        SoldDate = apar.SoldDate,
 
                         ApartmentAreaSeries = new SeriesCollection
                         {
@@ -317,8 +323,8 @@ namespace DomenaManager.Pages
                                 Title = "Reszta budynku (m2)", Values = new ChartValues<ObservableValue>
                                 {
                                     new ObservableValue(
-                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.ApartmentArea).DefaultIfEmpty(0).Sum() +
-                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false).Select(x => x.AdditionalArea).DefaultIfEmpty(0).Sum()
+                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false && x.SoldDate == null).Select(x => x.ApartmentArea).DefaultIfEmpty(0).Sum() +
+                                    db.Apartments.Where(x => x.BuildingId==apar.BuildingId && x.ApartmentId != apar.ApartmentId && x.IsDeleted==false && x.SoldDate == null).Select(x => x.AdditionalArea).DefaultIfEmpty(0).Sum()
                                     )
                                 },
                                 LabelPoint=chartPoint => string.Format("{0} m2 ({1:P})", chartPoint.Y, chartPoint.Participation)
@@ -393,12 +399,23 @@ namespace DomenaManager.Pages
             return SelectedApartment != null;
         }
 
+        private void SellApartment(object param)
+        {
+            Wizards.SellApartmentWizard saw = new Wizards.SellApartmentWizard(SelectedApartment);
+            SwitchPage.SwitchMainPage(saw, this);
+        }
+
+        private bool CanSellApartment()
+        {
+            return SelectedApartment != null;
+        }
+
         private void Filter(object param)
         {
             using (var db = new DB.DomenaDBContext())
             {
                 Apartments.Clear();
-                IQueryable<Apartment> q = db.Apartments.Where(x => x.IsDeleted == false);
+                IQueryable<Apartment> q = db.Apartments.Where(x => x.IsDeleted == false && x.SoldDate == null);
                 if (SelectedBuildingName != null)
                 {
                     q = q.Where(x => x.BuildingId == SelectedBuildingName.BuildingId);                    

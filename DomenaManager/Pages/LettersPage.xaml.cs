@@ -142,7 +142,7 @@ namespace DomenaManager.Pages
             using (var db = new DB.DomenaDBContext())
             {
                 AvailableApartments = new ObservableCollection<BindingDataGrid>();
-                foreach (var ap in db.Apartments.Where(x => !x.IsDeleted))
+                foreach (var ap in db.Apartments.Where(x => !x.IsDeleted && x.SoldDate == null))
                 {
                     BindingDataGrid bdg = new BindingDataGrid();
                     bdg.apartment = ap;

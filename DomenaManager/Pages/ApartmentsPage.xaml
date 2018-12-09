@@ -182,6 +182,7 @@
                     <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditApartmentCommand}" Margin="10,0,10,0"/>
                     <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeleteApartmentCommand}" Margin="10,0,10,0"/>
                     <MyControls:ActionButton MDTText="Szczegóły" MDTIcon="ClipboardText" Command="{Binding ExpandApartmentCommand}" Margin="10,0,10,0"/>
+                    <MyControls:ActionButton MDTText="Sprzedaż" MDTIcon="CurrencyUsd" Command="{Binding SellApartmentCommand}" Margin="10,0,10,0"/>
                 </StackPanel>
             </Grid>
             <DataGrid x:Name="ApartmentsDG"

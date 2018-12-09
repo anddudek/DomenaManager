@@ -91,7 +91,7 @@ namespace DomenaManager.Pages
                 var q = db.Owners.Where(x => x.IsDeleted == false);
                 foreach (var own in q)
                 {
-                    int apartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.OwnerId.Equals(own.OwnerId)).Count(x => true);
+                    int apartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.OwnerId.Equals(own.OwnerId)).Count(x => true);
                     var o = new OwnerDataGrid {FirstName = own.OwnerFirstName, SurName = own.OwnerSurname, Address= own.MailAddress, ApartmentsCount= apartmentsCount };
                     o.OwnerId = own.OwnerId;                    
                     Owners.Add(o);

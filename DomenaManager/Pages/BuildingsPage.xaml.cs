@@ -95,7 +95,7 @@ namespace DomenaManager.Pages
                 var q = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).Where(x => x.IsDeleted == false);
                 foreach (var build in q)
                 {
-                    var b = new Helpers.BuildingDataGrid { Name = build.Name, ApartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(build.BuildingId)).Count() };
+                    var b = new Helpers.BuildingDataGrid { Name = build.Name, ApartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(build.BuildingId)).Count() };
                     b.BuildingId = build.BuildingId;
                     b.Address = build.GetAddress();
                     Buildings.Add(b);

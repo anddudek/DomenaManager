@@ -573,7 +573,7 @@ namespace DomenaManager.Pages
         {
             using (var db = new DB.DomenaDBContext())
             {
-                Apartments =(db.Apartments.Include(x => x.MeterCollection.Select(y => y.MeterTypeParent)).Where(x => !x.IsDeleted).ToList());
+                Apartments =(db.Apartments.Include(x => x.MeterCollection.Select(y => y.MeterTypeParent)).Where(x => !x.IsDeleted && x.SoldDate == null).ToList());
                 Charges = (db.Charges.Include(x => x.Components).Where(x => !x.IsDeleted).ToList());
                 Owners = (db.Owners.Where(x => !x.IsDeleted).ToList());
             }
@@ -583,7 +583,7 @@ namespace DomenaManager.Pages
         {
             SelectedBuilding = _settlementPage.SelectedBuildingName.Name;
             InvoiceSum = Math.Ceiling(_settlementPage.SettledInvoices.Select(x => x.CostAmount).DefaultIfEmpty(0).Sum() * 100) / 100;
-            ApartmentsAmount = _settlementPage.ApartmentCollection.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Count();
+            ApartmentsAmount = _settlementPage.ApartmentCollection.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Count();
             SettlementCattegory = _settlementPage.SettlementCategoryName.CategoryName;
 
             if (_settlementPage.SettlementMethod == SettlementMethodsEnum.PER_APARTMENT)
@@ -591,7 +591,7 @@ namespace DomenaManager.Pages
                 var notRounded = InvoiceSum / ApartmentsAmount;
                 SettlePerApartment = (Math.Ceiling(notRounded * 100)) / 100;
                 PerApartmentCollection = new ObservableCollection<ApartamentMeterDataGrid>();
-                foreach (var a in Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)))
+                foreach (var a in Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)))
                 {
                     double chargeAmount = 0;
                     var c = Charges.Where(x => x.ApartmentId.Equals(a.ApartmentId) && x.ChargeDate >= _settlementPage.SettlementFrom && x.ChargeDate <= _settlementPage.SettlementTo);
@@ -621,7 +621,7 @@ namespace DomenaManager.Pages
                 SettlePerSquareMeter = Math.Ceiling((InvoiceSum / BuildingAreaSum) * 100)/ 100;
                 PerAreaCollection = new ObservableCollection<ApartamentMeterDataGrid>();
 
-                foreach (var a in Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)))
+                foreach (var a in Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)))
                 {
                     double chargeAmount = 0;
                     var c = Charges.Where(x => x.ApartmentId.Equals(a.ApartmentId) && x.ChargeDate >= _settlementPage.SettlementFrom && x.ChargeDate <= _settlementPage.SettlementTo);
@@ -648,12 +648,12 @@ namespace DomenaManager.Pages
 
             if (_settlementPage.SettlementMethod == SettlementMethodsEnum.PER_METERS)
             {
-                var ap = Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId));
+                var ap = Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId));
                 int notValidMetersCount = ap.Where(x => x.MeterCollection.FirstOrDefault(y => !y.IsDeleted && y.MeterTypeParent.MeterId.Equals(_settlementPage.SelectedMeterName.MeterId)).LegalizationDate <= DateTime.Now).Count();
 
                 MainMeterDiff = _settlementPage.MainMeterDiff;
                 ApartmentDiffSum = _settlementPage.ApartmentMetersCollection.Where(x => x.IsMeterLegalized).Select(x => x.MeterDifference).DefaultIfEmpty(0).Sum() + _settlementPage.NoMeterConstantAdjustment * notValidMetersCount;
-                ApartmentsAmount = _settlementPage.ApartmentCollection.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Count();
+                ApartmentsAmount = _settlementPage.ApartmentCollection.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Count();
                 BuildingAreaSum = Math.Ceiling((Apartments.Where(x => x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Select(x => new { totalArea = x.AdditionalArea + x.ApartmentArea }).Sum(x => x.totalArea) * 100)) / 100;
                 
                 
@@ -752,8 +752,8 @@ namespace DomenaManager.Pages
 
             if (_settlementPage.SettlementMethod == SettlementMethodsEnum.GAS)
             {
-                var ap = Apartments.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId));
-                ApartmentsAmount = _settlementPage.ApartmentCollection.Where(x => !x.IsDeleted && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Count();
+                var ap = Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId));
+                ApartmentsAmount = _settlementPage.ApartmentCollection.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Count();
                 BuildingAreaSum = Math.Ceiling((Apartments.Where(x => x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Select(x => new { totalArea = x.AdditionalArea + x.ApartmentArea }).Sum(x => x.totalArea) * 100)) / 100;
                 
                 var GJsum = _settlementPage.ApartmentGasMetersCollection.Where(x => x.IsMeterLegalized && x.Meter.MeterId.Equals(_settlementPage.HeatMeterName.MeterId)).Select(x => x.MeterDifference).DefaultIfEmpty(0).Sum();

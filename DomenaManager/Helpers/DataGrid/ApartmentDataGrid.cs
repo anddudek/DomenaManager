@@ -30,5 +30,6 @@ namespace DomenaManager.Helpers
         public SeriesCollection ApartmentAreaSeries { get; set; }
         public SeriesCollection BuildingAreaSeries { get; set; }
         public int LocatorsAmount { get; set; }
+        public DateTime? SoldDate { get; set; }        
     }
 }

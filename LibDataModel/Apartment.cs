@@ -18,7 +18,9 @@ namespace LibDataModel
         public double AdditionalArea { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime BoughtDate { get; set; }
+        public DateTime? SoldDate { get; set; }
         public bool IsDeleted { get; set; }
+        public Guid? OnSellCreatedApartmentGuid { get; set; }
         public string CorrespondenceAddress { get; set; }
         public Guid BindingParent { get; set; }
         public int Locators { get; set; }
@@ -31,6 +33,8 @@ namespace LibDataModel
             this.IsDeleted = false;
             this.BindingParent = Guid.Empty;
             this.MeterCollection = new List<ApartmentMeter>();
+            this.SoldDate = null;
+            this.OnSellCreatedApartmentGuid = null;
         }
 
         public Apartment(Apartment CopySource)
@@ -48,6 +52,8 @@ namespace LibDataModel
             this.BindingParent = CopySource.BindingParent;
             this.MeterCollection = CopySource.MeterCollection;
             this.Locators = CopySource.Locators;
+            this.SoldDate = CopySource.SoldDate;
+            this.OnSellCreatedApartmentGuid = CopySource.OnSellCreatedApartmentGuid;
         }
     }
 }

@@ -185,12 +185,12 @@ namespace DomenaManager.Pages
             BindingsList = new ObservableCollection<ApartmentBinding>();
             using (var db = new DB.DomenaDBContext())
             {
-                Apartments = new ObservableCollection<Apartment>(db.Apartments.Where(x => !x.IsDeleted).ToList());
+                Apartments = new ObservableCollection<Apartment>(db.Apartments.Where(x => !x.IsDeleted && x.SoldDate == null).ToList());
                 foreach (var b in db.Bindings.Where(x => !x.IsDeleted))
                 {
                     var ab = new ApartmentBinding() { BindingId = b.BindingId, Name = b.Name };
                     ab.BoundApartments = new ObservableCollection<BindingDataGrid>();
-                    var apartments = db.Apartments.Where(x => x.BindingParent.Equals(b.BindingId) && !x.IsDeleted);
+                    var apartments = db.Apartments.Where(x => x.BindingParent.Equals(b.BindingId) && !x.IsDeleted && x.SoldDate == null);
                     foreach (var a in apartments)
                     {
                         var bdg = new BindingDataGrid();
@@ -209,7 +209,7 @@ namespace DomenaManager.Pages
             AvailableApartments = new ObservableCollection<BindingDataGrid>();
             using (var db = new DB.DomenaDBContext())
             {
-                Apartments = new ObservableCollection<Apartment>(db.Apartments.Where(x => !x.IsDeleted).ToList());
+                Apartments = new ObservableCollection<Apartment>(db.Apartments.Where(x => !x.IsDeleted && x.SoldDate == null).ToList());
 
                 foreach (var a in Apartments)
                 {

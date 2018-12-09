@@ -876,7 +876,7 @@ namespace DomenaManager.Pages
                 InvoicesList = new ObservableCollection<Invoice>(db.Invoices.Where(x => !x.IsDeleted));
                 AllCategories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
                 SettlementCategories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
-                ApartmentCollection = new ObservableCollection<Apartment>(db.Apartments.Include(x => x.MeterCollection.Select(y => y.MeterTypeParent)).Where(x => !x.IsDeleted).ToList());
+                ApartmentCollection = new ObservableCollection<Apartment>(db.Apartments.Include(x => x.MeterCollection.Select(y => y.MeterTypeParent)).Where(x => !x.IsDeleted && x.SoldDate == null).ToList());
                 OwnerCollection = new ObservableCollection<Owner>(db.Owners.Where(x => !x.IsDeleted).ToList());
                 InitializeSettlementInvoices();
                 InitializeChargeCategories();

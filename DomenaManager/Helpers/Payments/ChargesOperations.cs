@@ -15,7 +15,7 @@ namespace DomenaManager.Helpers
             using (var db = new DB.DomenaDBContext())
             {
                 var q = db.Buildings.Include(b => b.CostCollection);
-                foreach (var a in db.Apartments.Where(x => !x.IsDeleted && q.Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count > 0))
+                foreach (var a in db.Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && q.Where(y => y.BuildingId.Equals(x.BuildingId)).FirstOrDefault().CostCollection.Count > 0))
                 {
                     var c = new Charge() { ApartmentId = a.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, ChargeDate = chargeDate, CreatedDate=DateTime.Today, SettlementId=Guid.Empty, AutoChargeId=autoChargeId, OwnerId = a.OwnerId };
                     c.Components = new List<ChargeComponent>();

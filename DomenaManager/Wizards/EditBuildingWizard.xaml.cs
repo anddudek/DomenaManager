@@ -720,7 +720,21 @@ namespace DomenaManager.Wizards
                         {
                             // Change names
                             q.MeterCollection[i].Name = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).Name;
-                            q.MeterCollection[i].LastMeasure = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure;
+                            if (q.MeterCollection[i].LastMeasure != MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure)
+                            {
+                                db.MetersHistories.Add(new MetersHistory
+                                {
+                                    MeterHistoryId = Guid.NewGuid(),
+                                    Apartment = null,
+                                    ApartmentMeter = null,
+                                    Building = q,
+                                    MeterType = q.MeterCollection[i],
+                                    ModifiedDate = DateTime.Now,
+                                    NewValue = q.MeterCollection[i].LastMeasure,
+                                    OldValue = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure,
+                                });
+                                q.MeterCollection[i].LastMeasure = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure;
+                            }
                             q.MeterCollection[i].IsBuilding = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).IsBuilding;
                             q.MeterCollection[i].IsApartment = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).IsApartment;
                         }

@@ -81,7 +81,7 @@ namespace DomenaManager.Wizards
                 }
                 if (_apartmentLocalCopy != null)
                 {
-                    var q = ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId) && !x.IsDeleted && !x.ApartmentId.Equals(_apartmentLocalCopy.ApartmentId)).Select(x => x.ApartmentNumber).ToList();
+                    var q = ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId) && !x.IsDeleted && x.SoldDate == null && !x.ApartmentId.Equals(_apartmentLocalCopy.ApartmentId)).Select(x => x.ApartmentNumber).ToList();
                     if (q.Any(x => x == value))
                     {
                         ValidationError verr = new ValidationError(new Helpers.StringToIntValidationRule(), apartmentNumberTB.GetBindingExpression(TextBox.TextProperty));
@@ -91,7 +91,7 @@ namespace DomenaManager.Wizards
                 }
                 else
                 {
-                    var q = ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId) && !x.IsDeleted).Select(x => x.ApartmentNumber).ToList();
+                    var q = ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId) && !x.IsDeleted && x.SoldDate == null).Select(x => x.ApartmentNumber).ToList();
                     if (q.Any(x => x == value))
                     {
                         ValidationError verr = new ValidationError(new Helpers.StringToIntValidationRule(), apartmentNumberTB.GetBindingExpression(TextBox.TextProperty));
@@ -419,7 +419,7 @@ namespace DomenaManager.Wizards
                 //Add new apartment
                 using (var db = new DB.DomenaDBContext())
                 {
-                    var newApartment = new LibDataModel.Apartment { BoughtDate = BoughtDate.Date, ApartmentId = Guid.NewGuid(), BuildingId = SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(AdditionalArea), ApartmentArea = double.Parse(ApartmentArea), IsDeleted = false, OwnerId = SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = ApartmentNumber, MeterCollection = new List<ApartmentMeter>(), Locators = LocatorsAmount };
+                    var newApartment = new LibDataModel.Apartment { BoughtDate = BoughtDate.Date, ApartmentId = Guid.NewGuid(), BuildingId = SelectedBuildingName.BuildingId, AdditionalArea = double.Parse(AdditionalArea), ApartmentArea = double.Parse(ApartmentArea), IsDeleted = false, SoldDate = null, OwnerId = SelectedOwnerName.OwnerId, CreatedDate = DateTime.Now, ApartmentNumber = ApartmentNumber, MeterCollection = new List<ApartmentMeter>(), Locators = LocatorsAmount };
                     if (!SelectedOwnerMailAddress.Equals(db.Owners.Where(x => x.OwnerId == _apartmentLocalCopy.OwnerId).Select(x => x.MailAddress)))
                     {
                         newApartment.CorrespondenceAddress = SelectedOwnerMailAddress;
@@ -527,6 +527,17 @@ namespace DomenaManager.Wizards
                         {
                             var s = q.MeterCollection.FirstOrDefault(x => x.MeterId.Equals(m.MeterId));
                             s.LegalizationDate = m.LegalizationDate;
+                            db.MetersHistories.Add(new MetersHistory
+                            {
+                                MeterHistoryId = Guid.NewGuid(),
+                                Apartment = q,
+                                Building = db.Buildings.FirstOrDefault(x => x.BuildingId == q.BuildingId),
+                                ApartmentMeter = s,
+                                MeterType = s.MeterTypeParent,
+                                ModifiedDate = DateTime.Now,
+                                NewValue = m.LastMeasure,
+                                OldValue = s.LastMeasure
+                            });
                             s.LastMeasure = m.LastMeasure;
                         }
                     }
