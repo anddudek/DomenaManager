@@ -30,5 +30,6 @@ namespace DomenaManager.DB
         public DbSet<AutoCharge> AutoCharges { get; set; }
         public DbSet<BuildingChargeGroupName> GroupName { get; set; }        
         public DbSet<MetersHistory> MetersHistories { get; set; }
+        public DbSet<BuildingChargeGroupBankAccount> BuildingChargeGroupBankAccounts { get; set; }
     }
 }

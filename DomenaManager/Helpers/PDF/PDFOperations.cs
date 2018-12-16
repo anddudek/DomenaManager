@@ -15,6 +15,8 @@ using MigraDoc.Rendering;
 using System.Windows.Forms;
 using LibDataModel;
 using System.IO;
+using Serilog;
+using System.Data.Entity;
 
 namespace DomenaManager.Helpers
 {
@@ -43,55 +45,29 @@ namespace DomenaManager.Helpers
        public static void PopulatePage(Document document)
         {
             Section section = document.AddSection();
-
             Paragraph paragraph = section.AddParagraph();
             paragraph.Format.RightIndent = "9cm";
-            paragraph.Format.Borders.Width = 2.5;
-            paragraph.Format.Borders.Color = Colors.Green;
-            paragraph.Format.Borders.Distance = 3;
-            paragraph.AddText("Dagmara Chruściel\nZarządzanie Nieruchomościami \"Domena\"\nul. Cinciały 5/1, 58-560 Jelenia Góra \nTel. 509 940 020 , zarzadca.domena@gmail.com\nNIP 6111618781 Regon 368669809");
-
-            paragraph = section.AddParagraph();
-            paragraph.Format.Alignment = ParagraphAlignment.Right;
-            paragraph.Format.RightIndent = 0;
             Image image = paragraph.AddImage("Images/DomenaLogo.png");
-            paragraph.Format.SpaceBefore = "-4.5cm";
             image.ScaleWidth = 0.4;
-            
 
-            /*XGraphics gfx = XGraphics.FromPdfPage(page);
-            XTextFormatter tf = new XTextFormatter(gfx);
-            tf.DrawString(
-                "Dagmara Chruściel\nZarządzanie Nieruchomościami \"Domena\"\nul. Cinciały 5/1, 58-560 Jelenia Góra \nTel. 509 940 020 , zarzadca.domena@gmail.com\nNIP 6111618781 Regon 368669809",
-                RegularFont(), XBrushes.Black,
-                new XRect(40, 30, page.Width / 3 + 20, page.Height / 5), XStringFormats.TopLeft);
-
-            var bitmap = Properties.Resources.Domena;
-            var drawable = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-            XImage img = XImage.FromBitmapSource(drawable);
-
-            gfx.DrawImage(img, 2 * page.Width / 3, 30, (page.Width / 3) - 40, page.Width * img.PixelHeight / (3 * img.PixelWidth) - 28);
-            gfx.Dispose();*/
+            // Create footer            
+            paragraph = section.Footers.Primary.AddParagraph();
+            paragraph.AddText("Zarządzanie Nieruchomościami \"Domena\"   ·   +48 509 940 020   ·   zarzadca.domena@gmail.com");
+            paragraph.Format.Font.Color = Colors.Gray;
+            paragraph.Format.Font.Size = 9;            
+            paragraph.Format.Alignment = ParagraphAlignment.Center;
         }
 
         public static void AddTitle(Document document, string title)
         {
             var section = document.LastSection;
             Paragraph paragraph = section.AddParagraph(title);
+            paragraph.Format.SpaceBefore = "-1cm";
             paragraph.Format.Font.Name = "Calibri";
             paragraph.Format.Font.Size = 16;
             paragraph.Format.Font.Bold = true;
             paragraph.Format.Alignment = ParagraphAlignment.Center;
-            /*XGraphics gfx = XGraphics.FromPdfPage(page);
-            var a = page.Elements.Where(x => x.Key == "XGraphics");
-            XTextFormatter tf = new XTextFormatter(gfx);
-            tf.Alignment = XParagraphAlignment.Center;
-            tf.DrawString(
-                title,
-                TitleFont(), XBrushes.Black,
-                new XRect(page.Width / 3, page.Height / 5 + 30, page.Width / 3 + 20, page.Height / 5), XStringFormats.TopLeft);
-            gfx.Dispose();*/
+            paragraph.Format.SpaceAfter = "0.5cm";            
         }
 
         public static void AddChargeTable(Document document, ChargeDataGrid selectedCharge, bool useDefaultFolder = false)
@@ -104,82 +80,92 @@ namespace DomenaManager.Helpers
             style.Font.Size = 12;
 
             var section = doc.LastSection;
-
-            /*var ownerFrame = section.AddTextFrame();
-            ownerFrame.Height = "3.0cm";
-            ownerFrame.Width = "7.0cm";
-            ownerFrame.Left = ShapePosition.Right;
-            ownerFrame.RelativeHorizontal = RelativeHorizontal.Margin;
-            ownerFrame.Top = "12.0cm";
-            ownerFrame.RelativeVertical = RelativeVertical.Page;
-            var paragraph = ownerFrame.AddParagraph(selectedCharge.Owner.OwnerName + Environment.NewLine + selectedCharge.Owner.MailAddress);
-            paragraph.Format.Alignment = ParagraphAlignment.Left;
-            paragraph.Style = "Table";
-            paragraph.Format.SpaceAfter = "1cm";
-
-            paragraph = section.AddParagraph(selectedCharge.Owner.OwnerName + Environment.NewLine + selectedCharge.Owner.MailAddress);
-            paragraph.Format.Alignment = ParagraphAlignment.Left;
-            paragraph.Style = "Table";
-            paragraph.Format.SpaceAfter = "1cm";*/
-
             Table address = new Table();
-            Column col = address.AddColumn(Unit.FromCentimeter(8.5));
+            Column col = address.AddColumn(Unit.FromCentimeter(4));
             col.Format.Alignment = ParagraphAlignment.Left;
-            col = address.AddColumn(Unit.FromCentimeter(8.5));
-            col.Format.Alignment = ParagraphAlignment.Left;
-            address.Borders.Width = 0;
-            Row addressRow = address.AddRow();
-            addressRow.Cells[0].AddParagraph(selectedCharge.Owner.OwnerName + Environment.NewLine + selectedCharge.Owner.MailAddress);
-            string apartmentsFrame = "Dotyczy mieszkań nr: " + selectedCharge.Apartment.ApartmentNumber + Environment.NewLine + "Budynek: " + selectedCharge.Building.GetAddress();
-            addressRow.Cells[1].AddParagraph(apartmentsFrame);
+            col = address.AddColumn(Unit.FromCentimeter(4));
+            col.Format.Alignment = ParagraphAlignment.Right;
+            address.Borders.Width = 1;
 
-            address.SetEdge(0, 0, 2, 1, Edge.Box, MigraDoc.DocumentObjectModel.BorderStyle.Single, 0, Colors.Transparent);
-            address.Format.SpaceBefore = "1cm";
-            address.Format.SpaceAfter = "1cm";
+            var ownerRow = address.AddRow();
+            ownerRow.Cells[0].AddParagraph("Płatnik:"); ownerRow.Cells[1].AddParagraph(selectedCharge.Owner.OwnerName);
+            ownerRow = address.AddRow();
+            ownerRow.Cells[0].AddParagraph("Budynek:"); ownerRow.Cells[1].AddParagraph(selectedCharge.Building.GetAddress());
+            ownerRow = address.AddRow();
+            ownerRow.Cells[0].AddParagraph("Lokal:"); ownerRow.Cells[1].AddParagraph(selectedCharge.Apartment.ApartmentNumber.ToString());
+            ownerRow = address.AddRow();
+            ownerRow.Cells[0].AddParagraph("Ilość osób:"); ownerRow.Cells[1].AddParagraph(selectedCharge.Apartment.Locators.ToString());
+            ownerRow = address.AddRow();
+            double percentage;
+            using (var db = new DB.DomenaDBContext())
+            {
+                var apartments = db.Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId == selectedCharge.Building.BuildingId);
+                double totalArea = (apartments.Sum(x => x.AdditionalArea) + apartments.Sum(x => x.ApartmentArea));
+                percentage = Math.Round(100 * (selectedCharge.Apartment.ApartmentArea + selectedCharge.Apartment.AdditionalArea) / totalArea, 2);
+            }
+            ownerRow.Cells[0].AddParagraph("Procent własności:"); ownerRow.Cells[1].AddParagraph(percentage.ToString() + "%");
+            ownerRow = address.AddRow();
+            ownerRow.Cells[0].AddParagraph("Powierzchnia ogółem:"); ownerRow.Cells[1].AddParagraph((selectedCharge.Apartment.AdditionalArea + selectedCharge.Apartment.ApartmentArea).ToString() + " m2");
+            ownerRow = address.AddRow();
+            ownerRow.Cells[0].AddParagraph("Powierzchnia grzewcza:"); ownerRow.Cells[1].AddParagraph((selectedCharge.Apartment.ApartmentArea).ToString() + " m2");
 
+            Paragraph paragraph = section.AddParagraph();
+            paragraph.Format.Alignment = ParagraphAlignment.Right;
+            paragraph.Format.RightIndent = "0";
+            paragraph.AddText(selectedCharge.Owner.OwnerName + Environment.NewLine + selectedCharge.Owner.MailAddress);
+            paragraph.Format.SpaceBefore = "-5.5cm";
+            paragraph.Format.SpaceAfter = "3.5cm";
+
+            address.Borders.Color = Colors.Transparent;
             document.LastSection.Add(address);
+
+            Paragraph sep = new Paragraph();
+            sep.Format.SpaceAfter = "0.5cm";
+            document.LastSection.Add(sep);
 
             Table table = new Table();
             table.Borders.Width = 0.5;
 
-            table.AddColumn(Unit.FromCentimeter(7));
+            table.AddColumn(Unit.FromCentimeter(5.5));
             table.AddColumn(Unit.FromCentimeter(3.75));
-            var column = table.AddColumn(Unit.FromCentimeter(2.5));
+            var column = table.AddColumn(Unit.FromCentimeter(2.25));
             column.Format.Alignment = ParagraphAlignment.Center;
             column = table.AddColumn(Unit.FromCentimeter(1.25));
             column.Format.Alignment = ParagraphAlignment.Center;
-            column = table.AddColumn(Unit.FromCentimeter(2.5));
+            column = table.AddColumn(Unit.FromCentimeter(2.25));
+            column.Format.Alignment = ParagraphAlignment.Center;
+            column = table.AddColumn(Unit.FromCentimeter(2));
             column.Format.Alignment = ParagraphAlignment.Center;
 
             Row row = table.AddRow();
-            row.Shading.Color = Colors.Green;
+            row.Shading.Color = new Color(135, 176, 77);
             Cell cell = row.Cells[0];
             cell.AddParagraph("KATEGORIA");
             cell.Format.Font.Bold = true;
             cell = row.Cells[1];
             cell.AddParagraph("JEDNOSTKA");
             cell.Format.Font.Bold = true;
-            cell = row.Cells[2];
+            cell = row.Cells[3];
             cell.AddParagraph("KOSZT JEDN.");
             cell.Format.Font.Bold = true;
-            cell = row.Cells[3];
+            cell = row.Cells[4];
             cell.AddParagraph("JEDN.");
             cell.Format.Font.Bold = true;
-            cell = row.Cells[4];
+            cell = row.Cells[5];
             cell.AddParagraph("SUMA");
             cell.Format.Font.Bold = true;
-
-            /*
-            Row apartmentRow = table.AddRow();
-            apartmentRow.Cells[0].Format.Font.Bold = true;
-            apartmentRow.Cells[0].AddParagraph(selectedCharge.Apartment.ApartmentNumber.ToString());
-            */
+            cell = row.Cells[2];
+            cell.AddParagraph("GRUPA");
+            cell.Format.Font.Bold = true;
 
             var length = selectedCharge.Components.Count;
+            int groupsCount;
             double sum = 0;
+            List<BuildingChargeGroupBankAccount> bankAccounts;
 
             using (var db = new DB.DomenaDBContext())
             {
+                bankAccounts = db.BuildingChargeGroupBankAccounts.Include(x => x.Building).Include(x => x.GroupName).Where(x => !x.IsDeleted && x.Building.BuildingId == selectedCharge.Building.BuildingId).ToList();
                 foreach (var c in selectedCharge.Components)
                 {
                     row = table.AddRow();
@@ -187,66 +173,116 @@ namespace DomenaManager.Helpers
                     cell.AddParagraph(db.CostCategories.FirstOrDefault(x => x.BuildingChargeBasisCategoryId.Equals(c.CostCategoryId)).CategoryName);
                     cell = row.Cells[1];
                     cell.AddParagraph(EnumCostDistribution.CostDistributionToString((EnumCostDistribution.CostDistribution)c.CostDistribution));
-                    cell = row.Cells[2];
-                    cell.AddParagraph(c.CostPerUnit + " zł");
                     cell = row.Cells[3];
-                    if (c.CostDistribution == 0)
-                    {
-                        cell.AddParagraph("1");
-                    }
-                    else if (c.CostDistribution == 1)
-                    {
-                        var area = selectedCharge.Apartment.AdditionalArea + selectedCharge.Apartment.ApartmentArea;
-                        cell.AddParagraph(area.ToString());
-                    }
+                    cell.AddParagraph(c.CostPerUnit + " zł");
                     cell = row.Cells[4];
+
+                    string units = "";
+                    switch ((EnumCostDistribution.CostDistribution)c.CostDistribution)
+                    {
+                        default:
+                            break;
+                        case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:
+                            units = (selectedCharge.Apartment.AdditionalArea + selectedCharge.Apartment.ApartmentArea).ToString();
+                            break;
+                        case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                            units = (selectedCharge.Apartment.AdditionalArea).ToString();
+                            break;
+                        case EnumCostDistribution.CostDistribution.PerApartment:
+                            units = "1";
+                            break;
+                        case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                            units = (selectedCharge.Apartment.ApartmentArea).ToString();
+                            break;
+                        case EnumCostDistribution.CostDistribution.PerLocators:
+                            units = (selectedCharge.Apartment.Locators).ToString();
+                            break;
+                    }
+                    cell.AddParagraph(units);
+                    cell = row.Cells[5];
                     cell.AddParagraph(c.Sum + " zł");
+                    cell = row.Cells[2];
+                    cell.AddParagraph(c.GroupName.GroupName);
                     sum += c.Sum;
+                }
+                var groups = selectedCharge.Components.GroupBy(x => x.GroupName.GroupName);
+                row = table.AddRow();
+                row.HeightRule = RowHeightRule.Exactly;
+                row.Height = 1;
+                row.Shading.Color = Colors.Black;
+                groupsCount = groups.Count();
+                foreach (var g in groups)
+                {
+                    row = table.AddRow();
+                    cell = row.Cells[0];
+                    cell.AddParagraph("Razem - " + g.Key);
+                    cell = row.Cells[5];
+                    cell.AddParagraph(g.Select(c => c.Sum).Sum() + " zł");
                 }
             }
             row = table.AddRow();
             cell = row.Cells[0];
             cell.AddParagraph("Razem");
-            cell = row.Cells[4];
+            cell.Format.Font.Bold = true;
+            cell = row.Cells[5];
             cell.AddParagraph(sum + " zł");
+            cell.Format.Font.Bold = true;
 
-            table.SetEdge(0, 0, 5, length + 2, Edge.Box, MigraDoc.DocumentObjectModel.BorderStyle.Single, 1, Colors.Black);
+            table.SetEdge(0, 0, 6, length + 3 + groupsCount, Edge.Box, MigraDoc.DocumentObjectModel.BorderStyle.Single, 1, Colors.Black);
 
             document.LastSection.Add(table);
+            if (bankAccounts != null && bankAccounts.Count > 0 && selectedCharge.Components != null && 
+                selectedCharge.Components.Count() > 0 && selectedCharge.Components.GroupBy(x => x.GroupName).Count() > 0 
+                )
+            {
+                paragraph = document.LastSection.AddParagraph();
+
+                paragraph.AddText("Wpłat należy dokonywać regularnie do dnia 10 każdego miesiąca na rachunek bankowy: ");
+
+                foreach (var g in selectedCharge.Components.GroupBy(x => x.GroupName))
+                {
+                    var ba = bankAccounts.FirstOrDefault(x => x.GroupName.BuildingChargeGroupNameId == g.Key.BuildingChargeGroupNameId);
+                    if (ba != null)
+                    {
+                        paragraph = document.LastSection.AddParagraph();
+                        paragraph.AddText(g.Key.GroupName + ": " + ba.BankAccount);
+                    }
+                }
+            }
 
             MigraDoc.Rendering.DocumentRenderer docRenderer = new MigraDoc.Rendering.DocumentRenderer(doc);
             docRenderer.PrepareDocument();
-
-            /*XGraphics gfx = XGraphics.FromPdfPage(page);
-            gfx.MUH = PdfFontEncoding.Unicode;
-            gfx.MFEH = PdfFontEmbedding.Default;
-
-            docRenderer.RenderObject(gfx, XUnit.FromCentimeter(1.5), XUnit.FromCentimeter(8.5), "12cm", paragraph);
-            gfx.Dispose();*/
-
+            
             PdfDocumentRenderer renderer = new PdfDocumentRenderer(true, PdfSharp.Pdf.PdfFontEmbedding.Always);
             renderer.Document = doc;
             renderer.RenderDocument();
             // Save the document...
-            //string filename = "HelloMigraDoc.pdf";
-            //renderer.PdfDocument.Save(filename);
-            if (!useDefaultFolder)
+
+            try
             {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = "PDF file|*.pdf";
-                sfd.Title = "Zapisz raport jako...";
-                sfd.ShowDialog();
-                if (sfd.FileName != "")
+                if (!useDefaultFolder)
                 {
-                    renderer.PdfDocument.Save(sfd.FileName);
+                    SaveFileDialog sfd = new SaveFileDialog();
+                    sfd.Filter = "PDF file|*.pdf";
+                    sfd.Title = "Zapisz raport jako...";
+                    sfd.ShowDialog();
+                    if (sfd.FileName != "")
+                    {
+                        renderer.PdfDocument.Save(sfd.FileName);
+                    }
+                }
+                else
+                {
+                    System.IO.FileInfo file = new System.IO.FileInfo("Reports\\");
+                    file.Directory.Create();
+                    string filename = selectedCharge.ChargeDate.ToString("MMMM_yyyy") + "_" + selectedCharge.Building.Name + "_" + selectedCharge.Apartment.ApartmentNumber + ".pdf";
+                    renderer.PdfDocument.Save(Path.Combine(file.FullName, filename.Replace(' ', '_')));
                 }
             }
-            else
+            catch (Exception e)
             {
-                System.IO.FileInfo file = new System.IO.FileInfo("Reports\\");
-                file.Directory.Create();
-                string filename = selectedCharge.ChargeDate.ToString("MMMM_yyyy") + "_" + selectedCharge.Building.Name + "_" + selectedCharge.Apartment.ApartmentNumber + ".pdf";
-                renderer.PdfDocument.Save(Path.Combine(file.FullName, filename.Replace(' ', '_')));                
+                MessageBox.Show("Błąd zapisu pliku - plik może być aktualnie używany. Spróbuj ponownie.");
+                Log.Logger.Error(e, "Error in report file save");
             }
         }
 

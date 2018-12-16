@@ -324,7 +324,7 @@ namespace DomenaManager.Pages
             using (var db = new DB.DomenaDBContext())
             {
                 //var qa = db.Charges.Include(c => c.Components).Where(x => x.IsClosed).FirstOrDefault();
-                var q = db.Charges.Include(x => x.Components).Where(x => !x.IsDeleted);
+                var q = db.Charges.Include(x => x.Components).Include(x => x.Components.Select(y => y.GroupName)).Where(x => !x.IsDeleted);
                 foreach (var ch in q)
                 {
                     var cdg = new ChargeDataGrid(ch);

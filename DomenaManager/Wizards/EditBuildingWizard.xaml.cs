@@ -340,7 +340,56 @@ namespace DomenaManager.Wizards
                 }
             }
         }
-        
+
+        private string _bankAccount;
+        public string BankAccount
+        {
+            get { return _bankAccount; }
+            set
+            {
+                if (value != _bankAccount)
+                {
+                    _bankAccount = value;
+                }
+                OnPropertyChanged("BankAccount");
+            }
+        }
+
+        private ObservableCollection<BuildingChargeGroupBankAccount> _groupBankAccounts;
+        public ObservableCollection<BuildingChargeGroupBankAccount> GroupBankAccounts
+        {
+            get { return _groupBankAccounts; }
+            set
+            {
+                if (value != _groupBankAccounts)
+                {
+                    _groupBankAccounts = value;
+                    OnPropertyChanged("GroupBankAccounts");
+                }
+            }
+        }
+
+        private BuildingChargeGroupBankAccount _selectedGroupBankAccount;
+        public BuildingChargeGroupBankAccount SelectedGroupBankAccount
+        {
+            get { return _selectedGroupBankAccount; }
+            set
+            {
+                if (value != _selectedGroupBankAccount)
+                {
+                    _selectedGroupBankAccount = value;
+                    OnPropertyChanged("SelectedGroupBankAccount");
+                    if (value != null)
+                    {
+                        BankAccount = value.BankAccount;
+                        SelectedGroupName = GroupNames.FirstOrDefault(x => x.BuildingChargeGroupNameId == value.GroupName.BuildingChargeGroupNameId);
+                    }
+                }
+            }
+        }
+
+        private List<BuildingChargeGroupBankAccount> GroupBankAccountsTotal;
+
         public Building _buildingLocalCopy;
 
         public ICommand DeleteSelectedCost
@@ -439,6 +488,30 @@ namespace DomenaManager.Wizards
             }
         }
 
+        public ICommand AddGroupBankAccountCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(AddGroupBankAccount, CanAddGroupBankAccount);
+            }
+        }
+
+        public ICommand ModifyGroupBankAccountCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(ModifyGroupBankAccount, CanModifyGroupBankAccount);
+            }
+        }
+
+        public ICommand DeleteGroupBankAccountCommand
+        {
+            get
+            {
+                return new Helpers.RelayCommand(DeleteGroupBankAccount, CanDeleteGroupBankAccount);
+            }
+        }
+
         public EditBuildingWizard(Building SelectedBuilding = null)
         {
             InitializeComponent();
@@ -466,6 +539,10 @@ namespace DomenaManager.Wizards
                 }
                 MetersCollection = new ObservableCollection<MeterType>(SelectedBuilding.MeterCollection);
             }
+            if (_buildingLocalCopy != null)
+                GroupBankAccounts = new ObservableCollection<BuildingChargeGroupBankAccount>(GroupBankAccountsTotal.Where(x => !x.IsDeleted && x.Building.BuildingId == _buildingLocalCopy.BuildingId).ToList());
+            else
+                GroupBankAccounts = new ObservableCollection<BuildingChargeGroupBankAccount>();
         }
 
         private void InitializeCategoriesList()
@@ -474,6 +551,7 @@ namespace DomenaManager.Wizards
             {
                 CategoriesNames = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
                 GroupNames = new ObservableCollection<BuildingChargeGroupName>(db.GroupName.Where(x => !x.IsDeleted).ToList());
+                GroupBankAccountsTotal = new List<BuildingChargeGroupBankAccount>(db.BuildingChargeGroupBankAccounts.Include(x => x.GroupName).Include(x => x.Building).ToList());                
             }
         }
 
@@ -646,6 +724,62 @@ namespace DomenaManager.Wizards
             return SelectedMeter != null;
         }
 
+        private void AddGroupBankAccount(object param)
+        {
+            if (SelectedGroupName != null && BankAccount != null && IsBankAccountValid(BankAccount) && !GroupBankAccounts.Any(x => x.GroupName.BuildingChargeGroupNameId == SelectedGroupName.BuildingChargeGroupNameId))
+            {
+                GroupBankAccounts.Add(new BuildingChargeGroupBankAccount() { BuildingChargeGroupBankAccountId = Guid.NewGuid(), BankAccount = BankAccount, GroupName = SelectedGroupName, IsDeleted = false });
+            }
+        }
+
+        private bool CanAddGroupBankAccount()
+        {
+            return (SelectedGroupName != null && BankAccount != null && IsBankAccountValid(BankAccount)); 
+        }
+
+        private void ModifyGroupBankAccount(object param)
+        {
+            if (SelectedGroupName != null && BankAccount != null && SelectedGroupBankAccount != null && IsBankAccountValid(BankAccount))
+            {
+                SelectedGroupBankAccount.BankAccount = BankAccount;
+                SelectedGroupBankAccount.GroupName = SelectedGroupName;
+            }
+        }
+
+        private bool CanModifyGroupBankAccount()
+        {
+            return (SelectedGroupName != null && BankAccount != null && SelectedGroupBankAccount != null && IsBankAccountValid(BankAccount));
+        }
+
+        private void DeleteGroupBankAccount(object param)
+        {
+            GroupBankAccounts.Remove(SelectedGroupBankAccount);
+        }
+
+        private bool CanDeleteGroupBankAccount()
+        {
+            return (SelectedGroupBankAccount != null);
+        }
+
+        private bool IsBankAccountValid(string bankAccount)
+        {
+            string account = bankAccount.Replace(" ", "");
+            if (account.Length != 26)
+                return false;
+            if (account.Any(x => !char.IsDigit(x)))
+                return false;
+            account = account.Substring(2, account.Length - 2) + "2521" + account.Substring(0, 2);
+            int checksum = int.Parse(account.Substring(0, 1));
+            for (int i = 1; i < account.Length; i++)
+            {
+                int v = int.Parse(account.Substring(i, 1));
+                checksum *= 10;
+                checksum += v;
+                checksum %= 97;
+            }
+            return checksum == 1;
+        }
+
         private void SaveDialog(object param)
         {
             if (_buildingLocalCopy == null)
@@ -671,6 +805,13 @@ namespace DomenaManager.Wizards
                         newBuilding.MeterCollection.Add(m);
                     }
                     db.Buildings.Add(newBuilding);
+                    foreach (var g in GroupBankAccounts)
+                    {
+                        g.Building = newBuilding;
+                        db.Entry(g.GroupName).State = EntityState.Unchanged;
+                        db.BuildingChargeGroupBankAccounts.Add(g);
+                    }
+                    _buildingLocalCopy = newBuilding;
                     db.SaveChanges();
                 }
             }
@@ -722,7 +863,7 @@ namespace DomenaManager.Wizards
                             q.MeterCollection[i].Name = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).Name;
                             if (q.MeterCollection[i].LastMeasure != MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure)
                             {
-                                db.MetersHistories.Add(new MetersHistory
+                                var nm = new MetersHistory
                                 {
                                     MeterHistoryId = Guid.NewGuid(),
                                     Apartment = null,
@@ -732,7 +873,10 @@ namespace DomenaManager.Wizards
                                     ModifiedDate = DateTime.Now,
                                     NewValue = q.MeterCollection[i].LastMeasure,
                                     OldValue = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure,
-                                });
+                                };
+                                db.MetersHistories.Add(nm);
+                                db.Entry(nm.Building).State = EntityState.Unchanged;
+
                                 q.MeterCollection[i].LastMeasure = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).LastMeasure;
                             }
                             q.MeterCollection[i].IsBuilding = MetersCollection.FirstOrDefault(x => x.MeterId.Equals(q.MeterCollection[i].MeterId)).IsBuilding;
@@ -740,7 +884,37 @@ namespace DomenaManager.Wizards
                         }
                     }
 
-                    db.SaveChanges();
+                    var buildingBankAddresses = db.BuildingChargeGroupBankAccounts.Where(x => x.Building.BuildingId == q.BuildingId).ToList();
+                    
+                    //Add new
+                    foreach (var bba in GroupBankAccounts)
+                    {
+                        if (!buildingBankAddresses.Any(x => x.BuildingChargeGroupBankAccountId == bba.BuildingChargeGroupBankAccountId))
+                        {
+                            bba.Building = q;
+                            db.BuildingChargeGroupBankAccounts.Add(bba);
+                            db.Entry(bba.GroupName).State = EntityState.Unchanged;
+                            db.Entry(bba.Building).State = EntityState.Unchanged;
+                        }
+                    }
+                    //Remove necessary
+                    for (int i = buildingBankAddresses.Count - 1; i >= 0; i--)
+                    {
+                        if (!GroupBankAccounts.Any(x => x.BuildingChargeGroupBankAccountId.Equals(buildingBankAddresses[i].BuildingChargeGroupBankAccountId)))
+                        {
+                            buildingBankAddresses[i].IsDeleted = true;
+                        }
+                        else
+                        {
+                            // Change names
+                            buildingBankAddresses[i].BankAccount = GroupBankAccounts.FirstOrDefault(x => x.BuildingChargeGroupBankAccountId == buildingBankAddresses[i].BuildingChargeGroupBankAccountId).BankAccount;
+                            buildingBankAddresses[i].GroupName = GroupBankAccounts.FirstOrDefault(x => x.BuildingChargeGroupBankAccountId == buildingBankAddresses[i].BuildingChargeGroupBankAccountId).GroupName;
+                            
+                            //db.Entry(buildingBankAddresses[i].Building).State = EntityState.Unchanged;
+                            db.Entry(buildingBankAddresses[i].GroupName).State = EntityState.Unchanged;
+                        }
+                    }            
+                    db.SaveChanges();                    
                 }
             }
         }

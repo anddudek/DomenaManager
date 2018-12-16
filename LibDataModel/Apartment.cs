@@ -54,6 +54,6 @@ namespace LibDataModel
             this.Locators = CopySource.Locators;
             this.SoldDate = CopySource.SoldDate;
             this.OnSellCreatedApartmentGuid = CopySource.OnSellCreatedApartmentGuid;
-        }
+        }        
     }
 }

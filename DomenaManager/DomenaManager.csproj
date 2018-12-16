@@ -151,6 +151,7 @@
     <Compile Include="Helpers\PDF\PDFOperations.cs" />
     <Compile Include="Helpers\SettlementMethodsEnum.cs" />
     <Compile Include="Helpers\SwitchPage.cs" />
+    <Compile Include="Helpers\ValidationRule\IBANValidationRule.cs" />
     <Compile Include="Helpers\ValidationRule\StringToDoubleValidationRule.cs" />
     <Compile Include="Helpers\ValidationRule\StringToIntValidationRule.cs" />
     <Compile Include="Helpers\ListView\OwnerDescriptionListView.cs" />
