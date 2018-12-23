@@ -250,7 +250,8 @@ namespace DomenaManager.Wizards
             {
                 foreach (var c in SelectedBuildingName.CostCollection)
                 {
-                    GroupNames.Add(_groupNamesDB.FirstOrDefault(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId));
+                    if (!GroupNames.Any(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId))
+                        GroupNames.Add(_groupNamesDB.FirstOrDefault(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId));
                 }                
             }
         }
@@ -265,7 +266,7 @@ namespace DomenaManager.Wizards
                 }
                 else
                 {
-                    ApartmentsNumbers = new ObservableCollection<Apartment>(_apartmentsOC.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId)).ToList());
+                    ApartmentsNumbers = new ObservableCollection<Apartment>(_apartmentsOC.Where(x => x.BuildingId.Equals(SelectedBuildingName.BuildingId)).OrderBy(x => x.ApartmentNumber).ToList());
                 }
             }
             OnPropertyChanged("ApartmentsNumbers");

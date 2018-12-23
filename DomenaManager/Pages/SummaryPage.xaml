@@ -82,9 +82,8 @@
                     <Label Content="{Binding SelectedSummary.apartment.ApartmentNumber}" ContentStringFormat="{}Mieszkanie: {0}, " FontSize="20"/>
                     <Label Content="{Binding SelectedSummary.owner.OwnerName}" ContentStringFormat="{}Właściciel: {0}, " FontSize="20"/>
                 </StackPanel>
-                <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="1">
-                    <ContentControl Margin="50,0,50,0" Content="{Binding SummaryDG}" HorizontalContentAlignment="Center"/>
-                </ScrollViewer>
+                <ContentControl Grid.Row="1" Margin="50,0,50,0" Content="{Binding SummaryDG}" HorizontalContentAlignment="Center"/>
+                
             </Grid>
         </Grid>
     </Grid>

@@ -192,6 +192,9 @@ namespace DomenaManager.Pages
                 CanUserAddRows = false,
                 CanUserDeleteRows = false,
                 IsReadOnly = true,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                FrozenColumnCount = 1,
             };
             var cellStyle = new Style(typeof(DataGridCell));
             cellStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, (SolidColorBrush)(new BrushConverter().ConvertFrom("#87B04D"))));
@@ -291,7 +294,7 @@ namespace DomenaManager.Pages
                             {
                                 var currentComponets = thisMonthComponents.Where(x => x.CostCategoryId == cat && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId);
                                 groupSum += currentComponets.Sum(x => x.Sum);
-                                sdg.rows[i].charges[iterator] = groupSum.ToString() + " zł";
+                                sdg.rows[i].charges[iterator] = currentComponets.Sum(x => x.Sum).ToString() + " zł";
 
                                 if (a.Columns.Count < columnsCount - 1)
                                 {
@@ -316,7 +319,7 @@ namespace DomenaManager.Pages
                             iterator++;
 
                             //Suma
-                            sdg.rows[i].charges[iterator] = (groupPayments - groupSum).ToString() + " zł";
+                            sdg.rows[i].charges[iterator] = (groupSum).ToString() + " zł";//(groupPayments - groupSum).ToString() + " zł";
                             currentMonthSum += (groupPayments - groupSum);
                             var groupSumCol = new DataGridTextColumn();
 
