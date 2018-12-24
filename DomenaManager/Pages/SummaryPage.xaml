@@ -32,6 +32,7 @@
             <Grid Grid.Row="3">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <MyControls:ActionButton MDTText="Zapisz do pliku" MDTIcon="FilePdf" Command="{Binding SaveToPdfCommand}" Margin="10,0,10,0"/>
+                    <MyControls:ActionButton MDTText="Powiększ" MDTIcon="ArrowExpandAll" Command="{Binding MaximizeCommand}" Margin="10,0,10,0"/>
                 </StackPanel>
             </Grid>
 

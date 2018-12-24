@@ -176,6 +176,11 @@ namespace DomenaManager.Pages
             get { return new RelayCommand(ExportPDF, CanExportPDF); }
         }
 
+        public ICommand MaximizeCommand
+        {
+            get { return new RelayCommand(Maximize, CanMaximize); }
+        }
+
         public SummaryPage()
         {
             DataContext = this;
@@ -384,6 +389,18 @@ namespace DomenaManager.Pages
         }
 
         private bool CanExportPDF()
+        {
+            return SummaryDG != null;
+        }
+
+        private void Maximize(object param)
+        {
+            Windows.MaximizeSummaryWindow msw = new Windows.MaximizeSummaryWindow();
+            msw.SummaryDG = SummaryDG;
+            msw.Show();
+        }
+
+        private bool CanMaximize()
         {
             return SummaryDG != null;
         }

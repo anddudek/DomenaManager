@@ -47,6 +47,7 @@ namespace DomenaManager.Helpers
         {
             // Create header
             Section section = document.AddSection();
+            section.PageSetup.LeftMargin = Unit.FromCentimeter(1);
             section.PageSetup.TopMargin = Unit.FromCentimeter(5.5);
             Paragraph paragraph = section.Headers.Primary.AddParagraph();
             paragraph.Format.RightIndent = "9cm";
@@ -310,18 +311,13 @@ namespace DomenaManager.Helpers
 
             var section = doc.LastSection;
 
-            /*for (int i = 0; i < 2; i++)
-            {
-                Table address = OwnerTableInfo(owner, building, apartment);
-                document.LastSection.Add(address);
-
-                Paragraph sep = new Paragraph();
-                sep.Format.SpaceAfter = "0.5cm";
-                document.LastSection.Add(sep);
-                section.AddPageBreak();                
-            }*/
-
             // Tables
+
+            Table summaryTable = new Table();
+            Row[] summaryRows = new Row[14];
+            double[] paymentsSum = new double[12];
+            double[] chargesSum = new double[12];
+            int distinctGroupsCount;
 
             using (var db = new DB.DomenaDBContext())
             {
@@ -340,9 +336,103 @@ namespace DomenaManager.Helpers
                 allGroups.AddRange(groups);
                 allGroups.AddRange(paymentGroups);
                 var distinctGroups = allGroups.Distinct();
+                distinctGroupsCount = distinctGroups.Count();
 
                 var uniqueCategories = componentsList.GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
 
+                summaryTable.Borders.Width = 0.5;
+                summaryTable.AddColumn(Unit.FromCentimeter(2));
+                int columnsCount = distinctGroups.Count() * 2 + 3;
+                for (int i = 0; i < columnsCount; i++)
+                {
+                    var column = summaryTable.AddColumn(Unit.FromCentimeter((double)17 / columnsCount));
+                    column.Format.Alignment = ParagraphAlignment.Center;
+                }
+
+                // |--Podsumowanie--|
+                var summaryRow = summaryTable.AddRow();
+                summaryRow.Shading.Color = new Color(135, 176, 77);
+                summaryRow.Cells[0].MergeRight = columnsCount;
+                summaryRow.Cells[0].AddParagraph("Podsumowanie");
+                summaryRow.Cells[0].Format.Font.Bold = true;
+                summaryRow.Cells[0].Format.Alignment = ParagraphAlignment.Center;
+
+                // |--Miesiąc--|--G1--|--G2--|--Razem--|
+                summaryRow = summaryTable.AddRow();
+                summaryRow.Shading.Color = new Color(135, 176, 77);
+                summaryRow.Cells[0].MergeDown = 1;
+                summaryRow.Cells[0].AddParagraph("Miesiąc");
+                summaryRow.Cells[0].Format.Font.Bold = true;
+                summaryRow.Cells[0].VerticalAlignment = VerticalAlignment.Center;
+                summaryRow.Cells[0].Format.Alignment = ParagraphAlignment.Center;
+                int iter = 1;
+                foreach (var dg in distinctGroups)
+                {
+                    summaryRow.Cells[iter].MergeRight = 1;
+                    summaryRow.Cells[iter].AddParagraph(dg.GroupName);
+                    summaryRow.Cells[iter].Format.Font.Bold = true;
+                    summaryRow.Cells[iter].Format.Alignment = ParagraphAlignment.Center;
+                    iter += 2;
+                }
+                summaryRow.Cells[iter].MergeRight = 2;
+                summaryRow.Cells[iter].AddParagraph("Razem");
+                summaryRow.Cells[iter].Format.Font.Bold = true;
+                summaryRow.Cells[iter].Format.Alignment = ParagraphAlignment.Center;
+
+                // |--Miesiąc (merged)--|--G1 wpłaty--|--G1 naliczenia--|--Suma wpłat--|--Suma naliczeń--|--Saldo--|
+                summaryRow = summaryTable.AddRow();
+                summaryRow.Shading.Color = new Color(135, 176, 77);
+                iter = 1;
+                foreach (var dg in distinctGroups)
+                {
+                    summaryRow.Cells[iter].AddParagraph(dg.GroupName + " wpłaty");
+                    summaryRow.Cells[iter].Format.Font.Bold = true;
+                    summaryRow.Cells[iter].VerticalAlignment = VerticalAlignment.Center;
+                    summaryRow.Cells[iter].Format.Alignment = ParagraphAlignment.Center;
+                    iter++;
+                    summaryRow.Cells[iter].AddParagraph(dg.GroupName + " naliczenia");
+                    summaryRow.Cells[iter].Format.Font.Bold = true;
+                    summaryRow.Cells[iter].VerticalAlignment = VerticalAlignment.Center;
+                    summaryRow.Cells[iter].Format.Alignment = ParagraphAlignment.Center;
+                    iter++;
+                }
+                summaryRow.Cells[iter].AddParagraph("Suma wpłat");
+                summaryRow.Cells[iter].Format.Font.Bold = true;
+                summaryRow.Cells[iter].VerticalAlignment = VerticalAlignment.Center;
+                summaryRow.Cells[iter].Format.Alignment = ParagraphAlignment.Center;
+                iter++;
+                summaryRow.Cells[iter].AddParagraph("Suma naliczeń");
+                summaryRow.Cells[iter].Format.Font.Bold = true;
+                summaryRow.Cells[iter].VerticalAlignment = VerticalAlignment.Center;
+                summaryRow.Cells[iter].Format.Alignment = ParagraphAlignment.Center;
+                iter++;
+                summaryRow.Cells[iter].AddParagraph("Saldo");
+                summaryRow.Cells[iter].Format.Font.Bold = true;
+                summaryRow.Cells[iter].VerticalAlignment = VerticalAlignment.Center;
+                summaryRow.Cells[iter].Format.Alignment = ParagraphAlignment.Center;
+                iter++;
+
+                summaryRows[0] = summaryTable.AddRow();
+                summaryRows[0].Cells[0].AddParagraph("Zeszły rok");
+                for (int i = 1; i< columnsCount; i++)
+                {
+                    summaryRows[0].Cells[i].AddParagraph("-");
+                }
+                double lastYearSaldo = Payments.CalculateSaldo(year - 1, apartment);
+                double thisYearSaldo = lastYearSaldo;
+                summaryRows[0].Cells[columnsCount].AddParagraph(lastYearSaldo + " zł");
+
+                for (int i = 1; i < 13; i++)//months
+                {
+                    summaryRows[i] = summaryTable.AddRow();
+                    summaryRows[i].Cells[0].AddParagraph(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(new DateTime(2000, i, 1).ToString("MMMM")));
+                }
+                
+                summaryRows[13] = summaryTable.AddRow();
+                summaryRows[13].Cells[0].AddParagraph("Razem");
+                summaryRows[13].Cells[0].Format.Font.Bold = true;
+
+                int summaryGroupIterator = 1;
                 foreach (var g in distinctGroups)
                 {
                     if (g != null)
@@ -361,18 +451,29 @@ namespace DomenaManager.Helpers
                         groupTable.Borders.Width = 0.5;
 
                         groupTable.AddColumn(Unit.FromCentimeter(2));
+                        Column col;
                         foreach (var cat in categoriesInGroup)
                         {
-                            groupTable.AddColumn(Unit.FromCentimeter((double)12 / categoriesInGroup.Count()));
+                            col = groupTable.AddColumn(Unit.FromCentimeter((double)14 / categoriesInGroup.Count()));
+                            col.Format.Alignment = ParagraphAlignment.Center;
                         }
-                        groupTable.AddColumn(Unit.FromCentimeter(1.5));
-                        groupTable.AddColumn(Unit.FromCentimeter(1.5));
+                        col = groupTable.AddColumn(Unit.FromCentimeter(1.5));
+                        col.Format.Alignment = ParagraphAlignment.Center;
+                        col = groupTable.AddColumn(Unit.FromCentimeter(1.5));
+                        col.Format.Alignment = ParagraphAlignment.Center;
 
                         // Header row
-
                         Row currentRow = groupTable.AddRow();
                         currentRow.Shading.Color = new Color(135, 176, 77);
                         Cell cell = currentRow.Cells[0];
+                        cell.AddParagraph(g.GroupName);
+                        cell.Format.Font.Bold = true;
+                        cell.Format.Alignment = ParagraphAlignment.Center;
+                        cell.MergeRight = categoriesInGroup.Count() + 2;
+
+                        currentRow = groupTable.AddRow();
+                        currentRow.Shading.Color = new Color(135, 176, 77);
+                        cell = currentRow.Cells[0];
                         cell.AddParagraph("Miesiąc");
                         cell.Format.Font.Bold = true;
                         var iterator = 1;
@@ -392,86 +493,88 @@ namespace DomenaManager.Helpers
                         cell.AddParagraph("Saldo");
                         cell.Format.Font.Bold = true;
 
-                        // Last year row
+                        double currentYear = 0;
+                        for (int i = 1; i < 13; i++)//months
+                        {
+                            currentRow = groupTable.AddRow();
+                            cell = currentRow.Cells[0];
+                            cell.AddParagraph(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(new DateTime(2000, i, 1).ToString("MMMM")));
+                            
+                            var thisMonthComponents = new List<ChargeComponent>();
+                            charges.Where(x => x.ChargeDate.Month == i).ToList().ForEach(x => thisMonthComponents.AddRange(x.Components));
+                                                        
+                            double groupSum = 0;
+                            iterator = 1;
+                            foreach (var cat in categoriesInGroup)
+                            {
+                                var currentComponets = thisMonthComponents.Where(x => x.CostCategoryId == cat && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId);
+                                groupSum += currentComponets.Sum(x => x.Sum);
+                                currentRow.Cells[iterator].AddParagraph(currentComponets.Sum(x => x.Sum).ToString() + " zł");
+                                iterator++;
+                            }
+                            //Wplaty
+                            var groupPayments = payments.Where(x => x.PaymentRegistrationDate.Month == i && x.ChargeGroup.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
+                            currentRow.Cells[iterator].AddParagraph(groupPayments.ToString() + " zł");
+                            iterator++;
+                            summaryRows[i].Cells[summaryGroupIterator].AddParagraph(groupPayments.ToString() + " zł");
+                            paymentsSum[i - 1] += groupPayments;
+
+                            //Suma
+                            currentRow.Cells[iterator].AddParagraph((groupPayments - groupSum).ToString() + " zł");//(groupPayments - groupSum).ToString() + " zł";       
+                            currentYear += groupPayments - groupSum;
+                            summaryRows[i].Cells[summaryGroupIterator + 1].AddParagraph(groupSum.ToString() + " zł");
+                            chargesSum[i - 1] += groupSum;
+                        }
 
                         currentRow = groupTable.AddRow();
                         cell = currentRow.Cells[0];
-                        cell.AddParagraph("Zeszły rok");
+                        cell.AddParagraph("Razem");
                         cell.Format.Font.Bold = true;
                         iterator = 1;
                         foreach (var cat in categoriesInGroup)
                         {
                             cell = currentRow.Cells[iterator];
                             cell.AddParagraph("-");
+                            cell.Format.Font.Bold = true;
                             iterator++;
                         }
 
                         cell = currentRow.Cells[iterator];
+                        cell.Format.Font.Bold = true;
                         cell.AddParagraph("-");
 
                         cell = currentRow.Cells[iterator + 1];
-                        double lastYearSaldo = Payments.CalculateSaldo(year - 1, apartment);
-                        cell.AddParagraph(lastYearSaldo.ToString() + " zł");
-
-                        for (int i = 1; i < 13; i++)//months
-                        {
-                            currentRow = groupTable.AddRow();
-                            cell = currentRow.Cells[0];
-                            cell.AddParagraph(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(new DateTime(2000, i, 1).ToString("MMMM")));
-                            /*
-                            var thisMonthComponents = new List<ChargeComponent>();
-                            charges.Where(x => x.ChargeDate.Month == i).ToList().ForEach(x => thisMonthComponents.AddRange(x.Components));
-
-                            double groupSum = 0;
-                            foreach (var cat in categoriesInGroup)
-                            {
-                                var currentComponets = thisMonthComponents.Where(x => x.CostCategoryId == cat && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId);
-                                groupSum += currentComponets.Sum(x => x.Sum);
-                                sdg.rows[i].charges[iterator] = currentComponets.Sum(x => x.Sum).ToString() + " zł";
-
-                                if (a.Columns.Count < columnsCount - 1)
-                                {
-                                    var catCol = new DataGridTextColumn();
-                                    catCol.Header = db.CostCategories.FirstOrDefault(x => x.BuildingChargeBasisCategoryId == cat).CategoryName;
-                                    catCol.Binding = new Binding("charges[" + iterator + "]");
-                                    a.Columns.Add(catCol);
-                                }
-                                iterator++;
-                            }
-                            //Wplaty
-                            var groupPayments = payments.Where(x => x.PaymentRegistrationDate.Month == i && x.ChargeGroup.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
-                            sdg.rows[i].charges[iterator] = groupPayments.ToString() + " zł";
-
-                            if (a.Columns.Count < columnsCount - 1)
-                            {
-                                var paymCol = new DataGridTextColumn();
-                                paymCol.Header = "Wpłaty";
-                                paymCol.Binding = new Binding("charges[" + iterator + "]");
-                                a.Columns.Add(paymCol);
-                            }
-                            iterator++;
-
-                            //Suma
-                            sdg.rows[i].charges[iterator] = (groupSum).ToString() + " zł";//(groupPayments - groupSum).ToString() + " zł";
-                            currentMonthSum += (groupPayments - groupSum);
-                            var groupSumCol = new DataGridTextColumn();
-
-                            if (a.Columns.Count < columnsCount - 1)
-                            {
-                                groupSumCol.CellStyle = cellStyle;
-                                groupSumCol.Header = "Razem - " + g.GroupName;
-                                groupSumCol.Binding = new Binding("charges[" + iterator + "]");
-                                a.Columns.Add(groupSumCol);
-                            }
-                            iterator++;
-                            */
-                        }
+                        cell.Format.Font.Bold = true;
+                        cell.AddParagraph(currentYear.ToString() + " zł");
 
                         document.LastSection.Add(groupTable);
                         section.AddPageBreak();
+
+                        summaryRows[13].Cells[summaryGroupIterator].AddParagraph("-");
+                        summaryRows[13].Cells[summaryGroupIterator].Format.Font.Bold = true;
+                        summaryRows[13].Cells[summaryGroupIterator + 1].AddParagraph("-");
+                        summaryRows[13].Cells[summaryGroupIterator + 1].Format.Font.Bold = true;
+                        summaryGroupIterator += 2;
                     }
                 }
             }
+
+            // Summary table
+
+            for (int i = 0; i < 12; i++)
+            {
+                summaryRows[i + 1].Cells[distinctGroupsCount * 2 + 1].AddParagraph(paymentsSum[i].ToString() + " zł");
+                summaryRows[i + 1].Cells[distinctGroupsCount * 2 + 2].AddParagraph(chargesSum[i].ToString() + " zł");
+                summaryRows[i + 1].Cells[distinctGroupsCount * 2 + 3].AddParagraph((paymentsSum[i] - chargesSum[i]).ToString() + " zł");
+            }
+            summaryRows[13].Cells[distinctGroupsCount * 2 + 1].AddParagraph(paymentsSum.DefaultIfEmpty(0).Sum().ToString() + " zł");
+            summaryRows[13].Cells[distinctGroupsCount * 2 + 1].Format.Font.Bold = true;
+            summaryRows[13].Cells[distinctGroupsCount * 2 + 2].AddParagraph(chargesSum.DefaultIfEmpty(0).Sum().ToString() + " zł");
+            summaryRows[13].Cells[distinctGroupsCount * 2 + 2].Format.Font.Bold = true;
+            summaryRows[13].Cells[distinctGroupsCount * 2 + 3].AddParagraph((paymentsSum.DefaultIfEmpty(0).Sum() - chargesSum.DefaultIfEmpty(0).Sum()).ToString() + " zł");
+            summaryRows[13].Cells[distinctGroupsCount * 2 + 3].Format.Font.Bold = true;
+
+            document.LastSection.Add(summaryTable);
 
             // Finish document and save
 
@@ -482,23 +585,31 @@ namespace DomenaManager.Helpers
             renderer.Document = doc;
             renderer.RenderDocument();
 
-            if (!useDefaultFolder)
+            try
             {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = "PDF file|*.pdf";
-                sfd.Title = "Zapisz raport jako...";
-                sfd.ShowDialog();
-                if (sfd.FileName != "")
+                if (!useDefaultFolder)
                 {
-                    renderer.PdfDocument.Save(sfd.FileName);
+                    SaveFileDialog sfd = new SaveFileDialog();
+                    sfd.Filter = "PDF file|*.pdf";
+                    sfd.Title = "Zapisz raport jako...";
+                    sfd.ShowDialog();
+                    if (sfd.FileName != "")
+                    {
+                        renderer.PdfDocument.Save(sfd.FileName);
+                    }
+                }
+                else
+                {
+                    System.IO.FileInfo file = new System.IO.FileInfo("Reports\\");
+                    file.Directory.Create();
+                    string filename = year.ToString() + "_" + building.Name + "_" + apartment.ApartmentNumber + ".pdf";
+                    renderer.PdfDocument.Save(Path.Combine(file.FullName, filename.Replace(' ', '_')));
                 }
             }
-            else
+            catch (Exception e)
             {
-                System.IO.FileInfo file = new System.IO.FileInfo("Reports\\");
-                file.Directory.Create();
-                string filename = year.ToString() + "_" + building.Name + "_" + apartment.ApartmentNumber + ".pdf";
-                renderer.PdfDocument.Save(Path.Combine(file.FullName, filename.Replace(' ', '_')));
+                Log.Logger.Error("Error during pdf save", e);
+                MessageBox.Show("Błąd zapisu pliku pdf. Zamknij wszystkie otwarte dokumenty pdf i spróbuj ponownie.");
             }
         }       
 

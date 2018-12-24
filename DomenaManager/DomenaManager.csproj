@@ -195,6 +195,9 @@
       <DependentUpon>ApartmentsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewSource\ApartmentsVS.cs" />
+    <Compile Include="Windows\MaximizeSummaryWindow.xaml.cs">
+      <DependentUpon>MaximizeSummaryWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\EditApartmentWizard.xaml.cs">
       <DependentUpon>EditApartmentWizard.xaml</DependentUpon>
     </Compile>
@@ -271,6 +274,10 @@
     <Page Include="Windows\LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\MaximizeSummaryWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
