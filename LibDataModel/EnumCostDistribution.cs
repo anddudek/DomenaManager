@@ -26,13 +26,13 @@ namespace LibDataModel
                 case CostDistribution.PerApartment:
                     return "Od lokalu";
                 case CostDistribution.PerApartmentTotalArea:
-                    return "Od powierzchni całkowitej";
+                    return "Od powierzchni całkowitej (m2)";
                 case CostDistribution.PerLocators:
-                    return "Od mieszkanów";
+                    return "Ilość mieszkanów";
                 case CostDistribution.PerAdditionalArea:
-                    return "Od powierzchni przynależnej";
+                    return "Od powierzchni przynależnej (m2)";
                 case CostDistribution.PerApartmentArea:
-                    return "Od powierzchni mieszkania";
+                    return "Od powierzchni mieszkania (m2)";
             }
         }
     }

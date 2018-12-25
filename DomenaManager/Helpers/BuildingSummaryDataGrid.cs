@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LibDataModel;
 using System.ComponentModel;
+using LibDataModel;
 
 namespace DomenaManager.Helpers
 {
-    public class SummaryDataGrid : INotifyPropertyChanged
+    public class BuildingSummaryDataGrid : INotifyPropertyChanged
     {
-        public Owner owner { get; set; }
-        public Apartment apartment { get; set; }
         public Building building { get; set; }
-        public BuildingChargeBasisCategory[] categories { get; set; }
+        public InvoiceCategory[] categories { get; set; }
         public int year { get; set; }
-        public SummaryDataGridRow[] rows { get; set; }
-        
+        public BuildingSummaryDataGridRow[] rows { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
@@ -28,10 +26,12 @@ namespace DomenaManager.Helpers
         }
     }
 
-    public class SummaryDataGridRow
+    public class BuildingSummaryDataGridRow
     {
         public string month { get; set; }
-        public string[] charges { get; set; }
-        public string chargesSum { get; set; }
-    }
+        public string[] invoices { get; set; } // [ 0 zł ; 1 zł ]
+        public string invoicesSum { get; set; }
+        public string payments { get; set; }
+        public string saldo { get; set; }
+    }    
 }

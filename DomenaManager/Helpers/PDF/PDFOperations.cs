@@ -298,7 +298,7 @@ namespace DomenaManager.Helpers
             }
         }
 
-        public static void AddSummaryTable(Document document, System.Windows.Controls.DataGrid selectedDG, int year, Apartment apartment, Owner owner, Building building, bool useDefaultFolder = false)
+        public static void AddSummaryTable(Document document, int year, Apartment apartment, Owner owner, Building building, bool useDefaultFolder = false)
         {
             // Initial data
 
@@ -620,11 +620,11 @@ namespace DomenaManager.Helpers
             AddChargeTable(doc, selectedCharge, useDefaultFolder);
         }
 
-        public static void PrepareSingleYearSummary(System.Windows.Controls.DataGrid selectedDG, int year, Apartment apartment, Owner owner, Building building, bool useDefaultFolder)
+        public static void PrepareSingleYearSummary(int year, Apartment apartment, Owner owner, Building building, bool useDefaultFolder)
         {
             Document doc = CreateTemplate(owner);
             AddTitle(doc, "Zestawienie roczne - " + year);
-            AddSummaryTable(doc, selectedDG, year, apartment, owner, building, false);
+            AddSummaryTable(doc, year, apartment, owner, building, useDefaultFolder);
         }
     }
 }

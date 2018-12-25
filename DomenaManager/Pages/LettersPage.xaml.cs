@@ -165,12 +165,12 @@ namespace DomenaManager.Pages
                 List<ChargeDataGrid> selectedCharges = new List<ChargeDataGrid>();
                 using (var db = new DB.DomenaDBContext())
                 {
-                    foreach (var c in db.Charges.Include(x => x.Components))
+                    foreach (var c in db.Charges.Include(x => x.Components).Include(x => x.Components.Select(y => y.GroupName)))
                     {
                         if (!c.IsDeleted && 
                             c.ChargeDate.Month == SelectedDate.Month && 
                             c.ChargeDate.Year == SelectedDate.Year &&
-                            AvailableApartments.Any(x => x.apartment.ApartmentId.Equals(c.ApartmentId)))
+                            SelectedApartments.Any(x => x.apartment.ApartmentId.Equals(c.ApartmentId)))
                         {
                             selectedCharges.Add(new ChargeDataGrid(c));
                         }
@@ -184,7 +184,10 @@ namespace DomenaManager.Pages
             }
             else if (SelectedLetterValue == YearSettlement)
             {
-
+                foreach (var ap in SelectedApartments)
+                {
+                    PDFOperations.PrepareSingleYearSummary(SelectedDate.Year, ap.apartment, ap.owner, ap.building, true);
+                }
             }
         }        
 

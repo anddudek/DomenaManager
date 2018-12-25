@@ -170,6 +170,10 @@ namespace DomenaManager.Windows
                     CurrentPage = new Pages.LettersPage();
                     OnPropertyChanged("CurrentPage");
                     return;
+                case "BuildingSummary":
+                    CurrentPage = new Pages.BuildingSummaryPage();
+                    OnPropertyChanged("CurrentPage");
+                    return;
             }
         }
 

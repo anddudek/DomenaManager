@@ -212,6 +212,9 @@ namespace DomenaManager.Pages
         "</ControlTemplate>";
             cellStyle.Setters.Add(new Setter(DataGridCell.TemplateProperty, (ControlTemplate)System.Windows.Markup.XamlReader.Parse(template)));
 
+            var cellCenteredStyle = new Style(typeof(DataGridCell));
+            cellCenteredStyle.Setters.Add(new Setter(DataGridCell.TemplateProperty, (ControlTemplate)System.Windows.Markup.XamlReader.Parse(template)));
+
             var headerStyle = new Style(typeof(System.Windows.Controls.Primitives.DataGridColumnHeader));
             headerStyle.Setters.Add(new Setter(FontSizeProperty, 18.0));
             headerStyle.Setters.Add(new Setter(BackgroundProperty, (SolidColorBrush)(new BrushConverter().ConvertFrom("#B4B4B4"))));
@@ -306,6 +309,7 @@ namespace DomenaManager.Pages
                                     var catCol = new DataGridTextColumn();
                                     catCol.Header = db.CostCategories.FirstOrDefault(x => x.BuildingChargeBasisCategoryId == cat).CategoryName;
                                     catCol.Binding = new Binding("charges[" + iterator + "]");
+                                    catCol.CellStyle = cellCenteredStyle;
                                     a.Columns.Add(catCol);
                                 }
                                 iterator++;
@@ -319,6 +323,7 @@ namespace DomenaManager.Pages
                                 var paymCol = new DataGridTextColumn();
                                 paymCol.Header = "Wpłaty";
                                 paymCol.Binding = new Binding("charges[" + iterator + "]");
+                                paymCol.CellStyle = cellCenteredStyle;
                                 a.Columns.Add(paymCol);
                             }
                             iterator++;
@@ -385,7 +390,7 @@ namespace DomenaManager.Pages
         {
             int y;
             if (int.TryParse(SelectedYear, out y))
-                PDFOperations.PrepareSingleYearSummary(SummaryDG, y, SelectedApartmentNumber, owner, SelectedBuildingName, true);
+                PDFOperations.PrepareSingleYearSummary(y, SelectedApartmentNumber, owner, SelectedBuildingName, true);
         }
 
         private bool CanExportPDF()

@@ -25,5 +25,22 @@ namespace DomenaManager.Helpers
                 return paym;
             }
         }
+
+        public static double CalculateBuildingSaldo(int year, Building building)
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                var apartments = db.Apartments.Where(x => x.BuildingId == building.BuildingId && !x.IsDeleted).Select(x => x.ApartmentId).ToList();
+                double paym = db.Payments.Where(x => apartments.Contains(x.ApartmentId) && x.PaymentRegistrationDate.Year <= year && !x.IsDeleted).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
+                var invoices = db.Invoices.Where(x => x.BuildingId == building.BuildingId && x.InvoiceDate.Year <= year && !x.IsDeleted);
+
+                foreach (var inv in invoices)
+                {
+                    paym -= inv.CostAmount;
+                }
+
+                return paym;
+            }
+        }
     }
 }
