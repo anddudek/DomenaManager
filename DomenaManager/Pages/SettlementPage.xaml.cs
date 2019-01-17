@@ -978,9 +978,12 @@ namespace DomenaManager.Pages
                         });
                     }
                 }
+               // ApartmentMetersCollection.OrderBy(x => x.ApartmentO.ApartmentNumber);
             }
 
             ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(ApartmentMetersCollection);
+            cv.SortDescriptions.Clear();
+            cv.SortDescriptions.Add(new SortDescription("ApartmentO.ApartmentNumber", ListSortDirection.Ascending));
             cv.GroupDescriptions.Clear();
             cv.GroupDescriptions.Add(new PropertyGroupDescription(""));
 
@@ -1045,6 +1048,8 @@ namespace DomenaManager.Pages
             }
 
             ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(ApartmentGasMetersCollection);
+            cv.SortDescriptions.Clear();
+            cv.SortDescriptions.Add(new SortDescription("ApartmentO.ApartmentNumber", ListSortDirection.Ascending));
             cv.GroupDescriptions.Clear();
             cv.GroupDescriptions.Add(new PropertyGroupDescription("ApartmentO.ApartmentId"));
 

@@ -611,6 +611,8 @@ namespace DomenaManager.Pages
                 }
 
                 ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(PerApartmentCollection);
+                cv.SortDescriptions.Clear();
+                cv.SortDescriptions.Add(new SortDescription("ApartmentO.ApartmentNumber", ListSortDirection.Ascending));
                 cv.GroupDescriptions.Clear();
                 cv.GroupDescriptions.Add(new PropertyGroupDescription(""));
             }
@@ -642,13 +644,15 @@ namespace DomenaManager.Pages
                 }
 
                 ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(PerAreaCollection);
+                cv.SortDescriptions.Clear();
+                cv.SortDescriptions.Add(new SortDescription("ApartmentO.ApartmentNumber", ListSortDirection.Ascending));
                 cv.GroupDescriptions.Clear();
                 cv.GroupDescriptions.Add(new PropertyGroupDescription(""));
             }
 
             if (_settlementPage.SettlementMethod == SettlementMethodsEnum.PER_METERS)
             {
-                var ap = Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId));
+                var ap = Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId) && x.MeterCollection != null && x.MeterCollection.Count >0);
                 int notValidMetersCount = ap.Where(x => x.MeterCollection.FirstOrDefault(y => !y.IsDeleted && y.MeterTypeParent.MeterId.Equals(_settlementPage.SelectedMeterName.MeterId)).LegalizationDate <= DateTime.Now).Count();
 
                 MainMeterDiff = _settlementPage.MainMeterDiff;
@@ -746,6 +750,8 @@ namespace DomenaManager.Pages
                 }
                 TotalSum = PerMetersCollection.Select(x => x.CostSettled).DefaultIfEmpty(0).Sum();
                 ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(PerMetersCollection);
+                cv.SortDescriptions.Clear();
+                cv.SortDescriptions.Add(new SortDescription("ApartmentO.ApartmentNumber", ListSortDirection.Ascending));
                 cv.GroupDescriptions.Clear();
                 cv.GroupDescriptions.Add(new PropertyGroupDescription(""));
             }
@@ -950,6 +956,8 @@ namespace DomenaManager.Pages
                 TotalSum = TotalGJSum + TotalWarmWaterCubicMeterSum;
 
                 ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(PerGasCollection);
+                cv.SortDescriptions.Clear();
+                cv.SortDescriptions.Add(new SortDescription("ApartmentO.ApartmentNumber", ListSortDirection.Ascending));
                 cv.GroupDescriptions.Clear();
                 cv.GroupDescriptions.Add(new PropertyGroupDescription("ApartmentO.ApartmentId"));
             }

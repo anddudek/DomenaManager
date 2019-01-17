@@ -273,6 +273,11 @@ namespace DomenaManager.Pages
             get { return new Helpers.RelayCommand(DeleteCharge, CanDeleteCharge); }
         }
 
+        public ICommand AddBuildingCharges
+        {
+            get { return new Helpers.RelayCommand(AddBuildingCharge, CanAddBuildingCharge); }
+        }
+
         public ICommand ClearFilterCommand
         {
             get
@@ -391,6 +396,18 @@ namespace DomenaManager.Pages
 
                 SwitchPage.SwitchMainPage(ecw, this);
             }
+        }
+
+        private bool CanAddBuildingCharge()
+        {
+            return true;
+        }
+
+        private void AddBuildingCharge(object param)
+        {
+            Wizards.AddBuildingCharge abc;
+            abc = new Wizards.AddBuildingCharge();
+            SwitchPage.SwitchMainPage(abc, this);
         }
 
         private bool CanOpenCloseCharge()

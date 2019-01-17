@@ -208,6 +208,9 @@
     <Compile Include="Wizards\EditBuildingWizard.xaml.cs">
       <DependentUpon>EditBuildingWizard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Wizards\AddBuildingCharge.xaml.cs">
+      <DependentUpon>AddBuildingCharge.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\EditChargeWizard.xaml.cs">
       <DependentUpon>EditChargeWizard.xaml</DependentUpon>
     </Compile>
@@ -318,6 +321,10 @@
     <Page Include="Wizards\EditBuildingWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizards\AddBuildingCharge.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Wizards\EditChargeWizard.xaml">
       <SubType>Designer</SubType>
