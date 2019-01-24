@@ -24,7 +24,7 @@ namespace DomenaManager.Wizards
     /// <summary>
     /// Interaction logic for EditPaymentWizard.xaml
     /// </summary>
-    public partial class EditPaymentWizard : UserControl, INotifyPropertyChanged
+    public partial class EditMultiPaymentWizard : UserControl, INotifyPropertyChanged
     {
         private ObservableCollection<Building> _buildingsNames;
         public ObservableCollection<Building> BuildingsNames
@@ -69,6 +69,34 @@ namespace DomenaManager.Wizards
             }
         }
 
+        private ObservableCollection<MultiPaymentDataGrid> _paymentsList;
+        public ObservableCollection<MultiPaymentDataGrid> PaymentsList
+        {
+            get { return _paymentsList; }
+            set
+            {
+                if (value != _paymentsList)
+                {
+                    _paymentsList = value;
+                    OnPropertyChanged("PaymentsList");
+                }
+            }
+        }
+
+        private MultiPaymentDataGrid _selectedPayment;
+        public MultiPaymentDataGrid SelectedPayment
+        {
+            get { return _selectedPayment; }
+            set
+            {
+                if (value != _selectedPayment)
+                {
+                    _selectedPayment = value;
+                    OnPropertyChanged("SelectedPayment");
+                }
+            }
+        }
+
         private ObservableCollection<BuildingChargeGroupName> _groupNames;
         public ObservableCollection<BuildingChargeGroupName> GroupNames
         {
@@ -96,6 +124,20 @@ namespace DomenaManager.Wizards
                 }
             }
         }
+        
+        private string _amountError;
+        public string AmountError
+        {
+            get { return _amountError; }
+            set
+            {
+                if (value != _amountError)
+                {
+                    _amountError = value;
+                    OnPropertyChanged("AmountError");
+                }
+            }
+        }
 
         public string SelectedGroupNameValue { get; set; }
 
@@ -112,12 +154,15 @@ namespace DomenaManager.Wizards
 
                     if (SelectedApartmentNumber != null)
                     {
-                        OwnerMailAddress = _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().OwnerName + Environment.NewLine;
-                        OwnerMailAddress += SelectedApartmentNumber.CorrespondenceAddress == null ? _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault().MailAddress : SelectedApartmentNumber.CorrespondenceAddress;                        
+                        _selectedOwner = _ownersOC.Where(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).FirstOrDefault();
+                        OwnerMailAddress = _selectedOwner.OwnerName + Environment.NewLine;
+                        OwnerMailAddress += SelectedApartmentNumber.CorrespondenceAddress == null ? _selectedOwner.MailAddress : SelectedApartmentNumber.CorrespondenceAddress;
                     }
                 }
             }
         }
+
+        private Owner _selectedOwner;
 
         private string _ownerMailAddress;
 
@@ -138,7 +183,7 @@ namespace DomenaManager.Wizards
 
         public string SelectedBuildingValue { get; set; }
 
-        private string _paymentAmount;        
+        private string _paymentAmount;
         public string PaymentAmount
         {
             get { return _paymentAmount; }
@@ -147,6 +192,7 @@ namespace DomenaManager.Wizards
                 if (value != _paymentAmount)
                 {
                     _paymentAmount = value;
+                    AmountError = string.Empty;
                     OnPropertyChanged("PaymentAmount");
                 }
             }
@@ -181,8 +227,6 @@ namespace DomenaManager.Wizards
             }
         }
 
-        public Payment _lpc;
-
         private List<BuildingChargeGroupName> _groupNamesDB;
 
         public ICommand SaveCommand
@@ -197,32 +241,33 @@ namespace DomenaManager.Wizards
 
         public ICommand AcceptCommand
         {
-            get
-            {
-                return new Helpers.RelayCommand(AcceptDialog, CanAcceptDialog);
-            }
+            get { return new Helpers.RelayCommand(AcceptDialog, CanAcceptDialog); }
         }
 
-        public EditPaymentWizard(Payment _payment = null)
+        public ICommand AddPaymentCommand
+        {
+            get { return new Helpers.RelayCommand(AddPayment, CanAddPayment); }
+        }
+
+        public ICommand UpdatePaymentCommand
+        {
+            get { return new Helpers.RelayCommand(UpdatePayment, CanUpdatePayment); }
+        }
+
+        public ICommand DeletePaymentCommand
+        {
+            get { return new Helpers.RelayCommand(DeletePayment, CanDeletePayment); }
+        }
+
+        public EditMultiPaymentWizard()
         {
             DataContext = this;
             InitializeComponent();
             InitializeBuildingList();
             InitializeApartmentsNumbers();
-            _lpc = _payment;
-            if (_payment != null)
-            {
-                CanEdit = false;
-                PaymentRegistrationDate = _payment.PaymentRegistrationDate;
-                PaymentAmount = _payment.PaymentAmount.ToString();
-                SelectedBuildingName = BuildingsNames.FirstOrDefault(x => x.BuildingId.Equals( _apartmentsOC.FirstOrDefault(a => a.ApartmentId.Equals(_payment.ApartmentId)).BuildingId ));
-                SelectedApartmentNumber = ApartmentsNumbers.FirstOrDefault(x => x.ApartmentId.Equals(_payment.ApartmentId));
-                OwnerMailAddress = _ownersOC.FirstOrDefault(x => x.OwnerId.Equals(SelectedApartmentNumber.OwnerId)).MailAddress;
-                SelectedGroupName = _groupNamesDB.FirstOrDefault(x => x.BuildingChargeGroupNameId == _payment.ChargeGroup.BuildingChargeGroupNameId);
-                return;
-            }
             CanEdit = true;
             PaymentRegistrationDate = DateTime.Today;
+            PaymentsList = new ObservableCollection<MultiPaymentDataGrid>();
         }
 
         private void InitializeGroupNames()
@@ -234,7 +279,7 @@ namespace DomenaManager.Wizards
                 {
                     if (!GroupNames.Any(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId))
                         GroupNames.Add(_groupNamesDB.FirstOrDefault(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId));
-                }                
+                }
             }
         }
 
@@ -274,7 +319,7 @@ namespace DomenaManager.Wizards
             double amount;
             bool isAmountValid = double.TryParse(this.PaymentAmount, out amount);
             //Accept
-            if (this._lpc == null)
+            if (this.ActualHeight == null)
             {
                 if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.SelectedBuildingValue) || string.IsNullOrEmpty(this.SelectedApartmentNumberValue) || !isAmountValid))
                 {
@@ -298,16 +343,15 @@ namespace DomenaManager.Wizards
                 //Edit payment
                 using (var db = new DB.DomenaDBContext())
                 {
-                    var q = db.Payments.Where(x => x.PaymentId.Equals(this._lpc.PaymentId)).FirstOrDefault();
+                    /*var q = db.Payments.Where(x => x.PaymentId.Equals(this._lpc.PaymentId)).FirstOrDefault();
                     q.ChargeGroup = SelectedGroupName;
                     q.PaymentAddDate = DateTime.Today;
                     q.PaymentRegistrationDate = this.PaymentRegistrationDate;
                     q.PaymentAmount = amount;
                     db.Entry(q.ChargeGroup).State = EntityState.Unchanged;
-                    db.SaveChanges();
+                    db.SaveChanges();*/
                 }
             }
-            SwitchPage.SwitchMainPage(new Pages.PaymentsPage(), this);
         }
 
         private bool CanSaveDialog()
@@ -334,6 +378,68 @@ namespace DomenaManager.Wizards
         {
             SaveDialog(null);
             Helpers.SwitchPage.SwitchMainPage(new Pages.PaymentsPage(), this);
+        }
+
+        private bool CanAddPayment()
+        {
+            return PaymentAmount != null && SelectedApartmentNumber != null && SelectedBuildingName != null && SelectedGroupName != null && PaymentRegistrationDate != null;
+        }
+
+        private void AddPayment(object param)
+        {
+            double amount;
+            bool isAmountValid = double.TryParse(this.PaymentAmount, out amount);
+            if (!isAmountValid || !IsValid(this as DependencyObject))
+            {
+                AmountError = "Niepoprawna kwota";
+                return;
+            }
+
+            var mpdg = new MultiPaymentDataGrid()
+            {
+                PaymentId = null,
+                Apartment = SelectedApartmentNumber,
+                Building = SelectedBuildingName,
+                ChargeGroup = SelectedGroupName,
+                Owner = _selectedOwner,
+                PaymentAddDate = DateTime.Now,
+                PaymentAmount = amount,
+                PaymentRegistrationDate = PaymentRegistrationDate,
+            };
+            PaymentsList.Add(mpdg);
+        }
+
+        private bool CanDeletePayment()
+        {
+            return SelectedPayment != null;
+        }
+
+        private void DeletePayment(object param)
+        {
+            PaymentsList.Remove(SelectedPayment);
+        }
+
+        private bool CanUpdatePayment()
+        {
+            return CanAddPayment() && SelectedPayment != null;
+        }
+
+        private void UpdatePayment(object param)
+        {
+            double amount;
+            bool isAmountValid = double.TryParse(this.PaymentAmount, out amount);
+            if (!isAmountValid || !IsValid(this as DependencyObject))
+            {
+                AmountError = "Niepoprawna kwota";
+                return;
+            }
+            SelectedPayment.Apartment = SelectedApartmentNumber;
+            SelectedPayment.Building = SelectedBuildingName;
+            SelectedPayment.ChargeGroup = SelectedGroupName;
+            SelectedPayment.Owner = _selectedOwner;
+            SelectedPayment.PaymentAddDate = DateTime.Now;
+            SelectedPayment.PaymentAmount = amount;
+            SelectedPayment.PaymentRegistrationDate = PaymentRegistrationDate;            
         }
 
         private bool IsValid(DependencyObject obj)

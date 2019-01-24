@@ -130,6 +130,7 @@
     <Compile Include="Helpers\DataGrid\ApartamentMeterDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentBinding.cs" />
     <Compile Include="Helpers\DataGrid\BindingDataGrid.cs" />
+    <Compile Include="Helpers\DataGrid\MultiPaymentDataGrid.cs" />
     <Compile Include="Helpers\Payments\ChargesOperations.cs" />
     <Compile Include="Helpers\Converter\BuildingsFooterConverter.cs" />
     <Compile Include="Helpers\Converter\GuidToCategoryNameMultiConverter.cs" />
@@ -225,6 +226,9 @@
     </Compile>
     <Compile Include="Wizards\EditInvoiceWizard.xaml.cs">
       <DependentUpon>EditInvoiceWizard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditMultiPaymentWizard.xaml.cs">
+      <DependentUpon>EditMultiPaymentWizard.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\SellApartmentWizard.xaml.cs">
       <DependentUpon>SellApartmentWizard.xaml</DependentUpon>
@@ -345,6 +349,10 @@
     <Page Include="Wizards\EditInvoiceWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizards\EditMultiPaymentWizard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Wizards\SellApartmentWizard.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -9,13 +9,19 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
         mc:Ignorable="d"
-        Height="auto" Width="750" Background="White">
+        Height="auto" Background="White">
     <UserControl.Resources>
         <Helpers:NullToDateConverter x:Key="NullToDateConverter" />
         <Helpers:DatesToCurrentDateMultiConverter x:Key="DateToCurrentDateConverter" />
     </UserControl.Resources>
     <ScrollViewer>
-    <StackPanel Orientation="Vertical">
+        <Grid HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="770" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Grid.Column="0">
+
+             
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -343,7 +349,7 @@
             
             <TextBox materialDesign:HintAssist.Hint="Ostatnie wskazanie"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="280,0,-25,0" >
+            Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="280,0,0,0" >
                 <TextBox.Text>
                     <Binding Path="LastMeasure" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
@@ -354,7 +360,7 @@
             </TextBox>
 
                 <CheckBox Grid.Column="1" IsChecked="{Binding IsBuilding}" Content="Budynek" VerticalAlignment="Center" Margin="0,0,200,0" Width="80"/>
-                <CheckBox Grid.Column="1" IsChecked="{Binding IsApartment}" Content="Mieszkanie" VerticalAlignment="Center" Margin="50,0,15,0" Width="80"/>
+                <CheckBox Grid.Column="1" IsChecked="{Binding IsApartment}" Content="Mieszkanie" VerticalAlignment="Center" Margin="40,0,15,0" Width="80"/>
 
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Dodaj" Grid.Row="0" Grid.Column="1" Command="{Binding AddMeter}" Margin="250,0,10,0" />
 
@@ -400,8 +406,9 @@
                 </Button.CommandParameter>
             </Button>
         </StackPanel>
-        
-    </StackPanel>
+            
+        </StackPanel>
+        </Grid>
     </ScrollViewer>
 
 </UserControl>

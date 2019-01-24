@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DomenaManager.Wizards.EditPaymentWizard"
+﻿<UserControl x:Class="DomenaManager.Wizards.EditMultiPaymentWizard"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -10,14 +10,14 @@
              xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             Height="Auto">
+             Height="Auto" >
     <ScrollViewer Background="White">
         <Grid HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="770" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Vertical" Grid.Column="0">
-                <Label Grid.ColumnSpan="2" Content="Wpłata indywidualna" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Medium" FontSize="19"/>
+                <Label Grid.ColumnSpan="2" Content="Wpłata zbiorowa" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Medium" FontSize="19"/>
 
                 <ComboBox materialDesign:HintAssist.Hint="Budynek" IsEnabled="{Binding CanEdit}"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
@@ -68,7 +68,7 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                
+
                 <TextBox materialDesign:HintAssist.Hint="Kwota wpłaty (zł)"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
             Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="10,5,10,5" >
@@ -80,6 +80,8 @@
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
+
+                <TextBlock Text="{Binding AmountError}" Margin="15,25,10,00" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red"/>
 
                 <ComboBox materialDesign:HintAssist.Hint="Grupa naliczeń" 
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
@@ -103,8 +105,29 @@
 
                 <DatePicker 
             Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" SelectedDate="{Binding PaymentRegistrationDate}"
-            VerticalAlignment="Center" Margin="10,5,10,5" Language="pl-PL" 
+            VerticalAlignment="Center" Margin="10,15,10,5" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Data księgowania" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="8">
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Dodaj" Command="{Binding AddPaymentCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2" />
+
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Aktualizuj zaznaczony" Command="{Binding UpdatePaymentCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2" />
+
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Usuń zaznaczony" Command="{Binding DeletePaymentCommand}"  Grid.Column="1" Grid.Row="8" Margin="5,0,5,2" />
+
+
+                </StackPanel>
+
+                <DataGrid ItemsSource="{Binding PaymentsList}" SelectedItem="{Binding SelectedPayment}" Foreground="Black" IsReadOnly="True" Padding="5" Margin="5" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Budynek" Binding="{Binding Building.Name}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Numer lokalu" Binding="{Binding Apartment.ApartmentNumber}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Właściciel" Binding="{Binding Owner.OwnerName}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Data wpłaty" Binding="{Binding PaymentRegistrationDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
+                        <DataGridTextColumn Header="Kwota" Binding="{Binding PaymentAmount, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
+                        <DataGridTextColumn Header="Grupa" Binding="{Binding ChargeGroup.GroupName}" Width="auto" FontSize="14"/>
+                    </DataGrid.Columns>
+                </DataGrid>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="8">
                     <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zastosuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
@@ -133,6 +156,7 @@
                         </Button.CommandParameter>
                     </Button>
                 </StackPanel>
+
             </StackPanel>
         </Grid>
     </ScrollViewer>

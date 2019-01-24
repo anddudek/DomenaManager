@@ -79,7 +79,7 @@
         <Grid Grid.Row="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddChargeCommand}" Margin="10,0,10,0"/>
-                <MyControls:ActionButton MDTText="Dodaj naliczenia &#x0a; dla budynku" MDTIcon="Home" Command="{Binding AddBuildingCharges}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="Dodaj dla&#x0a; budynku" MDTIcon="Home" Command="{Binding AddBuildingCharges}" Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="Przelicz otwarte" MDTIcon="Calculator" Command="{Binding RecalculateChargeCommand}"  Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditChargeCommand}" Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="{Binding OpenCloseButtonText}" MDTIcon="{Binding OpenCloseButtonIcon}" Command="{Binding OpenCloseChargeCommand}" Margin="10,0,10,0"/>

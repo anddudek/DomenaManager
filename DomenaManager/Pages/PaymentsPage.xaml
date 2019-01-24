@@ -68,6 +68,7 @@
         <Grid Grid.Row="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <MyControls:ActionButton MDTText="Dodaj" MDTIcon="Plus" Command="{Binding AddPaymentCommand}" Margin="10,0,10,0"/>
+                <MyControls:ActionButton MDTText="Dodaj więcej" MDTIcon="PlaylistPlus" Command="{Binding AddMultiPaymentCommand}" Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="Edytuj" MDTIcon="pencil" Command="{Binding EditPaymentCommand}" Margin="10,0,10,0"/>
                 <MyControls:ActionButton MDTText="Usuń" MDTIcon="DeleteForever" Command="{Binding DeletePaymentCommand}" Margin="10,0,10,0"/>
             </StackPanel>

@@ -11,147 +11,151 @@
         mc:Ignorable="d"
         Height="auto" Width="500" Background="White">
     <ScrollViewer>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="0.5*" />
-            <ColumnDefinition Width="0.5*" />
-            <ColumnDefinition Width="0.5*" />
-            <ColumnDefinition Width="0.5*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="1.5*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="3*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        
-        <ComboBox materialDesign:HintAssist.Hint="Budynek"
+        <Grid HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="770" />
+            </Grid.ColumnDefinitions>
+            <Grid HorizontalAlignment="Center" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="0.5*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="1.5*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <ComboBox materialDesign:HintAssist.Hint="Budynek"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="Name"
             Grid.Row="0" Grid.Column="0" SelectedItem="{Binding SelectedBuildingName}"  Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="35,0,10,0" >
-            <ComboBox.Text>
-                <Binding Path="SelectedBuildingValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </ComboBox.Text>
-            <ComboBox.ItemsSource>
-                <Binding Path="BuildingsNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </ComboBox.ItemsSource>
-        </ComboBox>
+                    <ComboBox.Text>
+                        <Binding Path="SelectedBuildingValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.Text>
+                    <ComboBox.ItemsSource>
+                        <Binding Path="BuildingsNames"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
 
-        <!--<Button Grid.Column="3" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewBuilding}">
+                <!--<Button Grid.Column="3" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewBuilding}">
             <ContentControl>
                 <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             </ContentControl>
         </Buton>-->
 
-        <TextBox materialDesign:HintAssist.Hint="Numer lokalu" x:Name="apartmentNumberTB"
+                <TextBox materialDesign:HintAssist.Hint="Numer lokalu" x:Name="apartmentNumberTB"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
             Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="5,0,30,0" >
-            <TextBox.Text>
-                <Binding Path="ApartmentNumber" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:StringToIntValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+                    <TextBox.Text>
+                        <Binding Path="ApartmentNumber" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:StringToIntValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
-        <TextBox materialDesign:HintAssist.Hint="Adres" Grid.RowSpan="1" Height="60"
+                <TextBox materialDesign:HintAssist.Hint="Adres" Grid.RowSpan="1" Height="60"
                  TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" SpellCheck.IsEnabled="True" ScrollViewer.CanContentScroll="True"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" IsReadOnly="True"
             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6" VerticalAlignment="Center" Margin="35,0,30,0" >
-            <TextBox.Text>
-                <Binding Path="SelectedBuildingAddress" UpdateSourceTrigger="PropertyChanged">                    
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-        
-        <ComboBox materialDesign:HintAssist.Hint="Właściciel"
+                    <TextBox.Text>
+                        <Binding Path="SelectedBuildingAddress" UpdateSourceTrigger="PropertyChanged">
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <ComboBox materialDesign:HintAssist.Hint="Właściciel"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" SelectedItem="{Binding SelectedOwnerName}"  DisplayMemberPath="OwnerName"
             Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="6" VerticalAlignment="Center" Margin="35,0,30,0" >
-            <ComboBox.Text>
-                <Binding Path="SelectedOwnerValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </ComboBox.Text>
-            <ComboBox.ItemsSource>
-                <Binding Path="OwnersNames" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:EmptyStringValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </ComboBox.ItemsSource>
-        </ComboBox>
+                    <ComboBox.Text>
+                        <Binding Path="SelectedOwnerValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.Text>
+                    <ComboBox.ItemsSource>
+                        <Binding Path="OwnersNames" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:EmptyStringValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.ItemsSource>
+                </ComboBox>
 
-        <!--<Button Grid.Column="5" Grid.Row="3" Margin="0,0,10,0" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewOwner}">
+                <!--<Button Grid.Column="5" Grid.Row="3" Margin="0,0,10,0" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding AddNewOwner}">
             <ContentControl>
                 <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             </ContentControl>
         </Button>-->
-        
-        <TextBox materialDesign:HintAssist.Hint="Adres do korespondencji" Grid.RowSpan="1" Height="60"
+
+                <TextBox materialDesign:HintAssist.Hint="Adres do korespondencji" Grid.RowSpan="1" Height="60"
                  TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" SpellCheck.IsEnabled="True" ScrollViewer.CanContentScroll="True"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" IsReadOnly="False"
             Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" VerticalAlignment="Center" Margin="35,0,30,0" >
-            <TextBox.Text>
-                <Binding Path="SelectedOwnerMailAddress" UpdateSourceTrigger="PropertyChanged">
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+                    <TextBox.Text>
+                        <Binding Path="SelectedOwnerMailAddress" UpdateSourceTrigger="PropertyChanged">
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
-        <TextBox materialDesign:HintAssist.Hint="Powierzchnia mieszkania w m2"
+                <TextBox materialDesign:HintAssist.Hint="Powierzchnia mieszkania w m2"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
             Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,15,0" >
-            <TextBox.Text>
-                <Binding Path="ApartmentArea" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                       <Helpers:StringToDoubleValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+                    <TextBox.Text>
+                        <Binding Path="ApartmentArea" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:StringToDoubleValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
-        <TextBox materialDesign:HintAssist.Hint="Powierzchnia przynależna w m2"
+                <TextBox materialDesign:HintAssist.Hint="Powierzchnia przynależna w m2"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
             Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="4" VerticalAlignment="Center" Margin="15,0,30,0" >
-            <TextBox.Text>
-                <Binding Path="AdditionalArea" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:StringToDoubleValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+                    <TextBox.Text>
+                        <Binding Path="AdditionalArea" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:StringToDoubleValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
-        <TextBox materialDesign:HintAssist.Hint="Ilość mieszkańców"
+                <TextBox materialDesign:HintAssist.Hint="Ilość mieszkańców"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
             Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,15,0" >
-            <TextBox.Text>
-                <Binding Path="LocatorsAmount" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <Helpers:StringToDoubleValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+                    <TextBox.Text>
+                        <Binding Path="LocatorsAmount" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <Helpers:StringToDoubleValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
 
-        <!--<ComboBox materialDesign:HintAssist.Hint="Mieszkanie posiada wodomierz"
+                <!--<ComboBox materialDesign:HintAssist.Hint="Mieszkanie posiada wodomierz"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}" SelectedIndex="{Binding HasWaterMeter}"
             Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,15,0" >
             <ComboBoxItem>Tak</ComboBoxItem>
@@ -162,72 +166,73 @@
             Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="4" SelectedDate="{Binding WaterMeterExp}" IsEnabled="{Binding EnableWaterMeterExp}"
             VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Legalizacja wodomierza" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />-->
-        <DataGrid Grid.Row="6" Grid.ColumnSpan="6" Margin="35,10,30,10" ItemsSource="{Binding MeterCollection}"
+                <DataGrid Grid.Row="6" Grid.ColumnSpan="6" Margin="35,10,30,10" ItemsSource="{Binding MeterCollection}"
                   Foreground="Black" AutoGenerateColumns="False" CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Nazwa licznika" IsReadOnly="True" Binding="{Binding MeterTypeParent.Name}" Width="auto" FontSize="14"/>
-                <DataGridTemplateColumn Header="Data legalizacji" Width="auto">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding LegalizationDate, StringFormat={}{0:dd-MM-yyyy}}" FontSize="14"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.CellEditingTemplate>
-                        <DataTemplate>
-                            <DatePicker SelectedDate="{Binding LegalizationDate}" FontSize="14"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellEditingTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Ostanie wskazanie" IsReadOnly="False" Binding="{Binding LastMeasure}" Width="auto" FontSize="14"/>
-            </DataGrid.Columns>
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=IsDeleted}" Value="True">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Path=IsDeleted}" Value="False">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
-        </DataGrid>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nazwa licznika" IsReadOnly="True" Binding="{Binding MeterTypeParent.Name}" Width="auto" FontSize="14"/>
+                        <DataGridTemplateColumn Header="Data legalizacji" Width="auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding LegalizationDate, StringFormat={}{0:dd-MM-yyyy}}" FontSize="14"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <DatePicker SelectedDate="{Binding LegalizationDate}" FontSize="14"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Ostanie wskazanie" IsReadOnly="False" Binding="{Binding LastMeasure}" Width="auto" FontSize="14"/>
+                    </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsDeleted}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsDeleted}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
 
-        
-        
-        <DatePicker 
+
+
+                <DatePicker 
             Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="4" SelectedDate="{Binding BoughtDate}"
             VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Data zakupu" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="7">
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zastosuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
-                    <Button.CommandParameter>
-                        <system:Boolean>True</system:Boolean>
-                    </Button.CommandParameter>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding UpdateAllFieldsCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zapisz i zamknij" Command="{Binding AcceptCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
-                    <Button.CommandParameter>
-                        <system:Boolean>True</system:Boolean>
-                    </Button.CommandParameter>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding UpdateAllFieldsCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{Binding CancelCommand}"  Grid.Column="1" Grid.Row="8" Margin="5,0,5,2">
-                    <Button.CommandParameter>
-                        <system:Boolean>False</system:Boolean>
-                    </Button.CommandParameter>
-                </Button>
-            </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="7">
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zastosuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
+                        <Button.CommandParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Button.CommandParameter>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding UpdateAllFieldsCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zapisz i zamknij" Command="{Binding AcceptCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
+                        <Button.CommandParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Button.CommandParameter>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding UpdateAllFieldsCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{Binding CancelCommand}"  Grid.Column="1" Grid.Row="8" Margin="5,0,5,2">
+                        <Button.CommandParameter>
+                            <system:Boolean>False</system:Boolean>
+                        </Button.CommandParameter>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </Grid>
     </ScrollViewer>
 </UserControl>

@@ -232,6 +232,11 @@ namespace DomenaManager.Pages
             get { return new Helpers.RelayCommand(ShowDetails, CanShowDetails); }
         }
 
+        public ICommand AddMultiPaymentCommand
+        {
+            get { return new Helpers.RelayCommand(AddMultiPayment, CanAddMultiPayment); }
+        }
+
         public PaymentsPage()
         {
             DataContext = this;
@@ -327,6 +332,18 @@ namespace DomenaManager.Pages
             Wizards.EditPaymentWizard eow = new Wizards.EditPaymentWizard();
 
             SwitchPage.SwitchMainPage(eow, this);
+        }
+
+        private bool CanAddMultiPayment()
+        {
+            return true;
+        }
+
+        private void AddMultiPayment(object param)
+        {
+            Wizards.EditMultiPaymentWizard emp = new Wizards.EditMultiPaymentWizard();
+
+            SwitchPage.SwitchMainPage(emp, this);
         }
 
         private bool CanShowDetails()
