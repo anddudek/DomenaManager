@@ -438,50 +438,56 @@ namespace DomenaManager.Wizards
 
                     // Add initial charge
                     var building = db.Buildings.Include(x => x.CostCollection).FirstOrDefault(x => x.BuildingId == newApartment.BuildingId);
-                    double percentage = 1 - ((double)DateTime.Now.Day / (double)DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
-                    var chargeDate = DateTime.Today;
+                    double percentage = 1 - (BoughtDate.Day / (double)DateTime.DaysInMonth(BoughtDate.Year, BoughtDate.Month));
+                    var chargeDate = BoughtDate;
 
-                    var c = new Charge() { ApartmentId = newApartment.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, ChargeDate = chargeDate, CreatedDate = DateTime.Today, SettlementId = Guid.Empty, AutoChargeId = Guid.Empty, OwnerId = newApartment.OwnerId };                    
-                    c.Components = new List<ChargeComponent>();
-                    foreach (var costCollection in building.CostCollection)
+                    while (chargeDate <= DateTime.Today)
                     {
-                        if (costCollection.BegginingDate > chargeDate || (costCollection.EndingDate.Year > 1901 && costCollection.EndingDate < chargeDate))
+                        var c = new Charge() { ApartmentId = newApartment.ApartmentId, ChargeId = Guid.NewGuid(), IsClosed = false, ChargeDate = chargeDate, CreatedDate = DateTime.Today, SettlementId = Guid.Empty, AutoChargeId = Guid.Empty, OwnerId = newApartment.OwnerId };
+                        c.Components = new List<ChargeComponent>();
+                        foreach (var costCollection in building.CostCollection)
                         {
-                            continue;
+                            if (costCollection.BegginingDate > chargeDate || (costCollection.EndingDate.Year > 1901 && costCollection.EndingDate < chargeDate))
+                            {
+                                continue;
+                            }
+                            var group = db.GroupName.FirstOrDefault(x => x.BuildingChargeGroupNameId == costCollection.BuildingChargeGroupNameId);
+                            var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit, GroupName = group };
+                            double units;
+                            switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
+                            {
+                                case EnumCostDistribution.CostDistribution.PerApartment:
+                                    units = 1;
+                                    break;
+                                case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:
+                                    units = newApartment.AdditionalArea + newApartment.ApartmentArea;
+                                    break;
+                                case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                                    units = newApartment.ApartmentArea;
+                                    break;
+                                case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                                    units = newApartment.AdditionalArea;
+                                    break;
+                                case EnumCostDistribution.CostDistribution.PerLocators:
+                                    units = newApartment.Locators;
+                                    break;
+                                default:
+                                    units = 0;
+                                    break;
+                            }
+                            cc.Sum = Math.Round(((units * cc.CostPerUnit) * percentage), 2);
+                            c.Components.Add(cc);
+                            db.Entry(cc.GroupName).State = EntityState.Unchanged;
                         }
-                        var group = db.GroupName.FirstOrDefault(x => x.BuildingChargeGroupNameId == costCollection.BuildingChargeGroupNameId);
-                        var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit, GroupName = group };
-                        double units;
-                        switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
+                        if (c.Components != null && c.Components.Count > 0)
                         {
-                            case EnumCostDistribution.CostDistribution.PerApartment:
-                                units = 1;
-                                break;
-                            case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:
-                                units = newApartment.AdditionalArea + newApartment.ApartmentArea;
-                                break;
-                            case EnumCostDistribution.CostDistribution.PerApartmentArea:
-                                units = newApartment.ApartmentArea;
-                                break;
-                            case EnumCostDistribution.CostDistribution.PerAdditionalArea:
-                                units = newApartment.AdditionalArea;
-                                break;
-                            case EnumCostDistribution.CostDistribution.PerLocators:
-                                units = newApartment.Locators;
-                                break;
-                            default:
-                                units = 0;
-                                break;
+                            db.Charges.Add(c);
                         }
-                        cc.Sum = Math.Round(((units * cc.CostPerUnit) * percentage), 2);
-                        c.Components.Add(cc);
-                        db.Entry(cc.GroupName).State = EntityState.Unchanged;
-                    }
-                    if (c.Components != null && c.Components.Count > 0)
-                    {
-                        db.Charges.Add(c);
+                        chargeDate = (new DateTime(chargeDate.Year, chargeDate.Month, 1)).AddMonths(1);
+                        percentage = 1;
                     }
                     db.SaveChanges();
+                    _apartmentLocalCopy = newApartment;
                 }
             }
             else
