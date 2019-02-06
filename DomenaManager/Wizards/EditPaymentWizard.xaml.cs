@@ -307,7 +307,6 @@ namespace DomenaManager.Wizards
                     db.SaveChanges();
                 }
             }
-            SwitchPage.SwitchMainPage(new Pages.PaymentsPage(), this);
         }
 
         private bool CanSaveDialog()
@@ -332,6 +331,10 @@ namespace DomenaManager.Wizards
 
         private void AcceptDialog(object param)
         {
+            if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.SelectedBuildingValue) || string.IsNullOrEmpty(this.SelectedApartmentNumberValue)))
+            {
+                return;
+            }
             SaveDialog(null);
             Helpers.SwitchPage.SwitchMainPage(new Pages.PaymentsPage(), this);
         }

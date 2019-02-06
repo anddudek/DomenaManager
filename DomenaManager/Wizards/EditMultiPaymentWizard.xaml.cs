@@ -319,38 +319,21 @@ namespace DomenaManager.Wizards
             double amount;
             bool isAmountValid = double.TryParse(this.PaymentAmount, out amount);
             //Accept
-            if (this.ActualHeight == null)
+            
+            if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.SelectedBuildingValue) || string.IsNullOrEmpty(this.SelectedApartmentNumberValue) || !isAmountValid))
             {
-                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.SelectedBuildingValue) || string.IsNullOrEmpty(this.SelectedApartmentNumberValue) || !isAmountValid))
+                return;
+            }
+            //Add new payment
+            using (var db = new DB.DomenaDBContext())
+            {
+                foreach (var p in PaymentsList)
                 {
-                    return;
-                }
-                //Add new payment
-                using (var db = new DB.DomenaDBContext())
-                {
-                    var newPayment = new Payment() { IsDeleted = false, ApartmentId = this.SelectedApartmentNumber.ApartmentId, PaymentAddDate = DateTime.Today, PaymentAmount = amount, PaymentId = Guid.NewGuid(), PaymentRegistrationDate = this.PaymentRegistrationDate, ChargeGroup = SelectedGroupName };
+                    var newPayment = new Payment() { IsDeleted = false, ApartmentId = p.Apartment.ApartmentId, PaymentAddDate = p.PaymentAddDate, PaymentAmount = p.PaymentAmount, PaymentId = Guid.NewGuid(), PaymentRegistrationDate = p.PaymentRegistrationDate, ChargeGroup = p.ChargeGroup };
                     db.Payments.Add(newPayment);
                     db.Entry(newPayment.ChargeGroup).State = EntityState.Unchanged;
-                    db.SaveChanges();
                 }
-            }
-            else
-            {
-                if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.SelectedBuildingValue) || string.IsNullOrEmpty(this.SelectedApartmentNumberValue) || !isAmountValid))
-                {
-                    return;
-                }
-                //Edit payment
-                using (var db = new DB.DomenaDBContext())
-                {
-                    /*var q = db.Payments.Where(x => x.PaymentId.Equals(this._lpc.PaymentId)).FirstOrDefault();
-                    q.ChargeGroup = SelectedGroupName;
-                    q.PaymentAddDate = DateTime.Today;
-                    q.PaymentRegistrationDate = this.PaymentRegistrationDate;
-                    q.PaymentAmount = amount;
-                    db.Entry(q.ChargeGroup).State = EntityState.Unchanged;
-                    db.SaveChanges();*/
-                }
+                db.SaveChanges();
             }
         }
 
@@ -376,6 +359,10 @@ namespace DomenaManager.Wizards
 
         private void AcceptDialog(object param)
         {
+            if (!IsValid(this as DependencyObject))
+            {
+                return;
+            }
             SaveDialog(null);
             Helpers.SwitchPage.SwitchMainPage(new Pages.PaymentsPage(), this);
         }

@@ -247,14 +247,6 @@ namespace DomenaManager.Wizards
             }
         }
 
-        public ICommand AddNewBuilding
-        {
-            get
-            {
-                return new Helpers.RelayCommand(AddBuilding, CanAddBuilding);
-            }
-        }
-
         public ICommand AddNewOwner
         {
             get
@@ -393,17 +385,6 @@ namespace DomenaManager.Wizards
         }
 
         private bool CanUpdateAllFields()
-        {
-            return true;
-        }
-
-        private async void AddBuilding(object param)
-        {
-            var ebw = new EditBuildingWizard();
-            var result = await DialogHost.Show(ebw, "HelperDialog", ExtendedEBWOpenedEventHandler, ExtendedEBWClosingEventHandler);
-        }
-
-        private bool CanAddBuilding()
         {
             return true;
         }
@@ -582,6 +563,10 @@ namespace DomenaManager.Wizards
 
         private void AcceptDialog(object param)
         {
+            if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(SelectedBuildingAddress) || string.IsNullOrEmpty(SelectedOwnerMailAddress) || ApartmentNumber <= 0 || double.Parse(AdditionalArea) < 0 || double.Parse(ApartmentArea) <= 0))
+            {
+                return;
+            }
             SaveDialog(null);
             Helpers.SwitchPage.SwitchMainPage(new Pages.ApartmentsPage(), this);
         }
@@ -590,71 +575,7 @@ namespace DomenaManager.Wizards
         {
 
         }
-
-        private async void ExtendedEBWClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
-        {
-
-            if ((bool)eventArgs.Parameter)
-            {
-                var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
-                //Accept
-                if (dc._buildingLocalCopy == null)
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.BuildingName) || string.IsNullOrEmpty(dc.BuildingCity) || string.IsNullOrEmpty(dc.BuildingZipCode) || string.IsNullOrEmpty(dc.BuildingRoadName) || string.IsNullOrEmpty(dc.BuildingRoadNumber)))
-
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Add new building
-
-                    var newBuilding = new LibDataModel.Building { BuildingId = Guid.NewGuid(), Name = dc.BuildingName, City = dc.BuildingCity, ZipCode = dc.BuildingZipCode, BuildingNumber = dc.BuildingRoadNumber, RoadName = dc.BuildingRoadName, IsDeleted = false };
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        db.Buildings.Add(newBuilding);
-                        db.SaveChanges();
-                    }
-
-                    InitializeBuildingList();
-                    SelectedBuildingName = BuildingsNames.Where(x => x.BuildingId.Equals(newBuilding.BuildingId)).FirstOrDefault();
-                }
-                else
-                {
-                    if (!IsValid(dc as DependencyObject) || (string.IsNullOrEmpty(dc.BuildingName) || string.IsNullOrEmpty(dc.BuildingCity) || string.IsNullOrEmpty(dc.BuildingZipCode) || string.IsNullOrEmpty(dc.BuildingRoadName) || string.IsNullOrEmpty(dc.BuildingRoadNumber)))
-
-                    {
-                        eventArgs.Cancel();
-                        return;
-                    }
-                    //Edit building
-                    using (var db = new DB.DomenaDBContext())
-                    {
-                        var q = db.Buildings.Where(x => x.BuildingId.Equals(dc._buildingLocalCopy.BuildingId)).FirstOrDefault();
-                        q.BuildingNumber = dc.BuildingRoadNumber;
-                        q.City = dc.BuildingCity;
-                        q.Name = dc.BuildingName;
-                        q.RoadName = dc.BuildingRoadName;
-                        q.ZipCode = dc.BuildingZipCode;
-                        db.SaveChanges();
-                    }
-
-                    InitializeBuildingList();
-                    SelectedBuildingName = BuildingsNames.Where(x => x.BuildingId.Equals(dc._buildingLocalCopy.BuildingId)).FirstOrDefault();
-                }
-            }
-            else if (!(bool)eventArgs.Parameter)
-            {
-
-                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
-                if (!ynResult)
-                {
-                    //eventArgs.Cancel();
-                    var dc = (eventArgs.Session.Content as Wizards.EditBuildingWizard);
-                    var result = await DialogHost.Show(dc, "HelperDialog", ExtendedEBWOpenedEventHandler, ExtendedEBWClosingEventHandler);
-                }
-            }
-        }
-
+                
         private void ExtendedEOWOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
         {
 

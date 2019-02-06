@@ -209,6 +209,21 @@
     <Compile Include="Wizards\EditBuildingWizard.xaml.cs">
       <DependentUpon>EditBuildingWizard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Wizards\EditBuildingWizard\CountersPart.xaml.cs">
+      <DependentUpon>CountersPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditBuildingWizard\InvoicesPart.xaml.cs">
+      <DependentUpon>InvoicesPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditBuildingWizard\ChargesPart.xaml.cs">
+      <DependentUpon>ChargesPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditBuildingWizard\MasterDataPart.xaml.cs">
+      <DependentUpon>MasterDataPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditLegacyBuildingWizard.xaml.cs">
+      <DependentUpon>EditLegacyBuildingWizard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\AddBuildingCharge.xaml.cs">
       <DependentUpon>AddBuildingCharge.xaml</DependentUpon>
     </Compile>
@@ -217,6 +232,9 @@
     </Compile>
     <Compile Include="Wizards\EditGroupNames.xaml.cs">
       <DependentUpon>EditGroupNames.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditInvoiceVatRates.xaml.cs">
+      <DependentUpon>EditInvoiceVatRates.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\EditInvoiceCategories.xaml.cs">
       <DependentUpon>EditInvoiceCategories.xaml</DependentUpon>
@@ -323,6 +341,26 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Wizards\EditBuildingWizard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\EditBuildingWizard\CountersPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\EditBuildingWizard\InvoicesPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\EditBuildingWizard\ChargesPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\EditBuildingWizard\MasterDataPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\EditLegacyBuildingWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -335,6 +373,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Wizards\EditGroupNames.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\EditInvoiceVatRates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

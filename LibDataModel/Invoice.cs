@@ -93,6 +93,34 @@ namespace LibDataModel
             }
         }
 
+        private double _vat;
+        public double Vat
+        {
+            get { return _vat; }
+            set
+            {
+                if (value != _vat)
+                {
+                    _vat = value;
+                    OnPropertyChanged("Vat");
+                }
+            }
+        }
+        
+        private string _costAmountGross;
+        public string CostAmountGross
+        {
+            get { return _costAmountGross; }
+            set
+            {
+                if (value != _costAmountGross)
+                {
+                    _costAmountGross = value;
+                    OnPropertyChanged("CostAmountGross");
+                }
+            }
+        }
+
         private bool _isSettled;
         public bool IsSettled
         {
@@ -103,6 +131,20 @@ namespace LibDataModel
                 {
                     _isSettled = value;
                     OnPropertyChanged("IsSettled");
+                }
+            }
+        }
+
+        private string _title;
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
+                if (value != _title)
+                {
+                    _title = value;
+                    OnPropertyChanged("Title");
                 }
             }
         }

@@ -74,9 +74,10 @@
                 <!--<DataGridTextColumn Header="Pow. mieszkalna" Binding="{Binding Apartment.ApartmentArea}" Width="auto" FontSize="14"/>-->
                 <!--<DataGridTextColumn Header="Pow. dodatkowa" Binding="{Binding Apartment.AdditionalArea}" Width="auto" FontSize="14"/>-->
                 <DataGridTextColumn Header="Data księgowania" Binding="{Binding InvoiceDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
-                <DataGridTextColumn Header="Data wystawienia" Binding="{Binding InvoiceCreatedTime, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
+                <DataGridTextColumn Header="Data wystawienia" Binding="{Binding InvoiceCreatedDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
                 <DataGridTextColumn Header="Kwota" Binding="{Binding CostAmount, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Kategoria" Binding="{Binding Category.CategoryName}" Width="auto" FontSize="14" />
+                <DataGridTextColumn Header="Tytułem" Binding="{Binding Title}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Numer faktury" Binding="{Binding InvoiceNumber}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Nazwa kontrahenta" Binding="{Binding ContractorName}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Faktura rozliczona" Binding="{hlp:SwitchBinding IsSettled, Tak, Nie}" Width="auto" FontSize="14" />

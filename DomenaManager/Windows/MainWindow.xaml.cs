@@ -74,6 +74,14 @@ namespace DomenaManager.Windows
             }
         }
 
+        public ICommand EditVatRatesCommand
+        {
+            get
+            {
+                return new RelayCommand(EditCostVatRates, CanEditCostVatRates);
+            }
+        }
+
         public ICommand MakeDbBackup
         {
             get
@@ -442,6 +450,61 @@ namespace DomenaManager.Windows
                 {
                     var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
                     var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
+                }
+            }
+        }
+
+        private bool CanEditCostVatRates()
+        {
+            return true;
+        }
+
+        private async void EditCostVatRates(object obj)
+        {
+            Wizards.EditInvoiceVatRates evr;
+            evr = new Wizards.EditInvoiceVatRates();
+            var result = await DialogHost.Show(evr, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingVatRatesEventHandler);
+        }
+
+        private async void ExtendedClosingVatRatesEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditInvoiceVatRates);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    foreach (var cmd in dc.commandBuffer)
+                    {
+                        switch (cmd.CommandType)
+                        {
+                            default:
+                                break;
+                            case CommandEnum.Add:
+                                db.InvoiceVatRates.Add(cmd.Item);
+                                db.SaveChanges();
+                                break;
+                            case CommandEnum.Remove:
+                                db.InvoiceVatRates.Where(x => x.InvoiceVatRateId.Equals(cmd.Item.InvoiceVatRateId)).FirstOrDefault().IsDeleted = true;
+                                db.SaveChanges();
+                                break;
+                            case CommandEnum.Update:
+                                db.InvoiceVatRates.Where(x => x.InvoiceVatRateId.Equals(cmd.Item.InvoiceVatRateId)).FirstOrDefault().Rate = cmd.Item.Rate;
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingVatRatesEventHandler);
                 }
             }
         }

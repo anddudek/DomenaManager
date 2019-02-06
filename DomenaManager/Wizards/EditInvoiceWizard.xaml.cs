@@ -25,6 +25,36 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class EditInvoiceWizard : UserControl, INotifyPropertyChanged
     {
+        private ObservableCollection<InvoiceVatRate> _vatCollection;
+        public ObservableCollection<InvoiceVatRate> VatCollection
+        {
+            get { return _vatCollection; }
+            set
+            {
+                _vatCollection = value;
+                OnPropertyChanged("VatCollection");
+            }
+        }
+
+        private InvoiceVatRate _selectedVat;
+        public InvoiceVatRate SelectedVat
+        {
+            get { return _selectedVat; }
+            set
+            {
+                _selectedVat = value;
+                double t;
+                if (SelectedVat != null && double.TryParse(CostAmount, out t))
+                {
+                    _costAmountGross = (Math.Floor(((1 + SelectedVat.Rate / 100) * t) * 100) / 100).ToString();
+                    OnPropertyChanged("CostAmountGross");
+                }
+                OnPropertyChanged("SelectedVat");
+            }
+        }
+
+        public string SelectedVatValue { get; set; }
+
         private ObservableCollection<Building> _buildingsNames;
         public ObservableCollection<Building> BuildingsNames
         {
@@ -107,7 +137,33 @@ namespace DomenaManager.Wizards
                 if (value != _costAmount)
                 {
                     _costAmount = value;
+                    double t;
+                    if (SelectedVat != null && double.TryParse(CostAmount, out t))
+                    {
+                        _costAmountGross = (Math.Floor(((1 + SelectedVat.Rate / 100) * t) * 100) / 100).ToString();
+                        OnPropertyChanged("CostAmountGross");
+                    }
                     OnPropertyChanged("CostAmount");
+                }
+            }
+        }
+
+        private string _costAmountGross;
+        public string CostAmountGross
+        {
+            get { return _costAmountGross; }
+            set
+            {
+                if (value != _costAmountGross)
+                {
+                    _costAmountGross = value;
+                    double t;
+                    if (SelectedVat != null && double.TryParse(value, out t))
+                    {
+                        _costAmount = (Math.Floor(( t / (1 + SelectedVat.Rate / 100)) * 100) / 100).ToString();
+                        OnPropertyChanged("CostAmount");
+                    }
+                    OnPropertyChanged("CostAmountGross");
                 }
             }
         }
@@ -122,6 +178,20 @@ namespace DomenaManager.Wizards
                 {
                     _invoiceNumber = value;
                     OnPropertyChanged("InvoiceNumber");
+                }
+            }
+        }
+
+        private string _title;
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
+                if (value != _title)
+                {
+                    _title = value;
+                    OnPropertyChanged("Title");
                 }
             }
         }
@@ -246,6 +316,9 @@ namespace DomenaManager.Wizards
                 CostAmount = _lic.CostAmount.ToString();
                 SelectedContractorsName = ContractorsNames.Where(x => x.Name.Equals(_lic.ContractorName)).FirstOrDefault();
                 IsSettled = _lic.IsSettled ? SettlementOptions.Where(x => x == "Tak").FirstOrDefault() : SettlementOptions.Where(x => x == "Nie").FirstOrDefault();
+                Title = _lic.Title;
+                CostAmountGross = _lic.CostAmountGross;
+                SelectedVat = VatCollection.FirstOrDefault(x => x.Rate == _lic.Vat);
                 return;
             }
 
@@ -266,6 +339,7 @@ namespace DomenaManager.Wizards
             using (var db = new DB.DomenaDBContext())
             {
                 CategoriesNames = new ObservableCollection<InvoiceCategory>(db.InvoiceCategories.Where(x => x.IsDeleted == false).ToList());
+                VatCollection = new ObservableCollection<InvoiceVatRate>(db.InvoiceVatRates.Where(x => !x.IsDeleted).ToList());
             }
         }
 
@@ -338,9 +412,12 @@ namespace DomenaManager.Wizards
                     q.CreatedTime = DateTime.Now;
                     q.InvoiceCategoryId = SelectedCategoryName.CategoryId;
                     q.InvoiceDate = InvoiceDate.Date;
-                    q.InvoiceCreatedDate = InvoiceCreatedDate.Date;
+                    q.InvoiceCreatedDate = InvoiceCreatedDate.Date;                    
                     q.InvoiceNumber = InvoiceNumber;
                     q.IsSettled = IsSettled == "Tak" ? true : false;
+                    q.Title = Title;
+                    q.CostAmountGross = CostAmountGross;
+                    q.Vat = SelectedVat.Rate;
 
                     if (!db.InvoiceContractors.Any(x => x.Name.Equals(SelectedContractorsValue)))
                     {
@@ -350,7 +427,6 @@ namespace DomenaManager.Wizards
                     db.SaveChanges();
                 }
             }
-            SwitchPage.SwitchMainPage(new Pages.InvoicesPage(), this);
         }
 
         private bool CanAcceptDialog()
@@ -360,6 +436,10 @@ namespace DomenaManager.Wizards
 
         private void AcceptDialog(object param)
         {
+            if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(SelectedBuildingName.Name) || string.IsNullOrEmpty(SelectedCategoryName.CategoryName)))
+            {
+                return;
+            }
             SaveDialog(null);
             Helpers.SwitchPage.SwitchMainPage(new Pages.InvoicesPage(), this);
         }

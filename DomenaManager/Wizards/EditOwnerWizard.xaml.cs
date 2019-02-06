@@ -162,7 +162,6 @@ namespace DomenaManager.Wizards
                     db.SaveChanges();
                 }
             }
-            SwitchPage.SwitchMainPage(new Pages.OwnersPage(), this);
         }
 
         private bool CanSaveDialog()
@@ -187,7 +186,11 @@ namespace DomenaManager.Wizards
 
         private void AcceptDialog(object param)
         {
-           SaveDialog(null);
+            if (!IsValid(this as DependencyObject) || (string.IsNullOrEmpty(this.OwnerFirstName) || string.IsNullOrEmpty(this.OwnerSurname) || string.IsNullOrEmpty(this.MailAddress)))
+            {
+                return;
+            }
+            SaveDialog(null);
            SwitchPage.SwitchMainPage(new Pages.OwnersPage(), this);
         }
 

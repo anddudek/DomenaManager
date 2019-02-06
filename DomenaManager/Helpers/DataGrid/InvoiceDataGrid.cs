@@ -30,6 +30,9 @@ namespace DomenaManager.Helpers
             this.InvoiceNumber = invoice.InvoiceNumber;
             this.IsDeleted = invoice.IsDeleted;
             this.IsSettled = invoice.IsSettled;
+            this.Title = invoice.Title;
+            this.Vat = invoice.Vat;
+            this.CostAmountGross = invoice.CostAmountGross;
             
             using (var db = new DB.DomenaDBContext())
             {

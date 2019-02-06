@@ -47,6 +47,7 @@
     <Compile Include="BuildingChargeGroupName.cs" />
     <Compile Include="Charge.cs" />
     <Compile Include="ChargeComponent.cs" />
+    <Compile Include="InvoiceVatRate.cs" />
     <Compile Include="ContractorsName.cs" />
     <Compile Include="BuildingChargeBasis.cs" />
     <Compile Include="InvoiceCategory.cs" />
