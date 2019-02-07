@@ -13,6 +13,7 @@ namespace LibDataModel
         {
             BuildingId = b.BuildingId;
             Name = b.Name;
+            FullName = b.FullName;
             City = b.City;
             ZipCode = b.ZipCode;
             RoadName = b.RoadName;
@@ -26,6 +27,7 @@ namespace LibDataModel
         {
             BuildingId = Guid.NewGuid();
             Name = null;
+            FullName = null;
             City = null;
             ZipCode = null;
             RoadName = null;
@@ -43,6 +45,7 @@ namespace LibDataModel
         [Key]
         public Guid BuildingId {get; set;}
         public string Name { get; set; }
+        public string FullName { get; set; }
         public string City { get; set; }
         public string ZipCode { get; set; }
         public string RoadName { get; set; }

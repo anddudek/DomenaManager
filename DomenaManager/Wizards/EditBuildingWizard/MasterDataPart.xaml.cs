@@ -25,10 +25,91 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class MasterDataPart : UserControl, INotifyPropertyChanged
     {
+        private BuildingMasterData masterData;
+
+        public string BuildingName
+        {
+            get { return masterData.BuildingName; }
+            set
+            {
+                if (value != masterData.BuildingName)
+                {
+                    masterData.BuildingName = value;
+                    OnPropertyChanged("BuildingName");
+                }
+            }
+        }
+
+        public string BuildingFullName
+        {
+            get { return masterData.BuildingFullName; }
+            set
+            {
+                if (value != masterData.BuildingFullName)
+                {
+                    masterData.BuildingFullName = value;
+                    OnPropertyChanged("BuildingFullName");
+                }
+            }
+        }
+
+        public string BuildingCity
+        {
+            get { return masterData.BuildingCity; }
+            set
+            {
+                if (value != masterData.BuildingCity)
+                {
+                    masterData.BuildingCity = value;
+                    OnPropertyChanged("BuildingCity");
+                }
+            }
+        }
+
+        public string BuildingZipCode
+        {
+            get { return masterData.BuildingZipCode; }
+            set
+            {
+                if (value != masterData.BuildingZipCode)
+                {
+                    masterData.BuildingZipCode = value;
+                    OnPropertyChanged("BuildingZipCode");
+                }
+            }
+        }
+
+        public string BuildingRoadName
+        {
+            get { return masterData.BuildingRoadName; }
+            set
+            {
+                if (value != masterData.BuildingRoadName)
+                {
+                    masterData.BuildingRoadName = value;
+                    OnPropertyChanged("BuildingRoadName");
+                }
+            }
+        }
+
+        public string BuildingRoadNumber
+        {
+            get { return masterData.BuildingRoadNumber; }
+            set
+            {
+                if (value != masterData.BuildingRoadNumber)
+                {
+                    masterData.BuildingRoadNumber = value;
+                    OnPropertyChanged("BuildingRoadNumber");
+                }
+            }
+        }
+
         public MasterDataPart(Building SelectedBuilding = null)
         {
             InitializeComponent();
-            DataContext = this;            
+            DataContext = this;
+            masterData = new BuildingMasterData();
         }              
 
         private bool IsValid(DependencyObject obj)
@@ -50,5 +131,15 @@ namespace DomenaManager.Wizards
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+    }
+
+    public class BuildingMasterData
+    {
+        public string BuildingName { get; set; }
+        public string BuildingFullName { get; set; }
+        public string BuildingCity { get; set; }
+        public string BuildingZipCode { get; set; }
+        public string BuildingRoadName { get; set; }
+        public string BuildingRoadNumber { get; set; }
     }
 }

@@ -161,9 +161,17 @@ namespace DomenaManager.Wizards
                 default:
                     return;
                 case CurrentPageEnum.MasterData:
-                    CurrentPage = CurrentPageEnum.Charges;
-                    WizardControl = chargesView;
-                    return;
+                    if (Validator.IsValid(masterDataView))
+                    {
+                        CurrentPage = CurrentPageEnum.Charges;
+                        WizardControl = chargesView;
+                        return;
+                    }
+                    else
+                    {
+                        Validator.IsValid(masterDataView);
+                        return;
+                    }
                 case CurrentPageEnum.Charges:
                     CurrentPage = CurrentPageEnum.Invoices;
                     WizardControl = invoicesView;

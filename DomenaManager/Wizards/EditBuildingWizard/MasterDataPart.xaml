@@ -15,5 +15,94 @@
         <Helpers:NullToDateConverter x:Key="NullToDateConverter" />
         <Helpers:DatesToCurrentDateMultiConverter x:Key="DateToCurrentDateConverter" />
     </UserControl.Resources>
-    <Label Content="MASTERDATA" />
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <TextBox materialDesign:HintAssist.Hint="Skrócona nazwa budynku"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingName" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="(Nazwa służy do identyfikacji budynku w programie)" FontSize="10" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="5,-5,5,5" TextAlignment="Center"/>
+
+        <TextBox materialDesign:HintAssist.Hint="Pełna nazwa budynku"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingFullName" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+        
+        <TextBox materialDesign:HintAssist.Hint="Miasto"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingCity" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBox materialDesign:HintAssist.Hint="Kod pocztowy"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingZipCode" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyZipCodeValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBox materialDesign:HintAssist.Hint="Ulica"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingRoadName" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBox materialDesign:HintAssist.Hint="Numer domu"
+	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
+            Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="35,0,30,0" >
+            <TextBox.Text>
+                <Binding Path="BuildingRoadNumber" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+    </Grid>
+
 </UserControl>

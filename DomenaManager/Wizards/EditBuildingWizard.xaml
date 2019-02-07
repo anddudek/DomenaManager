@@ -15,7 +15,7 @@
         <Helpers:NullToDateConverter x:Key="NullToDateConverter" />
         <Helpers:DatesToCurrentDateMultiConverter x:Key="DateToCurrentDateConverter" />
     </UserControl.Resources>
-    <Grid Width="650" VerticalAlignment="Stretch">
+    <Grid Width="750" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
             <RowDefinition/>
