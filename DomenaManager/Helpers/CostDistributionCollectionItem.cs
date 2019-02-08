@@ -12,7 +12,7 @@ namespace DomenaManager.Helpers
         public string Name { get; set; }
         public int EnumValue { get; set; }
 
-        public CostDistributionCollectionItem(EnumCostDistribution.CostDistribution value)
+        public CostDistributionCollectionItem(CostDistribution value)
         {
             this.Name = EnumCostDistribution.CostDistributionToString(value);
             this.EnumValue = (int)value;

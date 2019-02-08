@@ -557,7 +557,7 @@ namespace DomenaManager.Wizards
 
         private void InitializeUnitsList()
         {
-            var values = (EnumCostDistribution.CostDistribution[])Enum.GetValues(typeof(EnumCostDistribution.CostDistribution));
+            var values = (CostDistribution[])Enum.GetValues(typeof(CostDistribution));
             UnitsNames = new ObservableCollection<Helpers.CostDistributionCollectionItem>();
             foreach (var v in values)
             {

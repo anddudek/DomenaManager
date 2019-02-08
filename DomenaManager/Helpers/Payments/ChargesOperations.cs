@@ -28,21 +28,21 @@ namespace DomenaManager.Helpers
                         var group = db.GroupName.FirstOrDefault(x => x.BuildingChargeGroupNameId == costCollection.BuildingChargeGroupNameId);
                         var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit, GroupName=group};
                         double units;
-                        switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
+                        switch ((CostDistribution)cc.CostDistribution)
                         {
-                            case EnumCostDistribution.CostDistribution.PerApartment:
+                            case CostDistribution.PerApartment:
                                 units = 1;
                                 break;
-                            case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:
+                            case CostDistribution.PerApartmentTotalArea:
                                 units = a.AdditionalArea + a.ApartmentArea;
                                 break;
-                            case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                            case CostDistribution.PerApartmentArea:
                                 units = a.ApartmentArea;
                                 break;
-                            case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                            case CostDistribution.PerAdditionalArea:
                                 units = a.AdditionalArea;
                                 break;
-                            case EnumCostDistribution.CostDistribution.PerLocators:
+                            case CostDistribution.PerLocators:
                                 units = a.Locators;
                                 break;
                             default:
@@ -78,21 +78,21 @@ namespace DomenaManager.Helpers
                     var group = db.GroupName.FirstOrDefault(x => x.BuildingChargeGroupNameId == costCollection.BuildingChargeGroupNameId);
                     var cc = new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = costCollection.BuildingChargeBasisCategoryId, CostDistribution = costCollection.BuildingChargeBasisDistribution, CostPerUnit = costCollection.CostPerUnit, GroupName = group };
                     double units;
-                    switch ((EnumCostDistribution.CostDistribution)cc.CostDistribution)
+                    switch ((CostDistribution)cc.CostDistribution)
                     {
-                        case EnumCostDistribution.CostDistribution.PerApartment:
+                        case CostDistribution.PerApartment:
                             units = 1;
                             break;
-                        case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:
+                        case CostDistribution.PerApartmentTotalArea:
                             units = a.AdditionalArea + a.ApartmentArea;
                             break;
-                        case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                        case CostDistribution.PerApartmentArea:
                             units = a.ApartmentArea;
                             break;
-                        case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                        case CostDistribution.PerAdditionalArea:
                             units = a.AdditionalArea;
                             break;
-                        case EnumCostDistribution.CostDistribution.PerLocators:
+                        case CostDistribution.PerLocators:
                             units = a.Locators;
                             break;
                         default:

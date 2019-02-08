@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace LibDataModel
 {
-    public class EnumCostDistribution
+    public enum CostDistribution
     {
-        public enum CostDistribution
-        {
-            PerApartment = 0,
-            PerApartmentArea = 1,
-            PerLocators = 2,
-            PerApartmentTotalArea = 3,
-            PerAdditionalArea = 4,
-        }
+        PerApartment = 0,
+        PerApartmentArea = 1,
+        PerLocators = 2,
+        PerApartmentTotalArea = 3,
+        PerAdditionalArea = 4,
+    }
 
+    public class EnumCostDistribution
+    {     
         public static string CostDistributionToString(CostDistribution costDist)
         {
             switch (costDist)

@@ -12,7 +12,7 @@ namespace DomenaManager.Helpers
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return EnumCostDistribution.CostDistributionToString((EnumCostDistribution.CostDistribution)value);
+            return EnumCostDistribution.CostDistributionToString((CostDistribution)value);
         }
 
         public object ConvertBack(object value, Type targetTypes, object parameter, System.Globalization.CultureInfo culture)

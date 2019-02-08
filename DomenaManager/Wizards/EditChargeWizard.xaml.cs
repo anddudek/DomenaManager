@@ -436,7 +436,7 @@ namespace DomenaManager.Wizards
 
         private void InitializeUnitsList()
         {
-            var values = (EnumCostDistribution.CostDistribution[])Enum.GetValues(typeof(EnumCostDistribution.CostDistribution));
+            var values = (CostDistribution[])Enum.GetValues(typeof(CostDistribution));
             UnitsNames = new ObservableCollection<Helpers.CostDistributionCollectionItem>();
             foreach (var v in values)
             {
@@ -679,21 +679,21 @@ namespace DomenaManager.Wizards
                 return;
             double units;
             var a = ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber));
-            switch ((EnumCostDistribution.CostDistribution)SelectedUnitName.EnumValue)
+            switch ((CostDistribution)SelectedUnitName.EnumValue)
             {
-                case EnumCostDistribution.CostDistribution.PerApartment:
+                case CostDistribution.PerApartment:
                     units = 1;
                     break;
-                case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:                    
+                case CostDistribution.PerApartmentTotalArea:                    
                     units = a.AdditionalArea + a.ApartmentArea;
                     break;
-                case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                case CostDistribution.PerApartmentArea:
                     units = a.ApartmentArea;
                     break;
-                case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                case CostDistribution.PerAdditionalArea:
                     units = a.AdditionalArea;
                     break;
-                case EnumCostDistribution.CostDistribution.PerLocators:
+                case CostDistribution.PerLocators:
                     var ap = ApartmentsCollection.FirstOrDefault(x => x.BuildingId.Equals(SelectedBuilding.BuildingId) && x.ApartmentNumber.Equals(SelectedApartmentNumber));
                     units = ap.Locators;
                     break;

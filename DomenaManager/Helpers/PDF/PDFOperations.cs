@@ -184,29 +184,29 @@ namespace DomenaManager.Helpers
                     cell = row.Cells[0];
                     cell.AddParagraph(db.CostCategories.FirstOrDefault(x => x.BuildingChargeBasisCategoryId.Equals(c.CostCategoryId)).CategoryName);
                     cell = row.Cells[1];
-                    cell.AddParagraph(EnumCostDistribution.CostDistributionToString((EnumCostDistribution.CostDistribution)c.CostDistribution));
+                    cell.AddParagraph(EnumCostDistribution.CostDistributionToString((CostDistribution)c.CostDistribution));
                     cell = row.Cells[3];
                     cell.AddParagraph(c.CostPerUnit + " zł");
                     cell = row.Cells[4];
 
                     string units = "";
-                    switch ((EnumCostDistribution.CostDistribution)c.CostDistribution)
+                    switch ((CostDistribution)c.CostDistribution)
                     {
                         default:
                             break;
-                        case EnumCostDistribution.CostDistribution.PerApartmentTotalArea:
+                        case CostDistribution.PerApartmentTotalArea:
                             units = (selectedCharge.Apartment.AdditionalArea + selectedCharge.Apartment.ApartmentArea).ToString();
                             break;
-                        case EnumCostDistribution.CostDistribution.PerAdditionalArea:
+                        case CostDistribution.PerAdditionalArea:
                             units = (selectedCharge.Apartment.AdditionalArea).ToString();
                             break;
-                        case EnumCostDistribution.CostDistribution.PerApartment:
+                        case CostDistribution.PerApartment:
                             units = "1";
                             break;
-                        case EnumCostDistribution.CostDistribution.PerApartmentArea:
+                        case CostDistribution.PerApartmentArea:
                             units = (selectedCharge.Apartment.ApartmentArea).ToString();
                             break;
-                        case EnumCostDistribution.CostDistribution.PerLocators:
+                        case CostDistribution.PerLocators:
                             units = (selectedCharge.Apartment.Locators).ToString();
                             break;
                     }

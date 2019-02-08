@@ -45,6 +45,7 @@
     <Compile Include="BindingParent.cs" />
     <Compile Include="BuildingChargeGroupBankAccount.cs" />
     <Compile Include="BuildingChargeGroupName.cs" />
+    <Compile Include="BuildingInvoiceBinding.cs" />
     <Compile Include="Charge.cs" />
     <Compile Include="ChargeComponent.cs" />
     <Compile Include="InvoiceVatRate.cs" />

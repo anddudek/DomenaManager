@@ -6,14 +6,65 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
+             xmlns:DM="clr-namespace:LibDataModel;assembly=LibDataModel"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
         mc:Ignorable="d"
         xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
         Height="auto" Background="White">
-    <UserControl.Resources>
-        <Helpers:NullToDateConverter x:Key="NullToDateConverter" />
-        <Helpers:DatesToCurrentDateMultiConverter x:Key="DateToCurrentDateConverter" />
-    </UserControl.Resources>
-    <Label Content="INVOICES" />
+    <Grid MinWidth="650">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.5*"/>
+        </Grid.ColumnDefinitions>
+
+        <ComboBox materialDesign:HintAssist.Hint="Kategoria faktury"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" DisplayMemberPath="CategoryName"
+            Grid.Row="0" Grid.Column="0" SelectedItem="{Binding SelectedInvoiceCategory}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,10,10,10" >
+            <ComboBox.Text>
+                <Binding Path="SelectedInvoiceCategoryValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" />
+            </ComboBox.Text>
+            <ComboBox.ItemsSource>
+                <Binding Path="InvoiceCategories"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </ComboBox.ItemsSource>
+        </ComboBox>
+
+        <ComboBox materialDesign:HintAssist.Hint="Jednostka"
+	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" DisplayMemberPath="Name"
+            Grid.Row="0" Grid.Column="1" SelectedItem="{Binding SelectedDistributionType}"  Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,10,10,10" >
+            <ComboBox.Text>
+                <Binding Path="SelectedUnitValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" />
+            </ComboBox.Text>
+            <ComboBox.ItemsSource>
+                <Binding Path="DistributionTypes"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <Helpers:EmptyStringValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </ComboBox.ItemsSource>
+        </ComboBox>
+
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Dodaj" Grid.Row="0" Grid.Column="2" Command="{Binding AddBuildingInvoiceBindingCommand}" Margin="5" />
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Usuń" Grid.Row="0" Grid.Column="3" Command="{Binding DeleteBuildingInvoiceBindingCommand}" Margin="5" />
+
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="4" ItemsSource="{Binding BuildingInvoiceBindings}" SelectedItem="{Binding SelectedBuildingInvoiceBinding}" MinHeight="100" BorderBrush="Black" BorderThickness="1" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Kategoria faktury" Width="300" Binding="{Binding InvoiceCategory.CategoryName}" />
+                <DataGridTextColumn Header="Jednostka" Width="*" Binding="{Binding DistributionString}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        
+    </Grid>
 </UserControl>

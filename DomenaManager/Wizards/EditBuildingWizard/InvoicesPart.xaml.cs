@@ -25,11 +25,154 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class InvoicesPart : UserControl, INotifyPropertyChanged
     {
+        private InvoiceData _invoiceData { get; set; }
+
+        private ObservableCollection<CostDistributionCollectionItem> _distributionTypes;
+        public ObservableCollection<CostDistributionCollectionItem> DistributionTypes
+        {
+            get { return _distributionTypes; }
+            set
+            {
+                if (value != _distributionTypes)
+                {
+                    _distributionTypes = value;
+                    OnPropertyChanged("DistributionTypes");
+                }
+            }
+        }
+
+        private CostDistributionCollectionItem _selectedDistributionType;
+        public CostDistributionCollectionItem SelectedDistributionType
+        {
+            get { return _selectedDistributionType; }
+            set
+            {
+                if (value != _selectedDistributionType)
+                {
+                    _selectedDistributionType = value;
+                    OnPropertyChanged("SelectedDistributionType");
+                } 
+            }
+        }
+
+        private ObservableCollection<InvoiceCategory> _invoiceCategories;
+        public ObservableCollection<InvoiceCategory> InvoiceCategories
+        {
+            get { return _invoiceCategories; }
+            set
+            {
+                if (value != _invoiceCategories)
+                {
+                    _invoiceCategories = value;
+                    OnPropertyChanged("InvoiceCategories");
+                }
+            }
+        }
+
+        private InvoiceCategory _selectedInvoiceCategory;
+        public InvoiceCategory SelectedInvoiceCategory
+        {
+            get { return _selectedInvoiceCategory; }
+            set
+            {
+                if (value != _selectedInvoiceCategory)
+                {
+                    _selectedInvoiceCategory = value;
+                    OnPropertyChanged("SelectedInvoiceCategory");
+                }
+            }
+        }
+
+        public ObservableCollection<BuildingInvoiceBinding> BuildingInvoiceBindings
+        {
+            get { return _invoiceData.BuildingInvoiceBinding; }
+            set
+            {
+                if (value != _invoiceData.BuildingInvoiceBinding)
+                {
+                    _invoiceData.BuildingInvoiceBinding = value;
+                    OnPropertyChanged("BuildingInvoiceBindings");
+                }
+            }
+        }
+
+        private BuildingInvoiceBinding _selectedBuildingInvoiceBinding;
+        public BuildingInvoiceBinding SelectedBuildingInvoiceBinding
+        {
+            get { return _selectedBuildingInvoiceBinding; }
+            set
+            {
+                if (value != _selectedBuildingInvoiceBinding)
+                {
+                    _selectedBuildingInvoiceBinding = value;
+                    OnPropertyChanged("SelectedBuildingInvoiceBinding");
+                }
+            }
+        }
+
+        public string SelectedUnitValue { get; set; }
+
+        public string SelectedInvoiceCategoryValue { get; set; }
+                
+        public ICommand AddBuildingInvoiceBindingCommand
+        {
+            get { return new RelayCommand(AddBuildingInvoiceBinding, CanAddBuildingInvoiceBinding); }
+        }
+
+        public ICommand DeleteBuildingInvoiceBindingCommand
+        {
+            get { return new RelayCommand(DeleteBuildingInvoiceBinding, CanDeleteBuildingInvoiceBinding); }
+        }
+
         public InvoicesPart(Building SelectedBuilding = null)
         {
             InitializeComponent();
-            DataContext = this;            
-        }              
+            DataContext = this;
+            InitializeInvoicesPart();
+            _invoiceData = new InvoiceData();
+        }
+
+        private void InitializeInvoicesPart()
+        {
+            var values = (CostDistribution[])Enum.GetValues(typeof(CostDistribution));
+            DistributionTypes = new ObservableCollection<CostDistributionCollectionItem>();
+            foreach (var v in values)
+            {
+                var cdci = new CostDistributionCollectionItem(v);
+                DistributionTypes.Add(cdci);
+            }
+            using (var db = new DB.DomenaDBContext())
+            {
+                InvoiceCategories = new ObservableCollection<InvoiceCategory>(db.InvoiceCategories.Where(x => !x.IsDeleted).ToList());
+            }
+        }
+
+        private void AddBuildingInvoiceBinding(object param)
+        {
+            BuildingInvoiceBindings.Add(new BuildingInvoiceBinding()
+            {
+                BindingId = new Guid(),
+                Building = null,
+                Distribution = (CostDistribution)SelectedDistributionType.EnumValue,
+                InvoiceCategory = SelectedInvoiceCategory,
+                IsDeleted = false,
+            });
+        }
+
+        private bool CanAddBuildingInvoiceBinding()
+        {
+            return SelectedInvoiceCategory != null && SelectedDistributionType != null;
+        }
+
+        private void DeleteBuildingInvoiceBinding(object param)
+        {
+            BuildingInvoiceBindings.Remove(SelectedBuildingInvoiceBinding);
+        }
+
+        private bool CanDeleteBuildingInvoiceBinding()
+        {
+            return SelectedBuildingInvoiceBinding != null;
+        }
 
         private bool IsValid(DependencyObject obj)
         {
@@ -49,6 +192,16 @@ namespace DomenaManager.Wizards
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+    }
+
+    public class InvoiceData
+    {
+        public ObservableCollection<BuildingInvoiceBinding> BuildingInvoiceBinding { get; set; }
+
+        public InvoiceData()
+        {
+            BuildingInvoiceBinding = new ObservableCollection<BuildingInvoiceBinding>();
         }
     }
 }
