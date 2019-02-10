@@ -145,7 +145,7 @@ namespace DomenaManager.Wizards
         {
             InitializeComponent();
             DataContext = this;
-            countersData = new CountersData();
+            countersData = new CountersData(SelectedBuilding);
         }
 
         private void AddNewMeter(object param)
@@ -207,9 +207,9 @@ namespace DomenaManager.Wizards
     {
         public ObservableCollection<MeterType> MetersCollection { get; set; }
 
-        public CountersData()
+        public CountersData(Building b)
         {
-            this.MetersCollection = new ObservableCollection<MeterType>();
+            MetersCollection = new ObservableCollection<MeterType>(b.MeterCollection);           
         }
     }
 }

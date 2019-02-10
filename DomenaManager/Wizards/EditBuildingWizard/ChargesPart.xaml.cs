@@ -309,9 +309,10 @@ namespace DomenaManager.Wizards
         {
             InitializeComponent();
             DataContext = this;
-            chargeData = new ChargesData();
-            CostBeggining = DateTime.Today.AddYears(-3);
             OnLoad();
+            chargeData = new ChargesData(SelectedBuilding);
+            AfterInitialLoad();
+            CostBeggining = DateTime.Today.AddYears(-3);
         }              
 
         private void OnLoad()
@@ -325,8 +326,10 @@ namespace DomenaManager.Wizards
                 var cdci = new Helpers.CostDistributionCollectionItem(v);
                 UnitsNames.Add(cdci);
             }
+        }
 
-            CostCollection = new ObservableCollection<Helpers.CostListView>();
+        private void AfterInitialLoad()
+        {
             ICollectionView cvCostCollection = (CollectionView)CollectionViewSource.GetDefaultView(CostCollection);
             cvCostCollection.GroupDescriptions.Add(new PropertyGroupDescription("CategoryName"));
             cvCostCollection.SortDescriptions.Add(new SortDescription("BegginingDate", ListSortDirection.Ascending));
@@ -621,5 +624,32 @@ namespace DomenaManager.Wizards
     {
         public ObservableCollection<BuildingChargeGroupBankAccount> GroupBankAccounts { get; set; }
         public ObservableCollection<CostListView> CostCollection { get; set; }
+
+        public ChargesData(Building b)
+        {
+            ObservableCollection<BuildingChargeBasisCategory> CategoriesNames;
+            ObservableCollection<BuildingChargeGroupName> GroupNames;
+            using (var db = new DB.DomenaDBContext())
+            {
+                GroupBankAccounts = new ObservableCollection<BuildingChargeGroupBankAccount>(db.BuildingChargeGroupBankAccounts.Where(x => !x.IsDeleted && x.Building.BuildingId == b.BuildingId).ToList());
+                CategoriesNames = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
+                GroupNames = new ObservableCollection<BuildingChargeGroupName>(db.GroupName.Where(x => !x.IsDeleted).ToList());
+            }
+
+            var values = (CostDistribution[])Enum.GetValues(typeof(CostDistribution));
+            var UnitsNames = new ObservableCollection<Helpers.CostDistributionCollectionItem>();
+            foreach (var v in values)
+            {
+                var cdci = new Helpers.CostDistributionCollectionItem(v);
+                UnitsNames.Add(cdci);
+            }
+
+            CostCollection = new ObservableCollection<CostListView>();
+            foreach (var c in b.CostCollection)
+            {
+                var clv = new Helpers.CostListView { BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, Cost = c.CostPerUnit, CostUnit = UnitsNames.Where(x => x.EnumValue == c.BuildingChargeBasisDistribution).FirstOrDefault(), CategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(c.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName, CostGroup = GroupNames.Where(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId).FirstOrDefault() };
+                CostCollection.Add(clv);
+            }
+        }
     }
 }

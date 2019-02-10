@@ -109,7 +109,7 @@ namespace DomenaManager.Wizards
         {
             InitializeComponent();
             DataContext = this;
-            masterData = new BuildingMasterData();
+            masterData = new BuildingMasterData(SelectedBuilding);
         }              
 
         private bool IsValid(DependencyObject obj)
@@ -141,5 +141,15 @@ namespace DomenaManager.Wizards
         public string BuildingZipCode { get; set; }
         public string BuildingRoadName { get; set; }
         public string BuildingRoadNumber { get; set; }
+
+        public BuildingMasterData(Building b)
+        {
+            BuildingName = b.Name;
+            BuildingFullName = b.FullName;
+            BuildingCity = b.City;
+            BuildingZipCode = b.ZipCode;
+            BuildingRoadName = b.RoadName;
+            BuildingRoadNumber = b.BuildingNumber;
+        }
     }
 }

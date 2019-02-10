@@ -114,14 +114,17 @@ namespace DomenaManager.Wizards
             get { return new RelayCommand(Cancel, CanCancel); }
         }
 
+        private Building _localBuildingCopy;
+
         public EditBuildingWizard(Building SelectedBuilding = null)
         {
             InitializeComponent();
+            _localBuildingCopy = SelectedBuilding;
             CurrentPage = CurrentPageEnum.MasterData;
-            masterDataView = new MasterDataPart();
-            chargesView = new ChargesPart();
-            invoicesView = new InvoicesPart();
-            countersView = new CountersPart();
+            masterDataView = new MasterDataPart(_localBuildingCopy);
+            chargesView = new ChargesPart(_localBuildingCopy);
+            invoicesView = new InvoicesPart(_localBuildingCopy);
+            countersView = new CountersPart(_localBuildingCopy);
             WizardControl = masterDataView;
             DataContext = this;
         }        
