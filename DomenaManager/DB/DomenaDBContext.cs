@@ -33,5 +33,6 @@ namespace DomenaManager.DB
         public DbSet<MetersHistory> MetersHistories { get; set; }
         public DbSet<BuildingChargeGroupBankAccount> BuildingChargeGroupBankAccounts { get; set; }
         public DbSet<YearSummary> YearSummaries { get; set; }
+        public DbSet<BuildingInvoiceBinding> BuildingInvoceBindings { get; set; }
     }
 }

@@ -148,6 +148,7 @@ namespace DomenaManager.Wizards
                 case CurrentPageEnum.Counters:
                     CurrentPage = CurrentPageEnum.Invoices;
                     WizardControl = invoicesView;
+                    invoicesView.InitializeInvoicesPart();
                     return;
             }
         }
@@ -178,6 +179,7 @@ namespace DomenaManager.Wizards
                 case CurrentPageEnum.Charges:
                     CurrentPage = CurrentPageEnum.Invoices;
                     WizardControl = invoicesView;
+                    invoicesView.InitializeInvoicesPart();
                     return;
                 case CurrentPageEnum.Invoices:
                     CurrentPage = CurrentPageEnum.Counters;
@@ -195,7 +197,83 @@ namespace DomenaManager.Wizards
 
         public void Accept(object param)
         {
+            // Edit building
+            if (_localBuildingCopy != null)
+            {
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var selectedBuilding = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).FirstOrDefault(x => x.BuildingId == _localBuildingCopy.BuildingId);
 
+                    #region MasterData
+
+                    selectedBuilding.BuildingNumber = masterDataView.BuildingRoadNumber;
+                    selectedBuilding.City = masterDataView.BuildingCity;
+                    selectedBuilding.FullName = masterDataView.BuildingFullName;
+                    selectedBuilding.Name = masterDataView.BuildingName;
+                    selectedBuilding.RoadName = masterDataView.BuildingRoadName;
+                    selectedBuilding.ZipCode = masterDataView.BuildingZipCode;
+
+                    #endregion
+
+                    #region Charges
+
+                    while (selectedBuilding.CostCollection.Count > 0)
+                    {
+                        db.Entry(selectedBuilding.CostCollection[0]).State = EntityState.Deleted;
+                    }
+
+                    List<BuildingChargeBasis> costs = new List<BuildingChargeBasis>();
+                    foreach (var c in chargesView.CostCollection)
+                    {
+                        var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
+                        var cost = new BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId, BuildingChargeGroupNameId = c.CostGroup.BuildingChargeGroupNameId };
+                        costs.Add(cost);
+                    }
+                    selectedBuilding.CostCollection = costs;
+
+                    var buildingBankAddresses = db.BuildingChargeGroupBankAccounts.Where(x => x.Building.BuildingId == selectedBuilding.BuildingId).ToList();
+
+                    //Add new
+                    foreach (var bba in chargesView.GroupBankAccounts)
+                    {
+                        if (!buildingBankAddresses.Any(x => x.BuildingChargeGroupBankAccountId == bba.BuildingChargeGroupBankAccountId))
+                        {
+                            bba.Building = selectedBuilding;
+                            db.BuildingChargeGroupBankAccounts.Add(bba);
+                            db.Entry(bba.GroupName).State = EntityState.Unchanged;
+                            db.Entry(bba.Building).State = EntityState.Unchanged;
+                        }
+                    }
+                    //Remove necessary
+                    for (int i = buildingBankAddresses.Count - 1; i >= 0; i--)
+                    {
+                        if (!chargesView.GroupBankAccounts.Any(x => x.BuildingChargeGroupBankAccountId.Equals(buildingBankAddresses[i].BuildingChargeGroupBankAccountId)))
+                        {
+                            buildingBankAddresses[i].IsDeleted = true;
+                        }
+                        else
+                        {
+                            // Change names
+                            buildingBankAddresses[i].BankAccount = chargesView.GroupBankAccounts.FirstOrDefault(x => x.BuildingChargeGroupBankAccountId == buildingBankAddresses[i].BuildingChargeGroupBankAccountId).BankAccount;
+                            buildingBankAddresses[i].GroupName = chargesView.GroupBankAccounts.FirstOrDefault(x => x.BuildingChargeGroupBankAccountId == buildingBankAddresses[i].BuildingChargeGroupBankAccountId).GroupName;
+
+                            //db.Entry(buildingBankAddresses[i].Building).State = EntityState.Unchanged;
+                            db.Entry(buildingBankAddresses[i].GroupName).State = EntityState.Unchanged;
+                        }
+                    }
+
+                    #endregion
+
+                    db.SaveChanges();
+                }
+            }
+            // New building
+            else
+            {
+
+            }
+
+            SwitchPage.SwitchMainPage(new Pages.BuildingsPage(), this);
         }
 
         public bool CanAccept()

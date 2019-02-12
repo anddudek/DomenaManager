@@ -209,7 +209,7 @@ namespace DomenaManager.Wizards
 
         public CountersData(Building b)
         {
-            MetersCollection = new ObservableCollection<MeterType>(b.MeterCollection);           
+            MetersCollection = b != null ? new ObservableCollection<MeterType>(b.MeterCollection) : new ObservableCollection<MeterType>();           
         }
     }
 }

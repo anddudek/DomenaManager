@@ -132,7 +132,7 @@ namespace DomenaManager.Wizards
             _invoiceData = new InvoiceData();
         }
 
-        private void InitializeInvoicesPart()
+        public void InitializeInvoicesPart()
         {
             var values = (CostDistribution[])Enum.GetValues(typeof(CostDistribution));
             DistributionTypes = new ObservableCollection<CostDistributionCollectionItem>();

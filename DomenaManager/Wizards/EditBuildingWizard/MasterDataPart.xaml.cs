@@ -144,12 +144,15 @@ namespace DomenaManager.Wizards
 
         public BuildingMasterData(Building b)
         {
-            BuildingName = b.Name;
-            BuildingFullName = b.FullName;
-            BuildingCity = b.City;
-            BuildingZipCode = b.ZipCode;
-            BuildingRoadName = b.RoadName;
-            BuildingRoadNumber = b.BuildingNumber;
+            if (b != null)
+            {
+                BuildingName = b.Name;
+                BuildingFullName = b.FullName;
+                BuildingCity = b.City;
+                BuildingZipCode = b.ZipCode;
+                BuildingRoadName = b.RoadName;
+                BuildingRoadNumber = b.BuildingNumber;
+            }
         }
     }
 }

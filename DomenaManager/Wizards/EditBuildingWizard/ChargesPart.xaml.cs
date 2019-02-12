@@ -65,10 +65,10 @@ namespace DomenaManager.Wizards
                     if (value != null)
                     {
                         SelectedCategoryName = CategoriesNames.Where(x => x.CategoryName == value.CategoryName).FirstOrDefault();
-                        SelectedUnitName = UnitsNames.Where(x => x == value.CostUnit).FirstOrDefault();
+                        SelectedUnitName = UnitsNames.Where(x => x.EnumValue == value.CostUnit.EnumValue).FirstOrDefault();
                         UnitCost = value.Cost.ToString();
                         CostBeggining = value.BegginingDate.Date;
-                        SelectedGroupName = GroupNames.Where(x => x == value.CostGroup).FirstOrDefault();
+                        SelectedGroupName = GroupNames.Where(x => x.BuildingChargeGroupNameId == value.CostGroup.BuildingChargeGroupNameId).FirstOrDefault();
                     }
                     OnPropertyChanged("SelectedCost");
                 }
@@ -631,7 +631,7 @@ namespace DomenaManager.Wizards
             ObservableCollection<BuildingChargeGroupName> GroupNames;
             using (var db = new DB.DomenaDBContext())
             {
-                GroupBankAccounts = new ObservableCollection<BuildingChargeGroupBankAccount>(db.BuildingChargeGroupBankAccounts.Where(x => !x.IsDeleted && x.Building.BuildingId == b.BuildingId).ToList());
+                GroupBankAccounts = b != null ? new ObservableCollection<BuildingChargeGroupBankAccount>(db.BuildingChargeGroupBankAccounts.Where(x => !x.IsDeleted && x.Building.BuildingId == b.BuildingId).ToList()) : new ObservableCollection<BuildingChargeGroupBankAccount>();
                 CategoriesNames = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
                 GroupNames = new ObservableCollection<BuildingChargeGroupName>(db.GroupName.Where(x => !x.IsDeleted).ToList());
             }
@@ -645,10 +645,13 @@ namespace DomenaManager.Wizards
             }
 
             CostCollection = new ObservableCollection<CostListView>();
-            foreach (var c in b.CostCollection)
+            if (b != null)
             {
-                var clv = new Helpers.CostListView { BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, Cost = c.CostPerUnit, CostUnit = UnitsNames.Where(x => x.EnumValue == c.BuildingChargeBasisDistribution).FirstOrDefault(), CategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(c.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName, CostGroup = GroupNames.Where(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId).FirstOrDefault() };
-                CostCollection.Add(clv);
+                foreach (var c in b.CostCollection)
+                {
+                    var clv = new Helpers.CostListView { BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, Cost = c.CostPerUnit, CostUnit = UnitsNames.Where(x => x.EnumValue == c.BuildingChargeBasisDistribution).FirstOrDefault(), CategoryName = CategoriesNames.Where(x => x.BuildingChargeBasisCategoryId.Equals(c.BuildingChargeBasisCategoryId)).FirstOrDefault().CategoryName, CostGroup = GroupNames.Where(x => x.BuildingChargeGroupNameId == c.BuildingChargeGroupNameId).FirstOrDefault() };
+                    CostCollection.Add(clv);
+                }
             }
         }
     }
