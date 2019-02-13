@@ -129,7 +129,7 @@ namespace DomenaManager.Wizards
             InitializeComponent();
             DataContext = this;
             InitializeInvoicesPart();
-            _invoiceData = new InvoiceData();
+            _invoiceData = new InvoiceData(SelectedBuilding);
         }
 
         public void InitializeInvoicesPart()
@@ -151,7 +151,7 @@ namespace DomenaManager.Wizards
         {
             BuildingInvoiceBindings.Add(new BuildingInvoiceBinding()
             {
-                BindingId = new Guid(),
+                BindingId = Guid.NewGuid(),
                 Building = null,
                 Distribution = (CostDistribution)SelectedDistributionType.EnumValue,
                 InvoiceCategory = SelectedInvoiceCategory,
@@ -199,9 +199,12 @@ namespace DomenaManager.Wizards
     {
         public ObservableCollection<BuildingInvoiceBinding> BuildingInvoiceBinding { get; set; }
 
-        public InvoiceData()
+        public InvoiceData(Building b)
         {
-            BuildingInvoiceBinding = new ObservableCollection<BuildingInvoiceBinding>();
+            using (var db = new DB.DomenaDBContext())
+            {
+                BuildingInvoiceBinding = new ObservableCollection<BuildingInvoiceBinding>(db.BuildingInvoceBindings.Include(x => x.InvoiceCategory).Where(x => !x.IsDeleted && x.Building.BuildingId == b.BuildingId).ToList());
+            }
         }
     }
 }
