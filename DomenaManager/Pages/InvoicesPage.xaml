@@ -61,7 +61,7 @@
             </StackPanel>
         </Grid>
         <MyControls:MultipleDataGrid
-                SelectedItem="{Binding SelectedInvoice}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                SelectedItem="{Binding SelectedInvoice}" Grid.Row="2" AutoGenerateColumns="False" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 ItemsSource="{Binding Invoices}" Foreground="Black" Padding="5" Margin="5" SelectedItemsList="{Binding SelectedInvoicesList}"
                 CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="All" >
             <i:Interaction.Triggers>
@@ -75,7 +75,7 @@
                 <!--<DataGridTextColumn Header="Pow. dodatkowa" Binding="{Binding Apartment.AdditionalArea}" Width="auto" FontSize="14"/>-->
                 <DataGridTextColumn Header="Data księgowania" Binding="{Binding InvoiceDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
                 <DataGridTextColumn Header="Data wystawienia" Binding="{Binding InvoiceCreatedDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
-                <DataGridTextColumn Header="Kwota" Binding="{Binding CostAmount, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
+                <DataGridTextColumn Header="Kwota" Binding="{Binding CostAmountGross, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Kategoria" Binding="{Binding Category.CategoryName}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Tytułem" Binding="{Binding Title}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Numer faktury" Binding="{Binding InvoiceNumber}" Width="auto" FontSize="14" />

@@ -356,7 +356,166 @@ namespace DomenaManager.Wizards
             // New building
             else
             {
+                using (var db = new DB.DomenaDBContext())
+                {
+                    var selectedBuilding = new Building()
+                    {
+                        BuildingId = Guid.NewGuid(),                       
+                    };
 
+                    #region MasterData
+
+                    selectedBuilding.BuildingNumber = masterDataView.BuildingRoadNumber;
+                    selectedBuilding.City = masterDataView.BuildingCity;
+                    selectedBuilding.FullName = masterDataView.BuildingFullName;
+                    selectedBuilding.Name = masterDataView.BuildingName;
+                    selectedBuilding.RoadName = masterDataView.BuildingRoadName;
+                    selectedBuilding.ZipCode = masterDataView.BuildingZipCode;
+
+                    #endregion
+
+                    db.Buildings.Add(selectedBuilding);
+                    db.SaveChanges();
+
+                    selectedBuilding = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).FirstOrDefault(x => x.BuildingId == selectedBuilding.BuildingId);
+
+                    #region Charges
+
+                    while (selectedBuilding.CostCollection.Count > 0)
+                    {
+                        db.Entry(selectedBuilding.CostCollection[0]).State = EntityState.Deleted;
+                    }
+
+                    List<BuildingChargeBasis> costs = new List<BuildingChargeBasis>();
+                    foreach (var c in chargesView.CostCollection)
+                    {
+                        var catId = db.CostCategories.Where(x => x.CategoryName.Equals(c.CategoryName)).FirstOrDefault().BuildingChargeBasisCategoryId;
+                        var cost = new BuildingChargeBasis { BuildingChargeBasisId = Guid.NewGuid(), BegginingDate = c.BegginingDate.Date, EndingDate = c.EndingDate.Date, CostPerUnit = c.Cost, BuildingChargeBasisDistribution = c.CostUnit.EnumValue, BuildingChargeBasisCategoryId = catId, BuildingChargeGroupNameId = c.CostGroup.BuildingChargeGroupNameId };
+                        costs.Add(cost);
+                    }
+                    selectedBuilding.CostCollection = costs;
+
+                    var buildingBankAddresses = db.BuildingChargeGroupBankAccounts.Where(x => x.Building.BuildingId == selectedBuilding.BuildingId).ToList();
+
+                    //Add new
+                    foreach (var bba in chargesView.GroupBankAccounts)
+                    {
+                        if (!buildingBankAddresses.Any(x => x.BuildingChargeGroupBankAccountId == bba.BuildingChargeGroupBankAccountId))
+                        {
+                            bba.Building = selectedBuilding;
+                            db.BuildingChargeGroupBankAccounts.Add(bba);
+                            db.Entry(bba.GroupName).State = EntityState.Unchanged;
+                            db.Entry(bba.Building).State = EntityState.Unchanged;
+                        }
+                    }
+                    //Remove necessary
+                    for (int i = buildingBankAddresses.Count - 1; i >= 0; i--)
+                    {
+                        if (!chargesView.GroupBankAccounts.Any(x => x.BuildingChargeGroupBankAccountId.Equals(buildingBankAddresses[i].BuildingChargeGroupBankAccountId)))
+                        {
+                            buildingBankAddresses[i].IsDeleted = true;
+                        }
+                        else
+                        {
+                            // Change names
+                            buildingBankAddresses[i].BankAccount = chargesView.GroupBankAccounts.FirstOrDefault(x => x.BuildingChargeGroupBankAccountId == buildingBankAddresses[i].BuildingChargeGroupBankAccountId).BankAccount;
+                            buildingBankAddresses[i].GroupName = chargesView.GroupBankAccounts.FirstOrDefault(x => x.BuildingChargeGroupBankAccountId == buildingBankAddresses[i].BuildingChargeGroupBankAccountId).GroupName;
+
+                            //db.Entry(buildingBankAddresses[i].Building).State = EntityState.Unchanged;
+                            db.Entry(buildingBankAddresses[i].GroupName).State = EntityState.Unchanged;
+                        }
+                    }
+
+                    #endregion
+
+                    #region Meters
+
+                    //Add new
+                    foreach (var m in countersView.MetersCollection)
+                    {
+                        if (!selectedBuilding.MeterCollection.Any(x => x.MeterId.Equals(m.MeterId)))
+                        {
+                            selectedBuilding.MeterCollection.Add(m);
+                        }
+                    }
+                    //Remove necessary
+                    for (int i = selectedBuilding.MeterCollection.Count - 1; i >= 0; i--)
+                    {
+                        if (!countersView.MetersCollection.Any(x => x.MeterId.Equals(selectedBuilding.MeterCollection[i].MeterId)))
+                        {
+                            selectedBuilding.MeterCollection.RemoveAt(i);
+                        }
+                        else
+                        {
+                            // Change names
+                            selectedBuilding.MeterCollection[i].Name = countersView.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(selectedBuilding.MeterCollection[i].MeterId)).Name;
+                            if (selectedBuilding.MeterCollection[i].LastMeasure != countersView.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(selectedBuilding.MeterCollection[i].MeterId)).LastMeasure)
+                            {
+                                var nm = new MetersHistory
+                                {
+                                    MeterHistoryId = Guid.NewGuid(),
+                                    Apartment = null,
+                                    ApartmentMeter = null,
+                                    Building = selectedBuilding,
+                                    MeterType = selectedBuilding.MeterCollection[i],
+                                    ModifiedDate = DateTime.Now,
+                                    NewValue = selectedBuilding.MeterCollection[i].LastMeasure,
+                                    OldValue = countersView.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(selectedBuilding.MeterCollection[i].MeterId)).LastMeasure,
+                                };
+                                db.MetersHistories.Add(nm);
+                                db.Entry(nm.Building).State = EntityState.Unchanged;
+
+                                selectedBuilding.MeterCollection[i].LastMeasure = countersView.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(selectedBuilding.MeterCollection[i].MeterId)).LastMeasure;
+                            }
+                            selectedBuilding.MeterCollection[i].IsBuilding = countersView.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(selectedBuilding.MeterCollection[i].MeterId)).IsBuilding;
+                            selectedBuilding.MeterCollection[i].IsApartment = countersView.MetersCollection.FirstOrDefault(x => x.MeterId.Equals(selectedBuilding.MeterCollection[i].MeterId)).IsApartment;
+                        }
+                    }
+
+                    #endregion
+
+                    #region Invoices
+
+                    foreach (var inv in invoicesView.BuildingInvoiceBindings)
+                    {
+                        var binding = db.BuildingInvoceBindings.FirstOrDefault(x => x.BindingId == inv.BindingId);
+                        if (binding == null) // add new
+                        {
+                            db.BuildingInvoceBindings.Add(
+                                new BuildingInvoiceBinding()
+                                {
+                                    BindingId = inv.BindingId,
+                                    Building = selectedBuilding,
+                                    Distribution = inv.Distribution,
+                                    InvoiceCategory = inv.InvoiceCategory,
+                                    IsDeleted = inv.IsDeleted,
+                                });
+                            db.Entry(inv.InvoiceCategory).State = EntityState.Unchanged;
+                            //db.Entry(selectedBuilding).State = EntityState.Unchanged;
+                        }
+                        else // edit existing
+                        {
+                            binding.Distribution = inv.Distribution;
+                            binding.InvoiceCategory = inv.InvoiceCategory;
+                            binding.IsDeleted = inv.IsDeleted;
+                            db.Entry(inv.InvoiceCategory).State = EntityState.Unchanged;
+                        }
+                    }
+
+                    // Mark IsDeleted deleted entries
+                    var bindings = db.BuildingInvoceBindings.Where(x => !x.IsDeleted && x.Building.BuildingId == selectedBuilding.BuildingId);
+                    foreach (var b in bindings)
+                    {
+                        if (!invoicesView.BuildingInvoiceBindings.Any(x => x.BindingId == b.BindingId))
+                        {
+                            b.IsDeleted = true;
+                        }
+                    }
+
+                    #endregion
+
+                    db.SaveChanges();
+                }
             }
 
             SwitchPage.SwitchMainPage(new Pages.BuildingsPage(), this);

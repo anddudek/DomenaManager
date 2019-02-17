@@ -131,7 +131,7 @@
                     <TextBox.Text>
                         <Binding Path="CostAmount" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
-                                <Helpers:StringToDoubleValidationRule/>
+                                <Helpers:StringToDoubleInvoiceValidationRule/>
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
@@ -163,7 +163,7 @@
                     <TextBox.Text>
                         <Binding Path="CostAmountGross" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
-                                <Helpers:StringToDoubleValidationRule/>
+                                <Helpers:StringToDoubleInvoiceValidationRule/>
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>

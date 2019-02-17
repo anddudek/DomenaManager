@@ -201,9 +201,16 @@ namespace DomenaManager.Wizards
 
         public InvoiceData(Building b)
         {
-            using (var db = new DB.DomenaDBContext())
+            if (b == null)
             {
-                BuildingInvoiceBinding = new ObservableCollection<BuildingInvoiceBinding>(db.BuildingInvoceBindings.Include(x => x.InvoiceCategory).Where(x => !x.IsDeleted && x.Building.BuildingId == b.BuildingId).ToList());
+                BuildingInvoiceBinding = new ObservableCollection<BuildingInvoiceBinding>();
+            }
+            else
+            {
+                using (var db = new DB.DomenaDBContext())
+                {
+                    BuildingInvoiceBinding = new ObservableCollection<BuildingInvoiceBinding>(db.BuildingInvoceBindings.Include(x => x.InvoiceCategory).Where(x => !x.IsDeleted && x.Building.BuildingId == b.BuildingId).ToList());
+                }
             }
         }
     }

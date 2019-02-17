@@ -154,6 +154,7 @@
     <Compile Include="Helpers\SettlementMethodsEnum.cs" />
     <Compile Include="Helpers\SwitchPage.cs" />
     <Compile Include="Helpers\ValidationRule\IBANValidationRule.cs" />
+    <Compile Include="Helpers\ValidationRule\StringToDoubleInvoiceValidationRule.cs" />
     <Compile Include="Helpers\ValidationRule\StringToDoubleValidationRule.cs" />
     <Compile Include="Helpers\ValidationRule\StringToIntValidationRule.cs" />
     <Compile Include="Helpers\ListView\OwnerDescriptionListView.cs" />
@@ -166,6 +167,9 @@
     <Compile Include="Helpers\Converter\SumConverter.cs" />
     <Compile Include="Helpers\ValidationRule\Validator.cs" />
     <Compile Include="Dialogs\YNMsg.cs" />
+    <Compile Include="Pages\AnalysisPage.xaml.cs">
+      <DependentUpon>AnalysisPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\LettersPage.xaml.cs">
       <DependentUpon>LettersPage.xaml</DependentUpon>
     </Compile>
@@ -260,6 +264,10 @@
     <Compile Include="Wizards\YNMsgBox.xaml.cs">
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="Pages\AnalysisPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\LettersPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -232,7 +232,7 @@ namespace DomenaManager.Pages
                                 a.Columns.Add(catCol);
                             }
 
-                            var sum = invoices.Where(x => x.InvoiceCategoryId == g && x.InvoiceDate.Month == i).Select(x => x.CostAmount).DefaultIfEmpty(0).Sum();
+                            var sum = invoices.Where(x => x.InvoiceCategoryId == g && x.InvoiceDate.Month == i).Select(x => x.CostAmountGross).DefaultIfEmpty(0).Sum();
                             invoicesSum += sum;
                             sdg.rows[i].invoices[iterator] = sum.ToString() + " zł";                             
                             iterator++;
@@ -276,7 +276,7 @@ namespace DomenaManager.Pages
                 {
                     sdg.rows[sdg.rows.Length - 1].invoices[k] = "-";
                 }
-                sdg.rows[sdg.rows.Length - 1].invoicesSum = (invoices.Select(x => x.CostAmount).DefaultIfEmpty(0).Sum()).ToString() + " zł";
+                sdg.rows[sdg.rows.Length - 1].invoicesSum = (invoices.Select(x => x.CostAmountGross).DefaultIfEmpty(0).Sum()).ToString() + " zł";
                 sdg.rows[sdg.rows.Length - 1].payments = (payments.Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum()).ToString() + " zł";
                 sdg.rows[sdg.rows.Length - 1].saldo = (Payments.CalculateBuildingSaldo(year, building)).ToString() + " zł";
             }

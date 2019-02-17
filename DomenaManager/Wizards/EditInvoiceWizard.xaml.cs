@@ -317,7 +317,7 @@ namespace DomenaManager.Wizards
                 SelectedContractorsName = ContractorsNames.Where(x => x.Name.Equals(_lic.ContractorName)).FirstOrDefault();
                 IsSettled = _lic.IsSettled ? SettlementOptions.Where(x => x == "Tak").FirstOrDefault() : SettlementOptions.Where(x => x == "Nie").FirstOrDefault();
                 Title = _lic.Title;
-                CostAmountGross = _lic.CostAmountGross;
+                CostAmountGross = _lic.CostAmountGross.ToString();
                 SelectedVat = VatCollection.FirstOrDefault(x => x.Rate == _lic.Vat);
                 return;
             }
@@ -383,7 +383,23 @@ namespace DomenaManager.Wizards
                     return;
                 }
                 //Add new invoice
-                var newInvoice = new LibDataModel.Invoice { BuildingId = SelectedBuildingName.BuildingId, ContractorName = SelectedContractorsValue, CostAmount = double.Parse(CostAmount), CreatedTime = DateTime.Now, InvoiceCategoryId = SelectedCategoryName.CategoryId, InvoiceDate = InvoiceDate.Date, InvoiceId = Guid.NewGuid(), InvoiceNumber = InvoiceNumber, IsDeleted = false, IsSettled = IsSettled == "Tak" ? true : false, InvoiceCreatedDate = InvoiceCreatedDate };
+                var newInvoice = new LibDataModel.Invoice
+                {
+                    BuildingId = SelectedBuildingName.BuildingId,
+                    ContractorName = SelectedContractorsValue,
+                    CostAmount = double.Parse(CostAmount),
+                    CreatedTime = DateTime.Now,
+                    InvoiceCategoryId = SelectedCategoryName.CategoryId,
+                    InvoiceDate = InvoiceDate.Date,
+                    InvoiceId = Guid.NewGuid(),
+                    InvoiceNumber = InvoiceNumber,
+                    IsDeleted = false,
+                    IsSettled = IsSettled == "Tak" ? true : false,
+                    InvoiceCreatedDate = InvoiceCreatedDate,
+                    Vat = SelectedVat.Rate,
+                    Title = Title,
+                    CostAmountGross = double.Parse(CostAmountGross),
+                };
                 using (var db = new DB.DomenaDBContext())
                 {
                     db.Invoices.Add(newInvoice);
@@ -416,7 +432,7 @@ namespace DomenaManager.Wizards
                     q.InvoiceNumber = InvoiceNumber;
                     q.IsSettled = IsSettled == "Tak" ? true : false;
                     q.Title = Title;
-                    q.CostAmountGross = CostAmountGross;
+                    q.CostAmountGross = double.Parse(CostAmountGross);
                     q.Vat = SelectedVat.Rate;
 
                     if (!db.InvoiceContractors.Any(x => x.Name.Equals(SelectedContractorsValue)))

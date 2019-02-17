@@ -107,8 +107,8 @@ namespace LibDataModel
             }
         }
         
-        private string _costAmountGross;
-        public string CostAmountGross
+        private double _costAmountGross;
+        public double CostAmountGross
         {
             get { return _costAmountGross; }
             set

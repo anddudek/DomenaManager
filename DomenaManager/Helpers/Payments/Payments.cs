@@ -36,7 +36,7 @@ namespace DomenaManager.Helpers
 
                 foreach (var inv in invoices)
                 {
-                    paym -= inv.CostAmount;
+                    paym -= inv.CostAmountGross;
                 }
 
                 return paym;
