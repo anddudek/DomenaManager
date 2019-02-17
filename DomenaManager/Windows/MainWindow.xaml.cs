@@ -122,6 +122,7 @@ namespace DomenaManager.Windows
 
             SwitchPage("Buildings");
 
+            InitializeRepairFund();
 
             var LastBackupDate = Properties.Settings.Default.LastDBBackupCreation;
             if (LastBackupDate.AddDays(Properties.Settings.Default.DBCreationDaySpan) < DateTime.Today)
@@ -130,6 +131,32 @@ namespace DomenaManager.Windows
             }
 
             CanPerformCharge();
+        }
+
+        private void InitializeRepairFund()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                if (db.GroupName.FirstOrDefault(x => x.BuildingChargeGroupNameId == LibDataModel.BuildingChargeGroupName.RepairFundGroupId) == null)
+                {
+                    db.GroupName.Add(new LibDataModel.BuildingChargeGroupName()
+                    {
+                        BuildingChargeGroupNameId = LibDataModel.BuildingChargeGroupName.RepairFundGroupId,
+                        GroupName = "Fundusz Remontowy",
+                        IsDeleted = false,
+                    });
+                }
+                if (db.InvoiceCategories.FirstOrDefault(x => x.CategoryId == LibDataModel.InvoiceCategory.RepairFundInvoiceCategoryId) == null)
+                {
+                    db.InvoiceCategories.Add(new LibDataModel.InvoiceCategory()
+                    {
+                        CategoryId = LibDataModel.InvoiceCategory.RepairFundInvoiceCategoryId,
+                        CategoryName = "Remonty",
+                        IsDeleted = false,
+                    });
+                }
+                db.SaveChanges();
+            }
         }
 
         public void SwitchPage(object PageName)
@@ -180,6 +207,10 @@ namespace DomenaManager.Windows
                     return;
                 case "BuildingSummary":
                     CurrentPage = new Pages.BuildingSummaryPage();
+                    OnPropertyChanged("CurrentPage");
+                    return;
+                case "Analysis":
+                    CurrentPage = new Pages.AnalysisPage();
                     OnPropertyChanged("CurrentPage");
                     return;
             }

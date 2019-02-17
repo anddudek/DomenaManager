@@ -37,5 +37,13 @@ namespace LibDataModel
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public static Guid RepairFundGroupId
+        {
+            get
+            {
+                return new Guid("00000000-0000-0000-0000-100000000000");
+            }
+        }       
     }
 }

@@ -127,6 +127,7 @@
     <Compile Include="Helpers\Converter\EnumToBooleanConverter.cs" />
     <Compile Include="Helpers\Converter\GuidToInvoiceCategoryNameMultiConverter.cs" />
     <Compile Include="Helpers\Converter\InverseBooleanConverter.cs" />
+    <Compile Include="Helpers\DataGrid\AnalysisDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ApartamentMeterDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentBinding.cs" />
     <Compile Include="Helpers\DataGrid\BindingDataGrid.cs" />
@@ -167,9 +168,6 @@
     <Compile Include="Helpers\Converter\SumConverter.cs" />
     <Compile Include="Helpers\ValidationRule\Validator.cs" />
     <Compile Include="Dialogs\YNMsg.cs" />
-    <Compile Include="Pages\AnalysisPage.xaml.cs">
-      <DependentUpon>AnalysisPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\LettersPage.xaml.cs">
       <DependentUpon>LettersPage.xaml</DependentUpon>
     </Compile>
@@ -184,6 +182,9 @@
     </Compile>
     <Compile Include="Pages\BuildingSummaryPage.xaml.cs">
       <DependentUpon>BuildingSummaryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\AnalysisPage.xaml.cs">
+      <DependentUpon>AnalysisPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SummaryPage.xaml.cs">
       <DependentUpon>SummaryPage.xaml</DependentUpon>
@@ -264,10 +265,6 @@
     <Compile Include="Wizards\YNMsgBox.xaml.cs">
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
     </Compile>
-    <Page Include="Pages\AnalysisPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Pages\LettersPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -285,6 +282,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\BuildingSummaryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\AnalysisPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
