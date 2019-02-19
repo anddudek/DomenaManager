@@ -20,6 +20,8 @@ using MaterialDesignThemes.Wpf;
 using Serilog;
 using System.Data.Entity;
 using System.Reflection;
+using System.Globalization;
+using System.Threading;
 
 namespace DomenaManager.Windows
 {
@@ -123,6 +125,7 @@ namespace DomenaManager.Windows
             SwitchPage("Buildings");
 
             InitializeRepairFund();
+            ChangeCulture();
 
             var LastBackupDate = Properties.Settings.Default.LastDBBackupCreation;
             if (LastBackupDate.AddDays(Properties.Settings.Default.DBCreationDaySpan) < DateTime.Today)
@@ -146,6 +149,15 @@ namespace DomenaManager.Windows
                         IsDeleted = false,
                     });
                 }
+                if (db.GroupName.FirstOrDefault(x => x.BuildingChargeGroupNameId == LibDataModel.BuildingChargeGroupName.ExploitationGroupId) == null)
+                {
+                    db.GroupName.Add(new LibDataModel.BuildingChargeGroupName()
+                    {
+                        BuildingChargeGroupNameId = LibDataModel.BuildingChargeGroupName.ExploitationGroupId,
+                        GroupName = "Eksploatacja",
+                        IsDeleted = false,
+                    });
+                }
                 if (db.InvoiceCategories.FirstOrDefault(x => x.CategoryId == LibDataModel.InvoiceCategory.RepairFundInvoiceCategoryId) == null)
                 {
                     db.InvoiceCategories.Add(new LibDataModel.InvoiceCategory()
@@ -157,6 +169,18 @@ namespace DomenaManager.Windows
                 }
                 db.SaveChanges();
             }
+        }
+
+        private void ChangeCulture()
+        {
+            CultureInfo culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+
+            //culture.DateTimeFormat.DateSeparator = "/";
+            //culture.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
+
+            //culture.NumberFormat.NumberDecimalSeparator = ",";
+            //Thread.CurrentThread.CurrentCulture = culture;
+            //Thread.CurrentThread.CurrentUICulture = culture;
         }
 
         public void SwitchPage(object PageName)

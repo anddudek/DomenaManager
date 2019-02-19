@@ -156,7 +156,7 @@ namespace DomenaManager.Wizards
 
         private bool CanAddNewMeter()
         {
-            return !String.IsNullOrWhiteSpace(MeterName);
+            return (!String.IsNullOrWhiteSpace(MeterName) && (IsApartment || IsBuilding));
         }
 
         private void ModifyMeter(object param)

@@ -352,7 +352,8 @@ namespace DomenaManager.Pages
                     {
                         Id = i.ToString(),
                         Group = inv.CategoryName,
-                        TotalCost = Math.Floor(db.Invoices.Where(x => x.InvoiceDate.Year == year && !x.IsDeleted && x.BuildingId == apartment.BuildingId && x.InvoiceCategoryId == inv.CategoryId).Select(x => x.CostAmountGross).DefaultIfEmpty(0).Sum() * 100) / 100,
+                        TotalCost = Math.Floor(db.Invoices.Where(x => x.InvoiceDate.Year == year && !x.IsDeleted && x.BuildingId == apartment.BuildingId && x.InvoiceCategoryId == inv.CategoryId && x.IsSettled).Select(x => x.CostAmountGross).DefaultIfEmpty(0).Sum() * 100) / 100,
+                        IsRepairFund = inv.CategoryId == InvoiceCategory.RepairFundInvoiceCategoryId,
                     };
                     double scale;
                     switch (settleableGroups.FirstOrDefault(x => x.InvoiceCategory.CategoryId == inv.CategoryId).Distribution)
@@ -360,23 +361,23 @@ namespace DomenaManager.Pages
                         default:
                             break;
                         case CostDistribution.PerAdditionalArea:
-                            scale = (apartment.AdditionalArea / addArea);
+                            scale = Math.Floor(10000 * (apartment.AdditionalArea / addArea)) / 10000;
                             cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
                             break;
                         case CostDistribution.PerApartment:
-                            scale = (1 / apartmentsCount);
+                            scale = Math.Floor(10000 * (1 / (double)apartmentsCount)) / 10000;
                             cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
                             break;
                         case CostDistribution.PerApartmentArea:
-                            scale = (apartment.ApartmentArea / apArea);
+                            scale = Math.Floor(10000 * (apartment.ApartmentArea / apArea)) / 10000;
                             cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
                             break;
                         case CostDistribution.PerApartmentTotalArea:
-                            scale = ((apartment.ApartmentArea + apartment.AdditionalArea) / buildingTotalArea);
+                            scale = Math.Floor(10000 * ((apartment.ApartmentArea + apartment.AdditionalArea) / buildingTotalArea)) / 10000;
                             cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
                             break;
                         case CostDistribution.PerLocators:
-                            scale = (apartment.Locators / totalLocators);
+                            scale = Math.Floor(10000 * ((double)apartment.Locators / (double)totalLocators)) / 10000;
                             cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
                             break;
                     }
@@ -387,8 +388,9 @@ namespace DomenaManager.Pages
                 {
                     Id = i.ToString(),
                     Group = "Razem: ",
-                    TotalCost = CostsCollection.Sum(x => x.TotalCost),
-                    ApartmentCost = CostsCollection.Sum(x => x.ApartmentCost),
+                    TotalCost = CostsCollection.Where(x => !x.IsRepairFund).Sum(x => x.TotalCost),
+                    ApartmentCost = CostsCollection.Where(x => !x.IsRepairFund).Sum(x => x.ApartmentCost),
+                    IsRepairFund = false,
                 });
             }
         }

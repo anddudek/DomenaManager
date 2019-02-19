@@ -12,5 +12,6 @@ namespace DomenaManager.Helpers
         public string Group { get; set; }
         public double TotalCost { get; set; }
         public double ApartmentCost { get; set; }
+        public bool IsRepairFund { get; set; }
     }
 }

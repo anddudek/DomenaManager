@@ -119,6 +119,15 @@
                                 <DataGridTextColumn Header="Koszty całej wspólnoty" Binding="{Binding TotalCost, StringFormat={}{0} zł}" Width="auto"/>
                                 <DataGridTextColumn Header="Koszty na lokal (K)" Binding="{Binding ApartmentCost, StringFormat={}{0} zł}" Width="auto"/>
                             </DataGrid.Columns>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsRepairFund}" Value="True">
+                                            <Setter Property="Background" Value="LightGray" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
                         </DataGrid>
                     </StackPanel>                    
                 </ScrollViewer>

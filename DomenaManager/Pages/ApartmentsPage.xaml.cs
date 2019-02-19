@@ -452,26 +452,7 @@ namespace DomenaManager.Pages
             Wizards.EditApartmentWizard eaw;
             using (var db = new DB.DomenaDBContext())
             {
-                var sa = db.Apartments.Include(x => x.MeterCollection.Select(y => y.MeterTypeParent)).Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
-                var b = db.Buildings.Include(x => x.MeterCollection).FirstOrDefault(x => x.BuildingId.Equals(sa.BuildingId));
-                foreach (var m in b.MeterCollection)
-                {
-                    if (!sa.MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)))
-                    {
-                        sa.MeterCollection.Add(new ApartmentMeter() { MeterId = Guid.NewGuid(), MeterTypeParent = m, IsDeleted = false, LastMeasure = 0, LegalizationDate = DateTime.Today.AddDays(-1) });
-                    }
-                    else
-                    {
-                        sa.MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(m.MeterId)).IsDeleted = false;
-                    }
-                }
-                foreach (var m in sa.MeterCollection)
-                {
-                    if (!b.MeterCollection.Any(x => x.MeterId.Equals(m.MeterTypeParent.MeterId)))
-                    {
-                        m.IsDeleted = true;
-                    }
-                }
+                var sa = db.Apartments.Include(x => x.MeterCollection.Select(y => y.MeterTypeParent)).Include(x => x.MeterCollection).Where(x => x.ApartmentId.Equals(SelectedApartment.ApartmentId)).FirstOrDefault();
                 eaw = new Wizards.EditApartmentWizard(sa);
             }
 

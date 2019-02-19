@@ -53,7 +53,7 @@
                 </TextBox>
 
                 <CheckBox Grid.Column="1" IsChecked="{Binding IsBuilding}" Content="Budynek" VerticalAlignment="Center" Margin="0,0,200,0" Width="80"/>
-                <CheckBox Grid.Column="1" IsChecked="{Binding IsApartment}" Content="Mieszkanie" VerticalAlignment="Center" Margin="40,0,15,0" Width="80"/>
+                <CheckBox Grid.Column="1" IsChecked="{Binding IsApartment}" Content="Mieszkanie" VerticalAlignment="Center" Margin="30,0,10,0" Width="90"/>
 
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Dodaj" Grid.Row="0" Grid.Column="1" Command="{Binding AddMeter}" Margin="250,0,10,0" />
 

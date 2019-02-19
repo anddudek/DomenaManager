@@ -351,6 +351,51 @@ namespace DomenaManager.Wizards
                     #endregion
 
                     db.SaveChanges();
+
+                    // Add meters to building
+
+                    #region Meters
+
+                    selectedBuilding = db.Buildings.Include(x => x.CostCollection).Include(x => x.MeterCollection).FirstOrDefault(x => x.BuildingId == _localBuildingCopy.BuildingId);
+
+                    if (selectedBuilding.MeterCollection != null || selectedBuilding.MeterCollection.Count > 0)
+                    {
+                        foreach (var a in db.Apartments.Include(x => x.MeterCollection).Where(x => !x.IsDeleted && x.BuildingId == selectedBuilding.BuildingId))
+                        {
+                            if (a.MeterCollection == null || a.MeterCollection.Count == 0)
+                            {
+                                a.MeterCollection = new List<ApartmentMeter>();
+                                foreach (var m in selectedBuilding.MeterCollection.Where(x => !x.IsDeleted && x.IsApartment))
+                                {
+                                    a.MeterCollection.Add(new ApartmentMeter() { IsDeleted = m.IsDeleted, MeterTypeParent = m, MeterId = Guid.NewGuid(), LegalizationDate = DateTime.Today.AddDays(-1) });
+                                }
+                            }
+                            else if (a.MeterCollection != null && a.MeterCollection.Count > 0)
+                            {
+                                for (int i = selectedBuilding.MeterCollection.Count - 1; i >= 0; i--)
+                                {
+                                    if (!a.MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(selectedBuilding.MeterCollection[i].MeterId)) && selectedBuilding.MeterCollection[i].IsApartment)
+                                    {
+                                        a.MeterCollection.Add(new ApartmentMeter() { MeterId = Guid.NewGuid(), MeterTypeParent = selectedBuilding.MeterCollection[i], IsDeleted = false, LastMeasure = 0, LegalizationDate = DateTime.Today.AddDays(-1) });
+                                    }
+                                    else if (selectedBuilding.MeterCollection[i].IsApartment)
+                                    {
+                                        a.MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(selectedBuilding.MeterCollection[i].MeterId)).IsDeleted = false;
+                                    }
+                                }
+                                for (int i = a.MeterCollection.Count - 1; i >= 0; i--)
+                                {
+                                    if (!selectedBuilding.MeterCollection.Any(x => x.MeterId.Equals(a.MeterCollection[i].MeterTypeParent.MeterId)))
+                                    {
+                                        a.MeterCollection.RemoveAt(i);
+                                    }
+                                }
+                            }
+                        }
+                        db.SaveChanges();
+                    }
+
+                    #endregion
                 }
             }
             // New building

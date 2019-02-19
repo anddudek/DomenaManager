@@ -297,39 +297,7 @@ namespace DomenaManager.Wizards
 
         private void InitializeMeterCollection()
         {
-            if (_apartmentLocalCopy != null && SelectedBuildingName != null && _apartmentLocalCopy.BuildingId.Equals(SelectedBuildingName.BuildingId))
-            {
-                MeterCollection = new ObservableCollection<ApartmentMeter>();
-                foreach (var m in _apartmentLocalCopy.MeterCollection)
-                {
-                    MeterCollection.Add(new ApartmentMeter() { IsDeleted = m.IsDeleted, MeterTypeParent = m.MeterTypeParent, LastMeasure = m.LastMeasure, LegalizationDate = m.LegalizationDate, MeterId = m.MeterId });
-                }
-            }
-            else if (SelectedBuildingName != null)
-            {
-                for (int i = SelectedBuildingName.MeterCollection.Count - 1; i >= 0; i--)
-                {
-                    if (!MeterCollection.Any(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)) && SelectedBuildingName.MeterCollection[i].IsApartment)
-                    {
-                        MeterCollection.Add(new ApartmentMeter() { MeterId = Guid.NewGuid(), MeterTypeParent = SelectedBuildingName.MeterCollection[i], IsDeleted = false, LastMeasure = 0, LegalizationDate = DateTime.Today.AddDays(-1) });
-                    }
-                    else if (SelectedBuildingName.MeterCollection[i].IsApartment)
-                    {
-                        MeterCollection.FirstOrDefault(x => x.MeterTypeParent.MeterId.Equals(SelectedBuildingName.MeterCollection[i].MeterId)).IsDeleted = false;
-                    }
-                }
-                for (int i = MeterCollection.Count - 1; i >= 0; i--)
-                {
-                    if (!SelectedBuildingName.MeterCollection.Any(x => x.MeterId.Equals(MeterCollection[i].MeterTypeParent.MeterId)))
-                    {
-                        MeterCollection.RemoveAt(i);
-                    }
-                }
-            }
-            else
-            {
-                MeterCollection = new ObservableCollection<ApartmentMeter>();
-            }
+            MeterCollection = new ObservableCollection<ApartmentMeter>(_apartmentLocalCopy.MeterCollection);
         }
 
         private void InitializeBuildingList()

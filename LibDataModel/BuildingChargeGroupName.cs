@@ -44,6 +44,14 @@ namespace LibDataModel
             {
                 return new Guid("00000000-0000-0000-0000-100000000000");
             }
-        }       
+        }
+
+        public static Guid ExploitationGroupId
+        {
+            get
+            {
+                return new Guid("00000000-0000-0000-0000-200000000000");
+            }
+        }
     }
 }
