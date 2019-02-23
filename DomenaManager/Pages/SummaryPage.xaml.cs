@@ -263,7 +263,7 @@ namespace DomenaManager.Pages
 
                 var uniqueCategories = componentsList.GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
                 sdg.categories = db.CostCategories.Where(p => !p.IsDeleted && uniqueCategories.Any(g => g.Equals(p.BuildingChargeBasisCategoryId))).ToArray();
-                var rowArrayLength = sdg.categories.Length + distinctGroups.Count() * 2;
+                var rowArrayLength = sdg.categories.Length + distinctGroups.Count() * 2 + (allGroups.Any(x => x.BuildingChargeGroupNameId == BuildingChargeGroupName.RepairFundGroupId) ? 1 : 0);
                 var columnsCount = rowArrayLength + 2;
 
                 // Last year row
@@ -293,7 +293,7 @@ namespace DomenaManager.Pages
 
                     foreach (var g in distinctGroups)
                     {
-                        if (g != null)
+                        if (g != null && g.BuildingChargeGroupNameId != BuildingChargeGroupName.RepairFundGroupId)
                         {
                             // iterujemy po kazdej grupie a w srodku po kazdej kategorii + Wplty w grupie + suma
                             var categoriesInGroup = componentsList.Where(x => x.GroupName!=null && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
@@ -322,6 +322,69 @@ namespace DomenaManager.Pages
                             {
                                 var paymCol = new DataGridTextColumn();
                                 paymCol.Header = "Wpłaty";
+                                paymCol.Binding = new Binding("charges[" + iterator + "]");
+                                paymCol.CellStyle = cellCenteredStyle;
+                                a.Columns.Add(paymCol);
+                            }
+                            iterator++;
+
+                            //Suma
+                            sdg.rows[i].charges[iterator] = (groupSum).ToString() + " zł";//(groupPayments - groupSum).ToString() + " zł";
+                            currentMonthSum += (groupPayments - groupSum);
+                            var groupSumCol = new DataGridTextColumn();
+
+                            if (a.Columns.Count < columnsCount - 1)
+                            {
+                                groupSumCol.CellStyle = cellStyle;
+                                groupSumCol.Header = "Razem - " + g.GroupName;
+                                groupSumCol.Binding = new Binding("charges[" + iterator + "]");
+                                a.Columns.Add(groupSumCol);
+                            }
+                            iterator++;
+                        }
+                        else if (g.BuildingChargeGroupNameId == BuildingChargeGroupName.RepairFundGroupId)
+                        {// Fundusz remontowy
+                            // iterujemy po kazdej grupie a w srodku po kazdej kategorii + Wplty w grupie + suma
+                            var categoriesInGroup = componentsList.Where(x => x.GroupName != null && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
+                            double groupSum = 0;
+                            foreach (var cat in categoriesInGroup)
+                            {
+                                var currentComponets = thisMonthComponents.Where(x => x.CostCategoryId == cat && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId);
+                                groupSum += currentComponets.Sum(x => x.Sum);
+                                sdg.rows[i].charges[iterator] = currentComponets.Sum(x => x.Sum).ToString() + " zł";
+
+                                if (a.Columns.Count < columnsCount - 1)
+                                {
+                                    var catCol = new DataGridTextColumn();
+                                    catCol.Header = db.CostCategories.FirstOrDefault(x => x.BuildingChargeBasisCategoryId == cat).CategoryName;
+                                    catCol.Binding = new Binding("charges[" + iterator + "]");
+                                    catCol.CellStyle = cellCenteredStyle;
+                                    a.Columns.Add(catCol);
+                                }
+                                iterator++;
+                            }
+                            //Wplaty
+                            var groupPayments = payments.Where(x => x.PaymentRegistrationDate.Month == i && x.ChargeGroup.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
+                            sdg.rows[i].charges[iterator] = groupPayments.ToString() + " zł";
+
+                            if (a.Columns.Count < columnsCount - 1)
+                            {
+                                var paymCol = new DataGridTextColumn();
+                                paymCol.Header = "Wpłaty";
+                                paymCol.Binding = new Binding("charges[" + iterator + "]");
+                                paymCol.CellStyle = cellCenteredStyle;
+                                a.Columns.Add(paymCol);
+                            }
+                            iterator++;
+
+                            //Zgromadzone środki
+                            //var groupPayments = payments.Where(x => x.PaymentRegistrationDate.Month == i && x.ChargeGroup.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
+                            sdg.rows[i].charges[iterator] = "ZGR" + " zł";
+
+                            if (a.Columns.Count < columnsCount - 1)
+                            {
+                                var paymCol = new DataGridTextColumn();
+                                paymCol.Header = "Zgromadzone środki";
                                 paymCol.Binding = new Binding("charges[" + iterator + "]");
                                 paymCol.CellStyle = cellCenteredStyle;
                                 a.Columns.Add(paymCol);
