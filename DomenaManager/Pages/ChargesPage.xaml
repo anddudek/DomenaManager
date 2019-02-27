@@ -112,6 +112,8 @@
                 <DataGridTextColumn Header="Właściciel" Binding="{Binding Owner.OwnerName}" Width="auto" FontSize="14"/>
                 <DataGridTextColumn Header="Data naliczenia" Binding="{Binding ChargeDate, StringFormat=d, ConverterCulture=pl-PL}" Width="auto" FontSize="14"/>
                 <DataGridTextColumn Header="Kwota" Binding="{Binding Sum, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
+                <DataGridTextColumn Header="Suma - Ekploatacja" Binding="{Binding ExplorationSum, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
+                <DataGridTextColumn Header="Suma - Fundusz remontowy" Binding="{Binding RepairFundSum, StringFormat={}{0} zł}" Width="auto" FontSize="14" />
                 <DataGridTextColumn Header="Status" Binding="{hlp:SwitchBinding IsClosed, Zamknięte, Otwarte}" Width="auto" FontSize="14">                    
                 </DataGridTextColumn>
             </DataGrid.Columns>

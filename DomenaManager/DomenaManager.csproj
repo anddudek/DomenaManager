@@ -151,6 +151,7 @@
     <Compile Include="Helpers\CostDistributionCollectionItem.cs" />
     <Compile Include="Helpers\ListView\CostListView.cs" />
     <Compile Include="Helpers\Payments\Payments.cs" />
+    <Compile Include="Helpers\Payments\RepairFundOperations.cs" />
     <Compile Include="Helpers\PDF\PDFOperations.cs" />
     <Compile Include="Helpers\SettlementMethodsEnum.cs" />
     <Compile Include="Helpers\SwitchPage.cs" />

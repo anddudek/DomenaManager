@@ -12,6 +12,8 @@ namespace DomenaManager.Helpers
         public Building Building { get; set;}
         public Apartment Apartment { get; set; }
         public Owner Owner { get; set; }
+        public double ExplorationSum { get; set; }
+        public double RepairFundSum { get; set; }
         public double Sum { get; set; }
 
         public ChargeDataGrid(Charge _charge)
@@ -29,6 +31,8 @@ namespace DomenaManager.Helpers
                 if (_charge.Components != null)
                 {
                     this.Sum = _charge.Components.Select(x => x.Sum).Sum();
+                    this.ExplorationSum = _charge.Components.Where(x => x.GroupName.BuildingChargeGroupNameId == BuildingChargeGroupName.ExploitationGroupId).Select(x => x.Sum).DefaultIfEmpty(0).Sum();
+                    this.RepairFundSum = _charge.Components.Where(x => x.GroupName.BuildingChargeGroupNameId == BuildingChargeGroupName.RepairFundGroupId).Select(x => x.Sum).DefaultIfEmpty(0).Sum();
                 }
                 this.Apartment = db.Apartments.Where(x => x.ApartmentId.Equals(this.ApartmentId)).FirstOrDefault();
                 this.Building = db.Buildings.Where(x => x.BuildingId.Equals(this.Apartment.BuildingId)).FirstOrDefault();

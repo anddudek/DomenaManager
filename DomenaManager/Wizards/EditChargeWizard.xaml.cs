@@ -112,6 +112,32 @@ namespace DomenaManager.Wizards
                 }
             }
         }
+        
+        public string ComponentsSum
+        {
+            get
+            {
+                if (ChargeComponents != null && ChargeComponents.Count > 0)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    var groups = ChargeComponents.Select(x => x.GroupName).Distinct();
+                    foreach (var g in groups)
+                    {
+                        sb.Append("Razem: ");
+                        sb.Append(g.GroupName);
+                        sb.Append(": ");
+                        sb.Append(ChargeComponents.Where(x => x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).Select(x => x.Sum).DefaultIfEmpty(0).Sum());
+                        sb.Append(" zł");
+                        sb.Append(Environment.NewLine);
+                    }
+                    return sb.ToString();
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
 
         private string _ownerName;
         public string OwnerName
@@ -455,6 +481,7 @@ namespace DomenaManager.Wizards
                 }
             }
             else ChargeComponents = new ObservableCollection<ChargeComponent>();
+            OnPropertyChanged("ComponentsSum");
         }
 
         private void InitializeCategories()
@@ -513,6 +540,7 @@ namespace DomenaManager.Wizards
                 if (!double.TryParse(ChargeSum, out cs))
                     return;
                 SelectedChargeComponent.Sum = cs;
+                OnPropertyChanged("ComponentsSum");
             }
         }
 
@@ -531,8 +559,18 @@ namespace DomenaManager.Wizards
                 double cs;
                 if (!double.TryParse(ChargeSum, out cs))
                     return;
-                
-                ChargeComponents.Add(new ChargeComponent() { ChargeComponentId = Guid.NewGuid(), CostCategoryId = SelectedCategoryName.BuildingChargeBasisCategoryId, CostDistribution = SelectedUnitName.EnumValue, CostPerUnit = uc, Sum = cs });
+
+                var cc = new ChargeComponent()
+                {
+                    ChargeComponentId = Guid.NewGuid(),
+                    CostCategoryId = SelectedCategoryName.BuildingChargeBasisCategoryId,
+                    CostDistribution = SelectedUnitName.EnumValue,
+                    CostPerUnit = uc,
+                    Sum = cs,
+                    GroupName = SelectedGroupName
+                };
+                ChargeComponents.Add(cc);
+                OnPropertyChanged("ComponentsSum");
             }
         }
 
@@ -546,6 +584,7 @@ namespace DomenaManager.Wizards
             if (SelectedChargeComponent != null)
             {
                 ChargeComponents.Remove(SelectedChargeComponent);
+                OnPropertyChanged("ComponentsSum");
             }
         }
 
@@ -579,6 +618,7 @@ namespace DomenaManager.Wizards
                     foreach (var cc in ChargeComponents)
                     {
                         newCharge.Components.Add(cc);
+                        db.Entry(cc.GroupName).State = EntityState.Unchanged;
                     }
 
                     db.Charges.Add(newCharge);
@@ -612,6 +652,7 @@ namespace DomenaManager.Wizards
                         else
                         {
                             q.Components.Add(cc);
+                            db.Entry(cc.GroupName).State = EntityState.Unchanged;
                         }
                     }
 
@@ -662,7 +703,7 @@ namespace DomenaManager.Wizards
         {
             if (SelectedBuilding != null)
             {
-                ApartmentsNumbersCollection = new ObservableCollection<int>(ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuilding.BuildingId)).Select(x => x.ApartmentNumber).ToList());
+                ApartmentsNumbersCollection = new ObservableCollection<int>(ApartmentsCollection.Where(x => x.BuildingId.Equals(SelectedBuilding.BuildingId)).Select(x => x.ApartmentNumber).ToList().OrderBy(x => x));
                 SelectedApartmentNumberValue = null;
             }
             else

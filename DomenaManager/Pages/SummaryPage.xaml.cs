@@ -379,7 +379,7 @@ namespace DomenaManager.Pages
 
                             //Zgromadzone środki
                             //var groupPayments = payments.Where(x => x.PaymentRegistrationDate.Month == i && x.ChargeGroup.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
-                            sdg.rows[i].charges[iterator] = "ZGR" + " zł";
+                            sdg.rows[i].charges[iterator] = RepairFundOperations.CalculateAcumulateFund(apartment.ApartmentId, i, year) + " zł";
 
                             if (a.Columns.Count < columnsCount - 1)
                             {
