@@ -169,6 +169,9 @@
     <Compile Include="Helpers\Converter\SumConverter.cs" />
     <Compile Include="Helpers\ValidationRule\Validator.cs" />
     <Compile Include="Dialogs\YNMsg.cs" />
+    <Compile Include="Pages\MonthlyChargesPage.xaml.cs">
+      <DependentUpon>MonthlyChargesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\LettersPage.xaml.cs">
       <DependentUpon>LettersPage.xaml</DependentUpon>
     </Compile>
@@ -227,6 +230,9 @@
     <Compile Include="Wizards\EditBuildingWizard\MasterDataPart.xaml.cs">
       <DependentUpon>MasterDataPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Wizards\PreviewChargeWizard.xaml.cs">
+      <DependentUpon>PreviewChargeWizard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\EditLegacyBuildingWizard.xaml.cs">
       <DependentUpon>EditLegacyBuildingWizard.xaml</DependentUpon>
     </Compile>
@@ -266,6 +272,10 @@
     <Compile Include="Wizards\YNMsgBox.xaml.cs">
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="Pages\MonthlyChargesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\LettersPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -367,6 +377,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Wizards\EditBuildingWizard\MasterDataPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\PreviewChargeWizard.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -197,11 +197,11 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn x:Name="BuildingHeader" Header="Budynek" Binding="{Binding BuildingName}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn x:Name="AppNumberHeader" Header="Numer lokalu" Binding="{Binding ApartmentNumber}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn x:Name="AppAreaHeader" Header="Pow. mieszkalna" Binding="{Binding ApartmentArea}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn x:Name="AddAreaHeader" Header="Pow. przynależna" Binding="{Binding ApartmentAdditionalArea}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn x:Name="TotalAreaHeader" Header="Pow. całkowita" Binding="{Binding ApartmentTotalArea}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="AppAreaHeader" Header="Pow. mieszkalna" Binding="{Binding ApartmentArea, StringFormat={}{0} m2}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="AddAreaHeader" Header="Pow. przynależna" Binding="{Binding ApartmentAdditionalArea, StringFormat={}{0} m2}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="TotalAreaHeader" Header="Pow. całkowita" Binding="{Binding ApartmentTotalArea, StringFormat={}{0} m2}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn x:Name="PercentHeader" Header="Udział procentowy" Binding="{Binding ApartmentPercentageDistribution}" Width="auto" FontSize="14"/>
-                    <DataGridTextColumn x:Name="SaldoHeader" Header="Saldo" Binding="{Binding Balance}" Width="auto" FontSize="14"/>
+                    <DataGridTextColumn x:Name="SaldoHeader" Header="Saldo" Binding="{Binding Balance, StringFormat={}{0} zł}" Width="auto" FontSize="14"/>
                     <DataGridTextColumn x:Name="OwnerHeader" Header="Właściciel" Binding="{Binding ApartmentOwner}" Width="*" FontSize="14"/>
                 </DataGrid.Columns>
                 <DataGrid.GroupStyle>

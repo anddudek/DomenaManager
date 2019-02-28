@@ -265,6 +265,8 @@ namespace DomenaManager.Pages
                 var q = db.Apartments.Where(x => x.IsDeleted == false && x.SoldDate == null);
                 InitializeApartments(q);
             }
+            ICollectionView cvApartments = (CollectionView)CollectionViewSource.GetDefaultView(Apartments);
+            cvApartments.SortDescriptions.Add(new SortDescription("ApartmentNumber", ListSortDirection.Ascending));
         }
 
         private void InitializeApartments(IQueryable<Apartment> q)
@@ -333,7 +335,7 @@ namespace DomenaManager.Pages
 
 
                     };
-                    a.Balance = Payments.CalculateSaldo(DateTime.Today.Year, db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(a.ApartmentId)));
+                    a.Balance = Math.Floor(100 * (Payments.CalculateSaldo(DateTime.Today.Year, db.Apartments.FirstOrDefault(x => x.ApartmentId.Equals(a.ApartmentId))))) / 100;
                     a.CostHistory = new ObservableCollection<string>(db.Charges.Include(x => x.Components).Where(x => x.ApartmentId.Equals(a.ApartmentId) && !x.IsDeleted).OrderByDescending(x => x.ChargeDate).Take(5).ToList().Select(x => new { costConc = x.ChargeDate.ToString("dd-MM-yyyy") + " : " + x.Components.Select(y => y.Sum).DefaultIfEmpty(0).Sum() + " zł" }).Select(x => x.costConc).ToList());
                     a.PaymentHistory = new ObservableCollection<string>(db.Payments.Where(x => !x.IsDeleted && x.ApartmentId.Equals(a.ApartmentId)).OrderByDescending(x => x.PaymentRegistrationDate).Take(5).ToList().Select(x => new { paymConc = x.PaymentRegistrationDate.ToString("dd-MM-yyyy") + " : " + x.PaymentAmount + " zł" }).Select(x => x.paymConc).ToList());
                     Apartments.Add(a);

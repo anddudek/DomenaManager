@@ -56,7 +56,7 @@
                                 <MyControls:MetroButtonExpand.ExpandContent>
                                     <StackPanel>
                                         <Button Content="Lista obciążeń" Command="{Binding Path=SwitchPageCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}" CommandParameter="Charges"/>
-                                        <Button Content="Naliczenia" Command="{Binding Path=SwitchPageCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}" CommandParameter="Charges"/>
+                                        <Button Content="Naliczenia" Command="{Binding Path=SwitchPageCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}" CommandParameter="MonthlyCharges"/>
                                         <Button Content="Zestawienie roczne" Command="{Binding Path=SwitchPageCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}" CommandParameter="Summary"/>
                                         <Button Content="Zestawienie kosztów budynków" Command="{Binding Path=SwitchPageCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}" CommandParameter="BuildingSummary"/>
                                         <Button Content="Rozliczenie faktur" Command="{Binding Path=SwitchPageCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}" CommandParameter="Settlement"/>

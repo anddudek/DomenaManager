@@ -237,6 +237,10 @@ namespace DomenaManager.Windows
                     CurrentPage = new Pages.AnalysisPage();
                     OnPropertyChanged("CurrentPage");
                     return;
+                case "MonthlyCharges":
+                    CurrentPage = new Pages.MonthlyChargesPage();
+                    OnPropertyChanged("CurrentPage");
+                    break;
             }
         }
 
