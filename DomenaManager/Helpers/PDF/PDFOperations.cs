@@ -616,6 +616,13 @@ namespace DomenaManager.Helpers
         public static void PrepareSingleChargeReport(ChargeDataGrid selectedCharge, bool useDefaultFolder)
         {
             Document doc = CreateTemplate(selectedCharge.Owner);
+            AddTitle(doc, "Obciążenie z dnia: " + selectedCharge.ChargeDate.ToString("dd-MM-yyyy"));
+            AddChargeTable(doc, selectedCharge, useDefaultFolder);
+        }
+
+        public static void PrepareMonthlyChargeReport(ChargeDataGrid selectedCharge, bool useDefaultFolder)
+        {
+            Document doc = CreateTemplate(selectedCharge.Owner);
             AddTitle(doc, "Naliczenie z dnia: " + selectedCharge.ChargeDate.ToString("dd-MM-yyyy"));
             AddChargeTable(doc, selectedCharge, useDefaultFolder);
         }

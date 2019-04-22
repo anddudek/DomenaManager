@@ -297,7 +297,18 @@ namespace DomenaManager.Wizards
 
         private void InitializeMeterCollection()
         {
-            MeterCollection = new ObservableCollection<ApartmentMeter>(_apartmentLocalCopy.MeterCollection);
+            if (_apartmentLocalCopy != null)
+            {
+                MeterCollection = new ObservableCollection<ApartmentMeter>(_apartmentLocalCopy.MeterCollection);
+            }
+            else if (SelectedBuildingName != null)
+            {
+                MeterCollection = new ObservableCollection<ApartmentMeter>();
+                foreach (var m in SelectedBuildingName.MeterCollection.Where(x => !x.IsDeleted && x.IsApartment))
+                {
+                    MeterCollection.Add(new ApartmentMeter() { IsDeleted = m.IsDeleted, MeterTypeParent = m, MeterId = Guid.NewGuid(), LegalizationDate = DateTime.Today.AddDays(-1) });
+                }
+            }
         }
 
         private void InitializeBuildingList()

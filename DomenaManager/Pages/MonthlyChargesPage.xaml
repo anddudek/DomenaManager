@@ -22,6 +22,7 @@
             <RowDefinition Height="50" />
             <RowDefinition Height="90" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="120" />
         </Grid.RowDefinitions>
 
         <Label Grid.Row="0" Content="Naliczenia" FontSize="28"/>
@@ -145,5 +146,11 @@
             </DataGrid.RowStyle>
 
         </MyControls:MultipleDataGrid>
+
+        <Grid Grid.Row="3">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <MyControls:ActionButton MDTText="Do pliku PDF" MDTIcon="FilePdfBox" Command="{Binding PreparePdfCommand}" Margin="10,0,10,0"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

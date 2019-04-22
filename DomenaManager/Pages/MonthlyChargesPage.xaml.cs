@@ -360,12 +360,12 @@ namespace DomenaManager.Pages
             {
                 foreach (var sc in SelectedChargesList)
                 {
-                    PDFOperations.PrepareSingleChargeReport((ChargeDataGrid)sc, true);
+                    PDFOperations.PrepareMonthlyChargeReport((ChargeDataGrid)sc, true);
                 }
             }
             else if (SelectedCharge != null)
             {
-                PDFOperations.PrepareSingleChargeReport(SelectedCharge, false);
+                PDFOperations.PrepareMonthlyChargeReport(SelectedCharge, false);
             }
             //doc.Save("test.pdf");
         }
