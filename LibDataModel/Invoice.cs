@@ -121,6 +121,34 @@ namespace LibDataModel
             }
         }
 
+        private double _costAmountVariable;
+        public double CostAmountVariable
+        {
+            get { return _costAmountVariable; }
+            set
+            {
+                if (value != _costAmountVariable)
+                {
+                    _costAmountVariable = value;
+                    OnPropertyChanged("CostAmountVariable");
+                }
+            }
+        }
+
+        private double _costAmountConst;
+        public double CostAmountConst
+        {
+            get { return _costAmountConst; }
+            set
+            {
+                if (value != _costAmountConst)
+                {
+                    _costAmountConst = value;
+                    OnPropertyChanged("CostAmountConst");
+                }
+            }
+        }
+
         private bool _isSettled;
         public bool IsSettled
         {
