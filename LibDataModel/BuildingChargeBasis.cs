@@ -37,7 +37,7 @@ namespace LibDataModel
         public Guid BuildingChargeBasisId { get; set; }
         public Guid BuildingChargeBasisCategoryId { get; set; }
         public int BuildingChargeBasisDistribution { get; set; }
-        public double CostPerUnit { get; set; }
+        public decimal CostPerUnit { get; set; }
         public DateTime BegginingDate { get; set; }
         public DateTime EndingDate { get; set; }
         public Guid BuildingChargeGroupNameId { get; set; }

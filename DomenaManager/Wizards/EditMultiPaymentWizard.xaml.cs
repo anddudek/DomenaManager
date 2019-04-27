@@ -374,8 +374,8 @@ namespace DomenaManager.Wizards
 
         private void AddPayment(object param)
         {
-            double amount;
-            bool isAmountValid = double.TryParse(this.PaymentAmount, out amount);
+            decimal amount;
+            bool isAmountValid = decimal.TryParse(this.PaymentAmount, out amount);
             if (!isAmountValid || !IsValid(this as DependencyObject))
             {
                 AmountError = "Niepoprawna kwota";
@@ -413,8 +413,8 @@ namespace DomenaManager.Wizards
 
         private void UpdatePayment(object param)
         {
-            double amount;
-            bool isAmountValid = double.TryParse(this.PaymentAmount, out amount);
+            decimal amount;
+            bool isAmountValid = decimal.TryParse(this.PaymentAmount, out amount);
             if (!isAmountValid || !IsValid(this as DependencyObject))
             {
                 AmountError = "Niepoprawna kwota";

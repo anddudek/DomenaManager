@@ -26,6 +26,8 @@
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition Height="1.2*" />
+                    <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
@@ -125,53 +127,141 @@
                     </ComboBox.ItemsSource>
                 </ComboBox>
 
-                <TextBox materialDesign:HintAssist.Hint="Kwota netto (zł)"
-	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,5,10,5" >
-                    <TextBox.Text>
-                        <Binding Path="CostAmount" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <Helpers:StringToDoubleInvoiceValidationRule/>
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
+                <GroupBox Grid.Row="7" Grid.ColumnSpan="3" Header="Koszty zmienne">
+                    <GroupBox.Style>
+                        <Style TargetType="GroupBox"/>
+                    </GroupBox.Style>
+                    <GroupBox.Content>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox materialDesign:HintAssist.Hint="Kwota netto (zł)" Grid.Column="0"
+	                            Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="10,5,10,5" HorizontalAlignment="Stretch">
+                                <TextBox.Text>
+                                    <Binding Path="CostAmountVariable" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:StringToDoubleInvoiceValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
 
-                <ComboBox materialDesign:HintAssist.Hint="Stawka VAT"
-	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                            <ComboBox materialDesign:HintAssist.Hint="Stawka VAT" 
+	                Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" DisplayMemberPath="Rate"
-            Grid.Row="7" Grid.Column="1" SelectedItem="{Binding SelectedVat}"  VerticalAlignment="Center" Margin="10,5,0,5" >
-                    <ComboBox.Text>
-                        <Binding Path="SelectedVatValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <Helpers:EmptyStringValidationRule/>
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </ComboBox.Text>
-                    <ComboBox.ItemsSource>
-                        <Binding Path="VatCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <Helpers:EmptyStringValidationRule/>
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </ComboBox.ItemsSource>
-                </ComboBox>
+                    Grid.Column="1" SelectedItem="{Binding SelectedVariableVat}"  VerticalAlignment="Center" Margin="10,5,0,5" >
+                                <ComboBox.Text>
+                                    <Binding Path="SelectedVariableVatValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:EmptyStringValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </ComboBox.Text>
+                                <ComboBox.ItemsSource>
+                                    <Binding Path="VatCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:EmptyStringValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </ComboBox.ItemsSource>
+                            </ComboBox>
 
-                <TextBox materialDesign:HintAssist.Hint="Kwota brutto (zł)"
-	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Center" Margin="10,5,10,5" >
-                    <TextBox.Text>
-                        <Binding Path="CostAmountGross" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <Helpers:StringToDoubleInvoiceValidationRule/>
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
+                            <TextBox materialDesign:HintAssist.Hint="Kwota brutto (zł)" Grid.Column="2"
+	                        Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="10,5,10,5" HorizontalAlignment="Stretch">
+                                <TextBox.Text>
+                                    <Binding Path="CostAmountVariableGross" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:StringToDoubleInvoiceValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </Grid>
+                    </GroupBox.Content>
+                </GroupBox>
+
+                <GroupBox Grid.Row="8" Grid.ColumnSpan="3" Header="Koszty stałe">
+                    <GroupBox.Style>
+                        <Style TargetType="GroupBox"/>
+                    </GroupBox.Style>
+                    <GroupBox.Content>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox materialDesign:HintAssist.Hint="Kwota netto (zł)" Grid.Column="0"
+	                            Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="10,5,10,5" HorizontalAlignment="Stretch">
+                                <TextBox.Text>
+                                    <Binding Path="CostAmountConst" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:StringToDoubleInvoiceValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+
+                            <ComboBox materialDesign:HintAssist.Hint="Stawka VAT" 
+	                Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                  IsEditable="True" DisplayMemberPath="Rate"
+                    Grid.Column="1" SelectedItem="{Binding SelectedConstVat}"  VerticalAlignment="Center" Margin="10,5,0,5" >
+                                <ComboBox.Text>
+                                    <Binding Path="SelectedConstVatValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:EmptyStringValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </ComboBox.Text>
+                                <ComboBox.ItemsSource>
+                                    <Binding Path="VatCollection"  Mode="OneWay" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:EmptyStringValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </ComboBox.ItemsSource>
+                            </ComboBox>
+
+                            <TextBox materialDesign:HintAssist.Hint="Kwota brutto (zł)" Grid.Column="2"
+	                        Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="10,5,10,5" HorizontalAlignment="Stretch">
+                                <TextBox.Text>
+                                    <Binding Path="CostAmountConstGross" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <Helpers:StringToDoubleInvoiceValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </Grid>
+                    </GroupBox.Content>
+                </GroupBox>
+
+                <GroupBox Grid.Row="9" Grid.ColumnSpan="3" Header="Koszt całkowity">
+                    <GroupBox.Style>
+                        <Style TargetType="GroupBox"/>
+                    </GroupBox.Style>
+                    <GroupBox.Content>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox materialDesign:HintAssist.Hint="Kwota netto (zł)" IsReadOnly="True" Grid.Column="0" Text="{Binding CostAmount, Mode=OneWay}"
+	                            Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="10,5,10,5" HorizontalAlignment="Stretch">
+                            </TextBox>
+                            <TextBox materialDesign:HintAssist.Hint="Kwota brutto (zł)" IsReadOnly="True" Grid.Column="1" Text="{Binding CostAmountGross, Mode=OneWay}"
+	                        Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="10,5,10,5" HorizontalAlignment="Stretch">
+                            </TextBox>
+                        </Grid>
+                    </GroupBox.Content>
+                </GroupBox>
 
                 <TextBox materialDesign:HintAssist.Hint="Numer faktury"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
+            Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
                     <TextBox.Text>
                         <Binding Path="InvoiceNumber" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
@@ -183,7 +273,7 @@
 
                 <TextBox materialDesign:HintAssist.Hint="Tytułem"
 	        Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-            Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
+            Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
                     <TextBox.Text>
                         <Binding Path="Title" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
@@ -196,7 +286,7 @@
                 <ComboBox materialDesign:HintAssist.Hint="Faktura rozliczona"
 	        Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                   IsEditable="True" 
-            Grid.Row="10" Grid.Column="0" SelectedItem="{Binding IsSettled}"  Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
+            Grid.Row="12" Grid.Column="0" SelectedItem="{Binding IsSettled}"  Grid.ColumnSpan="3" VerticalAlignment="Center" Margin="10,5,10,5" >
                     <ComboBox.Text>
                         <Binding Path="SettlementOptionsValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
@@ -213,7 +303,7 @@
                     </ComboBox.ItemsSource>
                 </ComboBox>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="11">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="6" Grid.Row="13">
                     <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zastosuj" Command="{Binding SaveCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
                         <Button.CommandParameter>
                             <system:Boolean>True</system:Boolean>

@@ -12,9 +12,9 @@ namespace LibDataModel
         [Key]
         public Guid YearSummaryId { get; set; }
         public Building Building { get; set; }
-        public double BuildingOutcome { get; set; }
-        public double BuildingIncome { get; set; }
-        public double BuildingSaldo { get; set; }
+        public decimal BuildingOutcome { get; set; }
+        public decimal BuildingIncome { get; set; }
+        public decimal BuildingSaldo { get; set; }
         public bool IsClosed { get; set; }
     }
 }

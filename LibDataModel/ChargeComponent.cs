@@ -29,8 +29,8 @@ namespace LibDataModel
             }
         }
 
-        private double _sum;
-        public double Sum
+        private decimal _sum;
+        public decimal Sum
         {
             get
             {
@@ -47,8 +47,8 @@ namespace LibDataModel
             }
         }
 
-        private double _costPerUnit;
-        public double CostPerUnit
+        private decimal _costPerUnit;
+        public decimal CostPerUnit
         {
             get
             {

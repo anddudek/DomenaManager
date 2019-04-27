@@ -10,8 +10,8 @@ namespace DomenaManager.Helpers
     {
         public string Id { get; set; }
         public string Group { get; set; }
-        public double TotalCost { get; set; }
-        public double ApartmentCost { get; set; }
+        public decimal TotalCost { get; set; }
+        public decimal ApartmentCost { get; set; }
         public bool IsRepairFund { get; set; }
     }
 }

@@ -271,8 +271,8 @@ namespace DomenaManager.Wizards
             {
                 return;
             }
-            double amount;
-            bool isAmountValid = double.TryParse(this.PaymentAmount, out amount);
+            decimal amount;
+            bool isAmountValid = decimal.TryParse(this.PaymentAmount, out amount);
             //Accept
             if (this._lpc == null)
             {

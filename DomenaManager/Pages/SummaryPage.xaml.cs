@@ -277,7 +277,7 @@ namespace DomenaManager.Pages
                 {
                     sdg.rows[0].charges[k] = "-";
                 }
-                double lastYearSaldo = Payments.CalculateSaldo(year - 1, apartment);
+                decimal lastYearSaldo = Payments.CalculateSaldo(year - 1, apartment);
                 sdg.rows[0].chargesSum = lastYearSaldo.ToString() + " zł"; // lastYear
 
                 for (int i = 1; i < 13; i++)//months
@@ -288,7 +288,7 @@ namespace DomenaManager.Pages
                     sdg.rows[i] = new SummaryDataGridRow();
                     sdg.rows[i].month = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(new DateTime(2000, i, 1).ToString("MMMM"));
                     sdg.rows[i].charges = new string[rowArrayLength];
-                    double currentMonthSum = 0;
+                    decimal currentMonthSum = 0;
                     int iterator = 0;
 
                     foreach (var g in distinctGroups)
@@ -297,7 +297,7 @@ namespace DomenaManager.Pages
                         {
                             // iterujemy po kazdej grupie a w srodku po kazdej kategorii + Wplty w grupie + suma
                             var categoriesInGroup = componentsList.Where(x => x.GroupName!=null && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
-                            double groupSum = 0;
+                            decimal groupSum = 0;
                             foreach (var cat in categoriesInGroup)
                             {
                                 var currentComponets = thisMonthComponents.Where(x => x.CostCategoryId == cat && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId);
@@ -346,7 +346,7 @@ namespace DomenaManager.Pages
                         {// Fundusz remontowy
                             // iterujemy po kazdej grupie a w srodku po kazdej kategorii + Wplty w grupie + suma
                             var categoriesInGroup = componentsList.Where(x => x.GroupName != null && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId).GroupBy(x => x.CostCategoryId).Select(x => x.FirstOrDefault()).Select(x => x.CostCategoryId);
-                            double groupSum = 0;
+                            decimal groupSum = 0;
                             foreach (var cat in categoriesInGroup)
                             {
                                 var currentComponets = thisMonthComponents.Where(x => x.CostCategoryId == cat && x.GroupName.BuildingChargeGroupNameId == g.BuildingChargeGroupNameId);

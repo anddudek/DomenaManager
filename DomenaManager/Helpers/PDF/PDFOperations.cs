@@ -172,7 +172,7 @@ namespace DomenaManager.Helpers
 
             var length = selectedCharge.Components.Count;
             int groupsCount;
-            double sum = 0;
+            decimal sum = 0;
             List<BuildingChargeGroupBankAccount> bankAccounts;
 
             using (var db = new DB.DomenaDBContext())
@@ -315,8 +315,8 @@ namespace DomenaManager.Helpers
 
             Table summaryTable = new Table();
             Row[] summaryRows = new Row[14];
-            double[] paymentsSum = new double[12];
-            double[] chargesSum = new double[12];
+            decimal[] paymentsSum = new decimal[12];
+            decimal[] chargesSum = new decimal[12];
             int distinctGroupsCount;
 
             using (var db = new DB.DomenaDBContext())
@@ -418,8 +418,8 @@ namespace DomenaManager.Helpers
                 {
                     summaryRows[0].Cells[i].AddParagraph("-");
                 }
-                double lastYearSaldo = Payments.CalculateSaldo(year - 1, apartment);
-                double thisYearSaldo = lastYearSaldo;
+                decimal lastYearSaldo = Payments.CalculateSaldo(year - 1, apartment);
+                decimal thisYearSaldo = lastYearSaldo;
                 summaryRows[0].Cells[columnsCount].AddParagraph(lastYearSaldo + " zł");
 
                 for (int i = 1; i < 13; i++)//months
@@ -493,7 +493,7 @@ namespace DomenaManager.Helpers
                         cell.AddParagraph("Saldo");
                         cell.Format.Font.Bold = true;
 
-                        double currentYear = 0;
+                        decimal currentYear = 0;
                         for (int i = 1; i < 13; i++)//months
                         {
                             currentRow = groupTable.AddRow();
@@ -502,8 +502,8 @@ namespace DomenaManager.Helpers
                             
                             var thisMonthComponents = new List<ChargeComponent>();
                             charges.Where(x => x.ChargeDate.Month == i).ToList().ForEach(x => thisMonthComponents.AddRange(x.Components));
-                                                        
-                            double groupSum = 0;
+
+                            decimal groupSum = 0;
                             iterator = 1;
                             foreach (var cat in categoriesInGroup)
                             {

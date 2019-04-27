@@ -23,8 +23,8 @@ namespace DomenaManager.Helpers
             }
         }
 
-        private double _cost;
-        public double Cost
+        private decimal _cost;
+        public decimal Cost
         {
             get { return _cost; }
             set

@@ -49,7 +49,7 @@ namespace DomenaManager.Helpers
                                 units = 0;
                                 break;
                         }
-                        cc.Sum = Math.Round((units * cc.CostPerUnit), 2);
+                        cc.Sum = Math.Round((Convert.ToDecimal(units) * cc.CostPerUnit), 2);
                         c.Components.Add(cc);
                         db.Entry(cc.GroupName).State = EntityState.Unchanged; 
                     }
@@ -99,7 +99,7 @@ namespace DomenaManager.Helpers
                             units = 0;
                             break;
                     }
-                    cc.Sum = Math.Round((units * cc.CostPerUnit), 2);
+                    cc.Sum = Math.Round((Convert.ToDecimal(units) * cc.CostPerUnit), 2);
                     charge.Components.Add(cc);
                     db.Entry(cc.GroupName).State = EntityState.Unchanged;
                 }
@@ -146,7 +146,7 @@ namespace DomenaManager.Helpers
                             units = 0;
                             break;
                     }
-                    cc.Sum = Math.Round((units * cc.CostPerUnit), 2);
+                    cc.Sum = Math.Round((Convert.ToDecimal(units) * cc.CostPerUnit), 2);
                     c.Components.Add(cc);
                 }
             }

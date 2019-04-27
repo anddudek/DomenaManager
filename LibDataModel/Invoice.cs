@@ -79,8 +79,8 @@ namespace LibDataModel
             }
         }
         public DateTime CreatedTime { get; set; }
-        private double _costAmount;
-        public double CostAmount
+        private decimal _costAmount;
+        public decimal CostAmount
         {
             get { return _costAmount; }
             set
@@ -93,22 +93,36 @@ namespace LibDataModel
             }
         }
 
-        private double _vat;
-        public double Vat
+        private decimal _variableVat;
+        public decimal VariableVat
         {
-            get { return _vat; }
+            get { return _variableVat; }
             set
             {
-                if (value != _vat)
+                if (value != _variableVat)
                 {
-                    _vat = value;
-                    OnPropertyChanged("Vat");
+                    _variableVat = value;
+                    OnPropertyChanged("VariableVat");
                 }
             }
         }
-        
-        private double _costAmountGross;
-        public double CostAmountGross
+
+        private decimal _constVat;
+        public decimal ConstVat
+        {
+            get { return _constVat; }
+            set
+            {
+                if (value != _constVat)
+                {
+                    _constVat = value;
+                    OnPropertyChanged("ConstVat");
+                }
+            }
+        }
+
+        private decimal _costAmountGross;
+        public decimal CostAmountGross
         {
             get { return _costAmountGross; }
             set
@@ -121,8 +135,8 @@ namespace LibDataModel
             }
         }
 
-        private double _costAmountVariable;
-        public double CostAmountVariable
+        private decimal _costAmountVariable;
+        public decimal CostAmountVariable
         {
             get { return _costAmountVariable; }
             set
@@ -135,8 +149,22 @@ namespace LibDataModel
             }
         }
 
-        private double _costAmountConst;
-        public double CostAmountConst
+        private decimal _costAmountVariableGross;
+        public decimal CostAmountVariableGross
+        {
+            get { return _costAmountVariableGross; }
+            set
+            {
+                if (value != _costAmountVariableGross)
+                {
+                    _costAmountVariableGross = value;
+                    OnPropertyChanged("CostAmountVariableGross");
+                }
+            }
+        }
+
+        private decimal _costAmountConst;
+        public decimal CostAmountConst
         {
             get { return _costAmountConst; }
             set
@@ -145,6 +173,20 @@ namespace LibDataModel
                 {
                     _costAmountConst = value;
                     OnPropertyChanged("CostAmountConst");
+                }
+            }
+        }
+
+        private decimal _costAmountConstGross;
+        public decimal CostAmountConstGross
+        {
+            get { return _costAmountConstGross; }
+            set
+            {
+                if (value != _costAmountConstGross)
+                {
+                    _costAmountConstGross = value;
+                    OnPropertyChanged("CostAmountConstGross");
                 }
             }
         }

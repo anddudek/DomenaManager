@@ -435,7 +435,7 @@ namespace DomenaManager.Wizards
                                     units = 0;
                                     break;
                             }
-                            cc.Sum = Math.Round(((units * cc.CostPerUnit) * percentage), 2);
+                            cc.Sum = Math.Round(((Convert.ToDecimal(units) * cc.CostPerUnit) * Convert.ToDecimal(percentage)), 2);
                             c.Components.Add(cc);
                             db.Entry(cc.GroupName).State = EntityState.Unchanged;
                         }

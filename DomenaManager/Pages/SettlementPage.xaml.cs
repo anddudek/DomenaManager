@@ -556,8 +556,8 @@ namespace DomenaManager.Pages
             }
         }
         
-        private double _noMeterConstantCharge;
-        public double NoMeterConstantCharge
+        private decimal _noMeterConstantCharge;
+        public decimal NoMeterConstantCharge
         {
             get { return _noMeterConstantCharge; }
             set
@@ -567,8 +567,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _noMeterConstantAdjustment;
-        public double NoMeterConstantAdjustment
+        private decimal _noMeterConstantAdjustment;
+        public decimal NoMeterConstantAdjustment
         {
             get { return _noMeterConstantAdjustment; }
             set
@@ -686,8 +686,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _heatWaterConstantCharge;
-        public double HeatWaterConstantCharge
+        private decimal _heatWaterConstantCharge;
+        public decimal HeatWaterConstantCharge
         {
             get { return _heatWaterConstantCharge; }
             set
@@ -697,8 +697,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _heatWaterConstantAdjustment;
-        public double HeatWaterConstantAdjustment
+        private decimal _heatWaterConstantAdjustment;
+        public decimal HeatWaterConstantAdjustment
         {
             get { return _heatWaterConstantAdjustment; }
             set
@@ -741,8 +741,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _noHeatMeterConstantCharge;
-        public double NoHeatMeterConstantCharge
+        private decimal _noHeatMeterConstantCharge;
+        public decimal NoHeatMeterConstantCharge
         {
             get { return _noHeatMeterConstantCharge; }
             set
@@ -752,8 +752,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _noHeatMeterConstantAdjustment;
-        public double NoHeatMeterConstantAdjustment
+        private decimal _noHeatMeterConstantAdjustment;
+        public decimal NoHeatMeterConstantAdjustment
         {
             get { return _noHeatMeterConstantAdjustment; }
             set

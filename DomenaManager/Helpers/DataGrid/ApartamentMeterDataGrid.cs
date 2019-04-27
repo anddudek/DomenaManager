@@ -128,8 +128,8 @@ namespace DomenaManager.Helpers
             }
         }
 
-        private double _variableCost;
-        public double VariableCost
+        private decimal _variableCost;
+        public decimal VariableCost
         {
             get { return _variableCost; }
             set
@@ -142,8 +142,8 @@ namespace DomenaManager.Helpers
             }
         }
 
-        private double _constantCost;
-        public double ConstantCost
+        private decimal _constantCost;
+        public decimal ConstantCost
         {
             get { return _constantCost; }
             set
@@ -156,8 +156,8 @@ namespace DomenaManager.Helpers
             }
         }
 
-        private double _costSettled;
-        public double CostSettled
+        private decimal _costSettled;
+        public decimal CostSettled
         {
             get
             {
@@ -173,8 +173,8 @@ namespace DomenaManager.Helpers
             }
         }
 
-        private double _charge;
-        public double Charge
+        private decimal _charge;
+        public decimal Charge
         {
             get
             {
@@ -190,8 +190,8 @@ namespace DomenaManager.Helpers
             }
         }
 
-        private double _saldo;
-        public double Saldo
+        private decimal _saldo;
+        public decimal Saldo
         {
             get
             {

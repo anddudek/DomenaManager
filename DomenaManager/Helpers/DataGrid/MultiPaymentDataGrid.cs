@@ -13,7 +13,7 @@ namespace DomenaManager.Helpers
         public Apartment Apartment { get; set; }
         public Owner Owner { get; set; }
         public DateTime PaymentAddDate { get; set; }
-        public double PaymentAmount { get; set; }
+        public decimal PaymentAmount { get; set; }
         public Guid? PaymentId { get; set; }
         public DateTime PaymentRegistrationDate { get; set; }
         public BuildingChargeGroupName ChargeGroup { get; set; }

@@ -12,7 +12,7 @@ namespace LibDataModel
         [Key]
         public Guid PaymentId { get; set; }
         public Guid ApartmentId { get; set; }
-        public double PaymentAmount { get; set; }
+        public decimal PaymentAmount { get; set; }
         public DateTime PaymentRegistrationDate { get; set; }
         public DateTime PaymentAddDate { get; set; }
         public bool IsDeleted { get; set; }

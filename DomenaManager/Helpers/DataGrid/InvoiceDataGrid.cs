@@ -31,8 +31,13 @@ namespace DomenaManager.Helpers
             this.IsDeleted = invoice.IsDeleted;
             this.IsSettled = invoice.IsSettled;
             this.Title = invoice.Title;
-            this.Vat = invoice.Vat;
             this.CostAmountGross = invoice.CostAmountGross;
+            this.CostAmountConst = invoice.CostAmountConst;
+            this.CostAmountConstGross = invoice.CostAmountConstGross;
+            this.VariableVat = invoice.VariableVat;
+            this.CostAmountVariable = invoice.CostAmountVariable;
+            this.CostAmountVariableGross = invoice.CostAmountVariableGross;
+            this.ConstVat = invoice.ConstVat;
             
             using (var db = new DB.DomenaDBContext())
             {

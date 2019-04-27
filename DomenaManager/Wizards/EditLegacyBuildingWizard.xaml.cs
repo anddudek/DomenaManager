@@ -608,8 +608,8 @@ namespace DomenaManager.Wizards
                 LabelError = "Wybierz jednostkę";
                 return;
             }
-            double uc;
-            if (!double.TryParse(UnitCost, out uc) && uc <= 0)
+            decimal uc;
+            if (!decimal.TryParse(UnitCost, out uc) && uc <= 0)
             {
                 LabelError = "Podaj poprawny koszt";
                 return;

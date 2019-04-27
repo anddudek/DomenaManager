@@ -362,23 +362,23 @@ namespace DomenaManager.Pages
                             break;
                         case CostDistribution.PerAdditionalArea:
                             scale = Math.Floor(10000 * (apartment.AdditionalArea / addArea)) / 10000;
-                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
+                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * Convert.ToDecimal(scale))) / 100;
                             break;
                         case CostDistribution.PerApartment:
                             scale = Math.Floor(10000 * (1 / (double)apartmentsCount)) / 10000;
-                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
+                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * Convert.ToDecimal(scale))) / 100;
                             break;
                         case CostDistribution.PerApartmentArea:
                             scale = Math.Floor(10000 * (apartment.ApartmentArea / apArea)) / 10000;
-                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
+                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * Convert.ToDecimal(scale))) / 100;
                             break;
                         case CostDistribution.PerApartmentTotalArea:
                             scale = Math.Floor(10000 * ((apartment.ApartmentArea + apartment.AdditionalArea) / buildingTotalArea)) / 10000;
-                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
+                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * Convert.ToDecimal(scale))) / 100;
                             break;
                         case CostDistribution.PerLocators:
                             scale = Math.Floor(10000 * ((double)apartment.Locators / (double)totalLocators)) / 10000;
-                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * scale)) / 100;
+                            cc.ApartmentCost = Math.Floor(100 * (cc.TotalCost * Convert.ToDecimal(scale))) / 100;
                             break;
                     }
                     CostsCollection.Add(cc);

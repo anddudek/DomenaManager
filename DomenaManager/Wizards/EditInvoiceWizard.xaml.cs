@@ -36,25 +36,6 @@ namespace DomenaManager.Wizards
             }
         }
 
-        private InvoiceVatRate _selectedVat;
-        public InvoiceVatRate SelectedVat
-        {
-            get { return _selectedVat; }
-            set
-            {
-                _selectedVat = value;
-                double t;
-                if (SelectedVat != null && double.TryParse(CostAmount, out t))
-                {
-                    _costAmountGross = (Math.Floor(((1 + SelectedVat.Rate / 100) * t) * 100) / 100).ToString();
-                    OnPropertyChanged("CostAmountGross");
-                }
-                OnPropertyChanged("SelectedVat");
-            }
-        }
-
-        public string SelectedVatValue { get; set; }
-
         private ObservableCollection<Building> _buildingsNames;
         public ObservableCollection<Building> BuildingsNames
         {
@@ -128,45 +109,155 @@ namespace DomenaManager.Wizards
 
         public string SelectedContractorsValue { get; set; }
 
-        private string _costAmount;
         public string CostAmount
         {
-            get { return _costAmount; }
+            get
+            {
+                decimal v;
+                decimal c;
+                return decimal.TryParse(CostAmountVariable, out v) && decimal.TryParse(CostAmountConst, out c) ? (v + c).ToString() : "-";
+            }
+        }
+        
+        public string CostAmountGross
+        {
+            get
+            {
+                decimal v;
+                decimal c;
+                return decimal.TryParse(CostAmountVariableGross, out v) && decimal.TryParse(CostAmountConstGross, out c) ? (v + c).ToString() : "-";
+            }
+        }
+
+        private string _costAmountVariable;
+        public string CostAmountVariable
+        {
+            get { return _costAmountVariable; }
             set
             {
-                if (value != _costAmount)
+                if (value != _costAmountVariable)
                 {
-                    _costAmount = value;
-                    double t;
-                    if (SelectedVat != null && double.TryParse(CostAmount, out t))
+                    _costAmountVariable = value;
+                    decimal t;
+                    if (SelectedVariableVat != null && decimal.TryParse(CostAmountVariable, out t))
                     {
-                        _costAmountGross = (Math.Floor(((1 + SelectedVat.Rate / 100) * t) * 100) / 100).ToString();
-                        OnPropertyChanged("CostAmountGross");
+                        _costAmountVariableGross = (Math.Floor(((1 + SelectedVariableVat.Rate / 100) * t) * 100) / 100).ToString();
+                        OnPropertyChanged("CostAmountVariableGross");
                     }
+                    OnPropertyChanged("CostAmountVariable");
+                    OnPropertyChanged("CostAmountGross");
                     OnPropertyChanged("CostAmount");
                 }
             }
         }
 
-        private string _costAmountGross;
-        public string CostAmountGross
+        private string _costAmountVariableGross;
+        public string CostAmountVariableGross
         {
-            get { return _costAmountGross; }
+            get { return _costAmountVariableGross; }
             set
             {
-                if (value != _costAmountGross)
+                if (value != _costAmountVariableGross)
                 {
-                    _costAmountGross = value;
-                    double t;
-                    if (SelectedVat != null && double.TryParse(value, out t))
+                    _costAmountVariableGross = value;
+                    decimal t;
+                    if (SelectedVariableVat != null && decimal.TryParse(value, out t))
                     {
-                        _costAmount = (Math.Floor(( t / (1 + SelectedVat.Rate / 100)) * 100) / 100).ToString();
-                        OnPropertyChanged("CostAmount");
+                        _costAmountVariable = (Math.Floor((t / (1 + SelectedVariableVat.Rate / 100)) * 100) / 100).ToString();
+                        OnPropertyChanged("CostAmountVariable");
                     }
+                    OnPropertyChanged("CostAmountVariableGross");
                     OnPropertyChanged("CostAmountGross");
+                    OnPropertyChanged("CostAmount");
                 }
             }
         }
+
+        private InvoiceVatRate _selectedVariableVat;
+        public InvoiceVatRate SelectedVariableVat
+        {
+            get { return _selectedVariableVat; }
+            set
+            {
+                _selectedVariableVat = value;
+                decimal t;
+                if (SelectedVariableVat != null && decimal.TryParse(CostAmountVariable, out t))
+                {
+                    _costAmountVariableGross = (Math.Floor(((1 + SelectedVariableVat.Rate / 100) * t) * 100) / 100).ToString();
+                    OnPropertyChanged("CostAmountVariableGross");
+                }
+                OnPropertyChanged("SelectedVariableVat");
+                OnPropertyChanged("CostAmountGross");
+                OnPropertyChanged("CostAmount");
+            }
+        }
+
+        public string SelectedVariableVatValue { get; set; }
+
+        private string _costAmountConst;
+        public string CostAmountConst
+        {
+            get { return _costAmountConst; }
+            set
+            {
+                if (value != _costAmountConst)
+                {
+                    _costAmountConst = value;
+                    decimal t;
+                    if (SelectedConstVat != null && decimal.TryParse(CostAmount, out t))
+                    {
+                        _costAmountConstGross = (Math.Floor(((1 + SelectedConstVat.Rate / 100) * t) * 100) / 100).ToString();
+                        OnPropertyChanged("CostAmountVariableGross");
+                    }
+                    OnPropertyChanged("CostAmountConst");
+                    OnPropertyChanged("CostAmountConst");
+                    OnPropertyChanged("CostAmount");
+                }
+            }
+        }
+
+        private string _costAmountConstGross;
+        public string CostAmountConstGross
+        {
+            get { return _costAmountConstGross; }
+            set
+            {
+                if (value != _costAmountConstGross)
+                {
+                    _costAmountConstGross = value;
+                    decimal t;
+                    if (SelectedConstVat != null && decimal.TryParse(value, out t))
+                    {
+                        _costAmountConst = (Math.Floor((t / (1 + SelectedConstVat.Rate / 100)) * 100) / 100).ToString();
+                        OnPropertyChanged("CostAmountConst");
+                    }
+                    OnPropertyChanged("CostAmountConstGross");
+                    OnPropertyChanged("CostAmountGross");
+                    OnPropertyChanged("CostAmount");
+                }
+            }
+        }
+
+        private InvoiceVatRate _selectedConstVat;
+        public InvoiceVatRate SelectedConstVat
+        {
+            get { return _selectedConstVat; }
+            set
+            {
+                _selectedConstVat = value;
+                decimal t;
+                if (SelectedConstVat != null && decimal.TryParse(CostAmountConst, out t))
+                {
+                    _costAmountConstGross = (Math.Floor(((1 + SelectedConstVat.Rate / 100) * t) * 100) / 100).ToString();
+                    OnPropertyChanged("CostAmountConstGross");
+                }
+                OnPropertyChanged("SelectedConstVat");
+                OnPropertyChanged("CostAmountGross");
+                OnPropertyChanged("CostAmount");
+            }
+        }
+
+        public string SelectedConstVatValue { get; set; }
 
         private string _invoiceNumber;
         public string InvoiceNumber
@@ -313,12 +404,15 @@ namespace DomenaManager.Wizards
                 InvoiceDate = _lic.InvoiceDate.Date;
                 InvoiceCreatedDate = _lic.InvoiceCreatedDate.Date;
                 InvoiceNumber = _lic.InvoiceNumber;
-                CostAmount = _lic.CostAmount.ToString();
                 SelectedContractorsName = ContractorsNames.Where(x => x.Name.Equals(_lic.ContractorName)).FirstOrDefault();
                 IsSettled = _lic.IsSettled ? SettlementOptions.Where(x => x == "Tak").FirstOrDefault() : SettlementOptions.Where(x => x == "Nie").FirstOrDefault();
                 Title = _lic.Title;
-                CostAmountGross = _lic.CostAmountGross.ToString();
-                SelectedVat = VatCollection.FirstOrDefault(x => x.Rate == _lic.Vat);
+                CostAmountVariable = _lic.CostAmountVariable.ToString();
+                CostAmountVariableGross = _lic.CostAmountVariableGross.ToString();
+                SelectedVariableVat = VatCollection.FirstOrDefault(x => x.Rate == _lic.VariableVat);
+                CostAmountConst = _lic.CostAmountConst.ToString();
+                CostAmountConstGross = _lic.CostAmountConstGross.ToString();
+                SelectedConstVat = VatCollection.FirstOrDefault(x => x.Rate == _lic.ConstVat);
                 return;
             }
 
@@ -387,7 +481,6 @@ namespace DomenaManager.Wizards
                 {
                     BuildingId = SelectedBuildingName.BuildingId,
                     ContractorName = SelectedContractorsValue,
-                    CostAmount = double.Parse(CostAmount),
                     CreatedTime = DateTime.Now,
                     InvoiceCategoryId = SelectedCategoryName.CategoryId,
                     InvoiceDate = InvoiceDate.Date,
@@ -396,9 +489,15 @@ namespace DomenaManager.Wizards
                     IsDeleted = false,
                     IsSettled = IsSettled == "Tak" ? true : false,
                     InvoiceCreatedDate = InvoiceCreatedDate,
-                    Vat = SelectedVat.Rate,
+                    CostAmount = decimal.Parse(CostAmount),
+                    CostAmountGross = decimal.Parse(CostAmountGross),
+                    CostAmountVariable = decimal.Parse(CostAmountVariable),
+                    CostAmountVariableGross = decimal.Parse(CostAmountVariableGross),
+                    VariableVat = SelectedVariableVat.Rate,
+                    CostAmountConst = decimal.Parse(CostAmountConst),
+                    CostAmountConstGross = decimal.Parse(CostAmountConstGross),
+                    ConstVat = SelectedConstVat.Rate,
                     Title = Title,
-                    CostAmountGross = double.Parse(CostAmountGross),
                 };
                 using (var db = new DB.DomenaDBContext())
                 {
@@ -424,7 +523,7 @@ namespace DomenaManager.Wizards
                     var q = db.Invoices.Where(x => x.InvoiceId.Equals(_lic.InvoiceId)).FirstOrDefault();
                     q.BuildingId = SelectedBuildingName.BuildingId;
                     q.ContractorName = SelectedContractorsValue;
-                    q.CostAmount = double.Parse(CostAmount);
+                    q.CostAmount = decimal.Parse(CostAmount);
                     q.CreatedTime = DateTime.Now;
                     q.InvoiceCategoryId = SelectedCategoryName.CategoryId;
                     q.InvoiceDate = InvoiceDate.Date;
@@ -432,8 +531,14 @@ namespace DomenaManager.Wizards
                     q.InvoiceNumber = InvoiceNumber;
                     q.IsSettled = IsSettled == "Tak" ? true : false;
                     q.Title = Title;
-                    q.CostAmountGross = double.Parse(CostAmountGross);
-                    q.Vat = SelectedVat.Rate;
+                    q.CostAmount = decimal.Parse(CostAmount);
+                    q.CostAmountGross = decimal.Parse(CostAmountGross);
+                    q.CostAmountVariable = decimal.Parse(CostAmountVariable);
+                    q.CostAmountVariableGross = decimal.Parse(CostAmountVariableGross);
+                    q.VariableVat = SelectedVariableVat.Rate;
+                    q.CostAmountConst = decimal.Parse(CostAmountConst);
+                    q.CostAmountConstGross = decimal.Parse(CostAmountConstGross);
+                    q.ConstVat = SelectedConstVat.Rate;
 
                     if (!db.InvoiceContractors.Any(x => x.Name.Equals(SelectedContractorsValue)))
                     {

@@ -21,7 +21,7 @@ namespace DomenaManager.Helpers
         public double ApartmentAdditionalArea { get; set; }
         public double ApartmentTotalArea { get; set; }
         public string ApartmentPercentageDistribution { get; set; }
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
         public string HasWaterMeter { get; set; }
         public DateTime BoughtDate { get; set; }
         public DateTime WaterMeterExp { get; set; }

@@ -12,9 +12,9 @@ namespace DomenaManager.Helpers
         public Building Building { get; set;}
         public Apartment Apartment { get; set; }
         public Owner Owner { get; set; }
-        public double ExplorationSum { get; set; }
-        public double RepairFundSum { get; set; }
-        public double Sum { get; set; }
+        public decimal ExplorationSum { get; set; }
+        public decimal RepairFundSum { get; set; }
+        public decimal Sum { get; set; }
 
         public ChargeDataGrid(Charge _charge)
         {

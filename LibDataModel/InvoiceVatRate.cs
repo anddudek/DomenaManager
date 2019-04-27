@@ -12,8 +12,8 @@ namespace LibDataModel
     {
         [Key]
         public Guid InvoiceVatRateId { get; set; }
-        private double _rate;
-        public double Rate
+        private decimal _rate;
+        public decimal Rate
         {
             get
             {

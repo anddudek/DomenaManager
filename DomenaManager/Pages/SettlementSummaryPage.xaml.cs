@@ -44,8 +44,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _invoiceSum;
-        public double InvoiceSum
+        private decimal _invoiceSum;
+        public decimal InvoiceSum
         {
             get { return _invoiceSum; }
             set
@@ -86,8 +86,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _settlePerApartment;
-        public double SettlePerApartment
+        private decimal _settlePerApartment;
+        public decimal SettlePerApartment
         {
             get { return _settlePerApartment; }
             set
@@ -170,8 +170,8 @@ namespace DomenaManager.Pages
             }
         }        
 
-        private double _settlePerSquareMeter;
-        public double SettlePerSquareMeter
+        private decimal _settlePerSquareMeter;
+        public decimal SettlePerSquareMeter
         {
             get { return _settlePerSquareMeter; }
             set
@@ -198,8 +198,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _apartmentDiffSum;
-        public double ApartmentDiffSum
+        private decimal _apartmentDiffSum;
+        public decimal ApartmentDiffSum
         {
             get { return _apartmentDiffSum; }
             set
@@ -212,8 +212,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _settlePerMeter;
-        public double SettlePerMeter
+        private decimal _settlePerMeter;
+        public decimal SettlePerMeter
         {
             get { return _settlePerMeter; }
             set
@@ -226,8 +226,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _totalSum;
-        public double TotalSum
+        private decimal _totalSum;
+        public decimal TotalSum
         {
             get { return _totalSum; }
             set
@@ -254,8 +254,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _gasUnitCost;
-        public double GasUnitCost
+        private decimal _gasUnitCost;
+        public decimal GasUnitCost
         {
             get { return _gasUnitCost; }
             set
@@ -268,8 +268,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _GJSettlePerSquareMeter;
-        public double GJSettlePerSquareMeter
+        private decimal _GJSettlePerSquareMeter;
+        public decimal GJSettlePerSquareMeter
         {
             get { return _GJSettlePerSquareMeter; }
             set
@@ -282,8 +282,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _warmWaterSettlePerSquareMeter;
-        public double WarmWaterSettlePerSquareMeter
+        private decimal _warmWaterSettlePerSquareMeter;
+        public decimal WarmWaterSettlePerSquareMeter
         {
             get { return _warmWaterSettlePerSquareMeter; }
             set
@@ -324,8 +324,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _GJSettlePerMeter;
-        public double GJSettlePerMeter
+        private decimal _GJSettlePerMeter;
+        public decimal GJSettlePerMeter
         {
             get { return _GJSettlePerMeter; }
             set
@@ -338,8 +338,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _warmWaterSettlePerMeter;
-        public double WarmWaterSettlePerMeter
+        private decimal _warmWaterSettlePerMeter;
+        public decimal WarmWaterSettlePerMeter
         {
             get { return _warmWaterSettlePerMeter; }
             set
@@ -352,8 +352,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _GJConstantCharge;
-        public double GJConstantCharge
+        private decimal _GJConstantCharge;
+        public decimal GJConstantCharge
         {
             get { return _GJConstantCharge; }
             set
@@ -366,8 +366,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _GJConstantAdjustment;
-        public double GJConstantAdjustment
+        private decimal _GJConstantAdjustment;
+        public decimal GJConstantAdjustment
         {
             get { return _GJConstantAdjustment; }
             set
@@ -394,8 +394,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _warmWaterConstantCharge;
-        public double WarmWaterConstantCharge
+        private decimal _warmWaterConstantCharge;
+        public decimal WarmWaterConstantCharge
         {
             get { return _warmWaterConstantCharge; }
             set
@@ -408,8 +408,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _warmWaterConstantAdjustment;
-        public double WarmWaterConstantAdjustment
+        private decimal _warmWaterConstantAdjustment;
+        public decimal WarmWaterConstantAdjustment
         {
             get { return _warmWaterConstantAdjustment; }
             set
@@ -450,8 +450,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _warmWaterCost;
-        public double WarmWaterCost
+        private decimal _warmWaterCost;
+        public decimal WarmWaterCost
         {
             get { return _warmWaterCost; }
             set
@@ -464,8 +464,8 @@ namespace DomenaManager.Pages
             }
         }
 
-        private double _COCost;
-        public double COCost
+        private decimal _COCost;
+        public decimal COCost
         {
             get { return _COCost; }
             set
@@ -478,7 +478,7 @@ namespace DomenaManager.Pages
             }
         }
 
-        public double ConstantCharge
+        public decimal ConstantCharge
         {
             get { return _settlementPage.NoMeterConstantCharge; }
             set
@@ -487,7 +487,7 @@ namespace DomenaManager.Pages
             }
         }
         
-        public double ConstantAdjustment
+        public decimal ConstantAdjustment
         {
             get { return _settlementPage.NoMeterConstantAdjustment; }
             set
@@ -593,7 +593,7 @@ namespace DomenaManager.Pages
                 PerApartmentCollection = new ObservableCollection<ApartamentMeterDataGrid>();
                 foreach (var a in Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)))
                 {
-                    double chargeAmount = 0;
+                    decimal chargeAmount = 0;
                     var c = Charges.Where(x => x.ApartmentId.Equals(a.ApartmentId) && x.ChargeDate >= _settlementPage.SettlementFrom && x.ChargeDate <= _settlementPage.SettlementTo);
                     foreach (var cc in c)
                     {
@@ -620,12 +620,12 @@ namespace DomenaManager.Pages
             if (_settlementPage.SettlementMethod == SettlementMethodsEnum.PER_AREA)
             {
                 BuildingAreaSum = Math.Ceiling((Apartments.Where(x => x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Select(x => new { totalArea = x.AdditionalArea + x.ApartmentArea }).Sum(x => x.totalArea) * 100)) / 100;
-                SettlePerSquareMeter = Math.Ceiling((InvoiceSum / BuildingAreaSum) * 100)/ 100;
+                SettlePerSquareMeter = Math.Ceiling((InvoiceSum / Convert.ToDecimal(BuildingAreaSum)) * 100)/ 100;
                 PerAreaCollection = new ObservableCollection<ApartamentMeterDataGrid>();
 
                 foreach (var a in Apartments.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)))
                 {
-                    double chargeAmount = 0;
+                    decimal chargeAmount = 0;
                     var c = Charges.Where(x => x.ApartmentId.Equals(a.ApartmentId) && x.ChargeDate >= _settlementPage.SettlementFrom && x.ChargeDate <= _settlementPage.SettlementTo);
                     foreach (var cc in c)
                     {
@@ -638,8 +638,8 @@ namespace DomenaManager.Pages
                         ApartmentO = a,
                         Charge = chargeAmount,
                         OwnerO = Owners.FirstOrDefault(x => x.OwnerId.Equals(a.OwnerId)),
-                        CostSettled = SettlePerSquareMeter * (a.AdditionalArea + a.ApartmentArea),
-                        Saldo = chargeAmount - SettlePerSquareMeter * (a.AdditionalArea + a.ApartmentArea),
+                        CostSettled = SettlePerSquareMeter * Convert.ToDecimal((a.AdditionalArea + a.ApartmentArea)),
+                        Saldo = chargeAmount - SettlePerSquareMeter * Convert.ToDecimal((a.AdditionalArea + a.ApartmentArea)),
                     });
                 }
 
@@ -656,18 +656,18 @@ namespace DomenaManager.Pages
                 int notValidMetersCount = ap.Where(x => x.MeterCollection.FirstOrDefault(y => !y.IsDeleted && y.MeterTypeParent.MeterId.Equals(_settlementPage.SelectedMeterName.MeterId)).LegalizationDate <= DateTime.Now).Count();
 
                 MainMeterDiff = _settlementPage.MainMeterDiff;
-                ApartmentDiffSum = _settlementPage.ApartmentMetersCollection.Where(x => x.IsMeterLegalized).Select(x => x.MeterDifference).DefaultIfEmpty(0).Sum() + _settlementPage.NoMeterConstantAdjustment * notValidMetersCount;
+                ApartmentDiffSum = Convert.ToDecimal(_settlementPage.ApartmentMetersCollection.Where(x => x.IsMeterLegalized).Select(x => x.MeterDifference).DefaultIfEmpty(0).Sum()) + _settlementPage.NoMeterConstantAdjustment * notValidMetersCount;
                 ApartmentsAmount = _settlementPage.ApartmentCollection.Where(x => !x.IsDeleted && x.SoldDate == null && x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Count();
                 BuildingAreaSum = Math.Ceiling((Apartments.Where(x => x.BuildingId.Equals(_settlementPage.SelectedBuildingName.BuildingId)).Select(x => new { totalArea = x.AdditionalArea + x.ApartmentArea }).Sum(x => x.totalArea) * 100)) / 100;
-                
-                
-                var measureToDivide = MainMeterDiff;
-                double deficitPerApartment = 0;
+
+
+                decimal measureToDivide = Convert.ToDecimal(MainMeterDiff);
+                decimal deficitPerApartment = 0;
                 if (!_settlementPage.ChargeDeficit)
                 {
                     if (MainMeterDiff > 0)
                     {
-                        measureToDivide = Math.Min(MainMeterDiff, ApartmentDiffSum);
+                        measureToDivide = Math.Min(Convert.ToDecimal(MainMeterDiff), ApartmentDiffSum);
                     }
                     else
                     {
@@ -676,9 +676,9 @@ namespace DomenaManager.Pages
                 }
                 else
                 {
-                    if (MainMeterDiff > ApartmentDiffSum)
+                    if (Convert.ToDecimal(MainMeterDiff) > ApartmentDiffSum)
                     {
-                        deficitPerApartment = (MainMeterDiff - ApartmentDiffSum) / notValidMetersCount;
+                        deficitPerApartment = (Convert.ToDecimal(MainMeterDiff) - ApartmentDiffSum) / notValidMetersCount;
                     }
                 }
 
@@ -686,20 +686,20 @@ namespace DomenaManager.Pages
 
                 if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_AREA)
                 {
-                    SettlePerSquareMeter = Math.Ceiling((((_settlementPage.ConstantPeriod / 100) * adjustedInvoiceSum) / BuildingAreaSum) * 100) / 100;
+                    SettlePerSquareMeter = Math.Ceiling((((Convert.ToDecimal(_settlementPage.ConstantPeriod) / 100) * adjustedInvoiceSum) / Convert.ToDecimal(BuildingAreaSum)) * 100) / 100;
                 }
                 else
                 {
-                    SettlePerSquareMeter = Math.Ceiling((((_settlementPage.ConstantPeriod / 100) * adjustedInvoiceSum) / ApartmentsAmount) * 100) / 100;
+                    SettlePerSquareMeter = Math.Ceiling((((Convert.ToDecimal(_settlementPage.ConstantPeriod) / 100) * adjustedInvoiceSum) / ApartmentsAmount) * 100) / 100;
                 }
-                SettlePerMeter = Math.Ceiling((((_settlementPage.VariablePeriod / 100) * adjustedInvoiceSum) / measureToDivide) * 100) / 100;
+                SettlePerMeter = Math.Ceiling((((Convert.ToDecimal(_settlementPage.VariablePeriod) / 100) * adjustedInvoiceSum) / measureToDivide) * 100) / 100;
                 PerMetersCollection = new ObservableCollection<ApartamentMeterDataGrid>();
 
                 foreach (var a in ap)
                 {
                     var selectedAmdg = _settlementPage.ApartmentMetersCollection.FirstOrDefault(x => x.ApartmentO.ApartmentId.Equals(a.ApartmentId));
                     
-                    double chargeAmount = 0;
+                    decimal chargeAmount = 0;
                     var c = Charges.Where(x => x.ApartmentId.Equals(a.ApartmentId) && x.ChargeDate >= _settlementPage.SettlementFrom && x.ChargeDate <= _settlementPage.SettlementTo);
                     foreach (var cc in c)
                     {
@@ -726,12 +726,12 @@ namespace DomenaManager.Pages
                         SettleArea = a.ApartmentArea + a.AdditionalArea,         
                     };
 
-                    var costSett = Math.Ceiling((amd.MeterDifference * SettlePerMeter) * 100) / 100;
+                    var costSett = Math.Ceiling((Convert.ToDecimal(amd.MeterDifference) * SettlePerMeter) * 100) / 100;
                     if (!amd.IsMeterLegalized)
                     {
                         amd.LastMeasure = 0;
-                        amd.CurrentMeasure = (_settlementPage.NoMeterConstantAdjustment + deficitPerApartment);
-                        costSett = Math.Ceiling((amd.MeterDifference * SettlePerMeter) * 100) / 100;
+                        amd.CurrentMeasure = Convert.ToDouble(Convert.ToDecimal(_settlementPage.NoMeterConstantAdjustment) + deficitPerApartment);
+                        costSett = Math.Ceiling((Convert.ToDecimal(amd.MeterDifference) * SettlePerMeter) * 100) / 100;
                         costSett += _settlementPage.NoMeterConstantCharge;                        
                     }
                     amd.VariableCost = costSett;
@@ -739,7 +739,7 @@ namespace DomenaManager.Pages
 
                     if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_AREA)
                     {
-                        amd.ConstantCost = SettlePerSquareMeter * (amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea);
+                        amd.ConstantCost = SettlePerSquareMeter * Convert.ToDecimal((amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea));
                     }
                     else
                     {
@@ -780,16 +780,16 @@ namespace DomenaManager.Pages
                 IsWarmWaterDeficitShared = _settlementPage.ChargeHeatMeterDeficit;
 
                 var adjustedInvoiceSum = InvoiceSum - (notValidHeatMetersCount * _settlementPage.NoHeatMeterConstantCharge + notValidWarmWaterMetersCount * _settlementPage.HeatWaterConstantCharge);
-                var adjustedGJsum = GJsum + (notValidHeatMetersCount * _settlementPage.NoHeatMeterConstantAdjustment);
-                var adjustedWarmMeterCubicMeterSum = warmWaterCubicMeterSum + (notValidWarmWaterMetersCount * _settlementPage.HeatWaterConstantAdjustment);
+                var adjustedGJsum = Convert.ToDecimal(GJsum) + (notValidHeatMetersCount * _settlementPage.NoHeatMeterConstantAdjustment);
+                var adjustedWarmMeterCubicMeterSum = Convert.ToDecimal(warmWaterCubicMeterSum) + (notValidWarmWaterMetersCount * _settlementPage.HeatWaterConstantAdjustment);
                 if (warmWaterCubicMeterSum == 0)
                 {
-                    warmWaterCubicMeterSum = adjustedWarmMeterCubicMeterSum;
+                    warmWaterCubicMeterSum = Convert.ToDouble(adjustedWarmMeterCubicMeterSum);
                 }
                 
                 if (_settlementPage.GasUnitCostAuto && _settlementPage.GasMeterDiff != 0)
                 {
-                    GasUnitCost = adjustedInvoiceSum / _settlementPage.GasMeterDiff;
+                    GasUnitCost = adjustedInvoiceSum / Convert.ToDecimal(_settlementPage.GasMeterDiff);
                 }
                 else
                 {
@@ -798,59 +798,59 @@ namespace DomenaManager.Pages
                     GasUnitCost = GasUnitCost;
                 }
 
-                var valueToDivideGJ = _settlementPage.HeatMeterDiff == 0 ? adjustedGJsum : Math.Min(_settlementPage.HeatMeterDiff, adjustedGJsum);
+                var valueToDivideGJ = _settlementPage.HeatMeterDiff == 0 ? adjustedGJsum : Math.Min(Convert.ToDecimal(_settlementPage.HeatMeterDiff), adjustedGJsum);
 
-                var waterHeatCost = GasUnitCost * _settlementPage.GasNeededToHeatWater;
-                var waterHeatTotalCost = waterHeatCost * _settlementPage.HeatWaterMeterDiff;
+                var waterHeatCost = GasUnitCost * Convert.ToDecimal(_settlementPage.GasNeededToHeatWater);
+                var waterHeatTotalCost = waterHeatCost * Convert.ToDecimal(_settlementPage.HeatWaterMeterDiff);
                 WarmWaterCost = waterHeatTotalCost;
                 var heatTotalCost = InvoiceSum - waterHeatTotalCost;
                 COCost = heatTotalCost;
 
                 // Do adjusted dodać deficity jezeli rozlicane i min z głownego i adjusted)
-                var valueToDivideWarmWater = _settlementPage.HeatWaterMeterDiff;
+                var valueToDivideWarmWater = Convert.ToDecimal(_settlementPage.HeatWaterMeterDiff);
                 if (!IsWarmWaterDeficitShared)
                 {
-                    valueToDivideWarmWater = Math.Min(_settlementPage.HeatWaterMeterDiff, adjustedWarmMeterCubicMeterSum);
+                    valueToDivideWarmWater = Math.Min(Convert.ToDecimal(_settlementPage.HeatWaterMeterDiff), adjustedWarmMeterCubicMeterSum);
                 }
 
                 var heatTotalCostAdjusted = heatTotalCost - (notValidHeatMetersCount * _settlementPage.NoHeatMeterConstantCharge);
-                double GJunitCost = Math.Ceiling(100 * ((_settlementPage.VariablePeriod / 100) * heatTotalCostAdjusted) / valueToDivideGJ) / 100;
+                decimal GJunitCost = Math.Ceiling(100 * ((Convert.ToDecimal(_settlementPage.VariablePeriod / 100)) * heatTotalCostAdjusted) / valueToDivideGJ) / 100;
                 var waterHeatTotalCostAdjusted = waterHeatTotalCost - (notValidWarmWaterMetersCount * _settlementPage.HeatWaterConstantCharge);
-                double warmWaterCubicMeterUnitCost = Math.Ceiling(100 * ((_settlementPage.VariablePeriod / 100) * waterHeatTotalCostAdjusted) / valueToDivideWarmWater) / 100;
+                decimal warmWaterCubicMeterUnitCost = Math.Ceiling(100 * ((Convert.ToDecimal(_settlementPage.VariablePeriod) / 100) * waterHeatTotalCostAdjusted) / valueToDivideWarmWater) / 100;
 
                 GJSettlePerMeter = GJunitCost;
                 WarmWaterSettlePerMeter = warmWaterCubicMeterUnitCost;
 
-                double GJconstantCost;
-                double warmWaterConstantCost;
+                decimal GJconstantCost;
+                decimal warmWaterConstantCost;
                 if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_APARTMENT)
                 {
-                    GJconstantCost = Math.Ceiling(100 * ((_settlementPage.ConstantPeriod / 100) * heatTotalCost) / ApartmentsAmount) / 100;
-                    warmWaterConstantCost = Math.Ceiling(100 * ((_settlementPage.ConstantPeriod / 100) * waterHeatTotalCost) / ApartmentsAmount) / 100;
+                    GJconstantCost = Math.Ceiling(100 * ((Convert.ToDecimal(_settlementPage.ConstantPeriod) / 100) * heatTotalCost) / ApartmentsAmount) / 100;
+                    warmWaterConstantCost = Math.Ceiling(100 * ((Convert.ToDecimal(_settlementPage.ConstantPeriod) / 100) * waterHeatTotalCost) / ApartmentsAmount) / 100;
                 }
                 else
                 {
-                    GJconstantCost = Math.Ceiling(100 * ((_settlementPage.ConstantPeriod / 100) * heatTotalCost) / BuildingAreaSum) / 100;
-                    warmWaterConstantCost = Math.Ceiling(100 * ((_settlementPage.ConstantPeriod / 100) * waterHeatTotalCost) / BuildingAreaSum) / 100;
+                    GJconstantCost = Math.Ceiling(100 * ((Convert.ToDecimal(_settlementPage.ConstantPeriod) / 100) * heatTotalCost) / Convert.ToDecimal(BuildingAreaSum)) / 100;
+                    warmWaterConstantCost = Math.Ceiling(100 * ((Convert.ToDecimal(_settlementPage.ConstantPeriod) / 100) * waterHeatTotalCost) / Convert.ToDecimal(BuildingAreaSum)) / 100;
                 }
                 GJSettlePerSquareMeter = GJconstantCost;
                 WarmWaterSettlePerSquareMeter = warmWaterConstantCost;
                                 
-                double warmWaterDeficitPerApartment = 0;
+                decimal warmWaterDeficitPerApartment = 0;
                 if (_settlementPage.ChargeHeatMeterDeficit)
                 {
                     if (_settlementPage.HeatWaterMeterDiff > ApartmentHeatWaterMeterDiffSum)
                     {
-                        warmWaterDeficitPerApartment = (_settlementPage.HeatWaterMeterDiff - adjustedWarmMeterCubicMeterSum) / notValidWarmWaterMetersCount;
+                        warmWaterDeficitPerApartment = (Convert.ToDecimal(_settlementPage.HeatWaterMeterDiff) - adjustedWarmMeterCubicMeterSum) / notValidWarmWaterMetersCount;
                     }
                 }
 
-                double GJDeficitPerApartment = 0;
+                decimal GJDeficitPerApartment = 0;
                 if (_settlementPage.ChargeHeatDeficit)
                 {
                     if (_settlementPage.HeatMeterDiff > ApartmentGJMeterDiffSum)
                     {
-                        GJDeficitPerApartment = (_settlementPage.HeatMeterDiff - adjustedGJsum) / notValidHeatMetersCount;
+                        GJDeficitPerApartment = (Convert.ToDecimal(_settlementPage.HeatMeterDiff) - adjustedGJsum) / notValidHeatMetersCount;
                     }
                 }
 
@@ -864,7 +864,7 @@ namespace DomenaManager.Pages
 
                     var amdg = selectedAmdgs.FirstOrDefault(x => x.Meter.MeterId.Equals(_settlementPage.WarmWaterMeterName.MeterId));
                     
-                    double chargeAmount = 0;
+                    decimal chargeAmount = 0;
                     var c = Charges.Where(x => x.ApartmentId.Equals(a.ApartmentId) && x.ChargeDate >= _settlementPage.SettlementFrom && x.ChargeDate <= _settlementPage.SettlementTo);
                     foreach (var cc in c)
                     {
@@ -883,12 +883,12 @@ namespace DomenaManager.Pages
                         SettleArea = a.ApartmentArea + a.AdditionalArea,
                     };
 
-                    var costSett = Math.Ceiling((amd.MeterDifference * WarmWaterSettlePerMeter) * 100) / 100;
+                    var costSett = Math.Ceiling((Convert.ToDecimal(amd.MeterDifference) * WarmWaterSettlePerMeter) * 100) / 100;
                     if (!amd.IsMeterLegalized)
                     {
                         amd.LastMeasure = 0;
-                        amd.CurrentMeasure = (WarmWaterConstantAdjustment + warmWaterDeficitPerApartment);
-                        costSett = Math.Ceiling((amd.MeterDifference * WarmWaterSettlePerMeter) * 100) / 100;
+                        amd.CurrentMeasure = Convert.ToDouble(WarmWaterConstantAdjustment + warmWaterDeficitPerApartment);
+                        costSett = Math.Ceiling((Convert.ToDecimal(amd.MeterDifference) * WarmWaterSettlePerMeter) * 100) / 100;
                         costSett += WarmWaterConstantCharge;
                     }
                     amd.VariableCost = costSett;
@@ -896,14 +896,14 @@ namespace DomenaManager.Pages
 
                     if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_AREA)
                     {
-                        amd.ConstantCost = WarmWaterSettlePerSquareMeter * (amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea);
+                        amd.ConstantCost = WarmWaterSettlePerSquareMeter * Convert.ToDecimal(amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea);
                     }
                     else
                     {
                         amd.ConstantCost = WarmWaterSettlePerSquareMeter;
                     }
                     amd.CostSettled = amd.VariableCost + amd.ConstantCost;
-                    TotalWarmWaterCubicMeterSum += amd.CostSettled;
+                    TotalWarmWaterCubicMeterSum += Convert.ToDouble(amd.CostSettled);
                     PerGasCollection.Add(amd);
 
                     // GJ
@@ -928,12 +928,12 @@ namespace DomenaManager.Pages
                         SettleArea = a.ApartmentArea + a.AdditionalArea,
                     };
 
-                    costSett = Math.Ceiling((amd.MeterDifference * GJSettlePerMeter) * 100) / 100;
+                    costSett = Math.Ceiling((Convert.ToDecimal(amd.MeterDifference) * GJSettlePerMeter) * 100) / 100;
                     if (!amd.IsMeterLegalized)
                     {
                         amd.LastMeasure = 0;
-                        amd.CurrentMeasure = (GJConstantAdjustment + GJDeficitPerApartment);
-                        costSett = Math.Ceiling((amd.MeterDifference * GJSettlePerMeter) * 100) / 100;
+                        amd.CurrentMeasure = Convert.ToDouble(GJConstantAdjustment + GJDeficitPerApartment);
+                        costSett = Math.Ceiling((Convert.ToDecimal(amd.MeterDifference) * GJSettlePerMeter) * 100) / 100;
                         costSett += GJConstantCharge;
                     }
                     amd.VariableCost = costSett;
@@ -941,19 +941,19 @@ namespace DomenaManager.Pages
 
                     if (_settlementPage.ConstantSettlementMethod == SettlementMethodsEnum.PER_AREA)
                     {
-                        amd.ConstantCost = GJSettlePerSquareMeter * (amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea);
+                        amd.ConstantCost = GJSettlePerSquareMeter * Convert.ToDecimal(amd.ApartmentO.AdditionalArea + amd.ApartmentO.ApartmentArea);
                     }
                     else
                     {
                         amd.ConstantCost = GJSettlePerSquareMeter;
                     }
                     amd.CostSettled = amd.VariableCost + amd.ConstantCost;
-                    TotalGJSum += amd.CostSettled;
+                    TotalGJSum += Convert.ToDouble(amd.CostSettled);
                     PerGasCollection.Add(amd);
                     //  dodać footer z podsumowaniem  
 
                 }
-                TotalSum = TotalGJSum + TotalWarmWaterCubicMeterSum;
+                TotalSum = Convert.ToDecimal(TotalGJSum + TotalWarmWaterCubicMeterSum);
 
                 ICollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(PerGasCollection);
                 cv.SortDescriptions.Clear();

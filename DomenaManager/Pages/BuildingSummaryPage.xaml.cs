@@ -206,7 +206,7 @@ namespace DomenaManager.Pages
                 {
                     sdg.rows[0].invoices[k] = "-";
                 }
-                double lastYearSaldo = Payments.CalculateBuildingSaldo(year - 1, building);
+                decimal lastYearSaldo = Payments.CalculateBuildingSaldo(year - 1, building);
                 sdg.rows[0].invoicesSum = "-";
                 sdg.rows[0].payments = "-";
                 sdg.rows[0].saldo = lastYearSaldo.ToString() + " zł"; // lastYear
@@ -217,7 +217,7 @@ namespace DomenaManager.Pages
                     sdg.rows[i].month = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(new DateTime(2000, i, 1).ToString("MMMM"));
                     sdg.rows[i].invoices = new string[rowArrayLength];
                     int iterator = 0;
-                    double invoicesSum = 0;
+                    decimal invoicesSum = 0;
 
                     foreach (var g in distinctCategories)
                     {
@@ -261,7 +261,7 @@ namespace DomenaManager.Pages
                     }
 
                     sdg.rows[i].invoicesSum = invoicesSum.ToString() + " zł";
-                    double paym = payments.Where(x => x.PaymentRegistrationDate.Month == i).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
+                    decimal paym = payments.Where(x => x.PaymentRegistrationDate.Month == i).Select(x => x.PaymentAmount).DefaultIfEmpty(0).Sum();
                     sdg.rows[i].payments = paym.ToString() + " zł";
                     sdg.rows[i].saldo = (paym - invoicesSum).ToString() + " zł";
                 }

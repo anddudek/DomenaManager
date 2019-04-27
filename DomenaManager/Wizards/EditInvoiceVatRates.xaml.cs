@@ -24,8 +24,8 @@ namespace DomenaManager.Wizards
     /// </summary>
     public partial class EditInvoiceVatRates : UserControl, INotifyPropertyChanged
     {
-        private double _itemName;
-        public double ItemName
+        private decimal _itemName;
+        public decimal ItemName
         {
             get { return _itemName; }
             set

@@ -10,7 +10,7 @@ namespace DomenaManager.Helpers
 {
     public static class RepairFundOperations
     {
-        public static double CalculateAcumulateFund(Guid ApartmentId, int Month, int Year)
+        public static decimal CalculateAcumulateFund(Guid ApartmentId, int Month, int Year)
         {
             using (var db = new DB.DomenaDBContext())
             {
@@ -42,7 +42,7 @@ namespace DomenaManager.Helpers
                 var apartmentsCount = db.Apartments.Where(x => !x.IsDeleted && x.BuildingId == apartment.BuildingId).Count();
                 var totalLocators = db.Apartments.Where(x => !x.IsDeleted && x.BuildingId == apartment.BuildingId).Select(x => x.Locators).DefaultIfEmpty(0).Sum();
                 double scale;
-                double apartmentCost = 0;
+                decimal apartmentCost = 0;
 
                 switch (invoiceSettlement.Distribution)
                 {
@@ -50,23 +50,23 @@ namespace DomenaManager.Helpers
                         break;
                     case CostDistribution.PerAdditionalArea:
                         scale = Math.Floor(10000 * (apartment.AdditionalArea / addArea)) / 10000;
-                        apartmentCost = Math.Floor(100 * (totalCost * scale)) / 100;
+                        apartmentCost = Math.Floor(100 * (totalCost * Convert.ToDecimal(scale))) / 100;
                         break;
                     case CostDistribution.PerApartment:
                         scale = Math.Floor(10000 * (1 / (double)apartmentsCount)) / 10000;
-                        apartmentCost = Math.Floor(100 * (totalCost * scale)) / 100;
+                        apartmentCost = Math.Floor(100 * (totalCost * Convert.ToDecimal(scale))) / 100;
                         break;
                     case CostDistribution.PerApartmentArea:
                         scale = Math.Floor(10000 * (apartment.ApartmentArea / apArea)) / 10000;
-                        apartmentCost = Math.Floor(100 * (totalCost * scale)) / 100;
+                        apartmentCost = Math.Floor(100 * (totalCost * Convert.ToDecimal(scale))) / 100;
                         break;
                     case CostDistribution.PerApartmentTotalArea:
                         scale = Math.Floor(10000 * ((apartment.ApartmentArea + apartment.AdditionalArea) / buildingTotalArea)) / 10000;
-                        apartmentCost = Math.Floor(100 * (totalCost * scale)) / 100;
+                        apartmentCost = Math.Floor(100 * (totalCost * Convert.ToDecimal(scale))) / 100;
                         break;
                     case CostDistribution.PerLocators:
                         scale = Math.Floor(10000 * ((double)apartment.Locators / (double)totalLocators)) / 10000;
-                        apartmentCost = Math.Floor(100 * (totalCost * scale)) / 100;
+                        apartmentCost = Math.Floor(100 * (totalCost * Convert.ToDecimal(scale))) / 100;
                         break;
                 }
 

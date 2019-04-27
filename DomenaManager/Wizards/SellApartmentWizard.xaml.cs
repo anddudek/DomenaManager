@@ -259,7 +259,7 @@ namespace DomenaManager.Wizards
                             CostDistribution = cc.CostDistribution,
                             CostPerUnit = cc.CostPerUnit,
                             GroupName = cc.GroupName,
-                            Sum = Math.Round(cc.Sum * ratio, 0),
+                            Sum = Math.Round(cc.Sum * Convert.ToDecimal(ratio), 0),
                         };
                         soldApartmentCharge.Components.Add(chargeComponent);
                         cc.Sum -= chargeComponent.Sum;

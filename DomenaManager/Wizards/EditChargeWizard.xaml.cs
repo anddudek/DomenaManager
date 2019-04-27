@@ -532,12 +532,12 @@ namespace DomenaManager.Wizards
             {
                 SelectedChargeComponent.CostCategoryId = SelectedCategoryName.BuildingChargeBasisCategoryId;
                 SelectedChargeComponent.CostDistribution = SelectedUnitName.EnumValue;
-                double uc;
-                if (!double.TryParse(UnitCost, out uc))
+                decimal uc;
+                if (!decimal.TryParse(UnitCost, out uc))
                     return;
                 SelectedChargeComponent.CostPerUnit = uc;
-                double cs;
-                if (!double.TryParse(ChargeSum, out cs))
+                decimal cs;
+                if (!decimal.TryParse(ChargeSum, out cs))
                     return;
                 SelectedChargeComponent.Sum = cs;
                 OnPropertyChanged("ComponentsSum");
@@ -553,11 +553,11 @@ namespace DomenaManager.Wizards
         {
             if (SelectedCategoryName != null && SelectedUnitName != null)
             {
-                double uc;
-                if (!double.TryParse(UnitCost, out uc))
+                decimal uc;
+                if (!decimal.TryParse(UnitCost, out uc))
                     return;
-                double cs;
-                if (!double.TryParse(ChargeSum, out cs))
+                decimal cs;
+                if (!decimal.TryParse(ChargeSum, out cs))
                     return;
 
                 var cc = new ChargeComponent()

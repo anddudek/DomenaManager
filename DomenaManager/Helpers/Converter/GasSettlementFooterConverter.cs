@@ -17,7 +17,7 @@ namespace DomenaManager.Helpers
             if (items == null)
                 return "-";
 
-            double sum = 0;
+            decimal sum = 0;
             
             switch ((string)parameter)
             {    
@@ -27,7 +27,7 @@ namespace DomenaManager.Helpers
                     foreach (ApartamentMeterDataGrid u in items) { sum += u.VariableCost; }
                     break;
                 case "Area":
-                    foreach (ApartamentMeterDataGrid u in items) { sum = u.SettleArea; }
+                    foreach (ApartamentMeterDataGrid u in items) { sum = System.Convert.ToDecimal(u.SettleArea); }
                     break;
                 case "Constant":
                     foreach (ApartamentMeterDataGrid u in items) { sum += u.ConstantCost; }
