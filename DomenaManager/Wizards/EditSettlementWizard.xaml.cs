@@ -183,8 +183,12 @@ namespace DomenaManager.Wizards
                     WizardControl = settlementView;
                     return;
                 case CurrentSettlementPageEnum.Settlement:
+                    settlementView.PackViewResult();
                     CurrentPage = CurrentSettlementPageEnum.Summary;
                     WizardControl = summaryView;
+                    summaryView.SummaryData = new SettlementWizard.SummaryData();
+                    summaryView.SummaryData.SettlementData = settlementView.SettlementData;
+                    summaryView.InitializeView();
                     return;
             }
         }

@@ -104,6 +104,7 @@ namespace DomenaManager.Wizards.SettlementWizard
                     _mutualSummaryType = value;
                     OnPropertyChanged("MutualSummaryType");
                     OnPropertyChanged("MutualUnitsCount");
+                    OnPropertyChanged("MutualUnitCost");
                 }
             }
         }
@@ -119,6 +120,7 @@ namespace DomenaManager.Wizards.SettlementWizard
                     _constSummaryType = value;
                     OnPropertyChanged("ConstSummaryType");
                     OnPropertyChanged("ConstUnitsCount");
+                    OnPropertyChanged("ConstUnitCost");
                 }
             }
         }
@@ -134,6 +136,7 @@ namespace DomenaManager.Wizards.SettlementWizard
                     _varSummaryType = value;
                     OnPropertyChanged("VarSummaryType");
                     OnPropertyChanged("VarUnitsCount");
+                    OnPropertyChanged("VarUnitCost");
                 }
             }
         }
@@ -146,6 +149,16 @@ namespace DomenaManager.Wizards.SettlementWizard
             }
         }
 
+        public decimal MutualUnitCost
+        {
+            get
+            {
+                if (CalculateUnitCount(MutualSummaryType) == 0)
+                    return 0;
+                return (decimal.Floor(100 * TotalSum / Convert.ToDecimal(CalculateUnitCount(MutualSummaryType)))) / 100;
+            }
+        }
+
         public string ConstUnitsCount
         {
             get
@@ -154,11 +167,31 @@ namespace DomenaManager.Wizards.SettlementWizard
             }
         }
 
+        public decimal ConstUnitCost
+        {
+            get
+            {
+                if (CalculateUnitCount(ConstSummaryType) == 0)
+                    return 0;
+                return (decimal.Floor(100 * ConstSum / Convert.ToDecimal(CalculateUnitCount(ConstSummaryType)))) / 100;
+            }
+        }
+
         public string VarUnitsCount
         {
             get
             {
                 return CalculateUnitCount(VarSummaryType).ToString() + CalculateUnitSuffix(MutualSummaryType);
+            }
+        }
+
+        public decimal VarUnitCost
+        {
+            get
+            {
+                if (CalculateUnitCount(VarSummaryType) == 0)
+                    return 0;
+                return (decimal.Floor(100 * VarSum / Convert.ToDecimal(CalculateUnitCount(VarSummaryType)))) / 100;
             }
         }
 
@@ -203,6 +236,17 @@ namespace DomenaManager.Wizards.SettlementWizard
                 _apartmentsList = db.Apartments.ToList();
             }
             OnPropertyChanged("");
+        }
+
+        public void PackViewResult()
+        {
+            SettlementData.IsMutualSettlement = IsConstVarMutual;
+            SettlementData.MutualUnitCost = MutualUnitCost;
+            SettlementData.VarUnitCost = VarUnitCost;
+            SettlementData.ConstUnitCost = ConstUnitCost;
+            SettlementData.MutualSummaryType = MutualSummaryType;
+            SettlementData.VarSummaryType = VarSummaryType;
+            SettlementData.ConstSummaryType = ConstSummaryType;
         }
 
         private double CalculateUnitCount(SettlementUnitType type)
@@ -293,5 +337,12 @@ namespace DomenaManager.Wizards.SettlementWizard
     public class SettlementData
     {
         public InvoiceData InvoiceData { get; set; }
+        public bool IsMutualSettlement { get; set; }
+        public decimal MutualUnitCost { get; set; }
+        public decimal VarUnitCost { get; set; }
+        public decimal ConstUnitCost { get; set; }
+        public SettlementUnitType MutualSummaryType { get; set; }
+        public SettlementUnitType VarSummaryType { get; set; }
+        public SettlementUnitType ConstSummaryType { get; set; }
     }
 }
