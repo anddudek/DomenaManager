@@ -222,7 +222,7 @@ namespace DomenaManager.Windows
                     OnPropertyChanged("CurrentPage");
                     return;
                 case "Settlement":
-                    CurrentPage = new Pages.SettlementPage();
+                    CurrentPage = new Wizards.EditSettlementWizard();
                     OnPropertyChanged("CurrentPage");
                     return;
                 case "Letters":

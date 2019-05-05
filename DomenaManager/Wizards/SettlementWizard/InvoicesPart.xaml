@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="DomenaManager.Wizards.SettlementWizard.InvoicesPart"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
+             xmlns:DM="clr-namespace:LibDataModel;assembly=LibDataModel"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        mc:Ignorable="d"
+        xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
+        Height="auto" Background="White">
+    <Grid MinWidth="650">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <DataGrid Grid.ColumnSpan="4" ItemsSource="{Binding InvoiceData.Invoices}" MinHeight="100" BorderBrush="Black" BorderThickness="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" FrozenColumnCount="1">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Wybierz" Width="auto" Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Tytułem" Width="auto" Binding="{Binding Title}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Kategoria" Width="auto" Binding="{Binding InvoiceCategory.CategoryName}"  IsReadOnly="True"/>
+                <DataGridTextColumn Header="Część stała brutto" Width="auto" Binding="{Binding CostAmountConstGross, StringFormat={}{0} zł}"  IsReadOnly="True"/>
+                <DataGridTextColumn Header="Część zmienna brutto" Width="auto" Binding="{Binding CostAmountVariableGross, StringFormat={}{0} zł}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Kwota brutto" Width="auto" Binding="{Binding CostAmountGross, StringFormat={}{0} zł}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Kontrahent" Width="auto" Binding="{Binding ContractorName}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Numer faktury" Width="auto" Binding="{Binding InvoiceNumber}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Data wystawienia" Width="auto" Binding="{Binding InvoiceCreatedDate, StringFormat=\{0:dd-MM-yyyy\}}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Data księgowania" Width="auto" Binding="{Binding InvoiceDate, StringFormat=\{0:dd-MM-yyyy\}}" IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Label Grid.Row="1" Content="{Binding SelectedCount}" ContentStringFormat="{}Zaznaczono: {0}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Label Grid.Row="1" Grid.Column="1" Content="{Binding ConstantSum}" ContentStringFormat="{}Suma części stałych: {0} zł" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Label Grid.Row="1" Grid.Column="2" Content="{Binding VariableSum}" ContentStringFormat="{}Suma części zmiennych: {0} zł" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Label Grid.Row="1" Grid.Column="3" Content="{Binding TotalSum}" ContentStringFormat="{}Suma całkowita: {0} zł" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    </Grid>
+</UserControl>

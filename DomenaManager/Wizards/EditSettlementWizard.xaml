@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="DomenaManager.Wizards.EditSettlementWizard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:Helpers="clr-namespace:DomenaManager.Helpers"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        mc:Ignorable="d"
+        xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
+        Height="auto" Background="White">
+    <UserControl.Resources>
+        <Helpers:NullToDateConverter x:Key="NullToDateConverter" />
+        <Helpers:DatesToCurrentDateMultiConverter x:Key="DateToCurrentDateConverter" />
+    </UserControl.Resources>
+    <Grid Width="750" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Border BorderThickness="0,0,0,4" BorderBrush="{Binding MasterDataForeground}" Background="Transparent" Margin="4">
+                <Label Content="Dane podstawowe" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="120" Margin="10,10,15,10" Foreground="{Binding MasterDataForeground}"/>
+            </Border>
+            <Border BorderThickness="0,0,0,4" BorderBrush="{Binding InvoicesForeground}" Background="Transparent" Margin="4">
+                <Label Content="Faktury" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="120" Margin="15,10,15,10" Foreground="{Binding InvoicesForeground}"/>
+            </Border>
+            <Border BorderThickness="0,0,0,4" BorderBrush="{Binding SettlementForeground}" Background="Transparent" Margin="4">
+                <Label Content="Rozliczenie" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="120" Margin="15,10,15,10" Foreground="{Binding SettlementForeground}"/>
+            </Border>
+            <Border BorderThickness="0,0,0,4" BorderBrush="{Binding SummaryForeground}" Background="Transparent" Margin="4">
+                <Label Content="Podsumowanie" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="120" Margin="15,10,10,10" Foreground="{Binding SummaryForeground}"/>
+            </Border>
+        </StackPanel>
+        <ContentControl Content="{Binding WizardControl}" Grid.Row="1" />
+        <MyControls:ActionButton MDTText="Wstecz" Grid.Row="2" HorizontalAlignment="Left" Height="50" MDTIcon="ArrowLeft" Command="{Binding PreviousCommand}" Margin="10,0,10,0"/>
+        <MyControls:ActionButton MDTText="Dalej"  Grid.Row="2" HorizontalAlignment="Right" Height="50" MDTIcon="ArrowRight" Command="{Binding NextCommand}" Margin="10,0,10,0"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center">
+            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zapisz" Command="{Binding AcceptCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2" />
+            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{Binding CancelCommand}"  Grid.Column="1" Grid.Row="8" Margin="5,0,5,2" />
+        </StackPanel>
+    </Grid>
+</UserControl>

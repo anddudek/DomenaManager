@@ -118,6 +118,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helpers\BuildingSummaryDataGrid.cs" />
+    <Compile Include="Helpers\Converter\EnumToCollectionConverter.cs" />
     <Compile Include="Helpers\Converter\GuidToBindingNameConverter.cs" />
     <Compile Include="Helpers\Converter\GasSettlementFooterConverter.cs" />
     <Compile Include="Helpers\Converter\GuidToBindingNameMultiConverter.cs" />
@@ -131,7 +132,9 @@
     <Compile Include="Helpers\DataGrid\ApartamentMeterDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentBinding.cs" />
     <Compile Include="Helpers\DataGrid\BindingDataGrid.cs" />
+    <Compile Include="Helpers\DataGrid\InvoiceSettlementDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\MultiPaymentDataGrid.cs" />
+    <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Helpers\Payments\ChargesOperations.cs" />
     <Compile Include="Helpers\Converter\BuildingsFooterConverter.cs" />
     <Compile Include="Helpers\Converter\GuidToCategoryNameMultiConverter.cs" />
@@ -154,6 +157,7 @@
     <Compile Include="Helpers\Payments\RepairFundOperations.cs" />
     <Compile Include="Helpers\PDF\PDFOperations.cs" />
     <Compile Include="Helpers\SettlementMethodsEnum.cs" />
+    <Compile Include="Helpers\SettlementUnitType.cs" />
     <Compile Include="Helpers\SwitchPage.cs" />
     <Compile Include="Helpers\ValidationRule\IBANValidationRule.cs" />
     <Compile Include="Helpers\ValidationRule\StringToDoubleInvoiceValidationRule.cs" />
@@ -169,6 +173,7 @@
     <Compile Include="Helpers\Converter\SumConverter.cs" />
     <Compile Include="Helpers\ValidationRule\Validator.cs" />
     <Compile Include="Dialogs\YNMsg.cs" />
+    <Compile Include="Helpers\ValueDescription.cs" />
     <Compile Include="Pages\MonthlyChargesPage.xaml.cs">
       <DependentUpon>MonthlyChargesPage.xaml</DependentUpon>
     </Compile>
@@ -214,6 +219,9 @@
     </Compile>
     <Compile Include="Wizards\EditApartmentWizard.xaml.cs">
       <DependentUpon>EditApartmentWizard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\EditSettlementWizard.xaml.cs">
+      <DependentUpon>EditSettlementWizard.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\EditBuildingWizard.xaml.cs">
       <DependentUpon>EditBuildingWizard.xaml</DependentUpon>
@@ -268,6 +276,19 @@
     </Compile>
     <Compile Include="Wizards\EditPaymentWizard.xaml.cs">
       <DependentUpon>EditPaymentWizard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\SettlementTypeEnum.cs" />
+    <Compile Include="Wizards\SettlementWizard\SummaryPart.xaml.cs">
+      <DependentUpon>SummaryPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SettlementWizard\SettlementPart.xaml.cs">
+      <DependentUpon>SettlementPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SettlementWizard\InvoicesPart.xaml.cs">
+      <DependentUpon>InvoicesPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wizards\SettlementWizard\MasterDataPart.xaml.cs">
+      <DependentUpon>MasterDataPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wizards\YNMsgBox.xaml.cs">
       <DependentUpon>YNMsgBox.xaml</DependentUpon>
@@ -360,6 +381,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Wizards\EditSettlementWizard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Wizards\EditBuildingWizard.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -431,6 +456,22 @@
     <Page Include="Wizards\EditPaymentWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizards\SettlementWizard\SummaryPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\SettlementWizard\SettlementPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\SettlementWizard\InvoicesPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wizards\SettlementWizard\MasterDataPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Wizards\YNMsgBox.xaml">
       <SubType>Designer</SubType>
