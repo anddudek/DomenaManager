@@ -12,9 +12,10 @@
         mc:Ignorable="d"
         xmlns:MyControls="clr-namespace:MyCustomControls;assembly=MyCustomControls"
         Height="auto" Background="White">
-    <StackPanel>
-        <Label Content="{Binding SelectedSummaryType}" ContentStringFormat="Wybrany sposób rozliczania: {0}" HorizontalAlignment="Center"/>
-        <Grid Visibility="{Binding IsUnitSettle}">
+    <ScrollViewer>
+        <StackPanel>
+            <Label Content="{Binding SelectedSummaryType}" ContentStringFormat="Wybrany sposób rozliczania: {0}" HorizontalAlignment="Center"/>
+            <Grid Visibility="{Binding IsUnitSettle}">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -74,10 +75,14 @@
                 </Grid.RowDefinitions>
                 <Label Content="Koszty stałe - Koszt jednostkowy: " HorizontalAlignment="Right" FontWeight="Bold"/>
                 <Label Content="{Binding ConstUnitCost}" ContentStringFormat="{}{0} zł" HorizontalAlignment="Left" Grid.Column="1" FontWeight="Bold"/>
-                
+
                 <Label Content="Koszty zmienne - Koszt jednostkowy: " HorizontalAlignment="Right" Grid.Row="1" FontWeight="Bold"/>
                 <Label Content="{Binding VarUnitCost}" ContentStringFormat="{}{0} zł" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="1" FontWeight="Bold"/>
+
             </Grid>
+            <ContentControl Content="{Binding UnitSummaryDG}" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
+
         </Grid>
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>    
 </UserControl>

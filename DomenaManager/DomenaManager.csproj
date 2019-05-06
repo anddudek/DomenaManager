@@ -158,6 +158,7 @@
     <Compile Include="Helpers\PDF\PDFOperations.cs" />
     <Compile Include="Helpers\SettlementMethodsEnum.cs" />
     <Compile Include="Helpers\SettlementUnitType.cs" />
+    <Compile Include="Helpers\DGSummary\DGUnitSummary.cs" />
     <Compile Include="Helpers\SwitchPage.cs" />
     <Compile Include="Helpers\ValidationRule\IBANValidationRule.cs" />
     <Compile Include="Helpers\ValidationRule\StringToDoubleInvoiceValidationRule.cs" />
