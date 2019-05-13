@@ -149,7 +149,7 @@
                     <GridView>
                         <!--<GridViewColumn Header="Kategoria" Width="auto" DisplayMemberBinding="{Binding CategoryName}" />-->
                         <GridViewColumn Header="Jednostka" Width="auto" DisplayMemberBinding="{Binding CostUnit.Name}" />
-                        <GridViewColumn Header="Koszt" Width="auto" DisplayMemberBinding="{Binding Cost}" />
+                        <GridViewColumn Header="Cena" Width="auto" DisplayMemberBinding="{Binding Cost}" />
                         <GridViewColumn Header="Obow. od" Width="auto" DisplayMemberBinding="{Binding Path=BegginingDate, StringFormat=d, ConverterCulture=pl-PL}" />
                         <GridViewColumn Header="Obow. do" Width="auto" DisplayMemberBinding="{Binding Path=EndingDate, StringFormat=d, Converter={StaticResource NullToDateConverter}, ConverterCulture=pl-PL}" />
                         <GridViewColumn Header="Grupa" Width="auto" DisplayMemberBinding="{Binding Path=CostGroup.GroupName}" />

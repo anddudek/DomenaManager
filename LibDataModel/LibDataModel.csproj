@@ -41,11 +41,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApartmentMeter.cs" />
+    <Compile Include="ApartmentSettlement.cs" />
     <Compile Include="AutoCharge.cs" />
     <Compile Include="BindingParent.cs" />
     <Compile Include="BuildingChargeGroupBankAccount.cs" />
     <Compile Include="BuildingChargeGroupName.cs" />
     <Compile Include="BuildingInvoiceBinding.cs" />
+    <Compile Include="BuildingSettlement.cs" />
     <Compile Include="Charge.cs" />
     <Compile Include="ChargeComponent.cs" />
     <Compile Include="InvoiceVatRate.cs" />

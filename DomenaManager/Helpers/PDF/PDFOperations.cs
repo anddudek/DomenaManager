@@ -59,7 +59,7 @@ namespace DomenaManager.Helpers
             paragraph.Format.Alignment = ParagraphAlignment.Right;
             paragraph.Format.RightIndent = "0";
             paragraph.AddText(owner.OwnerName + Environment.NewLine + owner.MailAddress);
-            paragraph.Format.SpaceBefore = "-4.5cm";
+            paragraph.Format.SpaceBefore = ".5cm";
             paragraph.Format.SpaceAfter = "3.5cm";
 
             // Create footer            
@@ -143,11 +143,11 @@ namespace DomenaManager.Helpers
             var column = table.AddColumn(Unit.FromCentimeter(2.25));
             column.Format.Alignment = ParagraphAlignment.Center;
             column = table.AddColumn(Unit.FromCentimeter(1.25));
-            column.Format.Alignment = ParagraphAlignment.Center;
+            column.Format.Alignment = ParagraphAlignment.Right;
             column = table.AddColumn(Unit.FromCentimeter(2.25));
-            column.Format.Alignment = ParagraphAlignment.Center;
+            column.Format.Alignment = ParagraphAlignment.Right;
             column = table.AddColumn(Unit.FromCentimeter(2));
-            column.Format.Alignment = ParagraphAlignment.Center;
+            column.Format.Alignment = ParagraphAlignment.Right;
 
             Row row = table.AddRow();
             row.Shading.Color = new Color(135, 176, 77);

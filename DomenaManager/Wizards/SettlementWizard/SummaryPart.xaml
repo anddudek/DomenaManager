@@ -14,6 +14,10 @@
         Height="auto" Background="White">
     <ScrollViewer>
         <StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label Content="Rozlicz nadpłatę / niedopłatę jako: "/>
+                <ComboBox MinWidth="120" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" DisplayMemberPath="CategoryName"/>
+            </StackPanel>
             <Label Content="{Binding SelectedSummaryType}" ContentStringFormat="Wybrany sposób rozliczania: {0}" HorizontalAlignment="Center"/>
             <Grid Visibility="{Binding IsUnitSettle}">
             <Grid.RowDefinitions>
@@ -38,7 +42,7 @@
 
             <Label Content="{Binding Path=MutualSummaryType}" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"  Visibility="{Binding IsMutualVisible}"/>
 
-            <Label Content="{Binding MutualUnitsCount}" ContentStringFormat="{}Razem: {0}" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IsMutualVisible}"/>
+            <Label Content="{Binding MutualUnitsCount}" ContentStringFormat="{}Razem jednostek: {0}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding IsMutualVisible}"/>
 
             <Label Content="Rozlicz koszty stałe na podstawie: " Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="{Binding IsMutualNotVisible}"/>
 
@@ -52,34 +56,6 @@
 
             <Label Content="{Binding VarUnitsCount}" ContentStringFormat="{}Razem: {0}" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IsMutualNotVisible}"/>
 
-            <Grid Grid.ColumnSpan="2" Grid.Row="7" Visibility="{Binding IsMutualVisible}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Label Content="Koszt jednostkowy: " HorizontalAlignment="Right" FontWeight="Bold"/>
-                <Label Content="{Binding MutualUnitCost}" ContentStringFormat="{}{0} zł" HorizontalAlignment="Left" Grid.Column="1" FontWeight="Bold"/>
-            </Grid>
-
-            <Grid Grid.ColumnSpan="2" Grid.Row="8" Visibility="{Binding IsMutualNotVisible}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Label Content="Koszty stałe - Koszt jednostkowy: " HorizontalAlignment="Right" FontWeight="Bold"/>
-                <Label Content="{Binding ConstUnitCost}" ContentStringFormat="{}{0} zł" HorizontalAlignment="Left" Grid.Column="1" FontWeight="Bold"/>
-
-                <Label Content="Koszty zmienne - Koszt jednostkowy: " HorizontalAlignment="Right" Grid.Row="1" FontWeight="Bold"/>
-                <Label Content="{Binding VarUnitCost}" ContentStringFormat="{}{0} zł" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="1" FontWeight="Bold"/>
-
-            </Grid>
             <ContentControl Content="{Binding UnitSummaryDG}" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
 
         </Grid>

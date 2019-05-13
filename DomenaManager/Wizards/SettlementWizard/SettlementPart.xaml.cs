@@ -17,6 +17,7 @@ using System.Data.Entity;
 using LibDataModel;
 using DomenaManager.Helpers;
 using MaterialDesignThemes.Wpf;
+using DomenaManager.Helpers.DGSummary;
 
 namespace DomenaManager.Wizards.SettlementWizard
 {
@@ -26,6 +27,8 @@ namespace DomenaManager.Wizards.SettlementWizard
     public partial class SettlementPart : UserControl, INotifyPropertyChanged
     {
         public SettlementData SettlementData { get; set; }
+
+        #region UnitSettlement
 
         public string SelectedSettlementType
         {
@@ -43,7 +46,7 @@ namespace DomenaManager.Wizards.SettlementWizard
             {
                 if (SettlementData == null || SettlementData.InvoiceData == null || SettlementData.InvoiceData.MasterData == null)
                     return Visibility.Hidden;
-                return SettlementData.InvoiceData.MasterData.SettlementType == SettlementTypeEnum.UNITS ? Visibility.Visible : Visibility.Hidden;
+                return SettlementData.InvoiceData.MasterData.SettlementType == SettlementTypeEnum.UNITS ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -155,7 +158,8 @@ namespace DomenaManager.Wizards.SettlementWizard
             {
                 if (CalculateUnitCount(MutualSummaryType) == 0)
                     return 0;
-                return (decimal.Floor(100 * TotalSum / Convert.ToDecimal(CalculateUnitCount(MutualSummaryType)))) / 100;
+                //return (decimal.Ceiling(100 * TotalSum / Convert.ToDecimal(CalculateUnitCount(MutualSummaryType)))) / 100;
+                return TotalSum / Convert.ToDecimal(CalculateUnitCount(MutualSummaryType));
             }
         }
 
@@ -163,7 +167,7 @@ namespace DomenaManager.Wizards.SettlementWizard
         {
             get
             {
-                return CalculateUnitCount(ConstSummaryType).ToString() + CalculateUnitSuffix(MutualSummaryType);
+                return CalculateUnitCount(ConstSummaryType).ToString() + CalculateUnitSuffix(ConstSummaryType);
             }
         }
 
@@ -173,15 +177,16 @@ namespace DomenaManager.Wizards.SettlementWizard
             {
                 if (CalculateUnitCount(ConstSummaryType) == 0)
                     return 0;
-                return (decimal.Floor(100 * ConstSum / Convert.ToDecimal(CalculateUnitCount(ConstSummaryType)))) / 100;
+                //return (decimal.Ceiling(100 * ConstSum / Convert.ToDecimal(CalculateUnitCount(ConstSummaryType)))) / 100;
+                return ConstSum / Convert.ToDecimal(CalculateUnitCount(ConstSummaryType));
             }
         }
 
         public string VarUnitsCount
         {
-            get
+            get 
             {
-                return CalculateUnitCount(VarSummaryType).ToString() + CalculateUnitSuffix(MutualSummaryType);
+                return CalculateUnitCount(VarSummaryType).ToString() + CalculateUnitSuffix(ConstSummaryType);
             }
         }
 
@@ -191,7 +196,8 @@ namespace DomenaManager.Wizards.SettlementWizard
             {
                 if (CalculateUnitCount(VarSummaryType) == 0)
                     return 0;
-                return (decimal.Floor(100 * VarSum / Convert.ToDecimal(CalculateUnitCount(VarSummaryType)))) / 100;
+                return VarSum / Convert.ToDecimal(CalculateUnitCount(VarSummaryType));
+                //return (decimal.Ceiling(100 * VarSum / Convert.ToDecimal(CalculateUnitCount(VarSummaryType)))) / 100;
             }
         }
 
@@ -220,6 +226,220 @@ namespace DomenaManager.Wizards.SettlementWizard
             }
         }
 
+        #endregion
+
+        #region WaterSettlement
+
+        public Visibility IsWaterSettlement
+        {
+            get
+            {
+                if (SettlementData == null || SettlementData.InvoiceData == null || SettlementData.InvoiceData.MasterData == null)
+                    return Visibility.Hidden;
+                return SettlementData.InvoiceData.MasterData.SettlementType == SettlementTypeEnum.WATER ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        private decimal _waterUnitCost;
+        public decimal WaterUnitCost
+        {
+            get
+            {
+                return _waterUnitCost;
+            }
+            set
+            {
+                if (value != _waterUnitCost)
+                {
+                    _waterUnitCost = value;
+                    OnPropertyChanged("WaterUnitCost");
+                }
+            }
+        }
+
+        private decimal _sewageUnitCost;
+        public decimal SewageUnitCost
+        {
+            get
+            {
+                return _sewageUnitCost;
+            }
+            set
+            {
+                if (value != _sewageUnitCost)
+                {
+                    _sewageUnitCost = value;
+                    OnPropertyChanged("SewageUnitCost");
+                }
+            }
+        }
+
+        private double _totalCounter;
+        public double TotalCounter
+        {
+            get
+            {
+                return _totalCounter;
+            }
+            set
+            {
+                if (value != _totalCounter)
+                {
+                    _totalCounter = value;
+                    OnPropertyChanged("TotalCounter");
+                    OnPropertyChanged("ProposedUnitCost");
+                }
+            }
+        }
+        
+        public decimal ProposedUnitCost
+        {
+            get
+            {
+                if (SettlementData?.InvoiceData?.Invoices != null && TotalCounter != 0)
+                    return decimal.Round(SettlementData.InvoiceData.Invoices.Select(x => x.CostAmount).DefaultIfEmpty(0).Sum() / Convert.ToDecimal(TotalCounter), 2);
+                return 0;
+            }
+        }
+
+        private double _totalUsage;
+        public double TotalUsage
+        {
+            get
+            {
+                return _totalUsage;
+            }
+            set
+            {
+                if (value != _totalUsage)
+                {
+                    _totalUsage = value;
+                    OnPropertyChanged("TotalUsage");
+                }
+            }
+        }
+
+        private double _shortage;
+        public double Shortage
+        {
+            get
+            {
+                return _shortage;
+            }
+            set
+            {
+                if (value != _shortage)
+                {
+                    _shortage = value;
+                    OnPropertyChanged("Shortage");
+                }
+            }
+        }
+
+        private ObservableCollection<MeterType> _counters;
+        public ObservableCollection<MeterType> Counters
+        {
+            get
+            {
+                return _counters;
+            }
+            set
+            {
+                if (value != _counters)
+                {
+                    _counters = value;
+                    OnPropertyChanged("Counters");
+                }
+            }
+        }
+
+        private MeterType _hotWaterCounter;
+        public MeterType HotWaterCounter
+        {
+            get
+            {
+                return _hotWaterCounter;
+            }
+            set
+            {
+                if (value != _hotWaterCounter)
+                {
+                    _hotWaterCounter = value;
+                    OnPropertyChanged("HotWaterCounter");
+                }
+            }
+        }
+
+        private MeterType _coldWaterCounter;
+        public MeterType ColdWaterCounter
+        {
+            get
+            {
+                return _coldWaterCounter;
+            }
+            set
+            {
+                if (value != _coldWaterCounter)
+                {
+                    _coldWaterCounter = value;
+                    OnPropertyChanged("ColdWaterCounter");
+                }
+            }
+        }
+
+        private ObservableCollection<BuildingChargeBasisCategory> _paymentsCategories;
+        public ObservableCollection<BuildingChargeBasisCategory> PaymentsCategories
+        {
+            get
+            {
+                return _paymentsCategories;
+            }
+            set
+            {
+                if (value != _paymentsCategories)
+                {
+                    _paymentsCategories = value;
+                    OnPropertyChanged("PaymentsCategories");
+                }
+            }
+        }
+
+        private BuildingChargeBasisCategory _paymentCategory;
+        public BuildingChargeBasisCategory PaymentCategory
+        {
+            get
+            {
+                return _paymentCategory;
+            }
+            set
+            {
+                if (value != _paymentCategory)
+                {
+                    _paymentCategory = value;
+                    OnPropertyChanged("PaymentCategory");
+                }
+            }
+        }
+
+        private ObservableCollection<DGWarmWaterSettlement> _waterSettlementCounters;
+        public ObservableCollection<DGWarmWaterSettlement> WaterSettlementCounters
+        {
+            get
+            {
+                return _waterSettlementCounters;
+            }
+            set
+            {
+                if (value != _waterSettlementCounters)
+                {
+                    _waterSettlementCounters = value;
+                    OnPropertyChanged("WaterSettlementCounters");
+                }
+            }
+        }
+
+        #endregion  
+
         private List<Apartment> _apartmentsList;
 
         public SettlementPart()
@@ -233,7 +453,36 @@ namespace DomenaManager.Wizards.SettlementWizard
         {
             using (var db = new DB.DomenaDBContext())
             {
-                _apartmentsList = db.Apartments.ToList();
+                _apartmentsList = db.Apartments.Include(x => x.MeterCollection).ToList();
+                if (SettlementData?.InvoiceData?.MasterData.Building != null)
+                {
+                    var building = SettlementData?.InvoiceData?.MasterData.Building;
+                    _counters = new ObservableCollection<MeterType>(db.Buildings.Include(x => x.MeterCollection).Where(x => x.BuildingId == building.BuildingId).FirstOrDefault().MeterCollection.Where(x => !x.IsDeleted && x.IsApartment).ToList());
+                    PaymentsCategories = new ObservableCollection<BuildingChargeBasisCategory>(db.CostCategories.Where(x => !x.IsDeleted).ToList());
+                }
+
+                if (WaterSettlementCounters == null || WaterSettlementCounters.Count == 0)
+                {
+                    var buildingId = SettlementData?.InvoiceData?.MasterData?.Building?.BuildingId;
+                    var startingDate = SettlementData?.InvoiceData?.MasterData?.StartingDate;
+                    var endingDate = SettlementData?.InvoiceData?.MasterData?.EndingDate;
+                    var paymentCategory = PaymentCategory?.BuildingChargeBasisCategoryId;
+                    WaterSettlementCounters = new ObservableCollection<DGWarmWaterSettlement>();
+                    var currentBuildingApartments = _apartmentsList.Where(x => x.BuildingId == buildingId && !x.IsDeleted);
+                    var components = db.Charges.Include(x => x.Components).Where(x => x.ChargeDate >= startingDate && x.ChargeDate <= endingDate && x.Components.Any(c => c.CostCategoryId == paymentCategory)).Select(x => x.Components).SelectMany(x => x).Where(x => x.CostCategoryId == paymentCategory);
+                    foreach (var ap in currentBuildingApartments)
+                    {
+                        var dgwws = new DGWarmWaterSettlement()
+                        {
+                            Apartment = ap,
+                            Owner = db.Owners.FirstOrDefault(x => x.OwnerId == ap.OwnerId),
+                            Payments = components.Select(x => x.Sum).DefaultIfEmpty(0).Sum(),
+                            
+                        };
+                        WaterSettlementCounters.Add(dgwws);
+                    }
+                    WaterSettlementCounters.OrderBy(x => x.Apartment.ApartmentNumber);
+                }
             }
             OnPropertyChanged("");
         }
@@ -248,6 +497,8 @@ namespace DomenaManager.Wizards.SettlementWizard
             SettlementData.VarSummaryType = VarSummaryType;
             SettlementData.ConstSummaryType = ConstSummaryType;
         }
+
+        #region UnitSettlement
 
         private double CalculateUnitCount(SettlementUnitType type)
         {
@@ -280,8 +531,7 @@ namespace DomenaManager.Wizards.SettlementWizard
                         .Where(x => !x.IsDeleted && x.BuildingId == SettlementData.InvoiceData.MasterData.Building.BuildingId)
                         .Select(x => x.AdditionalArea)
                         .DefaultIfEmpty(0)
-                        .Sum()
-                        );
+                        .Sum());
                 case SettlementUnitType.PER_APARTMENT:
                     return _apartmentsList.Where(x => !x.IsDeleted && x.BuildingId == SettlementData.InvoiceData.MasterData.Building.BuildingId).Count();
                 case SettlementUnitType.LOCATORS:
@@ -312,6 +562,14 @@ namespace DomenaManager.Wizards.SettlementWizard
                     return " lokatorów";
             }
         }
+
+        #endregion
+
+        #region WaterSettlement
+
+
+
+        #endregion
 
         private bool IsValid(DependencyObject obj)
         {

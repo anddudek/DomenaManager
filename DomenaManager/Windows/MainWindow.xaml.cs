@@ -130,7 +130,9 @@ namespace DomenaManager.Windows
             var LastBackupDate = Properties.Settings.Default.LastDBBackupCreation;
             if (LastBackupDate.AddDays(Properties.Settings.Default.DBCreationDaySpan) < DateTime.Today)
             {
+#if RELEASE
                 BackupDb();
+#endif
             }
 
             CanPerformCharge();
@@ -268,7 +270,7 @@ namespace DomenaManager.Windows
                 string name;
                 if (useDefaultFolder)
                 {
-                    name = @"Backup\\DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
+                    name = @"Backup\DomenaManagerDB_" + DateTime.Today.ToString("ddMMyyyy") + ".bak";
                     name = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), name);
                 }
                 else

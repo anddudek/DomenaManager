@@ -9,8 +9,8 @@ namespace DomenaManager.Helpers
 {
     public enum SettlementTypeEnum
     {
-        [Description("Ciepła woda")]
-        HOT_WATER,
+        //[Description("Ciepła woda")]
+        //HOT_WATER,
         [Description("Ciepła woda i ogrzewanie")]
         HOT_WATER_AND_HEATING,
         [Description("Bieżąca woda")]

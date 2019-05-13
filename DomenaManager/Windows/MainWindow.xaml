@@ -8,7 +8,7 @@
                    BorderThickness="1"
         Title="Domena - zarządzanie nieruchomościami" Height="712.636" Width="1341.496" 
         WindowStyle="ThreeDBorderWindow" Background="#B4B4B4"
-        WindowStartupLocation="CenterScreen" WindowState="Normal"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
         materialDesign:TransitionAssist.DisableTransitions="True">
 
     <materialDesign:DialogHost Identifier="MsgBoxDialog">

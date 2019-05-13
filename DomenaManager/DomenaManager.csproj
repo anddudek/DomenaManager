@@ -134,6 +134,7 @@
     <Compile Include="Helpers\DataGrid\BindingDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\InvoiceSettlementDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\MultiPaymentDataGrid.cs" />
+    <Compile Include="Helpers\DGSummary\DGWarmWaterSettlement.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Helpers\Payments\ChargesOperations.cs" />
     <Compile Include="Helpers\Converter\BuildingsFooterConverter.cs" />

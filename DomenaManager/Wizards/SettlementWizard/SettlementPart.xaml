@@ -36,7 +36,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Label Grid.ColumnSpan="2" Content="{Binding SelectedSettlementType}" ContentStringFormat="{}Wybrany sposób rozliczenia {0}: " FontWeight="Bold" HorizontalAlignment="Center"/>
+                <Label Grid.ColumnSpan="2" Content="{Binding SelectedSettlementType}" ContentStringFormat="{}Wybrany sposób rozliczenia: {0}" FontWeight="Bold" HorizontalAlignment="Center"/>
 
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Content="{Binding ConstSum}" ContentStringFormat="{}Suma części stałych: {0} zł" />
@@ -122,6 +122,58 @@
                     <Label Content="Koszt jednostkowy: " HorizontalAlignment="Right" Grid.Row="5" FontWeight="Bold"/>
                     <Label Content="{Binding VarUnitCost}" ContentStringFormat="{}{0} zł" HorizontalAlignment="Left" Grid.Row="5" Grid.Column="1" FontWeight="Bold"/>
                 </Grid>
+            </Grid>
+            <Grid Visibility="{Binding IsWaterSettlement}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Label Grid.ColumnSpan="2" Content="{Binding SelectedSettlementType}" ContentStringFormat="{}Wybrany sposób rozliczenia: {0}" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <Label Grid.Row="1" Content="Cena 1m3 wody: " HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding WaterUnitCost}" />
+                <Label Grid.Row="2" Content="Cena 1m3 ścieków: "  HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SewageUnitCost}" />
+                <Label Grid.Row="3" Content="Zużycie na liczniku głównym: "  HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding TotalCounter}" />
+                <Label Grid.Row="4" Content="Nowa zaliczka za 1m3: "  HorizontalAlignment="Right"/>
+                <Label Grid.Row="4" Grid.Column="1" Content="{Binding ProposedUnitCost}" ContentStringFormat="{}{0} zł"/>
+                <Label Grid.Row="5" Content="Licznik ciepłej wody: "  HorizontalAlignment="Right"/>
+                <ComboBox Grid.Row="5" Grid.Column="1" DisplayMemberPath="Name" ItemsSource="{Binding Counters}" SelectedItem="{Binding HotWaterCounter}"/>
+                <Label Grid.Row="6" Content="Licznik zimnej wody: "  HorizontalAlignment="Right"/>
+                <ComboBox Grid.Row="6" Grid.Column="1" DisplayMemberPath="Name" ItemsSource="{Binding Counters}" SelectedItem="{Binding ColdWaterCounter}"/>
+                <Label Grid.Row="7" Content="Kategoria wpłaconych zaliczek: "  HorizontalAlignment="Right"/>
+                <ComboBox Grid.Row="7" Grid.Column="1" DisplayMemberPath="CategoryName" ItemsSource="{Binding PaymentsCategories}" SelectedItem="{Binding PaymentCategory}"/>
+                <DataGrid Grid.Row="8" Grid.ColumnSpan="2" ItemsSource="{Binding WaterSettlementCounters}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mieszkanie" Binding="{Binding Apartment.ApartmentNumber}"/>
+                        <DataGridTextColumn Header="Właściciel" Binding="{Binding Owner.OwnerName}"/>
+                        <DataGridTextColumn Header="CWU - ostatni odczyt" Binding="{Binding WarmWaterLastMeasure}"/>
+                        <DataGridTextColumn Header="CWU - aktualny odczyt" Binding="{Binding WarmWaterCurrentMeasure}" />
+                        <DataGridTextColumn Header="CWU - zużycie" Binding="{Binding WarmWaterUsage}" />
+                        <DataGridTextColumn Header="ZW - ostatni odczyt" Binding="{Binding ColdWaterLastMeasure}" />
+                        <DataGridTextColumn Header="ZW - aktualny odczyt" Binding="{Binding ColdWaterCurrentMeasure}" />
+                        <DataGridTextColumn Header="ZW - zużycie" Binding="{Binding ColdWaterUsage}" />
+                        <DataGridTextColumn Header="Zużycie razem"  Binding="{Binding TotalUsage}"/>
+                        <DataGridTextColumn Header="Koszty zużytej wody" Binding="{Binding UsageCost}" />
+                        <DataGridTextColumn Header="Zaliczka" Binding="{Binding Payments}" />
+                        <DataGridTextColumn Header="Wynik brutto" Binding="{Binding SaldoCost}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Label Grid.Row="9" Grid.Column="1" HorizontalAlignment="Right" Content="{Binding TotalUsage}" ContentStringFormat="{}Zużycie razem: {0}"/>
+                <Label Grid.Row="10" Grid.Column="1" HorizontalAlignment="Right" Content="{Binding Shortage}" ContentStringFormat="{}Ubytki: {0}"/>
             </Grid>
         </StackPanel>
     </ScrollViewer>
