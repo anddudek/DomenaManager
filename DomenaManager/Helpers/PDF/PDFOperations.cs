@@ -109,9 +109,9 @@ namespace DomenaManager.Helpers
             }
             ownerRow.Cells[0].AddParagraph("Procent własności:"); ownerRow.Cells[1].AddParagraph(percentage.ToString() + "%");
             ownerRow = address.AddRow();
-            ownerRow.Cells[0].AddParagraph("Powierzchnia ogółem:"); ownerRow.Cells[1].AddParagraph((apartment.AdditionalArea + apartment.ApartmentArea).ToString() + " m2");
+            ownerRow.Cells[0].AddParagraph("Powierzchnia całkowita:"); ownerRow.Cells[1].AddParagraph((apartment.AdditionalArea + apartment.ApartmentArea).ToString() + " m2");
             ownerRow = address.AddRow();
-            ownerRow.Cells[0].AddParagraph("Powierzchnia grzewcza:"); ownerRow.Cells[1].AddParagraph((apartment.ApartmentArea).ToString() + " m2");
+            ownerRow.Cells[0].AddParagraph("Powierzchnia mieszkalna:"); ownerRow.Cells[1].AddParagraph((apartment.ApartmentArea).ToString() + " m2");
 
             address.Borders.Color = Colors.Transparent;
             return address;
@@ -281,6 +281,7 @@ namespace DomenaManager.Helpers
                     if (sfd.FileName != "")
                     {
                         renderer.PdfDocument.Save(sfd.FileName);
+                        System.Diagnostics.Process.Start(sfd.FileName);
                     }
                 }
                 else
@@ -289,6 +290,7 @@ namespace DomenaManager.Helpers
                     file.Directory.Create();
                     string filename = selectedCharge.ChargeDate.ToString("MMMM_yyyy") + "_" + selectedCharge.Building.Name + "_" + selectedCharge.Apartment.ApartmentNumber + ".pdf";
                     renderer.PdfDocument.Save(Path.Combine(file.FullName, filename.Replace(' ', '_')));
+                    System.Diagnostics.Process.Start(Path.Combine(file.FullName, filename.Replace(' ', '_')));
                 }
             }
             catch (Exception e)
@@ -596,6 +598,7 @@ namespace DomenaManager.Helpers
                     if (sfd.FileName != "")
                     {
                         renderer.PdfDocument.Save(sfd.FileName);
+                        System.Diagnostics.Process.Start(sfd.FileName);
                     }
                 }
                 else
@@ -604,6 +607,7 @@ namespace DomenaManager.Helpers
                     file.Directory.Create();
                     string filename = year.ToString() + "_" + building.Name + "_" + apartment.ApartmentNumber + ".pdf";
                     renderer.PdfDocument.Save(Path.Combine(file.FullName, filename.Replace(' ', '_')));
+                    System.Diagnostics.Process.Start(Path.Combine(file.FullName, filename.Replace(' ', '_')));
                 }
             }
             catch (Exception e)
