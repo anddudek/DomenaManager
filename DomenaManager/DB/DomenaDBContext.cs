@@ -36,5 +36,6 @@ namespace DomenaManager.DB
         public DbSet<BuildingInvoiceBinding> BuildingInvoceBindings { get; set; }
         public DbSet<BuildingSettlement> BuildingSettlements { get; set; }
         public DbSet<ApartmentSettlement> ApartmentSettlements { get; set; }
-    }
+        public DbSet<Setting> Settings { get; set; }
+   }
 }
