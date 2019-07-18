@@ -22,6 +22,7 @@ using System.Data.Entity;
 using System.Reflection;
 using System.Globalization;
 using System.Threading;
+using LibDataModel;
 
 namespace DomenaManager.Windows
 {
@@ -48,7 +49,7 @@ namespace DomenaManager.Windows
         {
             get
             {
-                return new Helpers.RelayCommand(param => SwitchPage(param), CanSwitchPage);
+                return new Helpers.RelayCommand(param => SwitchPage(param), () => true);
             }
         }
 
@@ -56,7 +57,7 @@ namespace DomenaManager.Windows
         {
             get
             {
-                return new RelayCommand(EditCostCategories, CanEditCostCategories);
+                return new RelayCommand(EditCostCategories, () => true);
             }
         }
 
@@ -64,7 +65,7 @@ namespace DomenaManager.Windows
         {
             get
             {
-                return new RelayCommand(EditInvoiceCategories, CanEditInvoiceCategories);
+                return new RelayCommand(EditInvoiceCategories, () => true);
             }
         }
 
@@ -72,7 +73,7 @@ namespace DomenaManager.Windows
         {
             get
             {
-                return new RelayCommand(EditCostGroups, CanEditCostGroups);
+                return new RelayCommand(EditCostGroups, () => true);
             }
         }
 
@@ -80,7 +81,7 @@ namespace DomenaManager.Windows
         {
             get
             {
-                return new RelayCommand(EditCostVatRates, CanEditCostVatRates);
+                return new RelayCommand(EditCostVatRates, () => true);
             }
         }
 
@@ -88,7 +89,15 @@ namespace DomenaManager.Windows
         {
             get
             {
-                return new RelayCommand(DbBackup, CanDbBackup);
+                return new RelayCommand(DbBackup, () => true);
+            }
+        }
+
+        public ICommand EditSettingsCommand
+        {
+            get
+            {
+                return new RelayCommand(EditSettings, () => true);
             }
         }
 
@@ -246,16 +255,6 @@ namespace DomenaManager.Windows
             }
         }
 
-        public bool CanSwitchPage()
-        {
-            return true;
-        }
-
-        private bool CanEditCostCategories()
-        {
-            return true;
-        }
-
         private async void EditCostCategories(object obj)
         {
             Wizards.EditCostCategories ecc;            
@@ -309,7 +308,21 @@ namespace DomenaManager.Windows
             }
         }
 
-        private async void CanPerformCharge()
+        private void InitializeDB()
+        {
+            using (var db = new DB.DomenaDBContext())
+            {
+                string[,,] settings = new string[,,]
+                {
+                    {
+                        { "city-name", "Nazwa miasta" , "Jelenia Góra"},
+                        { "charge-title", "Tytuł naliczenia" , "Jelenia Góra"},
+                    }
+                };
+            }
+        }
+
+        private void CanPerformCharge()
         {
             using (var db = new DB.DomenaDBContext())
             {
@@ -339,11 +352,6 @@ namespace DomenaManager.Windows
         private void DbBackup(object param)
         {
             BackupDb(false);
-        }
-
-        private bool CanDbBackup()
-        {
-            return true;
         }
 
         private void PerformCharge(DateTime chargeDate)
@@ -405,11 +413,6 @@ namespace DomenaManager.Windows
             }
         }
 
-        private bool CanEditInvoiceCategories()
-        {
-            return true;
-        }
-
         private async void EditInvoiceCategories(object obj)
         {
             Wizards.EditInvoiceCategories eic;
@@ -460,16 +463,42 @@ namespace DomenaManager.Windows
             }
         }
 
-        private bool CanEditCostGroups()
-        {
-            return true;
-        }
-
         private async void EditCostGroups(object obj)
         {
             Wizards.EditGroupNames egn;
             egn = new Wizards.EditGroupNames();
             var result = await DialogHost.Show(egn, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingCostGroupsEventHandler);
+        }
+
+        private async void EditSettings(object obj)
+        {
+            Wizards.EditSettings es;
+            es = new Wizards.EditSettings();
+            var result = await DialogHost.Show(es, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEditSettingsEventHandler);
+        }
+
+        private async void ExtendedClosingEditSettingsEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+
+            if ((bool)eventArgs.Parameter)
+            {
+                var dc = (eventArgs.Session.Content as Wizards.EditSettings);
+                //Accept
+                using (var db = new DB.DomenaDBContext())
+                {
+                    
+                }
+            }
+            else if (!(bool)eventArgs.Parameter)
+            {
+
+                bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
+                if (!ynResult)
+                {
+                    var dc = (eventArgs.Session.Content as Wizards.EditSettings);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingEditSettingsEventHandler);
+                }
+            }
         }
 
         private async void ExtendedClosingCostGroupsEventHandler(object sender, DialogClosingEventArgs eventArgs)
@@ -509,15 +538,10 @@ namespace DomenaManager.Windows
                 bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
                 if (!ynResult)
                 {
-                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
-                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingInvoiceCategoriesEventHandler);
+                    var dc = (eventArgs.Session.Content as Wizards.EditGroupNames);
+                    var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingCostGroupsEventHandler);
                 }
             }
-        }
-
-        private bool CanEditCostVatRates()
-        {
-            return true;
         }
 
         private async void EditCostVatRates(object obj)
@@ -564,7 +588,7 @@ namespace DomenaManager.Windows
                 bool ynResult = await Helpers.YNMsg.Show("Czy chcesz anulować?");
                 if (!ynResult)
                 {
-                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceCategories);
+                    var dc = (eventArgs.Session.Content as Wizards.EditInvoiceVatRates);
                     var result = await DialogHost.Show(dc, "RootDialog", ExtendedOpenedEventHandler, ExtendedClosingVatRatesEventHandler);
                 }
             }

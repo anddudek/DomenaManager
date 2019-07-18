@@ -82,6 +82,7 @@
                                         <Button Content="Grupy kosztów" Command="{Binding Path=EditCostGroupsCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}"/>
                                         <Button Content="Stawki VAT" Command="{Binding Path=EditVatRatesCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}"/>
                                         <Button Content="Zapisz bazę danych" Command="{Binding Path=MakeDbBackup, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}"/>
+                                        <Button Content="Ustawienia" Command="{Binding Path=EditSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type metro:MetroWindow}}}"/>
                                 </StackPanel>
                             </MyControls:MetroButtonExpand.ExpandContent>
                         </MyControls:MetroButtonExpand>

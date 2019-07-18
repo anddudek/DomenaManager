@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DomenaManager.Wizards"
              mc:Ignorable="d" 
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              Height="550" Width="600" Background="White">
     <Grid>
@@ -22,7 +23,17 @@
             <DataGridTextColumn Header="Wartość" Width="*" IsReadOnly="False"/>
          </DataGrid.Columns>
       </DataGrid>
-      <Button Style="{StaticResource MaterialDesignFlatButton}" Grid.Row="1" Content="Akceptuj" Margin="5" Command="{Binding AcceptCommand}" />
-      <Button Style="{StaticResource MaterialDesignFlatButton}" Grid.Row="1" Grid.Column="1" Content="Anuluj" Margin="5" Command="{Binding CancelCommand}"/>
-   </Grid> 
+
+
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Akceptuj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}" Grid.Column="0" Grid.Row="1" Margin="5,0,5,2">
+            <Button.CommandParameter>
+                <system:Boolean>True</system:Boolean>
+            </Button.CommandParameter>
+        </Button>
+        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Anuluj" Command="{x:Static wpf:DialogHost.CloseDialogCommand}"  Grid.Column="1" Grid.Row="1" Margin="5,0,5,2">
+            <Button.CommandParameter>
+                <system:Boolean>False</system:Boolean>
+            </Button.CommandParameter>
+        </Button>
+    </Grid> 
 </UserControl>
