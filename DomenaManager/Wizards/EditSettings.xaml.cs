@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
+using LibDataModel;
 
 namespace DomenaManager.Wizards
 {
@@ -21,10 +23,32 @@ namespace DomenaManager.Wizards
    /// </summary>
    public partial class EditSettings : UserControl, INotifyPropertyChanged
    {
+      private ObservableCollection<Setting> _settings;
+      public ObservableCollection<Setting> Settings
+      {
+         get
+         {
+            return _settings;
+         }
+         set
+         {
+            if (value != _settings)
+            {
+               _settings = value;
+               OnPropertyChanged("Settings");
+            }
+         }
+      }
+
       public EditSettings()
       {
          InitializeComponent();
          DataContext = this;
+
+         using (var db = new DB.DomenaDBContext())
+         {
+            Settings = new ObservableCollection<Setting>(db.Settings.ToList());
+         }
       }
 
       public event PropertyChangedEventHandler PropertyChanged;

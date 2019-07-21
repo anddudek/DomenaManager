@@ -19,8 +19,8 @@
       </Grid.ColumnDefinitions>
       <DataGrid Margin="5" AutoGenerateColumns="False" ItemsSource="{Binding Settings}" Grid.ColumnSpan="2">
          <DataGrid.Columns>
-            <DataGridTextColumn Header="Ustawienie" Width="auto" IsReadOnly="True"/>
-            <DataGridTextColumn Header="Wartość" Width="*" IsReadOnly="False"/>
+            <DataGridTextColumn Header="Ustawienie" Width="auto" IsReadOnly="True" Binding="{Binding Description}"/>
+            <DataGridTextColumn Header="Wartość" Width="*" IsReadOnly="False" Binding="{Binding Value}"/>
          </DataGrid.Columns>
       </DataGrid>
 
