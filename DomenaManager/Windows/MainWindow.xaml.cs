@@ -133,8 +133,10 @@ namespace DomenaManager.Windows
 
          SwitchPage("Buildings");
 
-         InitializeDB();
-         InitializeRepairFund();
+#if DEBUG
+            InitializeDB();
+#endif
+            InitializeRepairFund();
          ChangeCulture();
 
          var LastBackupDate = Properties.Settings.Default.LastDBBackupCreation;
@@ -316,9 +318,9 @@ namespace DomenaManager.Windows
             string[,,] settings = new string[,,]
             {
                     {
-                        { "city-name", "Nazwa miasta" , "Jelenia Góra"},
-                        { "charge-title", "Tytuł naliczenia" , "Obiążenie"},
-                        { "bank-account", "Rachunek bankowy" , "Wpłat należy dokonywać na rachunek bankowy"},
+                        { "city-name", "Nazwa miasta" , "Jelenia Góra, "},
+                        { "charge-title", "Tytuł naliczenia" , "Obciążenie"},
+                        { "bank-account", "Rachunek bankowy" , "Wpłat należy dokonywać regularnie do dnia 10 każdego miesiąca na rachunek bankowy: "},
                     }
             };
 
