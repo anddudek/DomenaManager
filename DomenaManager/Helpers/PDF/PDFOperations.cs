@@ -43,8 +43,16 @@ namespace DomenaManager.Helpers
          return doc;
       }
 
-      public static void PopulatePage(Document document, Owner owner)
+      public static void PopulatePage(Document document, Owner owner, string city = null)
       {
+        if (city == null)
+            {
+                using (var db = new DB.DomenaDBContext())
+                {
+                    city = db.Settings.FirstOrDefault(s => s.Key == "city-name")?.Value;
+                }
+            }
+
          // Create header
          Section section = document.AddSection();
          section.PageSetup.LeftMargin = Unit.FromCentimeter(1);
@@ -58,7 +66,7 @@ namespace DomenaManager.Helpers
          paragraph = section.Headers.Primary.AddParagraph();
          paragraph.Format.Alignment = ParagraphAlignment.Right;
          paragraph.Format.RightIndent = "0";
-         paragraph.AddText("Jelenia Góra, " + DateTime.Today.ToString("dd.MM.yyyy"));
+         paragraph.AddText(city + DateTime.Today.ToString("dd.MM.yyyy"));
          paragraph.Format.SpaceBefore = "-5.5cm";
          paragraph.Format.SpaceAfter = "6.5cm";
 
@@ -136,7 +144,7 @@ namespace DomenaManager.Helpers
          return address;
       }
 
-      public static void AddChargeTable(Document document, ChargeDataGrid selectedCharge, bool useDefaultFolder = false)
+      public static void AddChargeTable(Document document, ChargeDataGrid selectedCharge, bool useDefaultFolder = false, string bankAccountCaption = null)
       {
          Document doc = document;
          Style style = doc.Styles["Normal"];
@@ -268,9 +276,17 @@ namespace DomenaManager.Helpers
          {
             Paragraph paragraph = document.LastSection.AddParagraph();
 
-            paragraph.AddText("Wpłat należy dokonywać regularnie do dnia 10 każdego miesiąca na rachunek bankowy: ");
+                if (bankAccountCaption == null)
+                {
+                    using (var db = new DB.DomenaDBContext())
+                    {
+                        bankAccountCaption = db.Settings.FirstOrDefault(s => s.Key == "bank-account")?.Value;
+                    }
+                }
+            //paragraph.AddText("Wpłat należy dokonywać regularnie do dnia 10 każdego miesiąca na rachunek bankowy: ");
+            paragraph.AddText(bankAccountCaption);
 
-            foreach (var g in selectedCharge.Components.GroupBy(x => x.GroupName))
+                foreach (var g in selectedCharge.Components.GroupBy(x => x.GroupName))
             {
                var ba = bankAccounts.FirstOrDefault(x => x.GroupName.BuildingChargeGroupNameId == g.Key.BuildingChargeGroupNameId);
                if (ba != null)
@@ -636,10 +652,18 @@ namespace DomenaManager.Helpers
          }
       }
 
-      public static void PrepareSingleChargeReport(ChargeDataGrid selectedCharge, bool useDefaultFolder)
+      public static void PrepareSingleChargeReport(ChargeDataGrid selectedCharge, bool useDefaultFolder, string title = null)
       {
          Document doc = CreateTemplate(selectedCharge.Owner);
-         AddTitle(doc, "Obciążenie z dnia: " + selectedCharge.ChargeDate.ToString("dd-MM-yyyy"), selectedCharge.Building);
+            if (title == null)
+            {
+                using (var db = new DB.DomenaDBContext())
+                {
+                    title = db.Settings.FirstOrDefault(s => s.Key == "charge-title")?.Value == null ? "Obciążenie z dnia: " + selectedCharge.ChargeDate.ToString("dd-MM-yyyy") : db.Settings.FirstOrDefault(s => s.Key == "charge-title")?.Value;
+                }
+            }
+            
+         AddTitle(doc, title, selectedCharge.Building);
          AddChargeTable(doc, selectedCharge, useDefaultFolder);
       }
 
