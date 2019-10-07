@@ -9,6 +9,7 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
         mc:Ignorable="d"
+        xmlns:Conv="clr-namespace:DomenaManager.Helpers.Converter"
         Height="auto" Width="450">
     <ScrollViewer>
     <Grid Background="White">
@@ -23,7 +24,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="70" />
+            <RowDefinition Height="300" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -128,6 +129,20 @@
             VerticalAlignment="Center" Margin="15,0,30,0" Language="pl-PL" 
             materialDesign:HintAssist.Hint="Data sprzedaży" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
 
+         <DataGrid Grid.ColumnSpan="2" Grid.Row="6" ItemsSource="{Binding ChargesCollection}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="10">
+            <DataGrid.Columns>
+               <DataGridTextColumn Header="Data naliczenia" Binding="{Binding Charge.ChargeDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+               <DataGridTextColumn Header="Kwota" Binding="{Binding TotalCost, StringFormat='{}{0} zł'}" />
+               <DataGridTemplateColumn Header="Typ rozliczenia">
+                  <DataGridTemplateColumn.CellTemplate >
+                     <DataTemplate>
+                        <ComboBox SelectedValue="{Binding SettlementType}" ItemsSource="{Binding Path=SettlementType, Converter={Conv:EnumToCollectionConverter}, Mode=OneTime}" SelectedValuePath="Value" DisplayMemberPath="Description"/>
+                     </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+               </DataGridTemplateColumn>
+            </DataGrid.Columns>
+         </DataGrid>
+       
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="7">
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Zatwierdź" Command="{Binding AcceptCommand}" Grid.Column="0" Grid.Row="8" Margin="5,0,5,2">
                     <Button.CommandParameter>

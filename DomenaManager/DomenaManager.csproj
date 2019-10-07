@@ -131,6 +131,8 @@
     <Compile Include="Helpers\DataGrid\AnalysisDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ApartamentMeterDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\ApartmentBinding.cs" />
+    <Compile Include="Helpers\DataGrid\ApartmentSellChargeDG.cs" />
+    <Compile Include="Helpers\DataGrid\ApartmentSellChargeSettlementType.cs" />
     <Compile Include="Helpers\DataGrid\BindingDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\InvoiceSettlementDataGrid.cs" />
     <Compile Include="Helpers\DataGrid\MultiPaymentDataGrid.cs" />
